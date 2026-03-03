@@ -1,57 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-79153-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YK1lHoe6pmk7TAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79153-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 11:40:07 +0100
+	id MBnfDvi5pmn2TAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 11:37:44 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE3941ECD19
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 11:40:06 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id A81891ECC0E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 11:37:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8C2F430E23B2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 10:35:29 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 960563097231
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 10:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA7B39D6D7;
-	Tue,  3 Mar 2026 10:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E444B386C2C;
+	Tue,  3 Mar 2026 10:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CyzlAe4L";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DvK+DTiT";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CyzlAe4L";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DvK+DTiT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421A531B114
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Mar 2026 10:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126AB39B950
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Mar 2026 10:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772534125; cv=none; b=JcVq8agCYNbApsStmggffo2MePCeLW3Ye++ZckHXzoPVQJW/EnP8O4OcYrJ+gYSX3G/b7KVNTBxaqBMuAo2TbMQk/jVt5mNn7SyWHdYiv+dlekIPfifxOd7zBaZlI247jfjIdbvRlhuAmOvee8xdTDAozI1jJEzg0mMqLJ3/Zfs=
+	t=1772534151; cv=none; b=ixT7aBTF3xlMqTnvP2YelyUPmE2qnLCHmfXg8bjt+mf3mlu7GpOJcbzTY+D7XpmDmi63y6MTbrvw0EKBEVq/3rAxmj2rVBJ3pLMb/ufLygPrkrK1hvlJzPUicY8ecCFctKJHiDRt3EXfHVDncDNqQlv3H2r96z4vPHg5HZSHB9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772534125; c=relaxed/simple;
-	bh=2/a9eqgQlz/3Mb1WXg09pHnceFw4nNkq4pR2iqKrJoM=;
+	s=arc-20240116; t=1772534151; c=relaxed/simple;
+	bh=iAQYf1Qy8SGxN1+aEnxN/hmRSnVqswowuoNdYM87ou8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G2EJKuWdSgJlnIHK+W9JYaFwgTkTErI8vkvGHVGMLSsny8M+E3mBdEPRiAwzyJD7FTVEoRJrvD63Jxz0kJktQCetl/bqG1HfPk1hfi3mhsVBJsimBLJ/9apWcAXTWCGVJDoXFZkbTquUFKOoWnslM7upvf/Dnf6wEVk4Vz6CtJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=R1PGNP/MEIQUO0Fm2nl3tsLEb8Xa5ZwkLMRZ/UlhU2+ymUaI2E438cQurdkgb03OOVmsFAWkffUTPDUNyYZEG9SDT5oyD1hBfNzFwRiJwbrOtYZLWV4NFvnis27pohqaojXEzwtp0GVO2NKJq5FO1qiFaYrAnH1dzhYIpFaYZeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CyzlAe4L; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DvK+DTiT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CyzlAe4L; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DvK+DTiT; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2E4983F924;
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2F9D23F929;
 	Tue,  3 Mar 2026 10:34:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1772534085; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ayutdjATkfIJsyi9w7bhVOmHaFZZfPEvqi93VrREg+I=;
+	b=CyzlAe4L3HqgIZiyZrYlmfOTNprQP6+SvArWyc9E5oQFYf012FxA3BtI1HbO45NcH/L2ti
+	d2/+6Kunl7+ts64jGrCfrGhzzoI1bWSmGAMdgak8DlIiv9YmTX6kd7Y3ymHAHpfuNzBJs5
+	OPoacYYPQnXACdBGf/mI1J14tfYVrO4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1772534085;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ayutdjATkfIJsyi9w7bhVOmHaFZZfPEvqi93VrREg+I=;
+	b=DvK+DTiTmQkSAKFjj2D2jqh/HRRXgvMyfCseBN8se/zRRqAnWTsBztdOnq2FD/y1CtToCZ
+	9fPpL595ZYW++fAQ==
 Authentication-Results: smtp-out1.suse.de;
 	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1772534085; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ayutdjATkfIJsyi9w7bhVOmHaFZZfPEvqi93VrREg+I=;
+	b=CyzlAe4L3HqgIZiyZrYlmfOTNprQP6+SvArWyc9E5oQFYf012FxA3BtI1HbO45NcH/L2ti
+	d2/+6Kunl7+ts64jGrCfrGhzzoI1bWSmGAMdgak8DlIiv9YmTX6kd7Y3ymHAHpfuNzBJs5
+	OPoacYYPQnXACdBGf/mI1J14tfYVrO4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1772534085;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ayutdjATkfIJsyi9w7bhVOmHaFZZfPEvqi93VrREg+I=;
+	b=DvK+DTiTmQkSAKFjj2D2jqh/HRRXgvMyfCseBN8se/zRRqAnWTsBztdOnq2FD/y1CtToCZ
+	9fPpL595ZYW++fAQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 243B83EA6E;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 22E653EA69;
 	Tue,  3 Mar 2026 10:34:45 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EyzXCEW5pml/FQAAD6G6ig
+	id 8yqECEW5pml9FQAAD6G6ig
 	(envelope-from <jack@suse.cz>); Tue, 03 Mar 2026 10:34:45 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C00ADA0ADA; Tue,  3 Mar 2026 11:34:40 +0100 (CET)
+	id C8F9DA0AE1; Tue,  3 Mar 2026 11:34:40 +0100 (CET)
 From: Jan Kara <jack@suse.cz>
 To: <linux-fsdevel@vger.kernel.org>
 Cc: Christian Brauner <brauner@kernel.org>,
@@ -68,9 +109,9 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	linux-aio@kvack.org,
 	Benjamin LaHaise <bcrl@kvack.org>,
 	Jan Kara <jack@suse.cz>
-Subject: [PATCH 15/32] fs: Drop osync_buffers_list()
-Date: Tue,  3 Mar 2026 11:34:04 +0100
-Message-ID: <20260303103406.4355-47-jack@suse.cz>
+Subject: [PATCH 16/32] fs: Fold fsync_buffers_list() into sync_mapping_buffers()
+Date: Tue,  3 Mar 2026 11:34:05 +0100
+Message-ID: <20260303103406.4355-48-jack@suse.cz>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260303101717.27224-1-jack@suse.cz>
 References: <20260303101717.27224-1-jack@suse.cz>
@@ -80,131 +121,269 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2464; i=jack@suse.cz; h=from:subject; bh=2/a9eqgQlz/3Mb1WXg09pHnceFw4nNkq4pR2iqKrJoM=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBpprkq3a5/P0oUM3bDlZR3EzEk1N3kzljC9F9eH VlmIijoJKmJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCaaa5KgAKCRCcnaoHP2RA 2YEWCADXaZjDgnEzRya8WwzOnAHZ4qj1cJhsps4vNe6LN2OzqXU9hRA0KCwyN1q3267mhf/Gtn8 cQRRvJrD7nTw1RB+acUok2EmA3WYOJGhPuSPpbrTyUgR+Z9yVqPuzZGop3fq7MfcFurZB3iLUx5 YTSQW0lx6H+QxRAeT1WU7SG9nAQn5ZNJpUFSpu49/+AaVQ4AQdrOmYLSY/z/z8uk+dbKs90w7JO 2Q67MYypYmHj19Hq5sjvXf30jcBQ+l4AlZSUrv4jJpk6eoN/Sq/dyC+CJT0RmslIUQc5Vg5w9vS U3/whdj22wIw13yayC2IA5mBBn6ZOi3aVH65TNsw32MyfLGR
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7504; i=jack@suse.cz; h=from:subject; bh=iAQYf1Qy8SGxN1+aEnxN/hmRSnVqswowuoNdYM87ou8=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBpprkret9/c1xpxPu/HVbqz9oF76wD6wt3S0VAk fZSs6HxtgCJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCaaa5KwAKCRCcnaoHP2RA 2aDRB/9ONHR3CHXaC9Dt8EF2Alucrv+2KoC6QvP67hC5JUwzvTa04STNFTHTv7npgR30ioCCpK+ 7zu9PYgTPbCFxHvL/sswxIxHIFcUWDC30dN3vJ64bCztTB8UpfvcMKi4XlhX8oWbG4XXVDXyxb/ Y05ivmiBrVYouoa6YO1dSos2EL3Rx0cldyxvOaGh+78+gB6EX9EVOyTSrRECvHRNg+X044PWRbn TwWWZea+fqAt1U0FRMJP0o2FxOdEg+Rj+pl9QA9CO8A8eoI+bhK/MEnbkzZ+oklCkKxGYoTHEbf joYLTGBG6fqUxjxIJRqHZgbA+0IWj5gArfSKoTAX85VsJ1EW
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
 X-Spam-Flag: NO
-X-Spam-Score: -4.00
+X-Spam-Score: -5.30
 X-Spam-Level: 
-X-Rspamd-Queue-Id: DE3941ECD19
+X-Rspamd-Queue-Id: A81891ECC0E
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [1.54 / 15.00];
+X-Spamd-Result: default: False [1.34 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_CONTAINS_FROM(1.00)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79153-lists,linux-fsdevel=lfdr.de];
-	DMARC_NA(0.00)[suse.cz];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
 	RCPT_COUNT_TWELVE(0.00)[15];
+	TAGGED_FROM(0.00)[bounces-79161-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
 	FREEMAIL_CC(0.00)[kernel.org,ZenIV.linux.org.uk,vger.kernel.org,mit.edu,gmail.com,suse.com,mail.parknet.co.jp,linux.dev,suse.de,kvack.org,suse.cz];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DMARC_NA(0.00)[suse.cz];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	R_DKIM_NA(0.00)[];
-	NEURAL_HAM(-0.00)[-0.858];
 	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.cz:mid,tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
+	NEURAL_HAM(-0.00)[-0.999];
 	TO_DN_SOME(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	RCVD_COUNT_SEVEN(0.00)[7]
 X-Rspamd-Action: no action
 
-The function only waits for already locked buffers in the list of
-metadata bhs. fsync_buffers_list() has just waited for all outstanding
-IO on buffers so this isn't adding anything useful. Comment in front of
-fsync_buffers_list() mentions concerns about buffers being moved out
-from tmp list back to mappings i_private_list but these days
-mark_buffer_dirty_inode() doesn't touch inodes with b_assoc_map set so
-that cannot happen. Just delete the stale code.
+There's only single caller of fsync_buffers_list() so untangle the code
+a bit by folding fsync_buffers_list() into sync_mapping_buffers(). Also
+merge the comments and update them to reflect current state of code.
 
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/buffer.c | 43 ++-----------------------------------------
- 1 file changed, 2 insertions(+), 41 deletions(-)
+ fs/buffer.c | 180 +++++++++++++++++++++++-----------------------------
+ 1 file changed, 80 insertions(+), 100 deletions(-)
 
 diff --git a/fs/buffer.c b/fs/buffer.c
-index c85ccfb1a4ec..1c0e7c81a38b 100644
+index 1c0e7c81a38b..18012afb8289 100644
 --- a/fs/buffer.c
 +++ b/fs/buffer.c
-@@ -526,41 +526,6 @@ int inode_has_buffers(struct inode *inode)
+@@ -54,7 +54,6 @@
+ 
+ #include "internal.h"
+ 
+-static int fsync_buffers_list(spinlock_t *lock, struct list_head *list);
+ static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
+ 			  enum rw_hint hint, struct writeback_control *wbc);
+ 
+@@ -531,22 +530,96 @@ EXPORT_SYMBOL_GPL(inode_has_buffers);
+  * @mapping: the mapping which wants those buffers written
+  *
+  * Starts I/O against the buffers at mapping->i_private_list, and waits upon
+- * that I/O.
++ * that I/O. Basically, this is a convenience function for fsync().  @mapping
++ * is a file or directory which needs those buffers to be written for a
++ * successful fsync().
+  *
+- * Basically, this is a convenience function for fsync().
+- * @mapping is a file or directory which needs those buffers to be written for
+- * a successful fsync().
++ * We have conflicting pressures: we want to make sure that all
++ * initially dirty buffers get waited on, but that any subsequently
++ * dirtied buffers don't.  After all, we don't want fsync to last
++ * forever if somebody is actively writing to the file.
++ *
++ * Do this in two main stages: first we copy dirty buffers to a
++ * temporary inode list, queueing the writes as we go. Then we clean
++ * up, waiting for those writes to complete. mark_buffer_dirty_inode()
++ * doesn't touch b_assoc_buffers list if b_assoc_map is not NULL so we
++ * are sure the buffer stays on our list until IO completes (at which point
++ * it can be reaped).
+  */
+ int sync_mapping_buffers(struct address_space *mapping)
+ {
+ 	struct address_space *buffer_mapping =
+ 				mapping->host->i_sb->s_bdev->bd_mapping;
++	struct buffer_head *bh;
++	int err = 0;
++	struct blk_plug plug;
++	LIST_HEAD(tmp);
+ 
+ 	if (list_empty(&mapping->i_private_list))
+ 		return 0;
+ 
+-	return fsync_buffers_list(&buffer_mapping->i_private_lock,
+-					&mapping->i_private_list);
++	blk_start_plug(&plug);
++
++	spin_lock(&buffer_mapping->i_private_lock);
++	while (!list_empty(&mapping->i_private_list)) {
++		bh = BH_ENTRY(list->next);
++		WARN_ON_ONCE(bh->b_assoc_map != mapping);
++		__remove_assoc_queue(bh);
++		/* Avoid race with mark_buffer_dirty_inode() which does
++		 * a lockless check and we rely on seeing the dirty bit */
++		smp_mb();
++		if (buffer_dirty(bh) || buffer_locked(bh)) {
++			list_add(&bh->b_assoc_buffers, &tmp);
++			bh->b_assoc_map = mapping;
++			if (buffer_dirty(bh)) {
++				get_bh(bh);
++				spin_unlock(&buffer_mapping->i_private_lock);
++				/*
++				 * Ensure any pending I/O completes so that
++				 * write_dirty_buffer() actually writes the
++				 * current contents - it is a noop if I/O is
++				 * still in flight on potentially older
++				 * contents.
++				 */
++				write_dirty_buffer(bh, REQ_SYNC);
++
++				/*
++				 * Kick off IO for the previous mapping. Note
++				 * that we will not run the very last mapping,
++				 * wait_on_buffer() will do that for us
++				 * through sync_buffer().
++				 */
++				brelse(bh);
++				spin_lock(&buffer_mapping->i_private_lock);
++			}
++		}
++	}
++
++	spin_unlock(&buffer_mapping->i_private_lock);
++	blk_finish_plug(&plug);
++	spin_lock(&buffer_mapping->i_private_lock);
++
++	while (!list_empty(&tmp)) {
++		bh = BH_ENTRY(tmp.prev);
++		get_bh(bh);
++		__remove_assoc_queue(bh);
++		/* Avoid race with mark_buffer_dirty_inode() which does
++		 * a lockless check and we rely on seeing the dirty bit */
++		smp_mb();
++		if (buffer_dirty(bh)) {
++			list_add(&bh->b_assoc_buffers,
++				 &mapping->i_private_list);
++			bh->b_assoc_map = mapping;
++		}
++		spin_unlock(&buffer_mapping->i_private_lock);
++		wait_on_buffer(bh);
++		if (!buffer_uptodate(bh))
++			err = -EIO;
++		brelse(bh);
++		spin_lock(&buffer_mapping->i_private_lock);
++	}
++	spin_unlock(&buffer_mapping->i_private_lock);
++	return err;
  }
- EXPORT_SYMBOL_GPL(inode_has_buffers);
+ EXPORT_SYMBOL(sync_mapping_buffers);
+ 
+@@ -719,99 +792,6 @@ bool block_dirty_folio(struct address_space *mapping, struct folio *folio)
+ }
+ EXPORT_SYMBOL(block_dirty_folio);
  
 -/*
-- * osync is designed to support O_SYNC io.  It waits synchronously for
-- * all already-submitted IO to complete, but does not queue any new
-- * writes to the disk.
+- * Write out and wait upon a list of buffers.
 - *
-- * To do O_SYNC writes, just queue the buffer writes with write_dirty_buffer
-- * as you dirty the buffers, and then use osync_inode_buffers to wait for
-- * completion.  Any other dirty buffers which are not yet queued for
-- * write will not be flushed to disk by the osync.
+- * We have conflicting pressures: we want to make sure that all
+- * initially dirty buffers get waited on, but that any subsequently
+- * dirtied buffers don't.  After all, we don't want fsync to last
+- * forever if somebody is actively writing to the file.
+- *
+- * Do this in two main stages: first we copy dirty buffers to a
+- * temporary inode list, queueing the writes as we go.  Then we clean
+- * up, waiting for those writes to complete.
+- * 
+- * During this second stage, any subsequent updates to the file may end
+- * up refiling the buffer on the original inode's dirty list again, so
+- * there is a chance we will end up with a buffer queued for write but
+- * not yet completed on that list.  So, as a final cleanup we go through
+- * the osync code to catch these locked, dirty buffers without requeuing
+- * any newly dirty buffers for write.
 - */
--static int osync_buffers_list(spinlock_t *lock, struct list_head *list)
+-static int fsync_buffers_list(spinlock_t *lock, struct list_head *list)
 -{
 -	struct buffer_head *bh;
--	struct list_head *p;
+-	struct address_space *mapping;
 -	int err = 0;
+-	struct blk_plug plug;
+-	LIST_HEAD(tmp);
+-
+-	blk_start_plug(&plug);
 -
 -	spin_lock(lock);
--repeat:
--	list_for_each_prev(p, list) {
--		bh = BH_ENTRY(p);
--		if (buffer_locked(bh)) {
--			get_bh(bh);
--			spin_unlock(lock);
--			wait_on_buffer(bh);
--			if (!buffer_uptodate(bh))
--				err = -EIO;
--			brelse(bh);
--			spin_lock(lock);
--			goto repeat;
+-	while (!list_empty(list)) {
+-		bh = BH_ENTRY(list->next);
+-		mapping = bh->b_assoc_map;
+-		__remove_assoc_queue(bh);
+-		/* Avoid race with mark_buffer_dirty_inode() which does
+-		 * a lockless check and we rely on seeing the dirty bit */
+-		smp_mb();
+-		if (buffer_dirty(bh) || buffer_locked(bh)) {
+-			list_add(&bh->b_assoc_buffers, &tmp);
+-			bh->b_assoc_map = mapping;
+-			if (buffer_dirty(bh)) {
+-				get_bh(bh);
+-				spin_unlock(lock);
+-				/*
+-				 * Ensure any pending I/O completes so that
+-				 * write_dirty_buffer() actually writes the
+-				 * current contents - it is a noop if I/O is
+-				 * still in flight on potentially older
+-				 * contents.
+-				 */
+-				write_dirty_buffer(bh, REQ_SYNC);
+-
+-				/*
+-				 * Kick off IO for the previous mapping. Note
+-				 * that we will not run the very last mapping,
+-				 * wait_on_buffer() will do that for us
+-				 * through sync_buffer().
+-				 */
+-				brelse(bh);
+-				spin_lock(lock);
+-			}
 -		}
 -	}
+-
+-	spin_unlock(lock);
+-	blk_finish_plug(&plug);
+-	spin_lock(lock);
+-
+-	while (!list_empty(&tmp)) {
+-		bh = BH_ENTRY(tmp.prev);
+-		get_bh(bh);
+-		mapping = bh->b_assoc_map;
+-		__remove_assoc_queue(bh);
+-		/* Avoid race with mark_buffer_dirty_inode() which does
+-		 * a lockless check and we rely on seeing the dirty bit */
+-		smp_mb();
+-		if (buffer_dirty(bh)) {
+-			list_add(&bh->b_assoc_buffers,
+-				 &mapping->i_private_list);
+-			bh->b_assoc_map = mapping;
+-		}
+-		spin_unlock(lock);
+-		wait_on_buffer(bh);
+-		if (!buffer_uptodate(bh))
+-			err = -EIO;
+-		brelse(bh);
+-		spin_lock(lock);
+-	}
+-	
 -	spin_unlock(lock);
 -	return err;
 -}
 -
- /**
-  * sync_mapping_buffers - write out & wait upon a mapping's "associated" buffers
-  * @mapping: the mapping which wants those buffers written
-@@ -777,7 +742,7 @@ static int fsync_buffers_list(spinlock_t *lock, struct list_head *list)
- {
- 	struct buffer_head *bh;
- 	struct address_space *mapping;
--	int err = 0, err2;
-+	int err = 0;
- 	struct blk_plug plug;
- 	LIST_HEAD(tmp);
- 
-@@ -844,11 +809,7 @@ static int fsync_buffers_list(spinlock_t *lock, struct list_head *list)
- 	}
- 	
- 	spin_unlock(lock);
--	err2 = osync_buffers_list(lock, list);
--	if (err)
--		return err;
--	else
--		return err2;
-+	return err;
- }
- 
  /*
+  * Invalidate any and all dirty buffers on a given inode.  We are
+  * probably unmounting the fs, but that doesn't mean we have already
 -- 
 2.51.0
 
