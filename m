@@ -1,548 +1,266 @@
-Return-Path: <linux-fsdevel+bounces-79096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +G42A74vpmkrLwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 01:47:58 +0100
+	id uGLEEb04pmnQMgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 02:26:21 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E5AC1E75DB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 01:47:57 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id D24271E7A4C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 02:26:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 0271530259B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 00:40:56 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3A235308301A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 01:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5699F201113;
-	Tue,  3 Mar 2026 00:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DFD36403D;
+	Tue,  3 Mar 2026 01:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cxXt3PxY"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Wc4TKdAE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A3112CDA5;
-	Tue,  3 Mar 2026 00:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF7D356A0D
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Mar 2026 01:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772498452; cv=none; b=XWQCcspbBY/tbnyFaeOLkkBfNacMKxWQsCq7EXGO2PYOsnaZ2akQzEsUffP6snfptP/xy4rzoo27ucXgZ9Ziqqnzmgcwbca87yO+FElCP8LbpESy1tjo3DOsmbMuHXrFwT2Klb/dqlaaoniZX+tyEsUFK2gTh4N5wCyiuGBvrgY=
+	t=1772501172; cv=none; b=ZY2r/QvM2nM8GxBb0ms1IKMhDlEA7bW6PV/umsIUCFDrj3KRx7qT+pl8nJEoMXGHRQLp5jvhtLVysIRT61RMMAkMNY/o1FJJiHGBzvGwn8VNj7Fkk9DJXaSGw5AXt/yiP7+c4DZuOhqIrrNNYr9bRLdl5BZqOS72GQGLPA38v7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772498452; c=relaxed/simple;
-	bh=NiAgvTZ9q/jszEbZykKZat8+RICbVID0Iz5hAtYVuEM=;
-	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZK5x3tTHMMMlcxwXZq4iC2awJS50fE3PaOrfYgb+H1jSDEB+1H7TA2Lo7hthR4W5UF5/z9X5rvFG0v7BkVO2izX+pm+9kNprIfxU/GrvHraiq8IpkRPpvq+ZWjY0pLnRdQDLQZvmNPPH8nXEZ9eLcnPnxYHeXNw4cjxHDeiGQZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cxXt3PxY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82F96C19423;
-	Tue,  3 Mar 2026 00:40:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772498452;
-	bh=NiAgvTZ9q/jszEbZykKZat8+RICbVID0Iz5hAtYVuEM=;
-	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=cxXt3PxYBQTNDM6lv5Oo8yMDMSvg/gekLP9VXtxkYXY8DVMa6uKUu8PUrEgUTF9JN
-	 dB8Vsuf7k/K7tLiVKsSna1J6HlRU5GI9kdzRxJpAvnaPn+s+i27bIw6HivQsOs+Iki
-	 bR7wwWR7tHPlDu8LyLb/n4uyF9n/7F/RdeSfHa8Ai1/w9cwWxwgWngipaeguPsgRxU
-	 dDZJ+L2OdTBwF6PCPGOK3QeuZ0lC57eTxhv5XquA5+qfS3wwr6SF1Ipw2td7WTntRP
-	 vl4PvgRuwYo3JIWMbpFf2h1SO/QeX6lvOj+oZvx64dCt3relh4LtFLeJ42r/Y9c5FE
-	 KM4eI5SVOHU5Q==
-Date: Mon, 02 Mar 2026 16:40:52 -0800
-Subject: [PATCH 1/1] generic: test fsnotify filesystem error reporting
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: zlang@redhat.com, djwong@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, hch@lst.de, gabriel@krisman.be,
- amir73il@gmail.com, jack@suse.cz, fstests@vger.kernel.org,
- linux-xfs@vger.kernel.org
-Message-ID: <177249785472.483405.1160086113668716052.stgit@frogsfrogsfrogs>
-In-Reply-To: <177249785452.483405.17984642662799629787.stgit@frogsfrogsfrogs>
-References: <177249785452.483405.17984642662799629787.stgit@frogsfrogsfrogs>
+	s=arc-20240116; t=1772501172; c=relaxed/simple;
+	bh=g+VdGlVLVkH1poZKLQaU9Z6Cz1tsg2GNZN6MfKpgxB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bcipdDdXSGOmSl4MR9ZzUh7PMN5ftrn3ASkePMSiuOZq/pYFZ+83FXtwKAt6PYUTR0kIf91cYDVymeCgU86Q23FkGmig7piejmwMrHmVueQ09jR2pOXJLKJQ8yGKxgcq2XGjlewGkuPeZIL7slM70s3v7hja+guLcO2X9+x4HMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Wc4TKdAE; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from macsyma.thunk.org (pool-173-48-102-84.bstnma.fios.verizon.net [173.48.102.84])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 6231Pu3R026610
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 2 Mar 2026 20:25:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1772501160; bh=/4PzqDjQa596+Pxv5nyCAFN8lvFTxej9AhTZolOU+To=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=Wc4TKdAEZiew43ZUa9oyK9BzvbQO3OJloJSKo3pd6MKCTHI4a2teHHPqzw1FRDL2y
+	 +yu6xwBU02gN3nI0t8y5UIoSUv5mdCVHfMEIdSd/UzmQ8n8XljJLn8WdsWZlzyvKGT
+	 rAz3wh7Iki5RyLotCb/Z/VDWmYDbAE0BsYdyvuoQ8F38jRx/zf/TpFP5KA5Lqp0Cw+
+	 Ng03SymNceY21qntaXusQUmsrvhvWlmHGa8roce7/UvpNA6pe9TJunmAktEO3gj4vh
+	 AMgTW7BxiT//fgI8Xnd0Mi0ldl+zhjAuEvp4QGZN3wtROS2Wpi13Sob+oCVUSW/6ZX
+	 sKXZK8+2UchSg==
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id 33A7D5AC5A1E; Mon,  2 Mar 2026 20:25:56 -0500 (EST)
+Date: Mon, 2 Mar 2026 20:25:56 -0500
+From: "Theodore Tso" <tytso@mit.edu>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Muchun Song <muchun.song@linux.dev>,
+        Oscar Salvador <osalvador@suse.de>,
+        David Hildenbrand <david@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Paulo Alcantara <pc@manguebit.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>,
+        Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+        Tom Talpey <tom@talpey.com>, Steve French <sfrench@samba.org>,
+        Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Bharath SM <bharathsm@microsoft.com>,
+        Alexander Aring <alex.aring@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        Viacheslav Dubeyko <slava@dubeyko.com>,
+        Eric Van Hensbergen <ericvh@kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        David Sterba <dsterba@suse.com>,
+        Marc Dionne <marc.dionne@auristor.com>, Ian Kent <raven@themaw.net>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Salah Triki <salah.triki@gmail.com>,
+        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
+        Ilya Dryomov <idryomov@gmail.com>, Alex Markuze <amarkuze@redhat.com>,
+        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
+        Nicolas Pitre <nico@fluxnic.net>, Tyler Hicks <code@tyhicks.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Yangtao Li <frank.li@vivo.com>,
+        Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Richard Weinberger <richard@nod.at>, Dave Kleikamp <shaggy@kernel.org>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Miklos Szeredi <miklos@szeredi.hu>, Anders Larsen <al@alarsen.net>,
+        Zhihao Cheng <chengzhihao1@huawei.com>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        James Clark <james.clark@linaro.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, Martin Schiller <ms@dev.tdt.de>,
+        Eric Paris <eparis@redhat.com>, Joerg Reuter <jreuter@yaina.de>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Oliver Hartkopp <socketcan@hartkopp.net>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        David Ahern <dsahern@kernel.org>, Neal Cardwell <ncardwell@google.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Remi Denis-Courmont <courmisch@gmail.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        Stanislav Fomichev <sdf@fomichev.me>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+        fsverity@lists.linux.dev, linux-mm@kvack.org, netfs@lists.linux.dev,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-nilfs@vger.kernel.org,
+        v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+        autofs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@telemann.coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+        linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+        devel@lists.orangefs.org, linux-unionfs@vger.kernel.org,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        netdev@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-hams@vger.kernel.org, linux-x25@vger.kernel.org,
+        audit@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-can@vger.kernel.org, linux-sctp@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: Re: [PATCH v2 001/110] vfs: introduce kino_t typedef and PRIino
+ format macro
+Message-ID: <20260303012556.GA6520@macsyma-wired.lan>
+References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
+ <20260302-iino-u64-v2-1-e5388800dae0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 0E5AC1E75DB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260302-iino-u64-v2-1-e5388800dae0@kernel.org>
+X-Rspamd-Queue-Id: D24271E7A4C
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	DMARC_POLICY_ALLOW(-0.50)[mit.edu,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[mit.edu:s=outgoing];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,lst.de,krisman.be,gmail.com,suse.cz];
-	TAGGED_FROM(0.00)[bounces-79096-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,yaina.de,holtmann.org,hartkopp.net,pengutronix.de,secunet.com,gondor.apana.org.au,fomichev.me,iogearbox.net,vger.kernel.org,lists.linux.dev,kvack.org,lists.sourceforge.net,lists.samba.org,lists.infradead.org,telemann.coda.cs.cmu.edu,lists.orangefs.org,lists.ubuntu.com,lists.freedesktop.org,lists.linaro.o
+ rg];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	TAGGED_FROM(0.00)[bounces-79097-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
-	TO_DN_NONE(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[mit.edu:+];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	MISSING_XM_UA(0.00)[];
-	NEURAL_HAM(-0.00)[-0.993];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[tytso@mit.edu,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[171];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo,popattr.py:url,scaleread.sh:url,btrfs_crc32c_forged_name.py:url]
+	NEURAL_HAM(-0.00)[-0.998];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[macsyma-wired.lan:mid,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-From: Darrick J. Wong <djwong@kernel.org>
+On Mon, Mar 02, 2026 at 03:23:45PM -0500, Jeff Layton wrote:
+> The PRIino macro is a length modifier, not a complete format specifier.
+> It is used as: "%" PRIino "u" for decimal, "%" PRIino "x" for hex, etc.
+> This follows the pattern used by userspace PRIu64/PRIx64 macros.
 
-Test the fsnotify filesystem error reporting.
+For the record, I really hate the inttypes.h format specifiers, but I
+agree that we should forward the example of the C99 spec, for better
+or for worse.
 
-Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
----
- src/Makefile           |    2 
- src/fs-monitor.c       |  155 +++++++++++++++++++++++++++++++++
- tests/generic/1838     |  228 ++++++++++++++++++++++++++++++++++++++++++++++++
- tests/generic/1838.out |   20 ++++
- 4 files changed, 404 insertions(+), 1 deletion(-)
- create mode 100644 src/fs-monitor.c
- create mode 100755 tests/generic/1838
- create mode 100644 tests/generic/1838.out
+That being said, the userspace PRIu64, et. al macros are complete
+format specifiers, not just a length modifier.  And I think this
+results in less ugly format specifiers in our kernel code.
 
+---- cut here ---
+#!/bin/sh
+cat <<EOF > /tmp/blah.c
+#include <inttypes.h>
+#include <stdio.h>
 
-diff --git a/src/Makefile b/src/Makefile
-index 577d816ae859b6..1c761da0ccff20 100644
---- a/src/Makefile
-+++ b/src/Makefile
-@@ -36,7 +36,7 @@ LINUX_TARGETS = xfsctl bstat t_mtab getdevicesize preallo_rw_pattern_reader \
- 	fscrypt-crypt-util bulkstat_null_ocount splice-test chprojid_fail \
- 	detached_mounts_propagation ext4_resize t_readdir_3 splice2pipe \
- 	uuid_ioctl t_snapshot_deleted_subvolume fiemap-fault min_dio_alignment \
--	rw_hint
-+	rw_hint fs-monitor
- 
- EXTRA_EXECS = dmerror fill2attr fill2fs fill2fs_check scaleread.sh \
- 	      btrfs_crc32c_forged_name.py popdir.pl popattr.py \
-diff --git a/src/fs-monitor.c b/src/fs-monitor.c
-new file mode 100644
-index 00000000000000..fef596a3966933
---- /dev/null
-+++ b/src/fs-monitor.c
-@@ -0,0 +1,155 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2021, Collabora Ltd.
-+ */
-+
-+#include <errno.h>
-+#include <err.h>
-+#include <stdlib.h>
-+#include <stdio.h>
-+#include <fcntl.h>
-+#include <sys/fanotify.h>
-+#include <sys/types.h>
-+#include <unistd.h>
-+#ifndef __GLIBC__
-+#include <asm-generic/int-ll64.h>
-+#endif
-+
-+#ifndef FAN_FS_ERROR
-+#define FAN_FS_ERROR		0x00008000
-+#define FAN_EVENT_INFO_TYPE_ERROR	5
-+
-+struct fanotify_event_info_error {
-+	struct fanotify_event_info_header hdr;
-+	__s32 error;
-+	__u32 error_count;
-+};
-+#endif
-+
-+#ifndef FILEID_INO32_GEN
-+#define FILEID_INO32_GEN	1
-+#endif
-+
-+#ifndef FILEID_INVALID
-+#define	FILEID_INVALID		0xff
-+#endif
-+
-+static void print_fh(struct file_handle *fh)
-+{
-+	int i;
-+	uint32_t *h = (uint32_t *) fh->f_handle;
-+
-+	printf("\tfh: ");
-+	for (i = 0; i < fh->handle_bytes; i++)
-+		printf("%hhx", fh->f_handle[i]);
-+	printf("\n");
-+
-+	printf("\tdecoded fh: ");
-+	if (fh->handle_type == FILEID_INO32_GEN)
-+		printf("inode=%u gen=%u\n", h[0], h[1]);
-+	else if (fh->handle_type == FILEID_INVALID && !fh->handle_bytes)
-+		printf("Type %d (Superblock error)\n", fh->handle_type);
-+	else
-+		printf("Type %d (Unknown)\n", fh->handle_type);
-+
-+}
-+
-+static void handle_notifications(char *buffer, int len)
-+{
-+	struct fanotify_event_metadata *event =
-+		(struct fanotify_event_metadata *) buffer;
-+	struct fanotify_event_info_header *info;
-+	struct fanotify_event_info_error *err;
-+	struct fanotify_event_info_fid *fid;
-+	int off;
-+
-+	for (; FAN_EVENT_OK(event, len); event = FAN_EVENT_NEXT(event, len)) {
-+
-+		if (event->mask != FAN_FS_ERROR) {
-+			printf("unexpected FAN MARK: %llx\n",
-+							(unsigned long long)event->mask);
-+			goto next_event;
-+		}
-+
-+		if (event->fd != FAN_NOFD) {
-+			printf("Unexpected fd (!= FAN_NOFD)\n");
-+			goto next_event;
-+		}
-+
-+		printf("FAN_FS_ERROR (len=%d)\n", event->event_len);
-+
-+		for (off = sizeof(*event) ; off < event->event_len;
-+		     off += info->len) {
-+			info = (struct fanotify_event_info_header *)
-+				((char *) event + off);
-+
-+			switch (info->info_type) {
-+			case FAN_EVENT_INFO_TYPE_ERROR:
-+				err = (struct fanotify_event_info_error *) info;
-+
-+				printf("\tGeneric Error Record: len=%d\n",
-+				       err->hdr.len);
-+				printf("\terror: %d\n", err->error);
-+				printf("\terror_count: %d\n", err->error_count);
-+				break;
-+
-+			case FAN_EVENT_INFO_TYPE_FID:
-+				fid = (struct fanotify_event_info_fid *) info;
-+
-+				printf("\tfsid: %x%x\n",
-+#if defined(__GLIBC__)
-+				       fid->fsid.val[0], fid->fsid.val[1]);
-+#else
-+				       fid->fsid.__val[0], fid->fsid.__val[1]);
-+#endif
-+				print_fh((struct file_handle *) &fid->handle);
-+				break;
-+
-+			default:
-+				printf("\tUnknown info type=%d len=%d:\n",
-+				       info->info_type, info->len);
-+			}
-+		}
-+next_event:
-+		printf("---\n\n");
-+		fflush(stdout);
-+	}
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	int fd;
-+
-+	char buffer[BUFSIZ];
-+
-+	if (argc < 2) {
-+		printf("Missing path argument\n");
-+		return 1;
-+	}
-+
-+	fd = fanotify_init(FAN_CLASS_NOTIF|FAN_REPORT_FID, O_RDONLY);
-+	if (fd < 0) {
-+		perror("fanotify_init");
-+		errx(1, "fanotify_init");
-+	}
-+
-+	if (fanotify_mark(fd, FAN_MARK_ADD|FAN_MARK_FILESYSTEM,
-+			  FAN_FS_ERROR, AT_FDCWD, argv[1])) {
-+		perror("fanotify_mark");
-+		errx(1, "fanotify_mark");
-+	}
-+
-+	printf("fanotify active\n");
-+	fflush(stdout);
-+
-+	while (1) {
-+		int n = read(fd, buffer, BUFSIZ);
-+
-+		if (n < 0)
-+			errx(1, "read");
-+
-+		handle_notifications(buffer, n);
-+	}
-+
-+	return 0;
-+}
-diff --git a/tests/generic/1838 b/tests/generic/1838
-new file mode 100755
-index 00000000000000..087851ddcbdb44
---- /dev/null
-+++ b/tests/generic/1838
-@@ -0,0 +1,228 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# Copyright (c) 2024-2026 Oracle.  All Rights Reserved.
-+#
-+# FS QA Test No. 1838
-+#
-+# Check that fsnotify can report file IO errors.
-+
-+. ./common/preamble
-+_begin_fstest auto quick eio selfhealing
-+
-+# Override the default cleanup function.
-+_cleanup()
-+{
-+	cd /
-+	test -n "$fsmonitor_pid" && kill -TERM $fsmonitor_pid
-+	rm -f $tmp.*
-+	_dmerror_cleanup
-+}
-+
-+# Import common functions.
-+. ./common/fuzzy
-+. ./common/filter
-+. ./common/dmerror
-+. ./common/systemd
-+
-+case "$FSTYP" in
-+xfs)
-+	# added as a part of xfs health monitoring
-+	_require_xfs_io_command healthmon
-+	# no out of place writes
-+	_require_no_xfs_always_cow
-+	;;
-+ext4)
-+	# added at the same time as uevents
-+	modprobe fs-$FSTYP
-+	test -e /sys/fs/ext4/features/uevents || \
-+		_notrun "$FSTYP does not support fsnotify ioerrors"
-+	;;
-+*)
-+	_notrun "$FSTYP does not support fsnotify ioerrors"
-+	;;
-+esac
-+
-+_require_scratch
-+_require_dm_target error
-+_require_test_program fs-monitor
-+_require_xfs_io_command "fiemap"
-+_require_odirect
-+
-+# fsnotify only gives us a file handle, the error number, and the number of
-+# times it was seen in between event deliveries.   The handle is mostly useless
-+# since we have no generic way to map that to a file path.  Therefore we can
-+# only coalesce all the I/O errors into one report.
-+filter_fsnotify_errors() {
-+	_filter_scratch | \
-+		grep -E '(FAN_FS_ERROR|Generic Error Record|error: 5)' | \
-+		sed -e "s/len=[0-9]*/len=XXX/g" | \
-+		sort | \
-+		uniq
-+}
-+
-+_scratch_mkfs >> $seqres.full
-+
-+#
-+# The dm-error map added by this test doesn't work on zoned devices because
-+# table sizes need to be aligned to the zone size, and even for zoned on
-+# conventional this test will get confused because of the internal RT device.
-+#
-+# That check requires a mounted file system, so do a dummy mount before setting
-+# up DM.
-+#
-+_scratch_mount
-+test $FSTYP = xfs && _require_xfs_scratch_non_zoned
-+_scratch_unmount
-+
-+_dmerror_init
-+_dmerror_mount >> $seqres.full 2>&1
-+
-+test $FSTYP = xfs && _xfs_force_bdev data $SCRATCH_MNT
-+
-+# Write a file with 4 file blocks worth of data, figure out the LBA to target
-+victim=$SCRATCH_MNT/a
-+file_blksz=$(_get_file_block_size $SCRATCH_MNT)
-+$XFS_IO_PROG -f -c "pwrite -S 0x58 0 $((4 * file_blksz))" -c "fsync" $victim >> $seqres.full
-+
-+awk_len_prog='{print $4}'
-+bmap_str="$($XFS_IO_PROG -c "fiemap -v" $victim | grep "^[[:space:]]*0:")"
-+echo "$bmap_str" >> $seqres.full
-+
-+phys="$(echo "$bmap_str" | $AWK_PROG '{print $3}')"
-+len="$(echo "$bmap_str" | $AWK_PROG "$awk_len_prog")"
-+
-+fs_blksz=$(_get_block_size $SCRATCH_MNT)
-+echo "file_blksz:$file_blksz:fs_blksz:$fs_blksz" >> $seqres.full
-+kernel_sectors_per_fs_block=$((fs_blksz / 512))
-+
-+# Did we get at least 4 fs blocks worth of extent?
-+min_len_sectors=$(( 4 * kernel_sectors_per_fs_block ))
-+test "$len" -lt $min_len_sectors && \
-+	_fail "could not format a long enough extent on an empty fs??"
-+
-+phys_start=$(echo "$phys" | sed -e 's/\.\..*//g')
-+
-+echo "$phys:$len:$fs_blksz:$phys_start" >> $seqres.full
-+echo "victim file:" >> $seqres.full
-+od -tx1 -Ad -c $victim >> $seqres.full
-+
-+# Set the dmerror table so that all IO will pass through.
-+_dmerror_reset_table
-+
-+cat >> $seqres.full << ENDL
-+dmerror before:
-+$DMERROR_TABLE
-+$DMERROR_RTTABLE
-+<end table>
-+ENDL
-+
-+# All sector numbers that we feed to the kernel must be in units of 512b, but
-+# they also must be aligned to the device's logical block size.
-+logical_block_size=`$here/src/min_dio_alignment $SCRATCH_MNT $SCRATCH_DEV`
-+kernel_sectors_per_device_lba=$((logical_block_size / 512))
-+
-+# Mark as bad one of the device LBAs in the middle of the extent.  Target the
-+# second LBA of the third block of the four-block file extent that we allocated
-+# earlier, but without overflowing into the fourth file block.
-+bad_sector=$(( phys_start + (2 * kernel_sectors_per_fs_block) ))
-+bad_len=$kernel_sectors_per_device_lba
-+if (( kernel_sectors_per_device_lba < kernel_sectors_per_fs_block )); then
-+	bad_sector=$((bad_sector + kernel_sectors_per_device_lba))
-+fi
-+if (( (bad_sector % kernel_sectors_per_device_lba) != 0)); then
-+	echo "bad_sector $bad_sector not congruent with device logical block size $logical_block_size"
-+fi
-+
-+# Remount to flush the page cache, start fsnotify, and make the LBA bad
-+_dmerror_unmount
-+_dmerror_mount
-+
-+$here/src/fs-monitor $SCRATCH_MNT > $tmp.fsmonitor &
-+fsmonitor_pid=$!
-+sleep 1
-+
-+_dmerror_mark_range_bad $bad_sector $bad_len
-+
-+cat >> $seqres.full << ENDL
-+dmerror after marking bad:
-+$DMERROR_TABLE
-+$DMERROR_RTTABLE
-+<end table>
-+ENDL
-+
-+_dmerror_load_error_table
-+
-+# See if buffered reads pick it up
-+echo "Try buffered read"
-+$XFS_IO_PROG -c "pread 0 $((4 * file_blksz))" $victim >> $seqres.full
-+
-+# See if directio reads pick it up
-+echo "Try directio read"
-+$XFS_IO_PROG -d -c "pread 0 $((4 * file_blksz))" $victim >> $seqres.full
-+
-+# See if directio writes pick it up
-+echo "Try directio write"
-+$XFS_IO_PROG -d -c "pwrite -S 0x58 0 $((4 * file_blksz))" -c fsync $victim >> $seqres.full
-+
-+# See if buffered writes pick it up
-+echo "Try buffered write"
-+$XFS_IO_PROG -c "pwrite -S 0x58 0 $((4 * file_blksz))" -c fsync $victim >> $seqres.full
-+
-+# Now mark the bad range good so that unmount won't fail due to IO errors.
-+echo "Fix device"
-+_dmerror_mark_range_good $bad_sector $bad_len
-+_dmerror_load_error_table
-+
-+cat >> $seqres.full << ENDL
-+dmerror after marking good:
-+$DMERROR_TABLE
-+$DMERROR_RTTABLE
-+<end table>
-+ENDL
-+
-+# Unmount filesystem to start fresh
-+echo "Kill fsnotify"
-+_dmerror_unmount
-+sleep 1
-+kill -TERM $fsmonitor_pid
-+unset fsmonitor_pid
-+echo fsnotify log >> $seqres.full
-+cat $tmp.fsmonitor >> $seqres.full
-+cat $tmp.fsmonitor | filter_fsnotify_errors
-+
-+# Start fsnotify again so that can verify that the errors don't persist after
-+# we flip back to the good dm table.
-+echo "Remount and restart fsnotify"
-+_dmerror_mount
-+$here/src/fs-monitor $SCRATCH_MNT > $tmp.fsmonitor &
-+fsmonitor_pid=$!
-+sleep 1
-+
-+# See if buffered reads pick it up
-+echo "Try buffered read again"
-+$XFS_IO_PROG -c "pread 0 $((4 * file_blksz))" $victim >> $seqres.full
-+
-+# See if directio reads pick it up
-+echo "Try directio read again"
-+$XFS_IO_PROG -d -c "pread 0 $((4 * file_blksz))" $victim >> $seqres.full
-+
-+# See if directio writes pick it up
-+echo "Try directio write again"
-+$XFS_IO_PROG -d -c "pwrite -S 0x58 0 $((4 * file_blksz))" -c fsync $victim >> $seqres.full
-+
-+# See if buffered writes pick it up
-+echo "Try buffered write again"
-+$XFS_IO_PROG -c "pwrite -S 0x58 0 $((4 * file_blksz))" -c fsync $victim >> $seqres.full
-+
-+# Unmount fs and kill fsnotify, then wait for it to finish
-+echo "Kill fsnotify again"
-+_dmerror_unmount
-+sleep 1
-+kill -TERM $fsmonitor_pid
-+unset fsmonitor_pid
-+cat $tmp.fsmonitor >> $seqres.full
-+cat $tmp.fsmonitor | filter_fsnotify_errors
-+
-+# success, all done
-+status=0
-+exit
-diff --git a/tests/generic/1838.out b/tests/generic/1838.out
-new file mode 100644
-index 00000000000000..adae590fe0b2ea
---- /dev/null
-+++ b/tests/generic/1838.out
-@@ -0,0 +1,20 @@
-+QA output created by 1838
-+Try buffered read
-+pread: Input/output error
-+Try directio read
-+pread: Input/output error
-+Try directio write
-+pwrite: Input/output error
-+Try buffered write
-+fsync: Input/output error
-+Fix device
-+Kill fsnotify
-+	Generic Error Record: len=XXX
-+	error: 5
-+FAN_FS_ERROR (len=XXX)
-+Remount and restart fsnotify
-+Try buffered read again
-+Try directio read again
-+Try directio write again
-+Try buffered write again
-+Kill fsnotify again
+int main(int arg, char **argv)
+{
+        printf("PRIu64 is %s\n", PRIu64);
+        printf("PRId64 is %s\n", PRId64);
+        printf("PRIx64 is %s\n", PRIx64);
+        return 0;
+}
+EOF
 
+clang -m32 -o /tmp/blah /tmp/blah.c
+/tmp/blah
+---- cut here ---
+
+% /tmp/blah.sh
+PRIu64 is llu
+PRId64 is lld
+PRIx64 is llx
+
+Thanks!
+
+						- Ted
 
