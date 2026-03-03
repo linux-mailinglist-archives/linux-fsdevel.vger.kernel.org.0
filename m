@@ -1,65 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-79270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79271-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id IC8SK+0Sp2mfdQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 17:57:17 +0100
+	id WGmFO2MTp2mfdQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79271-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 17:59:15 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31CA11F4338
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 17:57:17 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B6CE1F43CA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 17:59:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 32C35305ED13
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 16:53:19 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 886683124CDC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 16:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92986481FAB;
-	Tue,  3 Mar 2026 16:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lZUzoahV"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A4E49218E;
+	Tue,  3 Mar 2026 16:55:55 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF3D3DBD66;
-	Tue,  3 Mar 2026 16:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0571B3ACA5D;
+	Tue,  3 Mar 2026 16:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772556797; cv=none; b=blWisOkL/E7sN7lyz2hNyAYqwu6IS/zFh1zcna6Z+7kvz5Usy5rl8LcgjT/Eh9qxkyC85VYUBqr8L3FfFJd6nC/rw9HTE3j9Xlq9Q5QOSs5A4+B/F4VRks9cXZKKPgr55dB2RqB+csBo+j9kMIqwNGTdkffSxq15THtCZOLzuBo=
+	t=1772556954; cv=none; b=NBIIWZpt1diixhsyUoQEgP8ghhJXg2EBSCRlaLUuTdaQpkerBOUxK97CiHuzSVY51JoV3uWbBOtkJSlV3W54Dap1COjobVX2Vy3o5wN0BmaqaqbZwMF2TJzNYZkPIGhqDJ3rTirebQzy8wTXE/iXoVsugmVLVe5PiOyyC1bUSyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772556797; c=relaxed/simple;
-	bh=hM3JuSJObjPYSaMejdndGHeShGaty5RqSUN6GqELeZ0=;
+	s=arc-20240116; t=1772556954; c=relaxed/simple;
+	bh=79X5NrHvvHxgfkw5HXWmqlDll4X75GNj1FkPLgg6Ehg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pdvcXfDSl3o8mAdJOrhpUsyqIL/36oNzo3frRrWXNiWLDChmykcR2q56uI2MTjTI0tkvl43Ppqy68Pz4soslLPQX9KdpnMYgmJkEjVtkEkdMMBPps1rgDt94YewFPM37vMYKDhG17wfLGBHWKz0zlL6YaJUYXoPvHzMJW66gzCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lZUzoahV; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=LK5ovpByNqMJYEsOUFqrGM8WApOp3poHiGmOjO+XhlA=; b=lZUzoahVcm4BR6DSZEXlobv0kn
-	2M0ZYyZW3ViL5NF+WB88v0QV2eoS5wflLDsr3U5kTfkVag85Jfd00a65yz3jKtvdoIqbfFRMXdZQC
-	DwKfOKlpBaUXOPtGt3GtAfv911qQEM7zNt7Zq793idsBDI3DkgXfbGZir0yVa4EyoOsYX2iCNysNz
-	ZJyahRkTL6i/emRSuSRFW6HhEVY+m749s41o+eieuEazBXOuBXCT1WPqkajLgUbtKKMwwFiJFT59t
-	FTVh4WJdkNjvEOJrNij/FpCkYKHjsIXyui6D2p5RT2HGGX9stlb1kzhR0itWWbR3Y8kVavwyUqZ5f
-	0Nb8L5qw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vxSzg-0000000FbtI-1hEH;
-	Tue, 03 Mar 2026 16:53:12 +0000
-Date: Tue, 3 Mar 2026 08:53:12 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, zlang@redhat.com,
-	linux-fsdevel@vger.kernel.org, hch@lst.de, gabriel@krisman.be,
-	amir73il@gmail.com, jack@suse.cz, fstests@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 1/1] generic: test fsnotify filesystem error reporting
-Message-ID: <aacR-EYFd0x_nRz-@infradead.org>
-References: <177249785452.483405.17984642662799629787.stgit@frogsfrogsfrogs>
- <177249785472.483405.1160086113668716052.stgit@frogsfrogsfrogs>
- <aab2JbAZI8RFq_XE@infradead.org>
- <20260303164901.GJ57948@frogsfrogsfrogs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=alRS2rD0X+Nbl39PmsAQOppCyrL3/a/rrIE11GV6e0U8KP2uA+czIGtSf0XirJyQPySjiRlS53m7/0RiNqOCpAVCKuEn5sl2/OWN8k0FTg1My13icU2Hm8z0Fgx6jn0dnl9qhcyY9sbAvta3ofuiFAu5C4gEHavLhpel6Bib/9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id D7B6F68BEB; Tue,  3 Mar 2026 17:55:47 +0100 (CET)
+Date: Tue, 3 Mar 2026 17:55:46 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, "Theodore Y. Ts'o" <tytso@mit.edu>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, linux-fscrypt@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: dropping the non-inline mode for fscrypt?
+Message-ID: <20260303165546.GA10279@lst.de>
+References: <20260302142718.GA25174@lst.de> <20260302212236.GA2143@quark>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,79 +51,61 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260303164901.GJ57948@frogsfrogsfrogs>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Rspamd-Queue-Id: 31CA11F4338
+In-Reply-To: <20260302212236.GA2143@quark>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Rspamd-Queue-Id: 9B6CE1F43CA
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-0.36 / 15.00];
+	SUBJECT_ENDS_QUESTION(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
+	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[infradead.org,redhat.com,vger.kernel.org,lst.de,krisman.be,gmail.com,suse.cz];
-	TAGGED_FROM(0.00)[bounces-79270-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-79271-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[infradead.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@infradead.org,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[10];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[4];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,infradead.org:dkim,infradead.org:mid]
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	NEURAL_HAM(-0.00)[-0.994];
+	MID_RHS_MATCH_FROM(0.00)[];
+	R_DKIM_NA(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On Tue, Mar 03, 2026 at 08:49:01AM -0800, Darrick J. Wong wrote:
-> > > +ext4)
-> > > +	# added at the same time as uevents
-> > > +	modprobe fs-$FSTYP
-> > > +	test -e /sys/fs/ext4/features/uevents || \
-> > > +		_notrun "$FSTYP does not support fsnotify ioerrors"
-> > > +	;;
-> > > +*)
-> > > +	_notrun "$FSTYP does not support fsnotify ioerrors"
-> > > +	;;
-> > > +esac
-> > 
-> > Please abstract this out into a documented helper in common/
+On Mon, Mar 02, 2026 at 01:22:36PM -0800, Eric Biggers wrote:
+> On Mon, Mar 02, 2026 at 03:27:18PM +0100, Christoph Hellwig wrote:
+> > After just having run into another issue with missing testing for one of
+> > the path, I'd like to ask if we should look into dropping the non-inline
+> > mode for block based fscrypt?
 > 
-> Ok.  I'm not sure how to check for feature support on ext4 anymore since
-> the uevents patch didn't get merged, and then I clearly forgot to rip
-> that out of this helper here.
-
-Oh.  Well, drop that then and move the xfs side and the default n
-into a common helper instead of hardcoding it in the test.
-
-> > and add proper error injection to the block code, which has been
-> > somewhere on my todo list forever because dm-error and friends are
-> > so painful to setup.  Maybe I need to expedite that.
+> Yes, I think that's the way to go now.
 > 
-> I think it's theoretically possible to figure out that there's a zone
-> size and then round outwards the error-target part of the dm table to
-> align with a zone.
+> I do think the default should continue to be to use the well-tested
+> CPU-based encryption code (just accessed via blk-crypto-fallback
+> instead).  Inline encryption hardware should continue to be opt-in via
+> the inlinecrypt mount option, rather than used unconditionally.  To
+> allow this, we'll need to add a field 'allow_hardware' or similar to
+> struct bio_crypt_ctx.  Should be fairly straightforward though.
 
-It's the sysfs chunk size.  btrfs/237 harcodes reading that out,
-which could be easily lifted into a helper.
+Sounds fine.  Given that you're more familiar with this can I sign
+up you to do it?  Otherwise I can add it to my todo list, but chances
+are that I'll get some of the subtle interactions wrong.
 
-> I have a lot more doubts about whether or not doing
-> that in bash/awk is a good idea though.  It'd be a lot easier if either
-> the block layer did error injection or if someone just fixes those
-> limitations in dm itself.
+> I think it would be pretty safe to drop support for IV_INO_LBLK_32 with
+> blocksize != PAGE_SIZE entirely, given that that case already doesn't
+> work with inlinecrypt.  The whole point of IV_INO_LBLK_32 is to be able
+> to use eMMC inline encryption hardware that support only 32-bit IVs.
 
-I'll sign up to do the block layer stuff.  Doing so should allow us
-to run a lot more of the error injetion tests on zoned xfs, which
-would be good.  So I guess you should keep it as-is for now,
-and I'll do a sweep later.
+That sounds even better.
 
 
