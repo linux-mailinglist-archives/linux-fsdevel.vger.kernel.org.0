@@ -1,373 +1,248 @@
-Return-Path: <linux-fsdevel+bounces-79286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KLbGD9Nbp2knhAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 23:08:19 +0100
+	id yGaeAKVfp2lvhAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 23:24:37 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC1C51F7DBB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 23:08:18 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F9B1F7F30
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 23:24:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 57B6A3034A2A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 22:08:15 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8AF4E30AD1BC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 22:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0085B386C17;
-	Tue,  3 Mar 2026 22:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/bOPIoe"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8730238F629;
+	Tue,  3 Mar 2026 22:24:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com [209.85.161.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CBA37EFF2;
-	Tue,  3 Mar 2026 22:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B984E37C906
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Mar 2026 22:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772575691; cv=none; b=rmVL1snJZYrhVckCLRm/f1oQJVIa5yU2JCIENZj5ZbL8zuCN+xytHhJ6FTYbf0hQg5D9uN7xlKxT8I1+4mPTD8bVNpey4lY5J4styntPYO4thblhTi6Nv5Tyn7BTQfKkiUqPfYMxqbuTUf0rlHuuHEqjJyufNO3Aqn0CoFB7yqQ=
+	t=1772576670; cv=none; b=KgX7Vl8pcX0149jcS4QdQc7SQDcBT9NYzmLJF/BZxd3fzED5guoShMKviZJrhtVo9Oea0z8X9xcb42pQRhVHD9alQV6oJjbVB8LRP/q8FBx1i8bGyj2KXv2FqPmwoE+5DK81ZyHjOTr1fhH8NQzlPWDTTCW3K3GcVjCugyINk1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772575691; c=relaxed/simple;
-	bh=HYHLkG9d8l387LsfjPeLC/Pn7ygrv02/lOJJGWdLEzk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r3rifwUX90TeoQUoIDTGgqIMciCOLfyaaEQOK7X+LBhDDVk3rmxueQuFnBUKDFmFG5ZQCkPngWUflyt+GBLUrsV3g7CvwtBomzFpQnf2r1HUGpeLTIvXK5W2KRUV1YzxCykFHbVDB28/7xtR/ABrPNZfkn98a3xd/yjVw074Tgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/bOPIoe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D8E3C2BCAF;
-	Tue,  3 Mar 2026 22:08:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772575691;
-	bh=HYHLkG9d8l387LsfjPeLC/Pn7ygrv02/lOJJGWdLEzk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k/bOPIoeRv+xpWXkS2RVt+6rKiaHAwUN8PO9hBp01Rswu/ltHfw84LrzdqpubTy66
-	 /LKPYAXhRRb5J7Pcp/zlQkijKF9VbL6lcM+xGe6sLGpsS+HoMMdNGZrL6bCgeszAlQ
-	 m1JMPEGFYufNYtN2vTqvL74Ooh0R2jgHyt6IhoreAFzJOnT69Noh7zOxfCdMNYg8BT
-	 rru5h+7saa/eUUewTR+C6MNKgZ6rP2x+sHYp8d1PnTCO4cBnoJy2GAQtajipkIRHcv
-	 pDSgEd6m5R6Lfwm9hjune0fqb+3toNF9dqLETe+icugKWMIn4Sr8Nlbkz7zg82JqAu
-	 Lagx+/+9n0F7g==
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 3155CF40070;
-	Tue,  3 Mar 2026 17:08:10 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Tue, 03 Mar 2026 17:08:10 -0500
-X-ME-Sender: <xms:ylunaRe_wLS051LnTGLJ7uABzh6y7v4F0E1ATOUyEDqfYNHEP0Y9QQ>
-    <xme:ylunabHZ2DNpaGs2nxBjN4TTuteuP9rHaCaGZo_GFVHs4sZmd_C1gOAt-SBUN25cV
-    4Qp48FBsuptllboL_sW87KyWqPZo40EeF4ooa9nzVbtGr-hl5ZtFw>
-X-ME-Received: <xmr:ylunaXjR4OOf_AXNEFLTJG9eHWgSZIznk2f4QLq4rbjMAc3wB0w8FXKF_DYkst4RX3kL4GF7HtOLKH1FXBRugLPr3KJNSfyX>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddviedujeehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcu
-    hfgvnhhguceosghoqhhunheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrhhnpe
-    ekgffhhfeuheelhfekteeuffejveetjeefffettedtteegfefftdduteduudfgleenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnod
-    hmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduieejtdelkeegjeduqddujeej
-    keehheehvddqsghoqhhunheppehkvghrnhgvlhdrohhrghesfhhigihmvgdrnhgrmhgvpd
-    hnsggprhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghl
-    ihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepsghrrghunhgvrheskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgt
-    ohhmpdhrtghpthhtohepphgruhhlmhgtkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    epghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepghhrvghgkhhhsehlihhn
-    uhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheptghmlhhlrghmrghssehgoh
-    hoghhlvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhushhtqdhfohhrqdhlihhnuhigsehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:ylunaf1qvOocIejJ-AmtIEZj6OrRbDRdxdY87jGMUK6cSmfx5Kx-Yw>
-    <xmx:ylunaScV5gm_AXYggec6MOvrhthVDgD7eIC9ntzLex09IzD158nvgQ>
-    <xmx:ylunadxImnK0XRGNu4gtcYhSlupC1CIgNQBSiiws6KCaSOWpdf6kCQ>
-    <xmx:ylunaSxEgaIduRRGHggPBPVCFpMVyove-Vud1nwOvGJbSABwJ5OTQw>
-    <xmx:ylunaWZg2H-f8p7npgfXdJskNnjZafm8WWnyE5GDZtb3zSJHF6HlG9m3>
-Feedback-ID: i8dbe485b:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 3 Mar 2026 17:08:09 -0500 (EST)
-Date: Tue, 3 Mar 2026 14:08:08 -0800
-From: Boqun Feng <boqun@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Gary Guo <gary@garyguo.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Carlos Llamas <cmllamas@google.com>, linux-fsdevel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] rust: poll: make PollCondVar upgradable
-Message-ID: <aadbyBmaV8zCYiog@tardis.local>
-References: <20260213-upgrade-poll-v2-0-984a0fb184fb@google.com>
- <20260213-upgrade-poll-v2-1-984a0fb184fb@google.com>
+	s=arc-20240116; t=1772576670; c=relaxed/simple;
+	bh=3b9YKKTpJU/ElBqrzypOKAK48gjvgekPkWxQ9sgFvr8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Buu1PkX6do7rJUlDuOnJ8A8yRn3Z5wPFboe9/SGH6U/+/TB/eTSnzILuKBqCUjURnrlOG71KHyF9+nxXa/lfJZx2NgCyhEZmCU+nfEYC3AfpgYFz/yw3+6Snnt4B/ZAKvPHfRsK6EJjXFy/LYBfXLP7l9X0NBdDu25voD6GT/DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-679c5fde4c7so121087044eaf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Mar 2026 14:24:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772576667; x=1773181467;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7PI2tNxk+72k1E8YxyG5qHe8h2mUgtqdSyz1QeAv62c=;
+        b=nFtHN3QMcyGKKxZTRUSZQuD9UjJxHK+UjsN3xHrRQKBC6l0Er3RHuWFOBouWeNbnYK
+         U4+arVgNuRWptu/p6wwbbmvjJps4+OEi2tVCXb7RWZSML59tlAWCdqh/XPEXbpukEbl1
+         /jImPQQ6PwWa4HA29fACcnQ5mNpPH9V2mzwgvtsxaiITDquOKl1G1LKSP84jLyjqQwH+
+         Vt0iPBhKE5seJ5wI05Ba8LIj3IlSMPZ8LeMTdz202F2XZGZ1iImPi9sfw/xML787xdhi
+         FBV+4/qwUce05tlNQhbYSc5d267bk6PDssjeBASA+rCSMsx9q5I1wBu1f4TX7GYX23C9
+         xm0A==
+X-Gm-Message-State: AOJu0YztiZ4s8i0N3oTsx46y4iulA6Txchz7tXt5DS11/o/mBJ1Xrfcx
+	RCO1487uK6XdFZ4UKsmRTjaP0t5WGNXCGZYxWZ+CS4TuQtwsBFMvnSlDwNpreERVegMVZUCI3tt
+	6DzQj1tKRW8bHOdZ8jM7/ilVz5fNxx/e/YgCnHlDdLtKR5MNXZej39RbQ3lg=
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260213-upgrade-poll-v2-1-984a0fb184fb@google.com>
-X-Rspamd-Queue-Id: AC1C51F7DBB
+X-Received: by 2002:a05:6820:188a:b0:679:a560:cac7 with SMTP id
+ 006d021491bc7-67b176e95a5mr62315eaf.7.1772576667654; Tue, 03 Mar 2026
+ 14:24:27 -0800 (PST)
+Date: Tue, 03 Mar 2026 14:24:27 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69a75f9b.a70a0220.b118c.0013.GAE@google.com>
+Subject: [syzbot] [fuse?] KASAN: use-after-free Write in fuse_copy_do
+From: syzbot <syzbot+23299dfcac137a96834a@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Rspamd-Queue-Id: 57F9B1F7F30
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-0.36 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=54b410fabe2a4318];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
+	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[kernel.org,gmail.com,garyguo.net,linuxfoundation.org,google.com,vger.kernel.org];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo];
 	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	TAGGED_FROM(0.00)[bounces-79286-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[boqun@kernel.org,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
 	MISSING_XM_UA(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-79287-lists,linux-fsdevel=lfdr.de,23299dfcac137a96834a];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	SUBJECT_HAS_QUESTION(0.00)[];
+	REDIRECTOR_URL(0.00)[goo.gl];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_NONE(0.00)[];
+	R_DKIM_NA(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[7]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,appspotmail.com:email]
 X-Rspamd-Action: no action
 
-On Fri, Feb 13, 2026 at 11:29:41AM +0000, Alice Ryhl wrote:
-> Rust Binder currently uses PollCondVar, but it calls synchronize_rcu()
-> in the destructor, which we would like to avoid. Add a variation of
-> PollCondVar, which uses kfree_rcu() instead.
-> 
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  rust/kernel/sync/poll.rs | 160 ++++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 159 insertions(+), 1 deletion(-)
-> 
-> diff --git a/rust/kernel/sync/poll.rs b/rust/kernel/sync/poll.rs
-> index 0ec985d560c8d3405c08dbd86e48b14c7c34484d..9555f818a24d777dd908fca849015c3490ce38d3 100644
-> --- a/rust/kernel/sync/poll.rs
-> +++ b/rust/kernel/sync/poll.rs
-> @@ -5,12 +5,21 @@
->  //! Utilities for working with `struct poll_table`.
->  
->  use crate::{
-> +    alloc::AllocError,
->      bindings,
-> +    container_of,
->      fs::File,
->      prelude::*,
-> +    sync::atomic::{Acquire, Atomic, Relaxed, Release},
-> +    sync::lock::{Backend, Lock},
->      sync::{CondVar, LockClassKey},
-> +    types::Opaque, //
-> +};
-> +use core::{
-> +    marker::{PhantomData, PhantomPinned},
-> +    ops::Deref,
-> +    ptr,
->  };
-> -use core::{marker::PhantomData, ops::Deref};
->  
->  /// Creates a [`PollCondVar`] initialiser with the given name and a newly-created lock class.
->  #[macro_export]
-> @@ -66,6 +75,7 @@ pub fn register_wait(&self, file: &File, cv: &PollCondVar) {
->  ///
->  /// [`CondVar`]: crate::sync::CondVar
->  #[pin_data(PinnedDrop)]
-> +#[repr(transparent)]
->  pub struct PollCondVar {
->      #[pin]
->      inner: CondVar,
-> @@ -78,6 +88,17 @@ pub fn new(name: &'static CStr, key: Pin<&'static LockClassKey>) -> impl PinInit
->              inner <- CondVar::new(name, key),
->          })
->      }
-> +
-> +    /// Use this `CondVar` as a `PollCondVar`.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// After the last use of the returned `&PollCondVar`, `__wake_up_pollfree` must be called on
-> +    /// the `wait_queue_head` at least one grace period before the `CondVar` is destroyed.
-> +    unsafe fn from_non_poll(c: &CondVar) -> &PollCondVar {
-> +        // SAFETY: Layout is the same. Caller ensures that PollTables are cleared in time.
-> +        unsafe { &*ptr::from_ref(c).cast() }
-> +    }
->  }
->  
->  // Make the `CondVar` methods callable on `PollCondVar`.
-> @@ -104,3 +125,140 @@ fn drop(self: Pin<&mut Self>) {
->          unsafe { bindings::synchronize_rcu() };
->      }
->  }
-> +
-> +/// Wrapper around [`CondVar`] that can be upgraded to [`PollCondVar`].
-> +///
-> +/// By using this wrapper, you can avoid rcu for cases that don't use [`PollTable`], and in all
-> +/// cases you can avoid `synchronize_rcu()`.
-> +///
-> +/// # Invariants
-> +///
-> +/// `active` either references `simple`, or a `kmalloc` allocation holding an
-> +/// `UpgradePollCondVarInner`. In the latter case, the allocation remains valid until
-> +/// `Self::drop()` plus one grace period.
-> +#[pin_data(PinnedDrop)]
-> +pub struct UpgradePollCondVar {
-> +    #[pin]
-> +    simple: CondVar,
-> +    active: Atomic<*const CondVar>,
-> +    #[pin]
-> +    _pin: PhantomPinned,
-> +}
-> +
-> +#[pin_data]
-> +#[repr(C)]
-> +struct UpgradePollCondVarInner {
-> +    #[pin]
-> +    upgraded: CondVar,
-> +    #[pin]
-> +    rcu: Opaque<bindings::callback_head>,
-> +}
-> +
-> +impl UpgradePollCondVar {
-> +    /// Constructs a new upgradable condvar initialiser.
-> +    pub fn new(name: &'static CStr, key: Pin<&'static LockClassKey>) -> impl PinInit<Self> {
-> +        pin_init!(&this in Self {
-> +            simple <- CondVar::new(name, key),
-> +            // SAFETY: `this->simple` is in-bounds. Pointer remains valid since this type is
-> +            // pinned.
-> +            active: Atomic::new(unsafe { &raw const (*this.as_ptr()).simple }),
-> +            _pin: PhantomPinned,
-> +        })
-> +    }
-> +
-> +    /// Obtain a [`PollCondVar`], upgrading if necessary.
-> +    ///
-> +    /// You should use the same lock as what is passed to the `wait_*` methods. Otherwise wakeups
-> +    /// may be missed.
-> +    pub fn poll<T: ?Sized, B: Backend>(
-> +        &self,
-> +        lock: &Lock<T, B>,
-> +        name: &'static CStr,
-> +        key: Pin<&'static LockClassKey>,
-> +    ) -> Result<&PollCondVar, AllocError> {
-> +        let mut ptr = self.active.load(Acquire);
-> +        if ptr::eq(ptr, &self.simple) {
-> +            self.upgrade(lock, name, key)?;
-> +            ptr = self.active.load(Acquire);
-> +            debug_assert_ne!(ptr, ptr::from_ref(&self.simple));
-> +        }
-> +        // SAFETY: Signature ensures that last use of returned `&PollCondVar` is before drop(), and
-> +        // drop() calls `__wake_up_pollfree` followed by waiting a grace period before the
-> +        // `CondVar` is destroyed.
-> +        Ok(unsafe { PollCondVar::from_non_poll(&*ptr) })
-> +    }
-> +
-> +    fn upgrade<T: ?Sized, B: Backend>(
-> +        &self,
-> +        lock: &Lock<T, B>,
-> +        name: &'static CStr,
-> +        key: Pin<&'static LockClassKey>,
-> +    ) -> Result<(), AllocError> {
-> +        let upgraded = KBox::pin_init(
-> +            pin_init!(UpgradePollCondVarInner {
-> +                upgraded <- CondVar::new(name, key),
-> +                rcu: Opaque::uninit(),
-> +            }),
-> +            GFP_KERNEL,
-> +        )
-> +        .map_err(|_| AllocError)?;
-> +
-> +        // SAFETY: The value is treated as pinned.
-> +        let upgraded = KBox::into_raw(unsafe { Pin::into_inner_unchecked(upgraded) });
-> +
-> +        let res = self.active.cmpxchg(
-> +            ptr::from_ref(&self.simple),
-> +            // SAFETY: This operation stays in-bounds of the above allocation.
-> +            unsafe { &raw mut (*upgraded).upgraded },
-> +            Release,
-> +        );
-> +
-> +        if res.is_err() {
-> +            // Already upgraded, so still succeess.
-> +            // SAFETY: The cmpxchg failed, so take back ownership of the box.
-> +            drop(unsafe { KBox::from_raw(upgraded) });
-> +            return Ok(());
-> +        }
-> +
-> +        // If a normal waiter registers in parallel with us, then either:
-> +        // * We took the lock first. In that case, the waiter sees the above cmpxchg.
-> +        // * They took the lock first. In that case, we wake them up below.
-> +        drop(lock.lock());
-> +        self.simple.notify_all();
+Hello,
 
-Hmm.. what if the waiter gets its `&CondVar` before `upgrade()` and use
-that directly?
+syzbot found the following issue on:
 
-	<waiter>				<in upgrade()>
-	let poll_cv: &UpgradePollCondVar = ...;
-	let cv = poll_cv.deref();
-						cmpxchg();
-						drop(lock.lock());
-						self.simple.notify_all();
-	let mut guard = lock.lock();
-	cv.wait(&mut guard);
+HEAD commit:    c025f6cf4209 Add linux-next specific files for 20260303
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=135770ba580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=54b410fabe2a4318
+dashboard link: https://syzkaller.appspot.com/bug?extid=23299dfcac137a96834a
+compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1671b006580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1166bb5a580000
 
-we still miss the wake-up, right?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e2497bde352d/disk-c025f6cf.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/36827cb45429/vmlinux-c025f6cf.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7ebf1ed6bb73/bzImage-c025f6cf.xz
 
-It's creative, but I particularly hate we use an empty lock critical
-section to synchronize ;-)
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+23299dfcac137a96834a@syzkaller.appspotmail.com
 
-Do you think the complexity of a dynamic upgrading is worthwhile, or we
-should just use the box-allocated PollCondVar unconditionally?
+==================================================================
+BUG: KASAN: use-after-free in fuse_copy_do+0x193/0x380 fs/fuse/dev.c:-1
+Write of size 2 at addr ffff888070528fff by task syz.0.17/6005
 
-I think if the current users won't benefit from the dynamic upgrading
-then we can avoid the complexity. We can always add it back later.
-Thoughts?
+CPU: 0 UID: 0 PID: 6005 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2026
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0xe8/0x150 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xba/0x230 mm/kasan/report.c:482
+ kasan_report+0x117/0x150 mm/kasan/report.c:595
+ check_region_inline mm/kasan/generic.c:-1 [inline]
+ kasan_check_range+0x264/0x2c0 mm/kasan/generic.c:200
+ __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
+ fuse_copy_do+0x193/0x380 fs/fuse/dev.c:-1
+ fuse_copy_folio+0xefc/0x1b00 fs/fuse/dev.c:1166
+ fuse_notify_store fs/fuse/dev.c:1821 [inline]
+ fuse_notify fs/fuse/dev.c:2109 [inline]
+ fuse_dev_do_write+0x2b9d/0x4060 fs/fuse/dev.c:2205
+ fuse_dev_write+0x177/0x220 fs/fuse/dev.c:2289
+ new_sync_write fs/read_write.c:595 [inline]
+ vfs_write+0x61d/0xb90 fs/read_write.c:688
+ ksys_write+0x150/0x270 fs/read_write.c:740
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe8c659c799
+Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fe8c7476028 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007fe8c6815fa0 RCX: 00007fe8c659c799
+RDX: 000000000000002a RSI: 0000200000000080 RDI: 0000000000000003
+RBP: 00007fe8c6632bd9 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fe8c6816038 R14: 00007fe8c6815fa0 R15: 00007ffd95eaba38
+ </TASK>
 
-Regards,
-Boqun
+The buggy address belongs to the physical page:
+page: refcount:3 mapcount:0 mapping:ffff88805c1c4f20 index:0x7 pfn:0x70528
+memcg:ffff88802ce3a880
+aops:empty_aops ino:1 dentry name(?):"/"
+flags: 0xfff00000000005(locked|referenced|node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000005 0000000000000000 dead000000000122 ffff88805c1c4f20
+raw: 0000000000000007 0000000000000000 00000003ffffffff ffff88802ce3a880
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Movable, gfp_mask 0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), pid 6005, tgid 6004 (syz.0.17), ts 103948279019, free_ts 103868818778
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x231/0x280 mm/page_alloc.c:1892
+ prep_new_page mm/page_alloc.c:1900 [inline]
+ get_page_from_freelist+0x23a1/0x2440 mm/page_alloc.c:3965
+ __alloc_frozen_pages_noprof+0x18d/0x380 mm/page_alloc.c:5253
+ alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2484
+ alloc_frozen_pages_noprof mm/mempolicy.c:2555 [inline]
+ alloc_pages_noprof+0xa8/0x190 mm/mempolicy.c:2575
+ folio_alloc_noprof+0x1e/0x30 mm/mempolicy.c:2585
+ filemap_alloc_folio_noprof+0x111/0x470 mm/filemap.c:1013
+ __filemap_get_folio_mpol+0x3fc/0xb00 mm/filemap.c:2011
+ __filemap_get_folio include/linux/pagemap.h:774 [inline]
+ filemap_grab_folio include/linux/pagemap.h:854 [inline]
+ fuse_notify_store fs/fuse/dev.c:1813 [inline]
+ fuse_notify fs/fuse/dev.c:2109 [inline]
+ fuse_dev_do_write+0x298b/0x4060 fs/fuse/dev.c:2205
+ fuse_dev_write+0x177/0x220 fs/fuse/dev.c:2289
+ new_sync_write fs/read_write.c:595 [inline]
+ vfs_write+0x61d/0xb90 fs/read_write.c:688
+ ksys_write+0x150/0x270 fs/read_write.c:740
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 6002 tgid 6002 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ __free_pages_prepare mm/page_alloc.c:1436 [inline]
+ free_unref_folios+0xd71/0x1530 mm/page_alloc.c:3043
+ folios_put_refs+0x9ff/0xb40 mm/swap.c:1008
+ free_pages_and_swap_cache+0x2e7/0x5b0 mm/swap_state.c:401
+ __tlb_batch_free_encoded_pages mm/mmu_gather.c:138 [inline]
+ tlb_batch_pages_flush mm/mmu_gather.c:151 [inline]
+ tlb_flush_mmu_free mm/mmu_gather.c:417 [inline]
+ tlb_flush_mmu+0x6d3/0xa30 mm/mmu_gather.c:424
+ tlb_finish_mmu+0xf9/0x230 mm/mmu_gather.c:549
+ exit_mmap+0x498/0xa10 mm/mmap.c:1315
+ __mmput+0x118/0x430 kernel/fork.c:1179
+ exit_mm+0x18e/0x250 kernel/exit.c:581
+ do_exit+0x8b9/0x2580 kernel/exit.c:962
+ do_group_exit+0x21b/0x2d0 kernel/exit.c:1116
+ __do_sys_exit_group kernel/exit.c:1127 [inline]
+ __se_sys_exit_group kernel/exit.c:1125 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1125
+ x64_sys_call+0x221a/0x2240 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-> +
-> +        Ok(())
-> +    }
-> +}
-> +
-> +// Make the `CondVar` methods callable on `UpgradePollCondVar`.
-> +impl Deref for UpgradePollCondVar {
-> +    type Target = CondVar;
-> +
-> +    fn deref(&self) -> &CondVar {
-> +        // SAFETY: By the type invariants, this is either `&self.simple` or references an
-> +        // allocation that lives until `UpgradePollCondVar::drop`.
-> +        unsafe { &*self.active.load(Acquire) }
-> +    }
-> +}
-> +
-> +#[pinned_drop]
-> +impl PinnedDrop for UpgradePollCondVar {
-> +    #[inline]
-> +    fn drop(self: Pin<&mut Self>) {
-> +        // ORDERING: All calls to upgrade happens-before Drop, so no synchronization is required.
-> +        let ptr = self.active.load(Relaxed);
-> +        if ptr::eq(ptr, &self.simple) {
-> +            return;
-> +        }
-> +        // SAFETY: When the pointer is not &self.active, it is an `UpgradePollCondVarInner`.
-> +        let ptr = unsafe { container_of!(ptr.cast_mut(), UpgradePollCondVarInner, upgraded) };
-> +        // SAFETY: The pointer points at a valid `wait_queue_head`.
-> +        unsafe { bindings::__wake_up_pollfree((*ptr).upgraded.wait_queue_head.get()) };
-> +        // This skips drop of `CondVar`, but that's ok because we reimplemented its drop here.
-> +        //
-> +        // SAFETY: `__wake_up_pollfree` ensures that all registered PollTable instances are gone in
-> +        // one grace period, and this is the destructor so no new PollTable instances can be
-> +        // registered. Thus, it's safety to rcu free the `UpgradePollCondVarInner`.
-> +        unsafe { bindings::kvfree_call_rcu((*ptr).rcu.get(), ptr.cast::<c_void>()) };
-> +    }
-> +}
-> 
-> -- 
-> 2.53.0.273.g2a3d683680-goog
-> 
+Memory state around the buggy address:
+ ffff888070528f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff888070528f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff888070529000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                   ^
+ ffff888070529080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff888070529100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
