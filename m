@@ -1,72 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-79112-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id gC2NJFtqpmlRPgAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79112-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 05:58:03 +0100
+	id ULfcL25spmnMPgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 06:06:54 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B76F71E914C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 05:58:02 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 241631E91BE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 06:06:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 335453055D43
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 04:57:58 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id ED98F308012C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 05:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D38373C02;
-	Tue,  3 Mar 2026 04:57:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521A72E265A;
+	Tue,  3 Mar 2026 05:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d7lPLTMW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RhDeS2ql"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4107333D6E1
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Mar 2026 04:57:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CE71A6810;
+	Tue,  3 Mar 2026 05:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772513876; cv=none; b=IdVDOZpZ7AkkEcdh4/hMjiDY6wapJOtyMlvojiGH+IGzDP5Sz4Q+l7nSCvx7hjbOe5OkctSYRj54KE/tPdGZC2GaBxLcaTErKHpWlahMXHYfZQTV66gMWdJzbPDytznWIIJRgDtDVgXQmV8Z7Q+FRRrJdxkLtDzLwTX2ZqHctmA=
+	t=1772514375; cv=none; b=t+XDyw5VXNGf33cjfr/WizHWt6k0/76y96tsC6E1VnJfvcTNMiwczNRl8N3tf64yXDp4KhnvFUFud8eMzOZ4Zij+v30zJNaB7pjGEsX5NHDfbZlU1vaeDsrfk0idIGcQ/kK3c/YfQfNrVtPgRUWhlqLFN08x2BARWKSW7N62T+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772513876; c=relaxed/simple;
-	bh=l1tTb6ZqedZB1tYs/ZhQDppfd20EPa/78nVI1xlrSng=;
+	s=arc-20240116; t=1772514375; c=relaxed/simple;
+	bh=whFZ1Dh9y+BdMpxKN0xrNgq+rBBG/SakjaBknyK4PUg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TT04Hn8ptcYtPlcnQuDQpq9pJmlxCzcMgm7C2xM/2O6HASCH3OodeLgifV6skh+928j+Nncc4Hs4zeJjr9NXbXES5IJvMxEzVk5inBTd9TOpMYVE1VQtHjGhNT1g+uX6BoHR/lv/rQXzoz8qxQ64ieq0q8abmP9uKk/s7H6bcNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d7lPLTMW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D902CC116C6;
-	Tue,  3 Mar 2026 04:57:55 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=C7ZhyoOSlUMpm/Py9bdX5SITZsO5V3x0jKB1JupCPkEY3jzdsoQuw48o6DCyyTLUsbMTTew3EZg3+R0pnXMwB+F8+ruDoMSkm89TH+UBAuQfnJycnv5qnLuX1WfQ4Vz/WC5vP4JrfHW9fyekbJUNPzZxytTfBm+CQeXG9el4lKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RhDeS2ql; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D852C116C6;
+	Tue,  3 Mar 2026 05:06:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772513875;
-	bh=l1tTb6ZqedZB1tYs/ZhQDppfd20EPa/78nVI1xlrSng=;
+	s=k20201202; t=1772514375;
+	bh=whFZ1Dh9y+BdMpxKN0xrNgq+rBBG/SakjaBknyK4PUg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d7lPLTMWy1sPC0uSJO6see0YV5l8/T8bRigX8kqc9icxTLy+agEvk+kYnQEgiWCM7
-	 21q3xGLwAxZ28eXeqsfuQbKRcWaFnFDZuM/X1aKOGLFXrFPjUCo3c59h3fx14xx5aj
-	 YxlFwz/RUgzMEos547uXJROdaEDM0FL2mJ5R5hNw/zJ2raROLxTLVxpviFGCXlUXrk
-	 CLGhghAvBnhvXmNoSXJyrwQ08XSeHbDTKJJOejIRb48zubwy8MzgaqIADtrTwAUt77
-	 NqKGOhoq1uWSO9KXDbdq8BMLq0jf6hBLy869ESAYnrOjrc5YwYI/AJEz+tbviA3yQc
-	 +2u77QWAqn5aA==
-Date: Mon, 2 Mar 2026 20:57:55 -0800
+	b=RhDeS2ql90pyBzSlx6j3qh5Lp98LGb8HlHRpcEZBC/rnX214/7swZzf7pO4N0d4oX
+	 GP7ynHzGMhIryauvEjE2GUS8QcayFRClFrk7aAj/9jRPJKYlp3Tv4HuFar8NyX5gXL
+	 9an+1eXXHhbseOsEi3cZR4pgOXzKT//valRz930sOr8JygjfcufJveig2MgDyTvsAQ
+	 L6d5I3CIFiN2HRK21Y6zthynSj3BMw8klo6w2/sZM/oNGcgUZhhELehGLLeAWXoE5x
+	 jYmDlpd6vminl3h827ecV6MYaqrSL/qEGEEk+EaV0VqTZA5OvZ8g6BdtvQ8idpcf1A
+	 mZBciGz3iW7QQ==
+Date: Mon, 2 Mar 2026 21:06:14 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: John Groves <john@groves.net>, Amir Goldstein <amir73il@gmail.com>,
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: Joanne Koong <joannelkoong@gmail.com>,
+	Horst Birthelmer <horst@birthelmer.de>,
+	Horst Birthelmer <horst@birthelmer.com>,
 	Miklos Szeredi <miklos@szeredi.hu>,
-	"f-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	Bernd Schubert <bernd@bsbernd.com>,
-	Luis Henriques <luis@igalia.com>,
-	Horst Birthelmer <horst@birthelmer.de>
-Subject: Re: [LSF/MM/BPF TOPIC] Where is fuse going? API cleanup,
- restructuring and more
-Message-ID: <20260303045755.GN13829@frogsfrogsfrogs>
-References: <aYQNcagFg6-Yz1Fw@groves.net>
- <20260204190649.GB7693@frogsfrogsfrogs>
- <0100019c2bdca8b7-b1760667-a4e6-4a52-b976-9f039e65b976-000000@email.amazonses.com>
- <CAOQ4uxhzaTAw_sHVfY05HdLiB7f6Qu3GMZSBuPkmmsua0kqJBQ@mail.gmail.com>
- <20260206055247.GF7693@frogsfrogsfrogs>
- <aYZOVWXGxagpCYw5@groves.net>
- <CAJnrk1Za2SdCkpJ=sZR8LJ1qvBn8dd3CCsH=PvMrg=_0Jv+40Q@mail.gmail.com>
- <CAJnrk1YMqDKA5gDZasrxGjJtfdbhmjxX5uhUv=OSPyA=G5EE+Q@mail.gmail.com>
- <20260221003756.GD11076@frogsfrogsfrogs>
- <CAJnrk1ZJksW=uz1itdh+zoaQBo_XQ4ZSF13BSnZXMie5pBCvYA@mail.gmail.com>
+	Luis Henriques <luis@igalia.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Horst Birthelmer <hbirthelmer@ddn.com>
+Subject: Re: [PATCH v6 3/3] fuse: add an implementation of open+getattr
+Message-ID: <20260303050614.GO13829@frogsfrogsfrogs>
+References: <20260226-fuse-compounds-upstream-v6-0-8585c5fcd2fc@ddn.com>
+ <20260226-fuse-compounds-upstream-v6-3-8585c5fcd2fc@ddn.com>
+ <CAJnrk1ZsvtZh9vZoN=ca_wrs5enTfAQeNBYppOzZH=c+ARaP3Q@mail.gmail.com>
+ <aaFJEeeeDrdqSEX9@fedora.fritz.box>
+ <CAJnrk1ZiKyi4jVN=mP2N-27nmcf929jsN7u6LhzdYePiEzJWaA@mail.gmail.com>
+ <CAJnrk1ZQN6vGog2p_CsOh=C=O_jg6qHgXA0s4dKsgNbZycN2Cg@mail.gmail.com>
+ <aaKiWhdfLqF0qI3w@fedora.fritz.box>
+ <CAJnrk1bHSRxiKNefNH_SUq1E93Ysnyk-POjh5GWxy+=8BewKtA@mail.gmail.com>
+ <62edc506-2b0c-4470-8bdd-ee2d7fcc1cf1@ddn.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,268 +74,138 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1ZJksW=uz1itdh+zoaQBo_XQ4ZSF13BSnZXMie5pBCvYA@mail.gmail.com>
-X-Rspamd-Queue-Id: B76F71E914C
+In-Reply-To: <62edc506-2b0c-4470-8bdd-ee2d7fcc1cf1@ddn.com>
+X-Rspamd-Queue-Id: 241631E91BE
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	FREEMAIL_CC(0.00)[gmail.com,birthelmer.de,birthelmer.com,szeredi.hu,igalia.com,vger.kernel.org,ddn.com];
+	TAGGED_FROM(0.00)[bounces-79113-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79112-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_CC(0.00)[groves.net,gmail.com,szeredi.hu,lists.linux-foundation.org,vger.kernel.org,bsbernd.com,igalia.com,birthelmer.de];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo];
-	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	NEURAL_HAM(-0.00)[-0.316];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
 	DKIM_TRACE(0.00)[kernel.org:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	NEURAL_HAM(-0.00)[-0.992];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCPT_COUNT_SEVEN(0.00)[9];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	SUBJECT_HAS_QUESTION(0.00)[]
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,ddn.com:email,birthelmer.de:email]
 X-Rspamd-Action: no action
 
-On Thu, Feb 26, 2026 at 12:21:43PM -0800, Joanne Koong wrote:
-> On Fri, Feb 20, 2026 at 4:37 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> >
-> > On Wed, Feb 11, 2026 at 08:46:26PM -0800, Joanne Koong wrote:
-> > > On Fri, Feb 6, 2026 at 4:22 PM Joanne Koong <joannelkoong@gmail.com> wrote:
-> > > >
-> > > > On Fri, Feb 6, 2026 at 12:48 PM John Groves <john@groves.net> wrote:
-> > > > >
-> > > > > On 26/02/05 09:52PM, Darrick J. Wong wrote:
-> > > > > > On Thu, Feb 05, 2026 at 10:27:52AM +0100, Amir Goldstein wrote:
-> > > > > > > On Thu, Feb 5, 2026 at 4:33 AM John Groves <john@jagalactic.com> wrote:
-> > > > > > > >
-> > > > > > > > On 26/02/04 11:06AM, Darrick J. Wong wrote:
-> > > > > > > >
-> > > > > > > > [ ... ]
-> > > > > > > >
-> > > > > > > > > >  - famfs: export distributed memory
-> > > > > > > > >
-> > > > > > > > > This has been, uh, hanging out for an extraordinarily long time.
-> > > > > > > >
-> > > > > > > > Um, *yeah*. Although a significant part of that time was on me, because
-> > > > > > > > getting it ported into fuse was kinda hard, my users and I are hoping we
-> > > > > > > > can get this upstreamed fairly soon now. I'm hoping that after the 6.19
-> > > > > > > > merge window dust settles we can negotiate any needed changes etc. and
-> > > > > > > > shoot for the 7.0 merge window.
-> > > > > >
-> > > > > > I think we've all missed getting merged for 7.0 since 6.19 will be
-> > > > > > released in 3 days. :/
-> > > > > >
-> > > > > > (Granted most of the maintainers I know are /much/ less conservative
-> > > > > > than I was about the schedule)
-> > > > >
-> > > > > Doh - right you are...
-> > > > >
-> > > > > >
-> > > > > > > I think that the work on famfs is setting an example, and I very much
-> > > > > > > hope it will be a good example, of how improving existing infrastructure
-> > > > > > > (FUSE) is a better contribution than adding another fs to the pile.
-> > > > > >
-> > > > > > Yeah.  Joanne and I spent a couple of days this week coprogramming a
-> > > > > > prototype of a way for famfs to create BPF programs to handle
-> > > > > > INTERLEAVED_EXTENT files.  We might be ready to show that off in a
-> > > > > > couple of weeks, and that might be a way to clear up the
-> > > > > > GET_FMAP/IOMAP_BEGIN logjam at last.
-> > > > >
-> > > > > I'd love to learn more about this; happy to do a call if that's a
-> > > > > good way to get me briefed.
-> > > > >
-> > > > > I [generally but not specifically] understand how this could avoid
-> > > > > GET_FMAP, but not GET_DAXDEV.
-> > > > >
-> > > > > But I'm not sure it could (or should) avoid dax_iomap_rw() and
-> > > > > dax_iomap_fault(). The thing is that those call my begin() function
-> > > > > to resolve an offset in a file to an offset on a daxdev, and then
-> > > > > dax completes the fault or memcpy. In that dance, famfs never knows
-> > > > > the kernel address of the memory at all (also true of xfs in fs-dax
-> > > > > mode, unless that's changed fairly recently). I think that's a pretty
-> > > > > decent interface all in all.
-> > > > >
-> > > > > Also: dunno whether y'all have looked at the dax patches in the famfs
-> > > > > series, but the solution to working with Alistair's folio-ification
-> > > > > and cleanup of the dax layer (which set me back months) was to create
-> > > > > drivers/dax/fsdev.c, which, when bound to a daxdev in place of
-> > > > > drivers/dax/device.c, configures folios & pages compatibly with
-> > > > > fs-dax. So I kinda think I need the dax_iomap* interface.
-> > > > >
-> > > > > As usual, if I'm overlooking something let me know...
-> > > >
-> > > > Hi John,
-> > > >
-> > > > The conversation started [1] on Darrick's containerization patchset
-> > > > about using bpf to a) avoid extra requests / context switching for
-> > > > ->iomap_begin and ->iomap_end calls and b) offload what would
-> > > > otherwise have to be hard-coded kernel logic into userspace, which
-> > > > gives userspace more flexibility / control with updating the logic and
-> > > > is less of a maintenance burden for fuse. There was some musing [2]
-> > > > about whether with bpf infrastructure added, it would allow famfs to
-> > > > move all famfs-specific logic to userspace/bpf.
-> > > >
-> > > > I agree that it makes sense for famfs to go through dax iomap
-> > > > interfaces. imo it seems cleanest if fuse has a generic iomap
-> > > > interface with iomap dax going through that plumbing, and any
-> > > > famfs-specific logic that would be needed beyond that (eg computing
-> > > > the interleaved mappings) being moved to custom famfs bpf programs. I
-> > > > started trying to implement this yesterday afternoon because I wanted
-> > > > to make sure it would actually be doable for the famfs logic before
-> > > > bringing it up and I didn't want to derail your project. So far I only
-> > > > have the general iomap interface for fuse added with dax operations
-> > > > going through dax_iomap* and haven't tried out integrating the famfs
-> > > > GET_FMAP/GET_DAXDEV bpf program part yet but I'm planning/hoping to
-> > > > get to that early next week. The work I did with Darrick this week was
-> > > > on getting a server's bpf programs hooked up to fuse through bpf links
-> > > > and Darrick has fleshed that out and gotten that working now. If it
-> > > > turns out famfs can go through a generic iomap fuse plumbing layer,
-> > > > I'd be curious to hear your thoughts on which approach you'd prefer.
-> > >
-> > > I put together a quick prototype to test this out - this is what it
-> > > looks like with fuse having a generic iomap interface that supports
-> > > dax [1], and the famfs custom logic moved to a bpf program [2]. I
-> >
-> > The bpf maps that you've used to upload per-inode data into the kernel
-> > is a /much/ cleaner method than custom-compiling C into BPF at runtime!
-> > You can statically compile the BPF object code into the fuse server,
-> > which means that (a) you can take advantage of the bpftool skeletons,
-> > and (b) you can in theory vendor-sign the BPF code if and when that
-> > becomes a requirement.
-> >
-> > I think that's way better than having to put vmlinux.h and
-> > fuse_iomap_bpf.h on the deployed system.  Though there's one hitch in
-> > example/Makefile:
-> >
-> > vmlinux.h:
-> >         $(BPFTOOL) btf dump file /sys/kernel/btf/vmlinux format c > $@
-> >
-> > The build system isn't necessarily running the same kernel as the deploy
-> > images.  It might be for Meta, but it's not unheard of for our build
-> > system to be running (say) OL10+UEK8 kernel, but the build target is OL8
-> > and UEK7.
-> >
-> > There doesn't seem to be any standardization across distros for where a
-> > vmlinux.h file might be found.  Fedora puts it under
-> > /usr/src/$unamestuf, Debian puts it in /usr/include/$gcc_triple, and I
-> > guess SUSE doesn't ship it at all?
-> >
-> > That's going to be a headache for deployment as I've been muttering for
-> > a couple of weeks now. :(
+On Mon, Mar 02, 2026 at 09:03:26PM +0100, Bernd Schubert wrote:
 > 
-> I don't think this is an issue because bpf does dynamic btf-based
-> relocations (CO-RE) at load time [1]. On the target machine, when
-> libbpf loads the bpf object it will read the machine's btf and patch
-> any offsets in bytecode and load the fixed-up version into the kernel.
-> All that's needed on the target machine for CO-RE is
-> CONFIG_DEBUG_INFO_BTF=y which is enabled by default on mainstream
-> distributions. I think this addresses the deployment headache you've
-> been running into?
+> 
+> On 3/2/26 19:56, Joanne Koong wrote:
+> > On Sat, Feb 28, 2026 at 12:14 AM Horst Birthelmer <horst@birthelmer.de> wrote:
+> >>
+> >> On Fri, Feb 27, 2026 at 10:07:20AM -0800, Joanne Koong wrote:
+> >>> On Fri, Feb 27, 2026 at 9:51 AM Joanne Koong <joannelkoong@gmail.com> wrote:
+> >>>>
+> >>>> On Thu, Feb 26, 2026 at 11:48 PM Horst Birthelmer <horst@birthelmer.de> wrote:
+> >>>>>
+> >>>>> On Thu, Feb 26, 2026 at 11:12:00AM -0800, Joanne Koong wrote:
+> >>>>>> On Thu, Feb 26, 2026 at 8:43 AM Horst Birthelmer <horst@birthelmer.com> wrote:
+> >>>>>>>
+> >>>>>>> From: Horst Birthelmer <hbirthelmer@ddn.com>
+> >>>>>>>
+> >>>>>>> The discussion about compound commands in fuse was
+> >>>>>>> started over an argument to add a new operation that
+> >>>>>>> will open a file and return its attributes in the same operation.
+> >>>>>>>
+> >>>>>>> Here is a demonstration of that use case with compound commands.
+> >>>>>>>
+> >>>>>>> Signed-off-by: Horst Birthelmer <hbirthelmer@ddn.com>
+> >>>>>>> ---
+> >>>>>>>  fs/fuse/file.c   | 111 +++++++++++++++++++++++++++++++++++++++++++++++--------
+> >>>>>>>  fs/fuse/fuse_i.h |   4 +-
+> >>>>>>>  fs/fuse/ioctl.c  |   2 +-
+> >>>>>>>  3 files changed, 99 insertions(+), 18 deletions(-)
+> >>>>>>>
+> >>>>>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> >>>>>>> index a408a9668abbb361e2c1e386ebab9dfcb0a7a573..daa95a640c311fc393241bdf727e00a2bc714f35 100644
+> >>>>>>> --- a/fs/fuse/file.c
+> >>>>>>> +++ b/fs/fuse/file.c
+> >>>>>>>  struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
+> >>>>>>> -                                unsigned int open_flags, bool isdir)
+> >>>>>>> +                               struct inode *inode,
+> >>>>>>
+> >>>>>> As I understand it, now every open() is a opengetattr() (except for
+> >>>>>> the ioctl path) but is this the desired behavior? for example if there
+> >>>>>> was a previous FUSE_LOOKUP that was just done, doesn't this mean
+> >>>>>> there's no getattr that's needed since the lookup refreshed the attrs?
+> >>>>>> or if the server has reasonable entry_valid and attr_valid timeouts,
+> >>>>>> multiple opens() of the same file would only need to send FUSE_OPEN
+> >>>>>> and not the FUSE_GETATTR, no?
+> >>>>>
+> >>>>> So your concern is, that we send too many requests?
+> >>>>> If the fuse server implwments the compound that is not the case.
+> >>>>>
+> >>>>
+> >>>> My concern is that we're adding unnecessary overhead for every open
+> >>>> when in most cases, the attributes are already uptodate. I don't think
+> >>>> we can assume that the server always has attributes locally cached, so
+> >>>> imo the extra getattr is nontrivial (eg might require having to
+> >>>> stat()).
+> >>>
+> >>> Looking at where the attribute valid time gets set... it looks like
+> >>> this gets stored in fi->i_time (as per
+> >>> fuse_change_attributes_common()), so maybe it's better to only send
+> >>> the compound open+getattr if time_before64(fi->i_time,
+> >>> get_jiffies_64()) is true, otherwise only the open is needed. This
+> >>> doesn't solve the O_APPEND data corruption bug seen in [1] but imo
+> >>> this would be a more preferable way of doing it.
 
-Not really -- CO-RE does indeed work quite nicely to smooth over layout
-changes in C structures between a BPF program and the kernel it's being
-loaded into (thanks, whoever came up with that!) but the problem I have
-is how you /get/ those definitions into clang in the first place.
+/me notes that NFS can corrupt O_APPEND writes if you're not careful to
+synchronize writers at the application level...
 
-I was under the impression from many of the bpf examples that you're
-supposed to #include a distro-provided "vmlinux.h", but there doesn't
-seem to be a standard way to find that file.  Most -dev packages provide
-a pkgconfig file that give you the appropriate CFLAGS/LDFLAGS to add,
-but apparently this is not the case for BPF...?
+> >> Don't take this as an objection. I'm looking for arguments, since my defense
+> >> was always the line I used above (if the fuse server implements the compound,
+> >> it's one call).
+> > 
+> > The overhead for the server to fetch the attributes may be nontrivial
+> > (eg may require stat()). I really don't think we can assume the data
+> > is locally cached somewhere. Why always compound the getattr to the
+> > open instead of only compounding the getattr when the attributes are
+> > actually invalid?
+> > 
+> > But maybe I'm wrong here and this is the preferable way of doing it.
+> > Miklos, could you provide your input on this?
+> 
+> Personally I would see it as change of behavior if out of the sudden
+> open is followed by getattr. In my opinion fuse server needs to make a
+> decision that it wants that. Let's take my favorite sshfs example with a
+> 1s latency - it be very noticeable if open would get slowed down by
+> factor 2.
 
-Perhaps it's the case that distro packages that are building BPF
-programs simply add a build dependency on the package providing
-vmlinux.h (e.g. Build-Depends: linux-bpf-dev on Debian) and patch in
-"CFLAGS=-I/some/path" as needed?
+I wonder, since O_APPEND writes supposedly reposition the file position
+to i_size before every write, can we enlarge the write reply so that the
+fuse server could tell the client what i_size is supposed to be after
+every write?  Or perhaps add a notification so a network filesystem
+could try to keep the kernel uptodate after another node appends to a
+file?
 
-I suppose for a dynamically generated and compiled BPF program, one
-could just "bpftool skel" the /sys/kernel/btf files, capture the output,
-and "#include </dev/fd/XXX>" the results.  Honestly that sounds better
-than trusting some weird system package.
-
-But maybe dynamic compilation is a totally stupid idea.  I did grow up
-in the era of mshtml email wreaking havoc, after all...
+Just my unqualified opinion ;)
 
 --D
 
 > Thanks,
-> Joanne
+> Bernd
 > 
-> [1] https://docs.ebpf.io/concepts/core/
 > 
-> >
-> > Maybe we could reduce the fuse-iomap bpf definitions to use only
-> > cardinal types and the types that iomap itself defines.  That might not
-> > be too hard right now because bpf functions reuse structures from
-> > include/uapi/fuse.h, which currently use uint{8,16,32,64}_t.  It'll get
-> > harder if that __uintXX_t -> __uXX transition actually happens.
-> >
-> > But getting back to the famfs bpf stuff, I think doing the interleaved
-> > mappings via BPF gives the famfs server a lot more flexibility in terms
-> > of what it can do when future hardware arrives with even weirder
-> > configurations.
-> >
-> > --D
-> >
-> > > didn't change much, I just moved around your famfs code to the bpf
-> > > side. The kernel side changes are in [3] and the libfuse changes are
-> > > in [4].
-> > >
-> > > For testing out the prototype, I hooked it up to passthrough_hp to
-> > > test running the bpf program and verify that it is able to find the
-> > > extent from the bpf map. In my opinion, this makes the fuse side
-> > > infrastructure cleaner and more extendable for other servers that will
-> > > want to go through dax iomap in the future, but I think this also has
-> > > a few benefits for famfs. Instead of needing to issue a FUSE_GET_FMAP
-> > > request after a file is opened, the server can directly populate the
-> > > metadata map from userspace with the mapping info when it processes
-> > > the FUSE_OPEN request, which gets rid of the roundtrip cost. The
-> > > server can dynamically update the metadata at any time from userspace
-> > > if the mapping info needs to change in the future. For setting up the
-> > > daxdevs, I moved your logic to the init side, where the server passes
-> > > the daxdev info upfront through an IOMAP_CONFIG exchange with the
-> > > kernel initializing the daxdevs based off that info. I think this will
-> > > also make deploying future updates for famfs easier, as updating the
-> > > logic won't need to go through the upstream kernel mailing list
-> > > process and deploying updates won't require a new kernel release.
-> > >
-> > > These are just my two cents based on my (cursory) understanding of
-> > > famfs. Just wanted to float this alternative approach in case it's
-> > > useful.
-> > >
-> > > Thanks,
-> > > Joanne
-> > >
-> > > [1] https://github.com/joannekoong/linux/commit/b8f9d284a6955391f00f576d890e1c1ccc943cfd
-> > > [2] https://github.com/joannekoong/libfuse/commit/444fa27fa9fd2118a0dc332933197faf9bbf25aa
-> > > [3] https://github.com/joannekoong/linux/commits/prototype_generic_iomap_dax/
-> > > [4] https://github.com/joannekoong/libfuse/commits/famfs_bpf/
-> > >
-> > > >
-> > > > Thanks,
-> > > > Joanne
-> > > >
-> > > > [1] https://lore.kernel.org/linux-fsdevel/CAJnrk1bxhw2u0qwjw0dJPGdmxEXbcEyKn-=iFrszqof2c8wGCA@mail.gmail.com/t/#md1b8003a109760d8ee1d5397e053673c1978ed4d
-> > > > [2] https://lore.kernel.org/linux-fsdevel/CAJnrk1bxhw2u0qwjw0dJPGdmxEXbcEyKn-=iFrszqof2c8wGCA@mail.gmail.com/t/#u
-> > > >
-> > > > >
-> > > > > Regards,
-> > > > > John
-> > > > >
-> > >
 > 
 
