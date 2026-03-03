@@ -1,454 +1,289 @@
-Return-Path: <linux-fsdevel+bounces-79192-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id ILJYNALJpmk0TwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79192-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 12:41:54 +0100
+	id OBnmHW3IpmkaTwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 12:39:25 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AFDB1EE3F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 12:41:54 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id E74C01EE23F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 03 Mar 2026 12:39:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 67D9832330D7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 11:32:24 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 9F21D30C1BAD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2026 11:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16544429823;
-	Tue,  3 Mar 2026 11:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E46D47ECF4;
+	Tue,  3 Mar 2026 11:27:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TNLv15d/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eV9smZ4Q";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TNLv15d/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eV9smZ4Q"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dFtB+TMn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFB144B690
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Mar 2026 11:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772537234; cv=none; b=JPJPFOOnjyc5iRWKCNNcZr+REQl2BLJS6i1cyzJlk6fG7o/WOwNJi2qUkZeloX+s9rRBp3kB6Ogv2xONoNzqTYvLzyU3SXfYmY91g+IWseYVlMn1brByCLBBQ0cSvs7wzn6Eojm/NuNAgVDi5s365wMudq0aA/d0Jmf89zNITUQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772537234; c=relaxed/simple;
-	bh=QedSQybVdo6yCpkiIGhtaZbVi8MEk2EavcGEaxuCCSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MzE+05L3Chasnd/KhiC0LRwas4WfhvY0ZqtXbgWL+rvMEd5Nw5ax/esD6sSntlQMQNzvMBonx30Udw8cpVjESBcddRn5+cv/qKUdg28fNLb3g6VHNjD8NOLVi+0LnTYYnPr5FkACLgupMxtWFX7PABSafqjyqwG/8AoQX7L+9Ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TNLv15d/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eV9smZ4Q; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TNLv15d/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eV9smZ4Q; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 903235BD1C;
-	Tue,  3 Mar 2026 11:27:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1772537227; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PJNIfED44CDmRM9QKnZe3vjqDvjr0r1+sKr6g16PVBU=;
-	b=TNLv15d/Q09vJ3yaa5rtyOZXJnqvcbR6rI/DEcqvgjcnvPlL2p7w7N/t4v6fp7iXBMckFn
-	KI8390yLukozk4ihYQJERYEt3MZ2Xa8hOf2lyCyXhQaoR/0lyLYN1gFf6ZLwspZgvcblJf
-	8eN5vb5vdtk4do31HPWR1TQ0uj9qGIM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1772537227;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PJNIfED44CDmRM9QKnZe3vjqDvjr0r1+sKr6g16PVBU=;
-	b=eV9smZ4QhVNrlGzngsZi2/ze2KStbs+OocyLFDwfN7mxjM/fsVAwO/OP45s9rzwE/ZjD34
-	N/ABwqmXs1JJtYAw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="TNLv15d/";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=eV9smZ4Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1772537227; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PJNIfED44CDmRM9QKnZe3vjqDvjr0r1+sKr6g16PVBU=;
-	b=TNLv15d/Q09vJ3yaa5rtyOZXJnqvcbR6rI/DEcqvgjcnvPlL2p7w7N/t4v6fp7iXBMckFn
-	KI8390yLukozk4ihYQJERYEt3MZ2Xa8hOf2lyCyXhQaoR/0lyLYN1gFf6ZLwspZgvcblJf
-	8eN5vb5vdtk4do31HPWR1TQ0uj9qGIM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1772537227;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PJNIfED44CDmRM9QKnZe3vjqDvjr0r1+sKr6g16PVBU=;
-	b=eV9smZ4QhVNrlGzngsZi2/ze2KStbs+OocyLFDwfN7mxjM/fsVAwO/OP45s9rzwE/ZjD34
-	N/ABwqmXs1JJtYAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 77DFA3EA6E;
-	Tue,  3 Mar 2026 11:27:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zTg/HYvFpmkRTQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 03 Mar 2026 11:27:07 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 349A8A0A1B; Tue,  3 Mar 2026 12:27:07 +0100 (CET)
-Date: Tue, 3 Mar 2026 12:27:07 +0100
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>, 
-	Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>, 
-	Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
-	David Hildenbrand <david@kernel.org>, David Howells <dhowells@redhat.com>, 
-	Paulo Alcantara <pc@manguebit.org>, Andreas Dilger <adilger.kernel@dilger.ca>, 
-	Jan Kara <jack@suse.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, 
-	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
-	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
-	Steve French <sfrench@samba.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
-	Shyam Prasad N <sprasad@microsoft.com>, Bharath SM <bharathsm@microsoft.com>, 
-	Alexander Aring <alex.aring@gmail.com>, Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
-	Viacheslav Dubeyko <slava@dubeyko.com>, Eric Van Hensbergen <ericvh@kernel.org>, 
-	Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Christian Schoenebeck <linux_oss@crudebyte.com>, David Sterba <dsterba@suse.com>, 
-	Marc Dionne <marc.dionne@auristor.com>, Ian Kent <raven@themaw.net>, 
-	Luis de Bethencourt <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>, 
-	"Tigran A. Aivazian" <aivazian.tigran@gmail.com>, Ilya Dryomov <idryomov@gmail.com>, 
-	Alex Markuze <amarkuze@redhat.com>, Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu, 
-	Nicolas Pitre <nico@fluxnic.net>, Tyler Hicks <code@tyhicks.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Yangtao Li <frank.li@vivo.com>, 
-	Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, David Woodhouse <dwmw2@infradead.org>, 
-	Richard Weinberger <richard@nod.at>, Dave Kleikamp <shaggy@kernel.org>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
-	Joseph Qi <joseph.qi@linux.alibaba.com>, Mike Marshall <hubcap@omnibond.com>, 
-	Martin Brandenburg <martin@omnibond.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Anders Larsen <al@alarsen.net>, Zhihao Cheng <chengzhihao1@huawei.com>, 
-	Damien Le Moal <dlemoal@kernel.org>, Naohiro Aota <naohiro.aota@wdc.com>, 
-	Johannes Thumshirn <jth@kernel.org>, John Johansen <john.johansen@canonical.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>, 
-	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Simon Horman <horms@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Martin Schiller <ms@dev.tdt.de>, Eric Paris <eparis@redhat.com>, 
-	Joerg Reuter <jreuter@yaina.de>, Marcel Holtmann <marcel@holtmann.org>, 
-	Johan Hedberg <johan.hedberg@gmail.com>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-	Oliver Hartkopp <socketcan@hartkopp.net>, Marc Kleine-Budde <mkl@pengutronix.de>, 
-	David Ahern <dsahern@kernel.org>, Neal Cardwell <ncardwell@google.com>, 
-	Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Remi Denis-Courmont <courmisch@gmail.com>, Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>, 
-	Xin Long <lucien.xin@gmail.com>, Magnus Karlsson <magnus.karlsson@intel.com>, 
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	nvdimm@lists.linux.dev, fsverity@lists.linux.dev, linux-mm@kvack.org, 
-	netfs@lists.linux.dev, linux-ext4@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, linux-nilfs@vger.kernel.org, v9fs@lists.linux.dev, 
-	linux-afs@lists.infradead.org, autofs@vger.kernel.org, ceph-devel@vger.kernel.org, 
-	codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	jfs-discussion@lists.sourceforge.net, ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev, 
-	devel@lists.orangefs.org, linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, selinux@vger.kernel.org, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
-	linaro-mm-sig@lists.linaro.org, netdev@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-fscrypt@vger.kernel.org, linux-xfs@vger.kernel.org, linux-hams@vger.kernel.org, 
-	linux-x25@vger.kernel.org, audit@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
-	linux-can@vger.kernel.org, linux-sctp@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v2 046/110] udf: use PRIino format for i_ino
-Message-ID: <m67mgdgcjw6hhbrluvsdipezmgzmdfewqw4dlkbmqlbxi6gv5x@bd3aqfjjcqsv>
-References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
- <20260302-iino-u64-v2-46-e5388800dae0@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7773C3C0A
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Mar 2026 11:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772537262; cv=pass; b=Bvg2xbnE5h8RTTbYBvbio7nali2FL+RTYQ21QkUVIiV5LQ8aCLKIkkGABWClDNdWVzmcaRIfZLWAtatWIKA4duIlyya7jTdAtgWx0EEAy61suZ8sD+ajeaUHtyeGHzPgsqqzSDCol7YwjiXsYLi8LEeWMxQj2J7HDTzUawOXOpw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772537262; c=relaxed/simple;
+	bh=5mXcbTkuufop5uhTKOhembeC2DRfSRMAFASfr58P0QE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qAHFHtcGRImMfZnHXNepg1xdEOy2PmWlVXmQdXk9/DLifYoQfJLxjjiBo2+rMW+kBu/sj0z8TDlkkFHJX/2D4/fbMJSvApqUWAX48V2B3kMvnMe7WawjbFnUF//8fz/1apYFc7jbsvPzGIsSeTgChh07teU1W1KD8QR0cZXpqMw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dFtB+TMn; arc=pass smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-65c187dfc82so8668761a12.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Mar 2026 03:27:38 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772537257; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Gwj+iutEqgAbNgx1URJSxcrKA8hudd6iWu1WDtkz4DDXbK7mNqViQdOxY5PzV/sXWI
+         EKe/DPyPwCJ19qs81brqIqGUC40TbAkol+Z9VL3YeslPa8lEVkbqdFlt0rnpNBHwyRJO
+         UVxaJfzqvrVWEdQQNaj6QTYb5fSd3r+Nxi9kUXAMKVdq6mHVJVOR/JBCadnNClN7VHYZ
+         aQaB9/qXAc5HLeHJh3JbeyGC64Ohc3wvbGxTFNtafZm1dHkcTNgy3z3GxKk4+MQkClnX
+         GvKNWO8kHrXOahFCm9+CS/IuUH+Xg7ZzUcQWbg/JadOwEHySmK/vvFhKsFVr4tIARLZ9
+         70lw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=LH7NnVAg6YNTo0ag1UC0RiHGEjqmdXJI3aP1t2KH4+Y=;
+        fh=Wq/7+NUYj41gtIE8KP8EEGQ4koz+oaO5v4Gm6iyMtfI=;
+        b=TZ3vAkHRvYCORuTij/jQWlm+0mp/2OJFZJyiZIOMz4TSqSxlooYRzYNRkkdqoe7TEe
+         uoVvug0x9GBnPBeoGGaXgKBgIx0/bDBweZNDOLWb5cXsspQM7JAVTZzaOPcrTDnYPmoM
+         165tR/Ri3xa8OXinCi5/V10VcnokOCWUDXwgNBMs3tQaU7k24SvQ2CJ/Bkne8tLGMixa
+         p86Dt4p/6yHTUB0cgYuoZhP4jpVIa5Gjm1Z4BvNsx2xukotbNeFV8hNtPHT3PpklhxdR
+         Csixv1SnzNijZASTWTZpG9aJv4tYWSbZwP5C/5LXOtYaYKgrIN6Iixd1ui9ufOeEPSS6
+         rAsg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772537257; x=1773142057; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LH7NnVAg6YNTo0ag1UC0RiHGEjqmdXJI3aP1t2KH4+Y=;
+        b=dFtB+TMn3m5ffnvoNz/q0iRI3ZVA9iKP1RghiZ0PgDSpm4SV6J7Dyg8A+Gk1hKMIgn
+         oy9iDMicfAYrtqEUdBIFFmJwieVpCjfw2ZlmCIC5nS7kxxtWW+ExPmRoYt2y65q8x40N
+         9qtZGQEES2SueAvtIod1DLDWdTY409QjNZ9JPcu8HrE6qkZ+zJF8i6713ZmABdFGIYbk
+         qz3QclbFnWKIyhGF1MzD9liCoXXuImrvD3wFfnRCDJcKGsGN2L/0UZMvB/06kG+vJcnH
+         3bjYrboQuFTl9BmiCDQ8LVEFA3jS/LDUbkyDF2vyOBmi64/mqJzMEaaQUZ5PE0KxyI4c
+         4ATg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772537257; x=1773142057;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=LH7NnVAg6YNTo0ag1UC0RiHGEjqmdXJI3aP1t2KH4+Y=;
+        b=Vz2mhNAprhNHqBcEobhY9Shg1q1kSfS5C3Z7Qvzmk2DXROsyN1WuycUF9DB7VD+bMt
+         ZoUAAV4XdF7i54Xvl+pPaISO1hhyjI1Hiqo+vInAJ/d2dBsrDHhByoDv74XqnBURZv1d
+         6dfpWxcoZBQ+VUqKUC4Ns/XH/GFkGXB49n+ju5hELpvH4NincJv38CMNMQz3ZyBNrnoa
+         XKte0olOfeL5IIZedb0SaKg6TH/1QiZgUeciZx/wR49NEDySpZsgcs8sU+27fm9v89ma
+         1Z0kNqkQUOjT8skUgsTmoDuXY53m56M5twbBVIl+vmr3SJzsJcZL5bPFB5LjzR5Ke6Kb
+         j7CA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/PrQhn6ZHJL3PMCTg0JXIx8OV5fLRC0JX9tCFn3ndQgERZzCIstR55cIIGZ/sAiTky4QTwfjdP7NU2nR2@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIIOzagK7koDOjoOYMxTRdYkjVvTLTV/aElK/zXE9rJ0a/YmyC
+	ApQomZvMt7Evc56wusCTwEFnLsezFqnLILDbkfgnJXn0HCb1OOE06GeGDW5stqaf0X7QcGZ/rnK
+	HPczqJBJcJMGa1XuP9mrcgqhhKQBb9bv4aF3TOPI=
+X-Gm-Gg: ATEYQzwzKI9yDKHQcjy7QunkdH+IO/L9EmoNk5SmfuIjlV7JRzk3kd6tGF+7PJRmuvp
+	v/Z2bkFf7IpR94sgN22K8XjLBLgSbD7BJFbRxgAD77hue3TVT6rNMHD/4jn9dvJOgQG0zRRJhmW
+	fjXjclaeb/MMiRKrgsET/12nBaUGw5fYkcgpFWzkGPJQD3vauL6j+3A0K/HTnwQJu/P5vMOZmAA
+	2h5Yy07xBSCzjw/p6XeaJjyb/0p5pvqSRf9ANpwubaTWWby7cYDCnj8Z1oxSXu7H/f+oYny/4oQ
+	8NN4N6QxFtop/ooC/R7d7Gw6Mmic9rGX3Ma5CVcQ
+X-Received: by 2002:a17:907:6eab:b0:b93:c7f7:b456 with SMTP id
+ a640c23a62f3a-b93c7f7c67dmr285319766b.18.1772537256476; Tue, 03 Mar 2026
+ 03:27:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260302-iino-u64-v2-46-e5388800dae0@kernel.org>
-X-Spamd-Bar: /
-X-Spam-Flag: NO
-X-Spam-Score: -0.51
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 7AFDB1EE3F3
+References: <20260302183741.1308767-1-amir73il@gmail.com> <20260302183741.1308767-3-amir73il@gmail.com>
+ <fc9c776f-bc8b-4081-ad9e-b4ebc40b9974@oracle.com> <CAOQ4uxjHeUBfFLwahmaHj+ZKq=CxQGShi1-m_HQuWSjMa=f1-A@mail.gmail.com>
+ <177253370359.7472.12148587434874484168@noble.neil.brown.name>
+In-Reply-To: <177253370359.7472.12148587434874484168@noble.neil.brown.name>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 3 Mar 2026 12:27:25 +0100
+X-Gm-Features: AaiRm50cRIuXdfbL9xRJn8TkCXeNKHwcdbGIoRTEKg1o76DeY5Go-Cexr9cP4bg
+Message-ID: <CAOQ4uxj1P6snjRq3Z9qiks2LjdzsAg1d8m5LetrJ1yJ+ibeVGg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fs: use simple_end_creating helper to consolidate
+ fsnotify hooks
+To: NeilBrown <neil@brown.name>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>, 
+	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Jeff Layton <jlayton@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Queue-Id: E74C01EE23F
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.34 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79192-lists,linux-fsdevel=lfdr.de];
+	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-79193-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo];
-	DMARC_NA(0.00)[suse.cz];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,intel.com,infradead.org,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,yaina.de,holtmann.org,hartkopp.net,pengutronix.de,secunet.com,gondor.apana.org.au,fomichev.me,iogearbox.net,vger.kernel.org,lists.linux.dev,kvack.org,lists.sourceforge.net,lists.samba.org,lists.infradead.org,coda.cs.cmu.edu,lists.orangefs.org,lists.ubuntu.com,lists.freedesktop.org,lists.linaro.or
- g];
+	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[172];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	NEURAL_HAM(-0.00)[-0.998];
 	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[7]
+	DKIM_TRACE(0.00)[gmail.com:+];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	MISSING_XM_UA(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[amir73il@gmail.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,oracle.com:email,mail.gmail.com:mid]
 X-Rspamd-Action: no action
 
-On Mon 02-03-26 15:24:30, Jeff Layton wrote:
-> Convert udf i_ino format strings to use the PRIino format
-> macro in preparation for the widening of i_ino via kino_t.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+On Tue, Mar 3, 2026 at 11:28=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote=
+:
+>
+> On Tue, 03 Mar 2026, Amir Goldstein wrote:
+> > On Mon, Mar 2, 2026 at 11:28=E2=80=AFPM Chuck Lever <chuck.lever@oracle=
+.com> wrote:
+> > >
+> > > On 3/2/26 1:37 PM, Amir Goldstein wrote:
+> > > > Add simple_end_creating() helper which combines fsnotify_create/mkd=
+ir()
+> > > > hook and simple_done_creating().
+> > > >
+> > > > Use the new helper to consolidate this pattern in several pseudo fs
+> > > > which had open coded fsnotify_create/mkdir() hooks:
+> > > > binderfs, debugfs, nfsctl, tracefs, rpc_pipefs.
+> > > >
+> > > > For those filesystems, the paired fsnotify_delete() hook is already
+> > > > inside the library helper simple_recursive_removal().
+> > > >
+> > > > Note that in debugfs_create_symlink(), the fsnotify hook was missin=
+g,
+> > > > so the missing hook is fixed by this change.
+> > > >
+> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > >
+> > > > diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+> > > > index e9acd2cd602cb..6e600d52b66d0 100644
+> > > > --- a/fs/nfsd/nfsctl.c
+> > > > +++ b/fs/nfsd/nfsctl.c
+> > > > @@ -17,7 +17,6 @@
+> > > >  #include <linux/sunrpc/rpc_pipe_fs.h>
+> > > >  #include <linux/sunrpc/svc.h>
+> > > >  #include <linux/module.h>
+> > > > -#include <linux/fsnotify.h>
+> > > >  #include <linux/nfslocalio.h>
+> > > >
+> > > >  #include "idmap.h"
+> > > > @@ -1146,8 +1145,7 @@ static struct dentry *nfsd_mkdir(struct dentr=
+y *parent, struct nfsdfs_client *nc
+> > > >       }
+> > > >       d_make_persistent(dentry, inode);
+> > > >       inc_nlink(dir);
+> > > > -     fsnotify_mkdir(dir, dentry);
+> > > > -     simple_done_creating(dentry);
+> > > > +     simple_end_creating(dentry);
+> > > >       return dentry;  // borrowed
+> > > >  }
+> > > >
+> > > > @@ -1178,8 +1176,7 @@ static void _nfsd_symlink(struct dentry *pare=
+nt, const char *name,
+> > > >       inode->i_size =3D strlen(content);
+> > > >
+> > > >       d_make_persistent(dentry, inode);
+> > > > -     fsnotify_create(dir, dentry);
+> > > > -     simple_done_creating(dentry);
+> > > > +     simple_end_creating(dentry);
+> > > >  }
+> > > >  #else
+> > > >  static inline void _nfsd_symlink(struct dentry *parent, const char=
+ *name,
+> > > > @@ -1219,7 +1216,6 @@ static int nfsdfs_create_files(struct dentry =
+*root,
+> > > >                               struct nfsdfs_client *ncl,
+> > > >                               struct dentry **fdentries)
+> > > >  {
+> > > > -     struct inode *dir =3D d_inode(root);
+> > > >       struct dentry *dentry;
+> > > >
+> > > >       for (int i =3D 0; files->name && files->name[0]; i++, files++=
+) {
+> > > > @@ -1236,10 +1232,9 @@ static int nfsdfs_create_files(struct dentry=
+ *root,
+> > > >               inode->i_fop =3D files->ops;
+> > > >               inode->i_private =3D ncl;
+> > > >               d_make_persistent(dentry, inode);
+> > > > -             fsnotify_create(dir, dentry);
+> > > >               if (fdentries)
+> > > >                       fdentries[i] =3D dentry; // borrowed
+> > > > -             simple_done_creating(dentry);
+> > > > +             simple_end_creating(dentry);
+> > > >       }
+> > > >       return 0;
+> > > >  }
+> > >
+> > > For the NFSD hunks:
+> > >
+> > > Acked-by: Chuck Lever <chuck.lever@oracle.com>
+> >
+> > FWIW, you are technically also CCed for the sunrpc hunk ;)
+> >
+> > BTW, forgot to CC Neil and mention this patch:
+> > https://lore.kernel.org/linux-fsdevel/20260224222542.3458677-5-neilb@ow=
+nmail.net/
+> >
+> > Since simple_done_creating() starts using end_creating()
+> > so should simple_end_creating().
+> > I will change that in v2 after waiting for more feedback on v1.
+> >
+> > I don't want to get into naming discussion - I will just say that I wan=
+ted
+> > to avoid renaming simple_done_creating() to avoid unneeded churn.
+> >
+> > Thanks,
+> > Amir.
+> >
+>
+> Thanks for the Cc.
+>
+> Would there be a problem with doing the fs-notify for *every* caller of
+> simple_done_creating?
 
-Looks good. Feel free to add:
+1. simple_done_creating() is also called for the failed case, where the
+fsnotify hook is not desired. I am not sure if failure is always equivalent
+to negative child dentry.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+2. I assume you meant the simple_done_creating() calls in other fs that
+do not have fsnotify hooks in current code. This is a valid point.
+I am hesitant to add the FS_CREATE events for *all* the pseudo fs
+dentry creations.
+Specifically, I think we need not send the events for init/populate of fs.
+It's worth nothing that some of those fs do already send FS_DELETE
+events via simple_recursive_removal().
 
-								Honza
+> It does make sense to include the notify in the common code, but having
+> two different interfaces that only differ in the notification (and don't
+> contain some form of "notify" in their name) does seem like a recipe for
+> confusion.
 
-> ---
->  fs/udf/directory.c | 18 +++++++++---------
->  fs/udf/file.c      |  2 +-
->  fs/udf/inode.c     | 12 ++++++------
->  fs/udf/namei.c     |  8 ++++----
->  fs/udf/super.c     |  2 +-
->  5 files changed, 21 insertions(+), 21 deletions(-)
-> 
-> diff --git a/fs/udf/directory.c b/fs/udf/directory.c
-> index 632453aa38934a0b58b420717ec0674c85627ce5..c825e11c017f652500a3dfc83905679ef86ec570 100644
-> --- a/fs/udf/directory.c
-> +++ b/fs/udf/directory.c
-> @@ -22,7 +22,7 @@ static int udf_verify_fi(struct udf_fileident_iter *iter)
->  
->  	if (iter->fi.descTag.tagIdent != cpu_to_le16(TAG_IDENT_FID)) {
->  		udf_err(iter->dir->i_sb,
-> -			"directory (ino %lu) has entry at pos %llu with incorrect tag %x\n",
-> +			"directory (ino %" PRIino "u) has entry at pos %llu with incorrect tag %x\n",
->  			iter->dir->i_ino, (unsigned long long)iter->pos,
->  			le16_to_cpu(iter->fi.descTag.tagIdent));
->  		return -EFSCORRUPTED;
-> @@ -30,7 +30,7 @@ static int udf_verify_fi(struct udf_fileident_iter *iter)
->  	len = udf_dir_entry_len(&iter->fi);
->  	if (le16_to_cpu(iter->fi.lengthOfImpUse) & 3) {
->  		udf_err(iter->dir->i_sb,
-> -			"directory (ino %lu) has entry at pos %llu with unaligned length of impUse field\n",
-> +			"directory (ino %" PRIino "u) has entry at pos %llu with unaligned length of impUse field\n",
->  			iter->dir->i_ino, (unsigned long long)iter->pos);
->  		return -EFSCORRUPTED;
->  	}
-> @@ -41,20 +41,20 @@ static int udf_verify_fi(struct udf_fileident_iter *iter)
->  	 */
->  	if (len > 1 << iter->dir->i_blkbits) {
->  		udf_err(iter->dir->i_sb,
-> -			"directory (ino %lu) has too big (%u) entry at pos %llu\n",
-> +			"directory (ino %" PRIino "u) has too big (%u) entry at pos %llu\n",
->  			iter->dir->i_ino, len, (unsigned long long)iter->pos);
->  		return -EFSCORRUPTED;
->  	}
->  	if (iter->pos + len > iter->dir->i_size) {
->  		udf_err(iter->dir->i_sb,
-> -			"directory (ino %lu) has entry past directory size at pos %llu\n",
-> +			"directory (ino %" PRIino "u) has entry past directory size at pos %llu\n",
->  			iter->dir->i_ino, (unsigned long long)iter->pos);
->  		return -EFSCORRUPTED;
->  	}
->  	if (udf_dir_entry_len(&iter->fi) !=
->  	    sizeof(struct tag) + le16_to_cpu(iter->fi.descTag.descCRCLength)) {
->  		udf_err(iter->dir->i_sb,
-> -			"directory (ino %lu) has entry where CRC length (%u) does not match entry length (%u)\n",
-> +			"directory (ino %" PRIino "u) has entry where CRC length (%u) does not match entry length (%u)\n",
->  			iter->dir->i_ino,
->  			(unsigned)le16_to_cpu(iter->fi.descTag.descCRCLength),
->  			(unsigned)(udf_dir_entry_len(&iter->fi) -
-> @@ -78,7 +78,7 @@ static int udf_copy_fi(struct udf_fileident_iter *iter)
->  	}
->  	if (iter->dir->i_size < iter->pos + sizeof(struct fileIdentDesc)) {
->  		udf_err(iter->dir->i_sb,
-> -			"directory (ino %lu) has entry straddling EOF\n",
-> +			"directory (ino %" PRIino "u) has entry straddling EOF\n",
->  			iter->dir->i_ino);
->  		return -EFSCORRUPTED;
->  	}
-> @@ -184,7 +184,7 @@ static int udf_fiiter_advance_blk(struct udf_fileident_iter *iter)
->  			return 0;
->  		}
->  		udf_err(iter->dir->i_sb,
-> -			"extent after position %llu not allocated in directory (ino %lu)\n",
-> +			"extent after position %llu not allocated in directory (ino %" PRIino "u)\n",
->  			(unsigned long long)iter->pos, iter->dir->i_ino);
->  		return -EFSCORRUPTED;
->  	}
-> @@ -272,7 +272,7 @@ int udf_fiiter_init(struct udf_fileident_iter *iter, struct inode *dir,
->  		if (pos == dir->i_size)
->  			return 0;
->  		udf_err(dir->i_sb,
-> -			"position %llu not allocated in directory (ino %lu)\n",
-> +			"position %llu not allocated in directory (ino %" PRIino "u)\n",
->  			(unsigned long long)pos, dir->i_ino);
->  		err = -EFSCORRUPTED;
->  		goto out;
-> @@ -483,7 +483,7 @@ int udf_fiiter_append_blk(struct udf_fileident_iter *iter)
->  		   &iter->loffset, &etype);
->  	if (err <= 0 || etype != (EXT_RECORDED_ALLOCATED >> 30)) {
->  		udf_err(iter->dir->i_sb,
-> -			"block %llu not allocated in directory (ino %lu)\n",
-> +			"block %llu not allocated in directory (ino %" PRIino "u)\n",
->  			(unsigned long long)block, iter->dir->i_ino);
->  		return -EFSCORRUPTED;
->  	}
-> diff --git a/fs/udf/file.c b/fs/udf/file.c
-> index 32ae7cfd72c549958b70824b449cf146f6750f44..ab8093b87dc8f21ce8af6a72621e2868fb4b9a82 100644
-> --- a/fs/udf/file.c
-> +++ b/fs/udf/file.c
-> @@ -133,7 +133,7 @@ long udf_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->  	int result;
->  
->  	if (file_permission(filp, MAY_READ) != 0) {
-> -		udf_debug("no permission to access inode %lu\n", inode->i_ino);
-> +		udf_debug("no permission to access inode %" PRIino "u\n", inode->i_ino);
->  		return -EPERM;
->  	}
->  
-> diff --git a/fs/udf/inode.c b/fs/udf/inode.c
-> index 7fae8002344a0e1e7e51022e97f1e0e2424185f9..ecc22aded0d287ccdfb34b42a0d82e392054f585 100644
-> --- a/fs/udf/inode.c
-> +++ b/fs/udf/inode.c
-> @@ -147,7 +147,7 @@ void udf_evict_inode(struct inode *inode)
->  		if (iinfo->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB &&
->  		    inode->i_size != iinfo->i_lenExtents) {
->  			udf_warn(inode->i_sb,
-> -				 "Inode %lu (mode %o) has inode size %llu different from extent length %llu. Filesystem need not be standards compliant.\n",
-> +				 "Inode %" PRIino "u (mode %o) has inode size %llu different from extent length %llu. Filesystem need not be standards compliant.\n",
->  				 inode->i_ino, inode->i_mode,
->  				 (unsigned long long)inode->i_size,
->  				 (unsigned long long)iinfo->i_lenExtents);
-> @@ -1386,13 +1386,13 @@ static int udf_read_inode(struct inode *inode, bool hidden_inode)
->  	 */
->  	bh = udf_read_ptagged(inode->i_sb, iloc, 0, &ident);
->  	if (!bh) {
-> -		udf_err(inode->i_sb, "(ino %lu) failed !bh\n", inode->i_ino);
-> +		udf_err(inode->i_sb, "(ino %" PRIino "u) failed !bh\n", inode->i_ino);
->  		return -EIO;
->  	}
->  
->  	if (ident != TAG_IDENT_FE && ident != TAG_IDENT_EFE &&
->  	    ident != TAG_IDENT_USE) {
-> -		udf_err(inode->i_sb, "(ino %lu) failed ident=%u\n",
-> +		udf_err(inode->i_sb, "(ino %" PRIino "u) failed ident=%u\n",
->  			inode->i_ino, ident);
->  		goto out;
->  	}
-> @@ -1641,7 +1641,7 @@ static int udf_read_inode(struct inode *inode, bool hidden_inode)
->  		udf_debug("METADATA BITMAP FILE-----\n");
->  		break;
->  	default:
-> -		udf_err(inode->i_sb, "(ino %lu) failed unknown file type=%u\n",
-> +		udf_err(inode->i_sb, "(ino %" PRIino "u) failed unknown file type=%u\n",
->  			inode->i_ino, fe->icbTag.fileType);
->  		goto out;
->  	}
-> @@ -1942,7 +1942,7 @@ static int udf_update_inode(struct inode *inode, int do_sync)
->  	if (do_sync) {
->  		sync_dirty_buffer(bh);
->  		if (buffer_write_io_error(bh)) {
-> -			udf_warn(inode->i_sb, "IO error syncing udf inode [%08lx]\n",
-> +			udf_warn(inode->i_sb, "IO error syncing udf inode [%08" PRIino "x]\n",
->  				 inode->i_ino);
->  			err = -EIO;
->  		}
-> @@ -2224,7 +2224,7 @@ int udf_next_aext(struct inode *inode, struct extent_position *epos,
->  
->  		if (++indirections > UDF_MAX_INDIR_EXTS) {
->  			udf_err(inode->i_sb,
-> -				"too many indirect extents in inode %lu\n",
-> +				"too many indirect extents in inode %" PRIino "u\n",
->  				inode->i_ino);
->  			return -EFSCORRUPTED;
->  		}
-> diff --git a/fs/udf/namei.c b/fs/udf/namei.c
-> index 5f2e9a892bffa9579143cedf71d80efa7ad6e9fb..32209549a31f451a486918e673a41497bef42e89 100644
-> --- a/fs/udf/namei.c
-> +++ b/fs/udf/namei.c
-> @@ -550,7 +550,7 @@ static int udf_unlink(struct inode *dir, struct dentry *dentry)
->  		goto end_unlink;
->  
->  	if (!inode->i_nlink) {
-> -		udf_debug("Deleting nonexistent file (%lu), %u\n",
-> +		udf_debug("Deleting nonexistent file (%" PRIino "u), %u\n",
->  			  inode->i_ino, inode->i_nlink);
->  		set_nlink(inode, 1);
->  	}
-> @@ -809,7 +809,7 @@ static int udf_rename(struct mnt_idmap *idmap, struct inode *old_dir,
->  					       &diriter);
->  		if (retval == -ENOENT) {
->  			udf_err(old_inode->i_sb,
-> -				"directory (ino %lu) has no '..' entry\n",
-> +				"directory (ino %" PRIino "u) has no '..' entry\n",
->  				old_inode->i_ino);
->  			retval = -EFSCORRUPTED;
->  		}
-> @@ -821,7 +821,7 @@ static int udf_rename(struct mnt_idmap *idmap, struct inode *old_dir,
->  				old_dir->i_ino) {
->  			retval = -EFSCORRUPTED;
->  			udf_err(old_inode->i_sb,
-> -				"directory (ino %lu) has parent entry pointing to another inode (%lu != %u)\n",
-> +				"directory (ino %" PRIino "u) has parent entry pointing to another inode (%" PRIino "u != %u)\n",
->  				old_inode->i_ino, old_dir->i_ino,
->  				udf_get_lb_pblock(old_inode->i_sb, &tloc, 0));
->  			goto out_oiter;
-> @@ -869,7 +869,7 @@ static int udf_rename(struct mnt_idmap *idmap, struct inode *old_dir,
->  	retval = udf_fiiter_find_entry(old_dir, &old_dentry->d_name, &oiter);
->  	if (retval) {
->  		udf_err(old_dir->i_sb,
-> -			"failed to find renamed entry again in directory (ino %lu)\n",
-> +			"failed to find renamed entry again in directory (ino %" PRIino "u)\n",
->  			old_dir->i_ino);
->  	} else {
->  		udf_fiiter_delete_entry(&oiter);
-> diff --git a/fs/udf/super.c b/fs/udf/super.c
-> index 27f463fd1d89e8ae4844cd70c291d737aee1589e..c6e372d573885742745d3ff4b3b017facf228a32 100644
-> --- a/fs/udf/super.c
-> +++ b/fs/udf/super.c
-> @@ -1166,7 +1166,7 @@ static int udf_fill_partdesc_info(struct super_block *sb,
->  		}
->  		map->s_uspace.s_table = inode;
->  		map->s_partition_flags |= UDF_PART_FLAG_UNALLOC_TABLE;
-> -		udf_debug("unallocSpaceTable (part %d) @ %lu\n",
-> +		udf_debug("unallocSpaceTable (part %d) @ %" PRIino "u\n",
->  			  p_index, map->s_uspace.s_table->i_ino);
->  	}
->  
-> 
-> -- 
-> 2.53.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Right. I could make it simple_end_creating_notify().
+
+Now where does this sound familiar from?
+
+Oh yeah, my old fsnotify path hooks series [1] :)
+
+Cheers,
+Amir.
+
+[1]  https://lore.kernel.org/linux-fsdevel/CAOQ4uxi-UhF=3D6eaxhybvdBX-L5qYx=
+_uEuu-eCiiUzJPvz2U8aw@mail.gmail.com/
 
