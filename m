@@ -1,51 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-79441-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79442-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id IGZhBGCnqGlMwQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79441-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 22:42:56 +0100
+	id sL6PFdSnqGlOwQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79442-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 22:44:52 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9281E2081BE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 22:42:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E83B720825A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 22:44:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E2C4230A4543
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2026 21:41:54 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 5194030EC553
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2026 21:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77143D4127;
-	Wed,  4 Mar 2026 21:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF223DBD71;
+	Wed,  4 Mar 2026 21:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOy+ahU5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MTiNOmzu"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F229327BFB;
-	Wed,  4 Mar 2026 21:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104C83C3BF4;
+	Wed,  4 Mar 2026 21:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772660508; cv=none; b=Sw+pyDYSj5GGyKQkh5PJeOWD5VmG87070nFTyihXeVoAmnxEjU3wcvp37vxTqwTTmxGU++tGIPesOxd1b7JixuRdvuf1j4gWqeB4FZf4ENZ9n0eeQSSTmQr/wCdQChvDlFbA5kY6tmcaIE8ZbEbj42ydFYCAGTSebHjuhEI2gAE=
+	t=1772660534; cv=none; b=Rqfug1VyxhHlAJOKoNuALlevKgNwILyynO8JPcNABq+eK6R4L8KiqtpqHCcZI6JUkJTDn9MDHfNDYKCKpq/meaPe3uZO77+ya+ze1XwneHhyrDMg0eGlF9dZISmK9Ay+t87BaqvCmNoDZKW7X+Xbh0ayg6sqv0uPx5g6JhwXdaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772660508; c=relaxed/simple;
-	bh=PV67OS/91fsa6EbIf+u5pJQmbMnqcMaw7mOqQaMZtc4=;
+	s=arc-20240116; t=1772660534; c=relaxed/simple;
+	bh=xiOhB9YembJ+CStGf833o6vXChZ9R9iPIsGRMRIY668=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lfld2e8/PbdfaAtjfigBPh7E9dFW1n7G05AkucJry/6w46kgIFNyvq8Ec74bhrTMwT2u9Fs/hHRofFqKVS5l0aZXWocJDGl6q3qSWRzXAzvRXgGgyISAtQ65Mjbz52nMmgXXLwGijR+1/0Kp5egn+4O2VOcNn5aQK2iGIdfrkCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WOy+ahU5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFDDDC4CEF7;
-	Wed,  4 Mar 2026 21:41:22 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=toguuVh7tLwGBgu9ix+Q0Y4AuWqpeUsRKtNlqZ0vBpRksdSV19H9UwE9ZzVZoViiSu3HtDV3Ox5dON0MYH1IMbHri711EXXX1GHEqzoPeIBvmVSOJJezOK9Um4uhuGefprMIVcLVX1o5jwYWCAtm9D+fivwi1t3TnlgwElz3Tpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MTiNOmzu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07326C2BCB4;
+	Wed,  4 Mar 2026 21:41:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772660507;
-	bh=PV67OS/91fsa6EbIf+u5pJQmbMnqcMaw7mOqQaMZtc4=;
+	s=k20201202; t=1772660533;
+	bh=xiOhB9YembJ+CStGf833o6vXChZ9R9iPIsGRMRIY668=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WOy+ahU5UARQ0yTbDyVVAn1fSlv8RpYZwjPT+Gigf4F6vtlQM47BUEAaHpPl28jTi
-	 zijTiFmnsokrQhTEwusFFZyPjXjLpzptmexKVrqiO7zalnrs6jCk/4Dtvo7p2Wi1b1
-	 deFntjfjHaMPD1GtY9aIYLocTQHgNd9upu9na/Ju2G9Ir6nNYqwGJRWtco86cB0/5r
-	 uO2UQtHfq4CG7HDfigIocItuDJOTEaZae9H5bHTqKAx9IDkUJuakGJN2s0X8q9pydZ
-	 YUjxavtU51Dm29ViV1Ch1zVWrQIQ2z11hjkuPtHX/LzHUzaMqMA8RcsW3Ko5J8lxOB
-	 JCi7YwgNkSxnQ==
-Message-ID: <d5ef252a-02db-42d1-8ffa-1769189ae60a@kernel.org>
-Date: Thu, 5 Mar 2026 06:41:21 +0900
+	b=MTiNOmzumY+Ccr9Y25oeq5uYZKghdKy9YuMJBVJenlXMeDIlM5fFuFFctJXPSrlj1
+	 KOikET8YCvcGy9yWYQw1bgH6uo7qLLK1Yimq397PsLMKP+QRrCFPLt2x5Iauoplbvb
+	 eVdpKah8RLNh0zfOSHOOrQ3xqtsNbQi1nkFz6EB4vJXFLpSPJMg52b3nqo2mplKkNj
+	 xJmYwih0yzyZ+saefyHXLopmh2Uw8y8KnyiNiI3ZzGwKqQQ7Bt9hEM//Ab6R2kTuX0
+	 dvCJZkANj5UO/wUvSeTKYiDWcUSEi2O8IiF1HH0MkcYb0vMhcqKbNtD1e26QLX94o6
+	 x5Esh08bkPubQ==
+Message-ID: <000dfca2-3101-45dd-8fdd-987ca885124a@kernel.org>
+Date: Thu, 5 Mar 2026 06:41:41 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,8 +53,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 12/12] treewide: change inode->i_ino from unsigned long
- to u64
+Subject: Re: [PATCH v3 08/12] zonefs: widen trace event i_ino fields to u64
 To: Jeff Layton <jlayton@kernel.org>, Alexander Viro
  <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
  Jan Kara <jack@suse.cz>, Steven Rostedt <rostedt@goodmis.org>,
@@ -162,14 +161,14 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-bluetooth@vger.kernel.org, linux-can@vger.kernel.org,
  linux-sctp@vger.kernel.org, bpf@vger.kernel.org
 References: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
- <20260304-iino-u64-v3-12-2257ad83d372@kernel.org>
+ <20260304-iino-u64-v3-8-2257ad83d372@kernel.org>
 Content-Language: en-US
 From: Damien Le Moal <dlemoal@kernel.org>
 Organization: Western Digital Research
-In-Reply-To: <20260304-iino-u64-v3-12-2257ad83d372@kernel.org>
+In-Reply-To: <20260304-iino-u64-v3-8-2257ad83d372@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 9281E2081BE
+X-Rspamd-Queue-Id: E83B720825A
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
@@ -180,7 +179,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79441-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79442-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FREEMAIL_TO(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,goodmis.org,efficios.com,intel.com,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,infradead.org,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,yaina.de,holtmann.org,hartkopp.net,pengutronix.de,secunet.com,gondor.apana.org.au,fomichev.me,iogearbox.net];
 	HAS_ORG_HEADER(0.00)[];
@@ -203,25 +202,10 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 X-Rspamd-Action: no action
 
 On 3/5/26 00:32, Jeff Layton wrote:
-> On 32-bit architectures, unsigned long is only 32 bits wide, which
-> causes 64-bit inode numbers to be silently truncated. Several
-> filesystems (NFS, XFS, BTRFS, etc.) can generate inode numbers that
-> exceed 32 bits, and this truncation can lead to inode number collisions
-> and other subtle bugs on 32-bit systems.
-> 
-> Change the type of inode->i_ino from unsigned long to u64 to ensure that
-> inode numbers are always represented as 64-bit values regardless of
-> architecture. Update all format specifiers treewide from %lu/%lx to
-> %llu/%llx to match the new type, along with corresponding local variable
-> types.
-> 
-> This is the bulk treewide conversion. Earlier patches in this series
-> handled trace events separately to allow trace field reordering for
-> better struct packing on 32-bit.
+> Update zonefs trace event definitions to use u64 instead of
+> ino_t/unsigned long for inode number fields.
 > 
 > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-
-For the zonefs bits:
 
 Acked-by: Damien Le Moal <dlemoal@kernel.org>
 
