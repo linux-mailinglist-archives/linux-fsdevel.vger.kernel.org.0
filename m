@@ -1,243 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-79439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79440-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yNzREFafqGmZwAAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 22:08:38 +0100
+	id kOCyE0KmqGkYwQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79440-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 22:38:10 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B1E1207D37
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 22:08:37 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E66820807C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 22:38:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E1F93303FFD5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2026 21:08:24 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 1937B304DF15
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2026 21:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F898372EE9;
-	Wed,  4 Mar 2026 21:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C163932E2;
+	Wed,  4 Mar 2026 21:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JXG1zTL5"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PeOv4i62"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47CE222585
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Mar 2026 21:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EC5273D8D
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Mar 2026 21:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772658503; cv=none; b=Z4IFsR3FNc5ACKWjVC2Win1+ET9sVUmjK1Znb3HCclcFw0ku7GjGx3R84xnAVZeDTxADhdA2oqk68mnD8zu0Hmd6staAhill/Zksx60MMT3VXBOwORVDElFh9dt5KsvK4LQ2iaTvtP9l9PvHUpA+dxFbplkJQlNitgHIaJ5N8Zw=
+	t=1772660269; cv=none; b=IFcZ88IrE5VySuK+tUTUIh8xHTfAawDYeBYCSJJ6mDyT/jn6+biLyQp8rkWXSn0gfOGsGQzLY1FgyUXlapuoUqDg7wyAzHamDT6XeOUlZg8zgHHq17mDZaqg/V7ztm40FY6UgD4+o0DF+Xc/MIUvyy4C6uWw3Em6QSQmM2OrMU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772658503; c=relaxed/simple;
-	bh=wg7R4/UR78caQfsIgFzc5GgvL2oN0Ns+js7fnZOlBOQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M6ZmULbQK1ylVxMvXJh2ZTrSSDrTBwQG9KUxogEMex/4ullIgu+gCl4o91J7KY/mCTsw9S/SuYlbfvREQXHJeiIiggq1HTXKxrZvDA5tnr3BAR0/Z0LQMAk2oU+dFr0WFCQLkDTTfNUFoR3CkzHIyjZQ3h2erOVklibLh0HS+w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JXG1zTL5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44BDDC4CEF7;
-	Wed,  4 Mar 2026 21:08:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772658503;
-	bh=wg7R4/UR78caQfsIgFzc5GgvL2oN0Ns+js7fnZOlBOQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JXG1zTL5ZEVfBrd5Uz3PDr4kw/y/YnUkDq64guULTorI97V1bvu0LNpLuM97sQSyZ
-	 HmFI6BdN7q7cJlWnvgaeX3Z0RLhQdItoEWh0026S3KObWvEfgP8o06X8t2qlJLys+Z
-	 DsxwQP7JMgbjFwOsTlDo1OmFJtBd1k9pTk4INZYxrOGRK4ZL58oghygz5WHHc8NlHD
-	 IR8aCSKTvhcfTgfpSvvAXZKTvYIBpkUblnS+JLSi3s9xGgt1hVTFzxThFGWZC9F2px
-	 qjluMNzcbnOxhUn8ErBQPuYjKZhg3C8XHpFDjo4zvlzHRAbiIHZrRWnNOvobbYeKSI
-	 TCF1mMChGBEGw==
-Date: Wed, 4 Mar 2026 13:08:22 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: bschubert@ddn.com, joannelkoong@gmail.com,
-	linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, neal@gompa.dev
-Subject: Re: [GIT PULL] libfuse: run fuse servers as a contained service
-Message-ID: <20260304210822.GR13829@frogsfrogsfrogs>
-References: <177258294351.1167732.4543535509077707738.stg-ugh@frogsfrogsfrogs>
- <0d3d5dfc-6237-4d6d-abeb-e7adddecf2d9@bsbernd.com>
- <20260304170652.GP13829@frogsfrogsfrogs>
- <20260304180602.GQ13829@frogsfrogsfrogs>
- <ee584989-d81d-4dea-b953-6acf44d76d13@bsbernd.com>
+	s=arc-20240116; t=1772660269; c=relaxed/simple;
+	bh=DHFzucvKQo9mJnpiOC/mpjemhEuJZ6EV4obLrcNxNYQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=F8N0Lcv9OlCzOH/fAn42pF2TfuGmZQMkem1PApNhOLlRKNTSK9JDQAc0y/KSMvvdJMBA2fNcdCc7y9ybvmpSK52qUtnjeO/KZOkto5QgUHSJfgoMcSDXY1t8twWRKBPwzio3noZkiUpt3qP2Pql2zGVZobDyTZMgHDE6Gkm2GoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PeOv4i62; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4836b7c302fso75279565e9.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Mar 2026 13:37:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1772660267; x=1773265067; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=H3B6twlxs7RG5L5HQ0RR3EQNIcTaBDOh7BWXSLk64tU=;
+        b=PeOv4i62mPdMN5GCFB4SI/nked8GOPruvrh9hLhH7seF6Tu+9ZCDjzdlYqv62xeyEW
+         w4bltHeaJRElv1u9HArZLc8VCUn7rYhZEHNBN0vtn61qpT32va6U703RD/F9lQd97qPv
+         cp/DAmuziaoS1QaGnaxh0eRi8xYxxqPEWV0XP0WrojV2DFLpdt03C1DRawQoDmqTevaQ
+         GNHzje+jMWE/zSGPzDR6ZeCz1+bQAzSzQ/hAH+dZTOG/otHkGxknlSPeVxfv7JHpuP7c
+         E7ykQzdlFb6hBoMqkCh0L9LNFSePPC6QctcitDd8VtTOy1eRPZPMO1afwSCM3q6LyjaF
+         Dc1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772660267; x=1773265067;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H3B6twlxs7RG5L5HQ0RR3EQNIcTaBDOh7BWXSLk64tU=;
+        b=jp2XME7KwCj85WfeGxZrSFQpZiubgM5prvbS4VDttMAd9FI1wgkTKgLvw4rclytjUl
+         pSKNgg1vjV0uN+r5UNc1NHCsQlkyN3wOHHlX4yquilE7Bt3MsFVJ08T/MYvhS1rxPudg
+         UId+NzbY6o0b2MBnw6awsIdWOclEUG9SuFcvbTXdteebDI7rIk1p2WwMiHCjJHBa6FvC
+         QUZNCfFWdAYrddt5bey/9nw/ddFgMGzFq2g6RndmUOx15uUPDuvv/qjq70NR0yUnuhnD
+         SnuO7Xq+bq2Plk1snnhHbNqkb0CiWFmEfqdtg+imOtkL+x7ieNzjQGLlwT099/NfIah5
+         D4FA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5D5hDsvAO8d+6AlnzKP5yR/918m+bO7tS7SANbgzx69mZh+MK7ks2zWpBoCYucP+mL2yv52omoOzqn5nx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxojalre6mln5X8b4ouZSVtQom6EU7L3bo02ruFqRUNTbeH/NxI
+	ksBmi6YRJcXYwVbtCygxQSPASavMnwcxBeSKxdSpbCfreNeBq5YUHmilAHxEDKWVVSCFFFdMnt2
+	Sp2EC//lbQlCug6Wd7Q==
+X-Received: from wmjx23.prod.google.com ([2002:a05:600c:21d7:b0:482:ef67:407f])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:a087:b0:485:110f:5b7f with SMTP id 5b1f17b1804b1-48519888e6amr59392995e9.19.1772660266742;
+ Wed, 04 Mar 2026 13:37:46 -0800 (PST)
+Date: Wed, 4 Mar 2026 21:37:45 +0000
+In-Reply-To: <aahd2DIXFJiUKy0S@tardis.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ee584989-d81d-4dea-b953-6acf44d76d13@bsbernd.com>
-X-Rspamd-Queue-Id: 9B1E1207D37
+Mime-Version: 1.0
+References: <20260213-upgrade-poll-v2-0-984a0fb184fb@google.com>
+ <20260213-upgrade-poll-v2-1-984a0fb184fb@google.com> <aadbyBmaV8zCYiog@tardis.local>
+ <aafmf5icyPIFcwf_@google.com> <aahd2DIXFJiUKy0S@tardis.local>
+Message-ID: <aaimKbwAbPfBUPG6@google.com>
+Subject: Re: [PATCH v2 1/2] rust: poll: make PollCondVar upgradable
+From: Alice Ryhl <aliceryhl@google.com>
+To: Boqun Feng <boqun@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Carlos Llamas <cmllamas@google.com>, 
+	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+X-Rspamd-Queue-Id: 9E66820807C
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	MV_CASE(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
+	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-79440-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,garyguo.net,linuxfoundation.org,google.com,vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79439-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_CC(0.00)[ddn.com,gmail.com,vger.kernel.org,szeredi.hu,gompa.dev];
-	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[google.com:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	MID_RHS_MATCH_FROM(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
+	FROM_NEQ_ENVFROM(0.00)[aliceryhl@google.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On Wed, Mar 04, 2026 at 08:29:35PM +0100, Bernd Schubert wrote:
-> 
-> 
-> On 3/4/26 19:06, Darrick J. Wong wrote:
-> > On Wed, Mar 04, 2026 at 09:06:52AM -0800, Darrick J. Wong wrote:
-> >> On Wed, Mar 04, 2026 at 02:36:03PM +0100, Bernd Schubert wrote:
-> >>>
-> >>>
-> >>> On 3/4/26 01:11, Darrick J. Wong wrote:
-> >>>> Hi Bernd,
-> >>>>
-> >>>> Please pull this branch with changes for libfuse.
-> >>>>
-> >>>> As usual, I did a test-merge with the main upstream branch as of a few
-> >>>> minutes ago, and didn't see any conflicts.  Please let me know if you
-> >>>> encounter any problems.
-> >>>
-> >>> Hi Darrick,
-> >>>
-> >>> quite some problems actually ;)
-> >>>
-> >>> https://github.com/libfuse/libfuse/pull/1444
-> >>>
-> >>> Basically everything fails.  Build test with
-> >>
-> >> Doh :(
-> >>
-> >>> ../../../home/runner/work/libfuse/libfuse/lib/fuse_service.c:24:10:
-> >>> fatal error: 'systemd/sd-daemon.h' file not found
-> >>>    24 | #include <systemd/sd-daemon.h>
-> >>>
-> >>>
-> >>> Two issues here:
-> >>> a) meson is not testing for sd-daemon.h?
-> >>
-> >> Hrm.  meson.build *should* have this clause to detect systemd:
-> >>
-> >> # Check for systemd support
-> >> systemd_system_unit_dir = get_option('systemdsystemunitdir')
-> >> if systemd_system_unit_dir == ''
-> >>   systemd = dependency('systemd', required: false)
-> >>   if systemd.found()
-> >>      systemd_system_unit_dir = systemd.get_variable(pkgconfig: 'systemd_system_unit_dir')
-> >>   endif
-> >> endif
-> >>
-> >> if systemd_system_unit_dir == ''
-> >>   warning('could not determine systemdsystemunitdir, systemd stuff will not be installed')
-> >> else
-> >>   private_cfg.set_quoted('SYSTEMD_SYSTEM_UNIT_DIR', systemd_system_unit_dir)
-> >>   private_cfg.set('HAVE_SYSTEMD', true)
-> >> endif
-> >>
-> >> # Check for libc SCM_RIGHTS support (aka Linux)
-> >> code = '''
-> >> #include <sys/socket.h>
-> >> int main(void) {
-> >>     int moo = SCM_RIGHTS;
-> >>     return moo;
-> >> }'''
-> >> if cc.links(code, name: 'libc SCM_RIGHTS support')
-> >>   private_cfg.set('HAVE_SCM_RIGHTS', true)
-> >> endif
-> >>
-> >> if private_cfg.get('HAVE_SCM_RIGHTS', false) and private_cfg.get('HAVE_SYSTEMD', false)
-> >>   private_cfg.set('HAVE_SERVICEMOUNT', true)
-> >> endif
-> >>
-> >>
-> >> But apparently it built fuse_service.c anyway?  I'll have to look deeper
-> >> into what github ci did, since the pkgconfig fil... oh crikey.
-> >>
-> >> systemd-dev contains the systemd.pc file, so the systemd.get_variable
-> >> call succeeds and returns a path, thereby enabling the build.  However,
-> >> the header files are in libsystemd-dev, and neither package depends on
-> >> the other.
-> >>
-> >> So I clearly need to test for the presence of sd-daemon.h in that first
-> >> clause that determines if HAVE_SYSTEMD gets set.
-> 
-> Or link test for systemd
-
-<nod> Hilariously we only need a single #define out of that header file:
-SD_LISTEN_FDS_START
-
-> >>
-> >>> a.1) If not available needs to disable that service? Because I don't
-> >>> think BSD has support for systemd.
-> >>
-> >> <nod>
-> >>
-> >>> b) .github/workflow/*.yml files need to be adjusted to add in the new
-> >>> dependency.
-> >>
-> >> Oh, ok.  The 'apt install' lines should probably add in systemd-dev.
-> >>
-> >>> Please also have a look at checkpatch (which is a plain linux copy) and
-> >>> the spelling test failures.
-> >>
-> >> Ok, will do.
+On Wed, Mar 04, 2026 at 08:29:12AM -0800, Boqun Feng wrote:
+> On Wed, Mar 04, 2026 at 07:59:59AM +0000, Alice Ryhl wrote:
+> [...]
+> > > > +        // If a normal waiter registers in parallel with us, then either:
+> > > > +        // * We took the lock first. In that case, the waiter sees the above cmpxchg.
+> > > > +        // * They took the lock first. In that case, we wake them up below.
+> > > > +        drop(lock.lock());
+> > > > +        self.simple.notify_all();
+> > > 
+> > > Hmm.. what if the waiter gets its `&CondVar` before `upgrade()` and use
+> > > that directly?
+> > > 
+> > > 	<waiter>				<in upgrade()>
+> > > 	let poll_cv: &UpgradePollCondVar = ...;
+> > > 	let cv = poll_cv.deref();
+> > > 						cmpxchg();
+> > > 						drop(lock.lock());
+> > > 						self.simple.notify_all();
+> > > 	let mut guard = lock.lock();
+> > > 	cv.wait(&mut guard);
+> > > 
+> > > we still miss the wake-up, right?
+> > > 
+> > > It's creative, but I particularly hate we use an empty lock critical
+> > > section to synchronize ;-)
 > > 
-> > ...and the immediate problem that I run into is that all the logs are
-> > hidden behind a login wall so I cannot read them. :(
-> > 
-> > (It leaked enough about the spelling errors that I can fix those, and
-> > I can run checkpatch locally, but I don't know what else went wrong with
-> > the bsd build or the abi check.)
+> > I guess instead of exposing Deref, I can just implement `wait` directly
+> > on `UpgradePollCondVar`. Then this API misuse is not possible.
 > > 
 > 
+> If we do that,then we can avoid the `drop(lock.lock())` as well, if we
+> do:
 > 
-> BSD errors are actually a bit tricky, because it runs them in a VM, one has
-> to look at "raw logs". I think ABI checks are failling as the normal build
-> test because of the meson issue.
-> BSD is this
+>     impl UpgradePollCondVar {
+>         pub fn wait(...) {
+> 	    prepare_to_wait_exclusive(); // <- this will take lock in
+>                                          // simple.wait_queue_head. So
+>                                          // either upgrade() comes
+>                                          // first, or they observe the
+>                                          // wait being queued.
+>             let cv_ptr = self.active.load(Relaxed);
+> 	    if !ptr_eq(cv_ptr, &self.simple) { // We have moved from
+> 	                                       // simple, so need to
+>                                                // need to wake up and
+>                                                // redo the wait.
+> 	        finish_wait();
+> 	    } else {
+> 	        guard.do_unlock(|| { schedule_timeout(); });
+> 		finish_wait();
+> 	    }
+> 	}
+>     }
 > 
-> 2026-03-04T13:17:20.5979965Z [14/82] cc -Ilib/libfuse3.so.3.19.0.p -Ilib -I../lib -Iinclude -I../include -I. -I.. -fdiagnostics-color=always -Wall -Winvalid-pch -Wextra -std=gnu11 -O2 -g -D_REENTRANT -DHAVE_LIBFUSE_PRIVATE_CONFIG_H -Wno-sign-compare -D_FILE_OFFSET_BITS=64 -Wstrict-prototypes -Wmissing-declarations -Wwrite-strings -fno-strict-aliasing -fPIC -pthread -DFUSE_USE_VERSION=317 '-DFUSERMOUNT_DIR="/usr/local/bin"' -MD -MQ lib/libfuse3.so.3.19.0.p/fuse_service_stub.c.o -MF lib/libfuse3.so.3.19.0.p/fuse_service_stub.c.o.d -o lib/libfuse3.so.3.19.0.p/fuse_service_stub.c.o -c ../lib/fuse_service_stub.c
-> 2026-03-04T13:17:20.6004021Z FAILED: [code=1] lib/libfuse3.so.3.19.0.p/fuse_service_stub.c.o 
-> 2026-03-04T13:17:20.6008119Z cc -Ilib/libfuse3.so.3.19.0.p -Ilib -I../lib -Iinclude -I../include -I. -I.. -fdiagnostics-color=always -Wall -Winvalid-pch -Wextra -std=gnu11 -O2 -g -D_REENTRANT -DHAVE_LIBFUSE_PRIVATE_CONFIG_H -Wno-sign-compare -D_FILE_OFFSET_BITS=64 -Wstrict-prototypes -Wmissing-declarations -Wwrite-strings -fno-strict-aliasing -fPIC -pthread -DFUSE_USE_VERSION=317 '-DFUSERMOUNT_DIR="/usr/local/bin"' -MD -MQ lib/libfuse3.so.3.19.0.p/fuse_service_stub.c.o -MF lib/libfuse3.so.3.19.0.p/fuse_service_stub.c.o.d -o lib/libfuse3.so.3.19.0.p/fuse_service_stub.c.o -c ../lib/fuse_service_stub.c
-> 2026-03-04T13:17:20.6012011Z In file included from ../lib/fuse_service_stub.c:21:
-> 2026-03-04T13:17:20.6013206Z ../include/fuse_service_priv.h:12:2: error: unknown type name '__be32'
-> 2026-03-04T13:17:20.6013899Z    12 |         __be32 pos;
-> 2026-03-04T13:17:20.6014268Z       |         ^
-> 2026-03-04T13:17:20.6014789Z ../include/fuse_service_priv.h:13:2: error: unknown type name '__be32'
-> 2026-03-04T13:17:20.6015421Z    13 |         __be32 len;
-> 2026-03-04T13:17:20.6015779Z       |         ^
-> 2026-03-04T13:17:20.6016510Z ../include/fuse_service_priv.h:17:2: error: unknown type name '__be32'
-> 2026-03-04T13:17:20.6017130Z    17 |         __be32 magic;
-> 2026-03-04T13:17:20.6017506Z       |         ^
-> 2026-03-04T13:17:20.6018004Z ../include/fuse_service_priv.h:18:2: error: unknown type name '__be32'
-> 2026-03-04T13:17:20.6018615Z    18 |         __be32 argc;
-> 2026-03-04T13:17:20.6018988Z       |         ^
+> (CondVar::notify*() will take the wait_queue_head lock as well)
 
-Hrmm, well at least on BSD I see that it's building the service stub,
-which means that it didn't actually try to build any of the real systemd
-service stuff at all.  I think this is due to fuse_service_stub.c
-including fuse_service_priv.h unnecessarily.
+Yeah but then I have to actually re-implement those methods and not just
+call them. Seems not worth it.
 
---D
+> > > Do you think the complexity of a dynamic upgrading is worthwhile, or we
+> > > should just use the box-allocated PollCondVar unconditionally?
+> > > 
+> > > I think if the current users won't benefit from the dynamic upgrading
+> > > then we can avoid the complexity. We can always add it back later.
+> > > Thoughts?
+> > 
+> > I do actually think it's worthwhile to consider:
+> > 
+> > I started an Android device running this. It created 3961 instances of
+> > `UpgradePollCondVar` during the hour it ran, but only 5 were upgraded.
+> > 
+> 
+> That makes sense, thank you for providing the data! But still I think we
+> should be more informative about the performance difference between
+> dynamic upgrading vs. unconditionally box-allocated PollCondVar, because
+> I would assume when a `UpgradePollCondVar` is created, other allocations
+> also happen as well (e.g. when creating a Arc<binder::Thread>), so the
+> extra cost of the allocation may be unnoticeable.
 
-> 
-> 
-> Cheers,
-> Bernd
-> 
+Perf-wise it doesn't matter, but I'm concerned about memory usage.
+
+Alice
 
