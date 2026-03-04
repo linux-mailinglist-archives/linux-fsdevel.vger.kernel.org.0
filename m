@@ -1,277 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-79435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 2KUuEiqIqGn2vQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 20:29:46 +0100
+	id sFeACbuNqGmbvgAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 20:53:31 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FE4A20713B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 20:29:45 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB5720739A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 20:53:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7D4893022077
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2026 19:29:42 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id BAB243032DD6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2026 19:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0839F3DBD58;
-	Wed,  4 Mar 2026 19:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36ED390223;
+	Wed,  4 Mar 2026 19:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="bFw8JDzW";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BTHKAi/x"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pX3IkKnI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBCF1F4176
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Mar 2026 19:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32359288514;
+	Wed,  4 Mar 2026 19:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772652581; cv=none; b=AvWL0vzf/Q1laO2iIyrbE+E+NQ8iBtSIr3eV2qWF4oQzFHhiwsRjdSThdNTj7Jo8t10yN+uQR+fWrMCn/nEIjTQqpsS9n035oZVZNM7PrqtDwJU9h8zWSOn+zKwM3lFCQ4STV6a6DJcGyagfkFxix9GfNkTLIhv3NQjwm/9Oo6E=
+	t=1772653904; cv=none; b=PqDTXQT3Rp5gSV1tE5Sbd2eitTIIhINlDYUEVofziy51WjoZ36ikgRLgGRICWyQZPdSdFUWw15a0nXIFQMC9qKIHPrfmepb0baU0SSCyA6QiAH6fwVw2iY+l4v/GdaSzBfyDmjo8ORh6HUryYo45r2Ic2HUC4NDL9PrO0uNMtog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772652581; c=relaxed/simple;
-	bh=0UbN5//c0ndO0peM4b9JHEeKeAjOu7q+eRgZk3UU8JU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NFhHrrsI8eImm91hGFRkv9z100pkQq7vTIph95deKo17oip2M7+CHV1AkpaYs1kLn6MQXMzUMkmUUl7jtOr531Y+nRB7qyDOWwRdl5hlYbf9d5e8bGMBA9DOzF7vPf79bd7BmrX714WIJj/ZHdJ8eKXyFwS94DevBSuTQLhM6Q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=bFw8JDzW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BTHKAi/x; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 9887BEC059C;
-	Wed,  4 Mar 2026 14:29:38 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Wed, 04 Mar 2026 14:29:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1772652578;
-	 x=1772738978; bh=+GBQQzWh02tlHuN7Vfy3PN3YxQIpBG+ABNf2SRGSjtA=; b=
-	bFw8JDzWUdmAzalXpo04INO37DPN8As7vaitEiMVwkgRno2IvuThAjnDmQHt6P55
-	/qyXVndR1cwBH0kNyWv5k7EzKiCsSDwLmXzesWbrUBY/dbZe1Efa+joiuScboAlX
-	p9ZJPiQP47/b6VFOZHHu2gQV9IPBicwqLfa70kww1L5ECTpugQXrTBmLVDeliHjt
-	MKiBHav4U0WuZt1GuJajf5EfG5dpdXEEAMr23KeRLC8BaKCEq2xV+I5SpkoDNADG
-	kmaXDPR6/PXqz7Wf3VdDf7BktABJpnpILUpJXDXgBpTXBEuUVwxPPf8sEGKHzoab
-	BL4jlASiJKydsF4dnnIe2A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1772652578; x=
-	1772738978; bh=+GBQQzWh02tlHuN7Vfy3PN3YxQIpBG+ABNf2SRGSjtA=; b=B
-	THKAi/xTE6rFquUkMN/ytz4owrcyo1APd6Xua4fco7Aqlt85U/w7Xm+GN+ZTBmdu
-	erVaDRR1lXQRyqEGlkUFedt8CBUtKORll7hB5+VXQc+sA6S3ivfllTf1/vrB8zsp
-	hICSaYgpQULGdjTxaZMKYgV3MhoUhM5uRQMJVHh3JiRVpptYxPHV2VnsZO2CQ/J+
-	kP0RKB3wIdsfYDRhEzjAhoIkvZKLadv45/5+sXVdKFtz4QIomz9+Yi+MzgUqVioE
-	ROSYn00jZrnnPFDkm2ZWJhOINvFXudMH+S/tSUobHfUXq7URgbcOQKCPNjBaJ7bi
-	DwlpyV6djxH5coTkMy93g==
-X-ME-Sender: <xms:IoioaeLYBUtq7uhpdiuVtAZNtQPI6QgQu3Jy7fG9v3dv3W6IeTM0JQ>
-    <xme:IoioaZ2lIRZThJCeJU_8sXG34Ll06wPjXRuWsUj4_ub9uBFC19iPtcWhPracocMeX
-    r_mnW123BbAhNB5u7MUgMXBGxxZQk0qr7NjMqvld0toHol4hDaj>
-X-ME-Received: <xmr:IoioaYjsncKcRXblFeHRbC_sbJtXgk17vOrCwj9ydK63cFUXCA7rf4RL83IcVzEnXBUzhmW-pI9gY_0kDEylQbSsxnw73cYzoFzYNhM8oYc-ndbM_A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvieegfeegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghrnhgu
-    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
-    htthgvrhhnpeeugfevvdeggeeutdelgffgiefgffejheffkedtieduffehledvfeevgeej
-    hedtjeenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtgho
-    mhdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepug
-    hjfihonhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsshgthhhusggvrhhtsegu
-    ughnrdgtohhmpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtoh
-    hmpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoh
-    epnhgvrghlsehgohhmphgrrdguvghv
-X-ME-Proxy: <xmx:IoioaaVVDaHUwCJ_0ztmZrv6ymbJyn9GEcCS-r0YiOdmpxIJW4ck0w>
-    <xmx:IoioaXWEMf4K0kk2P3eEsk1zPtoWNPMirwfDcJQLk8dembnP6q8SEA>
-    <xmx:IoioaaiiItlae2pHjpn-xNi__DBuxLXwxK-fxGgcdgjPCoH-AHDiZw>
-    <xmx:IoioaSaoykJB1khvVC0RRDsVYkVp1EdVDHbxWndR10Gv9YoHhtGkMA>
-    <xmx:IoioaZh1cd2kV7Qtanl0PY4RtjbMkKdX56LGkb7HdZ4XRsG-stCw5dJ1>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 4 Mar 2026 14:29:37 -0500 (EST)
-Message-ID: <ee584989-d81d-4dea-b953-6acf44d76d13@bsbernd.com>
-Date: Wed, 4 Mar 2026 20:29:35 +0100
+	s=arc-20240116; t=1772653904; c=relaxed/simple;
+	bh=rFmGkgUVzMPgco4e0S5JV2te/mCdrmp4u2/QNzOWFLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pc1V5ySnqmXa74FNfEVFj2NZVyDSipvyJvYkC756wMhwFSlfhQ7zrVCqC1I5aLzMfuu9LlXOrHMx0Q1/CXs9WeUAQ1KUhOzmrDpbN1zQrN1DdaT2ARywPGsqxTmA0J5NhduUjKsVDGzuSkW+7dMxfv+JmLaKMxZ5tAqh4PTDlrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pX3IkKnI; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=08NDQAJVBDz3lIIuOFusP0LgtmohkQzXTukv2/ZPiuU=; b=pX3IkKnIC6cLxQzOMp1keovyop
+	TS2FsJXeNEXcXPyHii0WzqT16tB7+HKWNEYn4gfnSiwdF56V6oURJkrFM4H1S5cw0aP1xs7Gzn/Hh
+	a4cIHjyoh+MT6RaBjHJsLGoh27Nh0+VUzrrzx5A0gwtaawFXofRqt5t/zRwpYmNCWAX9grnCmg2Rd
+	yqKXD6BNK7nHMWAq6F8xna0er6PulXNsXMl3odNU49mICLB55Z06AuLFO+c7wY8gdE+uiMGCGWRSz
+	zf1GVo8kheJkJPGtaKJ8/Fi7j4+20XbJtolnazCwkngNRLLRaRSJxsTCzEBbxC+tJDID+V05ajLBi
+	DbLr8P+Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vxsFu-0000000Doa8-1hV2;
+	Wed, 04 Mar 2026 19:51:38 +0000
+Date: Wed, 4 Mar 2026 19:51:38 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
+	Christoph Hellwig <hch@infradead.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC 1/1] rwsem: Shrink rwsem by one pointer
+Message-ID: <aaiNSqx5by3J5Cij@casper.infradead.org>
+References: <20260217190835.1151964-1-willy@infradead.org>
+ <20260217190835.1151964-2-willy@infradead.org>
+ <CAHk-=wjkyw-sap1dNkW7v8at8MvF3j5wshC1Gw3XEpHBbBw6BQ@mail.gmail.com>
+ <aZYoXsUtbzs-nRZH@casper.infradead.org>
+ <CAHk-=wiXCcnp5VuAZO7D7Gs75p+O4k-__ep+-2zapQ4Bqkd=rQ@mail.gmail.com>
+ <CAHk-=wggNowW32UcNWHQ4Ak5J-0mZT_EO+PAEw2DLe7tr8-Dtg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] libfuse: run fuse servers as a contained service
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: bschubert@ddn.com, joannelkoong@gmail.com, linux-fsdevel@vger.kernel.org,
- miklos@szeredi.hu, neal@gompa.dev
-References: <177258294351.1167732.4543535509077707738.stg-ugh@frogsfrogsfrogs>
- <0d3d5dfc-6237-4d6d-abeb-e7adddecf2d9@bsbernd.com>
- <20260304170652.GP13829@frogsfrogsfrogs>
- <20260304180602.GQ13829@frogsfrogsfrogs>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <20260304180602.GQ13829@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 9FE4A20713B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wggNowW32UcNWHQ4Ak5J-0mZT_EO+PAEw2DLe7tr8-Dtg@mail.gmail.com>
+X-Rspamd-Queue-Id: 9CB5720739A
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[bsbernd.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[bsbernd.com:s=fm2,messagingengine.com:s=fm1];
+	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
+	R_DKIM_ALLOW(-0.20)[infradead.org:s=casper.20170209];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_CC(0.00)[ddn.com,gmail.com,vger.kernel.org,szeredi.hu,gompa.dev];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-79435-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[bsbernd.com:+,messagingengine.com:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[infradead.org,redhat.com,kernel.org,gmail.com,vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-79436-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[bernd@bsbernd.com,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCVD_COUNT_THREE(0.00)[4];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[infradead.org:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[willy@infradead.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,messagingengine.com:dkim,bsbernd.com:dkim,bsbernd.com:mid]
+	RCPT_COUNT_SEVEN(0.00)[9];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,infradead.org:dkim,linux-foundation.org:email]
 X-Rspamd-Action: no action
 
-
-
-On 3/4/26 19:06, Darrick J. Wong wrote:
-> On Wed, Mar 04, 2026 at 09:06:52AM -0800, Darrick J. Wong wrote:
->> On Wed, Mar 04, 2026 at 02:36:03PM +0100, Bernd Schubert wrote:
->>>
->>>
->>> On 3/4/26 01:11, Darrick J. Wong wrote:
->>>> Hi Bernd,
->>>>
->>>> Please pull this branch with changes for libfuse.
->>>>
->>>> As usual, I did a test-merge with the main upstream branch as of a few
->>>> minutes ago, and didn't see any conflicts.  Please let me know if you
->>>> encounter any problems.
->>>
->>> Hi Darrick,
->>>
->>> quite some problems actually ;)
->>>
->>> https://github.com/libfuse/libfuse/pull/1444
->>>
->>> Basically everything fails.  Build test with
->>
->> Doh :(
->>
->>> ../../../home/runner/work/libfuse/libfuse/lib/fuse_service.c:24:10:
->>> fatal error: 'systemd/sd-daemon.h' file not found
->>>    24 | #include <systemd/sd-daemon.h>
->>>
->>>
->>> Two issues here:
->>> a) meson is not testing for sd-daemon.h?
->>
->> Hrm.  meson.build *should* have this clause to detect systemd:
->>
->> # Check for systemd support
->> systemd_system_unit_dir = get_option('systemdsystemunitdir')
->> if systemd_system_unit_dir == ''
->>   systemd = dependency('systemd', required: false)
->>   if systemd.found()
->>      systemd_system_unit_dir = systemd.get_variable(pkgconfig: 'systemd_system_unit_dir')
->>   endif
->> endif
->>
->> if systemd_system_unit_dir == ''
->>   warning('could not determine systemdsystemunitdir, systemd stuff will not be installed')
->> else
->>   private_cfg.set_quoted('SYSTEMD_SYSTEM_UNIT_DIR', systemd_system_unit_dir)
->>   private_cfg.set('HAVE_SYSTEMD', true)
->> endif
->>
->> # Check for libc SCM_RIGHTS support (aka Linux)
->> code = '''
->> #include <sys/socket.h>
->> int main(void) {
->>     int moo = SCM_RIGHTS;
->>     return moo;
->> }'''
->> if cc.links(code, name: 'libc SCM_RIGHTS support')
->>   private_cfg.set('HAVE_SCM_RIGHTS', true)
->> endif
->>
->> if private_cfg.get('HAVE_SCM_RIGHTS', false) and private_cfg.get('HAVE_SYSTEMD', false)
->>   private_cfg.set('HAVE_SERVICEMOUNT', true)
->> endif
->>
->>
->> But apparently it built fuse_service.c anyway?  I'll have to look deeper
->> into what github ci did, since the pkgconfig fil... oh crikey.
->>
->> systemd-dev contains the systemd.pc file, so the systemd.get_variable
->> call succeeds and returns a path, thereby enabling the build.  However,
->> the header files are in libsystemd-dev, and neither package depends on
->> the other.
->>
->> So I clearly need to test for the presence of sd-daemon.h in that first
->> clause that determines if HAVE_SYSTEMD gets set.
-
-Or link test for systemd
-
->>
->>> a.1) If not available needs to disable that service? Because I don't
->>> think BSD has support for systemd.
->>
->> <nod>
->>
->>> b) .github/workflow/*.yml files need to be adjusted to add in the new
->>> dependency.
->>
->> Oh, ok.  The 'apt install' lines should probably add in systemd-dev.
->>
->>> Please also have a look at checkpatch (which is a plain linux copy) and
->>> the spelling test failures.
->>
->> Ok, will do.
+On Wed, Feb 18, 2026 at 02:52:29PM -0800, Linus Torvalds wrote:
+> On Wed, 18 Feb 2026 at 14:45, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > Anyway, this is all from just looking at the patch, so maybe I missed
+> > something, but it does look very wrong.
 > 
-> ...and the immediate problem that I run into is that all the logs are
-> hidden behind a login wall so I cannot read them. :(
+> Bah. And immediately after sending, I went "maybe I should look at the
+> code" more closely.
 > 
-> (It leaked enough about the spelling errors that I can fix those, and
-> I can run checkpatch locally, but I don't know what else went wrong with
-> the bsd build or the abi check.)
-> 
+> I think my suggestion to just remove the check was right, but the
+> return value of rwsem_del_waiter() needs to be fixed to be the "I used
+> to be the first waiter, but there are other waiters and I updated the
+> first waiter pointer".
+
+I tried to make this work, but it's a bit ugly.  rwsem_del_waiter()
+needs to know whether there are remaining waiters, and
+rwsem_del_wake_waiter() needs to know whether we deleted the first
+waiter _and_ there are remaining ones.  So we end up returning a
+tristate from __rwsem_del_waiter() and I find it less clear.
+
+ static inline
+-bool __rwsem_del_waiter(struct rw_semaphore *sem, struct rwsem_waiter *waiter)
++int __rwsem_del_waiter(struct rw_semaphore *sem, struct rwsem_waiter *waiter)
+ {
++       int ret = 1;
++
+        if (list_empty(&waiter->list)) {
+                sem->first_waiter = NULL;
+-               return true;
++               return 0;
+        }
+
+-       if (sem->first_waiter == waiter)
++       if (sem->first_waiter == waiter) {
+                sem->first_waiter = list_first_entry(&waiter->list,
+                                struct rwsem_waiter, list);
++               ret = 2;
++       }
+        list_del(&waiter->list);
+
+-       return false;
++       return ret;
+ }
+[...]
+-static inline bool
+-rwsem_del_waiter(struct rw_semaphore *sem, struct rwsem_waiter *waiter)
++static inline
++bool rwsem_del_waiter(struct rw_semaphore *sem, struct rwsem_waiter *waiter)
+ {
++       int del_case;
++
+        lockdep_assert_held(&sem->wait_lock);
+-       if (__rwsem_del_waiter(sem, waiter))
+-               return true;
+-       atomic_long_andnot(RWSEM_FLAG_HANDOFF | RWSEM_FLAG_WAITERS, &sem->count);
+-       return false;
++       del_case = __rwsem_del_waiter(sem, waiter);
++       if (del_case > 0)
++               atomic_long_andnot(RWSEM_FLAG_HANDOFF | RWSEM_FLAG_WAITERS,
++                               &sem->count);
++       return del_case == 2;
+ }
+[...]
+ {
+-       bool first = sem->first_waiter == waiter;
+-
+        wake_q_init(wake_q);
+
+        /*
+-        * If the wait_list isn't empty and the waiter to be deleted is
+-        * the first waiter, we wake up the remaining waiters as they may
+-        * be eligible to acquire or spin on the lock.
++        * If the deleted waiter was the first one and there are other
++        * waiters, we wake them up as they may be eligible to acquire
++        * or spin on the lock.
+         */
+-       if (rwsem_del_waiter(sem, waiter) && first)
++       if (rwsem_del_waiter(sem, waiter))
+                rwsem_mark_wake(sem, RWSEM_WAKE_ANY, wake_q);
 
 
-BSD errors are actually a bit tricky, because it runs them in a VM, one has
-to look at "raw logs". I think ABI checks are failling as the normal build
-test because of the meson issue.
-BSD is this
-
-2026-03-04T13:17:20.5979965Z [14/82] cc -Ilib/libfuse3.so.3.19.0.p -Ilib -I../lib -Iinclude -I../include -I. -I.. -fdiagnostics-color=always -Wall -Winvalid-pch -Wextra -std=gnu11 -O2 -g -D_REENTRANT -DHAVE_LIBFUSE_PRIVATE_CONFIG_H -Wno-sign-compare -D_FILE_OFFSET_BITS=64 -Wstrict-prototypes -Wmissing-declarations -Wwrite-strings -fno-strict-aliasing -fPIC -pthread -DFUSE_USE_VERSION=317 '-DFUSERMOUNT_DIR="/usr/local/bin"' -MD -MQ lib/libfuse3.so.3.19.0.p/fuse_service_stub.c.o -MF lib/libfuse3.so.3.19.0.p/fuse_service_stub.c.o.d -o lib/libfuse3.so.3.19.0.p/fuse_service_stub.c.o -c ../lib/fuse_service_stub.c
-2026-03-04T13:17:20.6004021Z FAILED: [code=1] lib/libfuse3.so.3.19.0.p/fuse_service_stub.c.o 
-2026-03-04T13:17:20.6008119Z cc -Ilib/libfuse3.so.3.19.0.p -Ilib -I../lib -Iinclude -I../include -I. -I.. -fdiagnostics-color=always -Wall -Winvalid-pch -Wextra -std=gnu11 -O2 -g -D_REENTRANT -DHAVE_LIBFUSE_PRIVATE_CONFIG_H -Wno-sign-compare -D_FILE_OFFSET_BITS=64 -Wstrict-prototypes -Wmissing-declarations -Wwrite-strings -fno-strict-aliasing -fPIC -pthread -DFUSE_USE_VERSION=317 '-DFUSERMOUNT_DIR="/usr/local/bin"' -MD -MQ lib/libfuse3.so.3.19.0.p/fuse_service_stub.c.o -MF lib/libfuse3.so.3.19.0.p/fuse_service_stub.c.o.d -o lib/libfuse3.so.3.19.0.p/fuse_service_stub.c.o -c ../lib/fuse_service_stub.c
-2026-03-04T13:17:20.6012011Z In file included from ../lib/fuse_service_stub.c:21:
-2026-03-04T13:17:20.6013206Z ../include/fuse_service_priv.h:12:2: error: unknown type name '__be32'
-2026-03-04T13:17:20.6013899Z    12 |         __be32 pos;
-2026-03-04T13:17:20.6014268Z       |         ^
-2026-03-04T13:17:20.6014789Z ../include/fuse_service_priv.h:13:2: error: unknown type name '__be32'
-2026-03-04T13:17:20.6015421Z    13 |         __be32 len;
-2026-03-04T13:17:20.6015779Z       |         ^
-2026-03-04T13:17:20.6016510Z ../include/fuse_service_priv.h:17:2: error: unknown type name '__be32'
-2026-03-04T13:17:20.6017130Z    17 |         __be32 magic;
-2026-03-04T13:17:20.6017506Z       |         ^
-2026-03-04T13:17:20.6018004Z ../include/fuse_service_priv.h:18:2: error: unknown type name '__be32'
-2026-03-04T13:17:20.6018615Z    18 |         __be32 argc;
-2026-03-04T13:17:20.6018988Z       |         ^
-
-
-Cheers,
-Bernd
+Even if we use a nice enum instead of 0/1/2 for the return value, I
+don't think this is an improvement.  I played around with a couple of
+other ways to refactor this and didn't come up with anything pretty.
 
