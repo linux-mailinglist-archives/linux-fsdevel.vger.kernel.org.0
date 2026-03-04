@@ -1,53 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-79412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iJspJlhUqGlutQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 16:48:40 +0100
+	id KP7jHcVTqGnUtAAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 16:46:13 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50E5E2033E5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 16:48:40 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C74D20325C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 16:46:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 475C2312623D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2026 15:33:39 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id C386331AA9C3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2026 15:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8806334B1B4;
-	Wed,  4 Mar 2026 15:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0D0347FE2;
+	Wed,  4 Mar 2026 15:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tjZnrAfT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bChptJ5T"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA816344D9D;
-	Wed,  4 Mar 2026 15:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6D834A3AB;
+	Wed,  4 Mar 2026 15:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772638393; cv=none; b=cNg1oaf73bGoQ0OBbTxsRsyDE4ypHU9X7bNMSiHJDYcY0hzeuWp4/5d8/tY8wlt30MmM/tVb8mkTX7hiw/aJaEZRUAs08zWfvJWg2ehpWpzZEyk4BmZkM5FEh1MccZCA4LSZ4EM7Cl/4oFMSBNF1bz+CywjhPTZ4nLDbRI6tJ9Y=
+	t=1772638407; cv=none; b=Rs43wCiOFPziWvweaREvdlIFmaStKYlBoWTSPCHfgks8t2qjMdazj9CRTuRDEmnGShgKBlKr/ZmgKRnyMIXXGECjifymRUZbr8w9wcg9zfehUDaqRhd6KwadqJDkCt9A3Z6HOl9aTbLtEsuZLXYCQbR5Y8v4sei3eO2wPOBAo8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772638393; c=relaxed/simple;
-	bh=EvIxci8XOiLl4n/2GeBIsKqplwU5bONQrJ/+crL2wy0=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tKE1be0Vnyj7u17Ccw16K5dGKnkXPcYtkLYu/1rLyl+rA1YYMz0XtLLNzGHFuKjGvfIug+8/pIAyW27qOKt/ZCN+NodcRCO6WVTPNaiBEo4XoiaqbGOIFkugK74edkr+VPvcqhDH0bvb11ukG98771uFIJxtC+81nQj0j6NQwfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tjZnrAfT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED6E0C2BC9E;
-	Wed,  4 Mar 2026 15:32:57 +0000 (UTC)
+	s=arc-20240116; t=1772638407; c=relaxed/simple;
+	bh=5cP83dKvqPjVsj1XPnIyUXMyl29bPUyTZbFPkJY+hYA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=aa11fBZKEZZG/Ubh++y4U/JzBgyELAcLI30XdecyqytPlVhVwebpj3xyt9v2QMAW/4RxOHt8yP1B6PRiX4zm/x0bMYMFQF/dwRnCgtVaq8Ct/8jOwUwaqQg702sKvACr5JbdLGCpxhW8f7kBqayQAlnX6bN4iU4L+uaqjBo/g6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bChptJ5T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C009AC19423;
+	Wed,  4 Mar 2026 15:33:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772638392;
-	bh=EvIxci8XOiLl4n/2GeBIsKqplwU5bONQrJ/+crL2wy0=;
-	h=From:Subject:Date:To:Cc:From;
-	b=tjZnrAfTQY1egcaOHf43QElBbuHttSDoazI+LhukmrntOJQQAiiebEjQy/XlLFIY6
-	 YZBRowumS+CbfL8vCCZJ5ZNJ6/AuhMs+JKxLQn/rsiE38K0mrezhI9zm13iQXv/+v0
-	 8b4CaZIxgaqa06ai0MIFmXbaiCEa7u+DIQgSNfl/GZVw4IjFUwa0m1sAT+eBfYGNH+
-	 /oAPpYF8Pr7sbmfd5yhxB31Nk/jRCBtZQSpT5OlmT7keh30sXYijYmK3N3sLlC34NN
-	 e5vk9jzJkoQkaXORDozAzv3TLVD/vhk71bcohAk5Rj1zHBH/VsCs7Q4VVm9VmXnzkn
-	 19P4RrX9m9yDA==
+	s=k20201202; t=1772638407;
+	bh=5cP83dKvqPjVsj1XPnIyUXMyl29bPUyTZbFPkJY+hYA=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=bChptJ5TJzLEN1XfmQ7DZM46vuOu+oMXoZpPjhyPc3DOQsK6Anrzo1DvrJfxKa8g6
+	 T8ZxpFwq8TPMgaGqmZlTDxg/mGyAeW2gNEhv9raQTJk1So+85RdbTmP3srwaIrUgkY
+	 7nnE9eMoKmvoGwFZALIpm1UD2SBIyN+ViJkLRYPH1XCWp9ScI+8wuyTGHaFjriYqSz
+	 dPcawWLJtNXmxcgB5MLz+VLRToUxsaIv4mTRg4y+yqjxWt/9PxUytmusigPJ/6hpY8
+	 ++x+JjdMWX9ujFyI58Gwj+ifYm2UXv0ieMtF9F0YEKVJaZy8JmvrwJjGl8RfXA8rMi
+	 GYeukqw9VVF7g==
 From: Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH v3 00/12] vfs: change inode->i_ino from unsigned long to
- u64
-Date: Wed, 04 Mar 2026 10:32:30 -0500
-Message-Id: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
+Date: Wed, 04 Mar 2026 10:32:31 -0500
+Subject: [PATCH v3 01/12] vfs: widen inode hash/lookup functions to u64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,11 +55,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/1WMwQ6CMBAFf4X0bE3Zloqe/A/joZQFNpqWtNpoC
- P9uITHocV7ezMQiBsLITsXEAiaK5F0GuSuYHYzrkVObmYEALQAUJ3KeP7XijVJGmgNUSlqW72P
- Ajl5r6nLNPFB8+PBey6lc1m9Eb5FUcsGttdh1Uuu2OZ5vGBze9z70bKkk2Ewp4MeEbGIl67oWo
- jUo/sx5nj+ixfmA2wAAAA==
-X-Change-ID: 20260224-iino-u64-b44a3a72543c
+Message-Id: <20260304-iino-u64-v3-1-2257ad83d372@kernel.org>
+References: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
+In-Reply-To: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
  Steven Rostedt <rostedt@goodmis.org>, 
@@ -172,34 +169,34 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-sctp@vger.kernel.org, bpf@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=15620; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=EvIxci8XOiLl4n/2GeBIsKqplwU5bONQrJ/+crL2wy0=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpqFCmtSXlBjo6dQnzEqcLO8yRk/GwocfV+Ys43
- 1r2nHJWZLKJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaahQpgAKCRAADmhBGVaC
- FZUuD/9cUVHXDTOWJ8EHyosX0JVcAaa8EjHKBSKXi5RdtbvclsnQzxZFo3IHsJRUr5rS20/LlhZ
- Q7bvvGD3ObSLMUnGJ5qEsuw6qLLQl+AHcZHkBNV82iTQ0HbycsLjgvug8TFq977jlXJnAdPObCG
- lInf86Xw+IOQIHirr5f4X6M7dXlLOO2Sr7Z0aR+teb2fo6yeAO1PmY/3RSRNWUYP2OJHUwBbcKc
- 2AUrx1vpCMEhOySlHJikzpiNMpdr08wVChoNCQCaXXnk6LUhVVYq77SBKfeRyZAEWlp5As2TiOd
- zvjttN0LJ2Si7bJwcjlTZ08DjZxGiskZ6e56aWJqwoemPzH5xfZ7UQsIk5TThABLumTWSFb9Ytp
- du3oW+3igfz8Mvl0naLgzAt68c3XULfxcmstOXn+iXTvjX0tc0CI4UVCQPpotbo1VIbTSouzh/u
- OLKWsFTrGH3f5MksUXp7bHWVDjaxi3Y/7Kv7oLKpAmd2BzTFGcXjPGFZSx7Kp7uDEWj6h2t4EEN
- bBZvroEHtbd9dUC4XmdWp3iuoRrniH7Tbbx4lD5BHONfGwGsvjttpdJ7DJCm6PgnZZQH22AvID4
- /iG1k2TsVrnLswQvrKkb+SI2T36SGrQsRxcxKEWGtP3ttmRB+Ofhxy/K22a457401aBQq9wv5p/
- thBn08iirCMMzCg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10591; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=5cP83dKvqPjVsj1XPnIyUXMyl29bPUyTZbFPkJY+hYA=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpqFCmmQpujh448XNFM6BLqUSXhX6OopSNb2vZQ
+ YuT/+5KSTiJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaahQpgAKCRAADmhBGVaC
+ FabnD/4/xiP6rMz15b4n1SAp1B3YU/tfdq/NzXrOqhtxlHMkMl+XM8wIA4aIk9JOYAg896eD/Fy
+ +WEN1lOcfd2TZD7vLlzGp2ml8bg/c47mXjrailQCw57Rtg+1iLHTCzPvCrRLEv7tMnVmZGSNUQt
+ gXXuX4g7ABl1s+Rz5EDehLR75HThVUn/RVkHycVFw2OeuG7lNkghSfnVhGWrK22o4/30C3md+eh
+ r8Y5hmLT7kDTthNo9t1BidFUHy4va8kKZReNiFeD984T2JT8aJdqDwczA+VKzt38SEP0In9d6/h
+ ESHbggCh1x9Q5vNaYxlswea13/mgjpLWFPsf3ye1ys0w83/tE9A10G8HRgGEJyiT8cqfOnmz0cW
+ DcY7aHOuldgAAT2nwIMKDyUvYyp7RIIY1r0atfMubBaT0r7pdaRUghPP0hddnqvHsAnpcI/gTOY
+ DC4kZGycm+cqQHmeftuedmmTY3ph2H8N3nwdiPuCqMxTGDQEZ7RXlJ7De8YF0LWELZMfQV8ErYd
+ YzFowiaXrWgeMMEYTLXpmh7XV3mOi0HZF58L8r8uighvnGQPtPho03bVLJEkk0zMdCmT17g/M6a
+ m/BIxsDn02CGLaAh5pC+VoSVhoN3OdF6N8p5QZ/+CeVE5Q7L7NN6Y+tj/6KT70Do8/drp3ASace
+ 2sxFmo+H7Ut8k6g==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Rspamd-Queue-Id: 50E5E2033E5
+X-Rspamd-Queue-Id: 0C74D20325C
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79412-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79413-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,goodmis.org,efficios.com,intel.com,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,infradead.org,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,yaina.de,holtmann.org,hartkopp.net,pengutronix.de,secunet.com,gondor.apana.org.au,fomichev.me,iogearbox.net];
@@ -207,7 +204,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	TO_DN_SOME(0.00)[];
 	RCPT_COUNT_GT_50(0.00)[171];
 	PRECEDENCE_BULK(0.00)[];
@@ -217,313 +214,254 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-This version squashes all of the format-string changes and the i_ino
-type change into the same patch. This results in a giant 600+ line patch
-at the end of the series, but it does remain bisectable.  Because the
-patchset was reorganized (again) some of the R-b's and A-b's have been
-dropped.
+Change the inode hash/lookup VFS API functions to accept u64 parameters
+instead of unsigned long for inode numbers and hash values. This is
+preparation for widening i_ino itself to u64, which will allow
+filesystems to store full 64-bit inode numbers on 32-bit architectures.
 
-The entire pile is in the "iino-u64" branch of my tree, if anyone is
-interested in testing this.
+Since unsigned long implicitly widens to u64 on all architectures, this
+change is backward-compatible with all existing callers.
 
-    https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git/
-
-Original cover letter follows:
-
-----------------------8<-----------------------
-
-Christian said [1] to "just do it" when I proposed this, so here we are!
-
-For historical reasons, the inode->i_ino field is an unsigned long,
-which means that it's 32 bits on 32 bit architectures. This has caused a
-number of filesystems to implement hacks to hash a 64-bit identifier
-into a 32-bit field, and deprives us of a universal identifier field for
-an inode.
-
-This patchset changes the inode->i_ino field from an unsigned long to a
-u64. This shouldn't make any material difference on 64-bit hosts, but
-32-bit hosts will see struct inode grow by at least 4 bytes. This could
-have effects on slabcache sizes and field alignment.
-
-The bulk of the changes are to format strings and tracepoints, since the
-kernel itself doesn't care that much about the i_ino field. The first
-patch changes some vfs function arguments, so check that one out
-carefully.
-
-With this change, we may be able to shrink some inode structures. For
-instance, struct nfs_inode has a fileid field that holds the 64-bit
-inode number. With this set of changes, that field could be eliminated.
-I'd rather leave that sort of cleanups for later just to keep this
-simple.
-
-Much of this set was generated by LLM, but I attributed it to myself
-since I consider this to be in the "menial tasks" category of LLM usage.
-
-[1]: https://lore.kernel.org/linux-fsdevel/20260219-portrait-winkt-959070cee42f@brauner/
-
+Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
-Changes in v3:
-- reorganize set for fewer patches, drop kino_t typedef and PRIino macro
-- reorganize more TP_struct fields for better packing
-- clean up ext4 goal calculation in ext4_ext_migrate()
-- make audit_inode_hash() take a 64-bit argument
-- Link to v2: https://lore.kernel.org/r/20260302-iino-u64-v2-0-e5388800dae0@kernel.org
+ fs/f2fs/node.c     |  2 +-
+ fs/inode.c         | 36 ++++++++++++++++++------------------
+ include/linux/fs.h | 26 +++++++++++++-------------
+ 3 files changed, 32 insertions(+), 32 deletions(-)
 
-Changes in v2:
-- Use a typedef and macro and do the change in two steps to make it cleanly bisectable
-- Fix check_for_busy_inodes() in fscrypt
-- Added patch to reorganize tracepoint structs for better packing
-- Added patch to change sock.sk_ino to u64
-- Added patch to clean up internal handling of inode numbers in audit subsystem
-- Drop some unnecessary casts
-- Link to v1: https://lore.kernel.org/r/20260226-iino-u64-v1-0-ccceff366db9@kernel.org
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 2030e943ab9b3d5e2deb20efe9a44cf5093a61fb..d8d02870cfd1c22cf1951201361519de534b6bf7 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1997,7 +1997,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ 	return ret;
+ }
+ 
+-static int f2fs_match_ino(struct inode *inode, unsigned long ino, void *data)
++static int f2fs_match_ino(struct inode *inode, u64 ino, void *data)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	bool clean;
+diff --git a/fs/inode.c b/fs/inode.c
+index cc12b68e021b2c97cc88a46ddc736334ecb8edfa..62df5dda05894297dde05e541e4c8550bd866fef 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -672,7 +672,7 @@ static inline void inode_sb_list_del(struct inode *inode)
+ 	}
+ }
+ 
+-static unsigned long hash(struct super_block *sb, unsigned long hashval)
++static unsigned long hash(struct super_block *sb, u64 hashval)
+ {
+ 	unsigned long tmp;
+ 
+@@ -685,12 +685,12 @@ static unsigned long hash(struct super_block *sb, unsigned long hashval)
+ /**
+  *	__insert_inode_hash - hash an inode
+  *	@inode: unhashed inode
+- *	@hashval: unsigned long value used to locate this object in the
++ *	@hashval: u64 value used to locate this object in the
+  *		inode_hashtable.
+  *
+  *	Add an inode to the inode hash for this superblock.
+  */
+-void __insert_inode_hash(struct inode *inode, unsigned long hashval)
++void __insert_inode_hash(struct inode *inode, u64 hashval)
+ {
+ 	struct hlist_head *b = inode_hashtable + hash(inode->i_sb, hashval);
+ 
+@@ -1087,7 +1087,7 @@ static struct inode *find_inode(struct super_block *sb,
+  * iget_locked for details.
+  */
+ static struct inode *find_inode_fast(struct super_block *sb,
+-				struct hlist_head *head, unsigned long ino,
++				struct hlist_head *head, u64 ino,
+ 				bool hash_locked, bool *isnew)
+ {
+ 	struct inode *inode = NULL;
+@@ -1301,7 +1301,7 @@ EXPORT_SYMBOL(unlock_two_nondirectories);
+  * Note that both @test and @set are called with the inode_hash_lock held, so
+  * they can't sleep.
+  */
+-struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
++struct inode *inode_insert5(struct inode *inode, u64 hashval,
+ 			    int (*test)(struct inode *, void *),
+ 			    int (*set)(struct inode *, void *), void *data)
+ {
+@@ -1378,7 +1378,7 @@ EXPORT_SYMBOL(inode_insert5);
+  * Note that both @test and @set are called with the inode_hash_lock held, so
+  * they can't sleep.
+  */
+-struct inode *iget5_locked(struct super_block *sb, unsigned long hashval,
++struct inode *iget5_locked(struct super_block *sb, u64 hashval,
+ 		int (*test)(struct inode *, void *),
+ 		int (*set)(struct inode *, void *), void *data)
+ {
+@@ -1408,7 +1408,7 @@ EXPORT_SYMBOL(iget5_locked);
+  * This is equivalent to iget5_locked, except the @test callback must
+  * tolerate the inode not being stable, including being mid-teardown.
+  */
+-struct inode *iget5_locked_rcu(struct super_block *sb, unsigned long hashval,
++struct inode *iget5_locked_rcu(struct super_block *sb, u64 hashval,
+ 		int (*test)(struct inode *, void *),
+ 		int (*set)(struct inode *, void *), void *data)
+ {
+@@ -1455,7 +1455,7 @@ EXPORT_SYMBOL_GPL(iget5_locked_rcu);
+  * hashed, and with the I_NEW flag set.  The file system gets to fill it in
+  * before unlocking it via unlock_new_inode().
+  */
+-struct inode *iget_locked(struct super_block *sb, unsigned long ino)
++struct inode *iget_locked(struct super_block *sb, u64 ino)
+ {
+ 	struct hlist_head *head = inode_hashtable + hash(sb, ino);
+ 	struct inode *inode;
+@@ -1527,7 +1527,7 @@ EXPORT_SYMBOL(iget_locked);
+  *
+  * Returns 1 if the inode number is unique, 0 if it is not.
+  */
+-static int test_inode_iunique(struct super_block *sb, unsigned long ino)
++static int test_inode_iunique(struct super_block *sb, u64 ino)
+ {
+ 	struct hlist_head *b = inode_hashtable + hash(sb, ino);
+ 	struct inode *inode;
+@@ -1616,7 +1616,7 @@ EXPORT_SYMBOL(igrab);
+  *
+  * Note2: @test is called with the inode_hash_lock held, so can't sleep.
+  */
+-struct inode *ilookup5_nowait(struct super_block *sb, unsigned long hashval,
++struct inode *ilookup5_nowait(struct super_block *sb, u64 hashval,
+ 		int (*test)(struct inode *, void *), void *data, bool *isnew)
+ {
+ 	struct hlist_head *head = inode_hashtable + hash(sb, hashval);
+@@ -1647,7 +1647,7 @@ EXPORT_SYMBOL(ilookup5_nowait);
+  *
+  * Note: @test is called with the inode_hash_lock held, so can't sleep.
+  */
+-struct inode *ilookup5(struct super_block *sb, unsigned long hashval,
++struct inode *ilookup5(struct super_block *sb, u64 hashval,
+ 		int (*test)(struct inode *, void *), void *data)
+ {
+ 	struct inode *inode;
+@@ -1677,7 +1677,7 @@ EXPORT_SYMBOL(ilookup5);
+  * Search for the inode @ino in the inode cache, and if the inode is in the
+  * cache, the inode is returned with an incremented reference count.
+  */
+-struct inode *ilookup(struct super_block *sb, unsigned long ino)
++struct inode *ilookup(struct super_block *sb, u64 ino)
+ {
+ 	struct hlist_head *head = inode_hashtable + hash(sb, ino);
+ 	struct inode *inode;
+@@ -1726,8 +1726,8 @@ EXPORT_SYMBOL(ilookup);
+  * very carefully implemented.
+  */
+ struct inode *find_inode_nowait(struct super_block *sb,
+-				unsigned long hashval,
+-				int (*match)(struct inode *, unsigned long,
++				u64 hashval,
++				int (*match)(struct inode *, u64,
+ 					     void *),
+ 				void *data)
+ {
+@@ -1773,7 +1773,7 @@ EXPORT_SYMBOL(find_inode_nowait);
+  *
+  * The caller must hold the RCU read lock.
+  */
+-struct inode *find_inode_rcu(struct super_block *sb, unsigned long hashval,
++struct inode *find_inode_rcu(struct super_block *sb, u64 hashval,
+ 			     int (*test)(struct inode *, void *), void *data)
+ {
+ 	struct hlist_head *head = inode_hashtable + hash(sb, hashval);
+@@ -1812,7 +1812,7 @@ EXPORT_SYMBOL(find_inode_rcu);
+  * The caller must hold the RCU read lock.
+  */
+ struct inode *find_inode_by_ino_rcu(struct super_block *sb,
+-				    unsigned long ino)
++				    u64 ino)
+ {
+ 	struct hlist_head *head = inode_hashtable + hash(sb, ino);
+ 	struct inode *inode;
+@@ -1833,7 +1833,7 @@ EXPORT_SYMBOL(find_inode_by_ino_rcu);
+ int insert_inode_locked(struct inode *inode)
+ {
+ 	struct super_block *sb = inode->i_sb;
+-	ino_t ino = inode->i_ino;
++	u64 ino = inode->i_ino;
+ 	struct hlist_head *head = inode_hashtable + hash(sb, ino);
+ 	bool isnew;
+ 
+@@ -1884,7 +1884,7 @@ int insert_inode_locked(struct inode *inode)
+ }
+ EXPORT_SYMBOL(insert_inode_locked);
+ 
+-int insert_inode_locked4(struct inode *inode, unsigned long hashval,
++int insert_inode_locked4(struct inode *inode, u64 hashval,
+ 		int (*test)(struct inode *, void *), void *data)
+ {
+ 	struct inode *old;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 8b3dd145b25ec12b00ac1df17a952d9116b88047..dfa1f475b1c480c503ab6f00e891aa9b051607fa 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2935,32 +2935,32 @@ static inline int inode_generic_drop(struct inode *inode)
+ extern void d_mark_dontcache(struct inode *inode);
+ 
+ extern struct inode *ilookup5_nowait(struct super_block *sb,
+-		unsigned long hashval, int (*test)(struct inode *, void *),
++		u64 hashval, int (*test)(struct inode *, void *),
+ 		void *data, bool *isnew);
+-extern struct inode *ilookup5(struct super_block *sb, unsigned long hashval,
++extern struct inode *ilookup5(struct super_block *sb, u64 hashval,
+ 		int (*test)(struct inode *, void *), void *data);
+-extern struct inode *ilookup(struct super_block *sb, unsigned long ino);
++extern struct inode *ilookup(struct super_block *sb, u64 ino);
+ 
+-extern struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
++extern struct inode *inode_insert5(struct inode *inode, u64 hashval,
+ 		int (*test)(struct inode *, void *),
+ 		int (*set)(struct inode *, void *),
+ 		void *data);
+-struct inode *iget5_locked(struct super_block *, unsigned long,
++struct inode *iget5_locked(struct super_block *, u64,
+ 			   int (*test)(struct inode *, void *),
+ 			   int (*set)(struct inode *, void *), void *);
+-struct inode *iget5_locked_rcu(struct super_block *, unsigned long,
++struct inode *iget5_locked_rcu(struct super_block *, u64,
+ 			       int (*test)(struct inode *, void *),
+ 			       int (*set)(struct inode *, void *), void *);
+-extern struct inode * iget_locked(struct super_block *, unsigned long);
++extern struct inode *iget_locked(struct super_block *, u64);
+ extern struct inode *find_inode_nowait(struct super_block *,
+-				       unsigned long,
++				       u64,
+ 				       int (*match)(struct inode *,
+-						    unsigned long, void *),
++						    u64, void *),
+ 				       void *data);
+-extern struct inode *find_inode_rcu(struct super_block *, unsigned long,
++extern struct inode *find_inode_rcu(struct super_block *, u64,
+ 				    int (*)(struct inode *, void *), void *);
+-extern struct inode *find_inode_by_ino_rcu(struct super_block *, unsigned long);
+-extern int insert_inode_locked4(struct inode *, unsigned long, int (*test)(struct inode *, void *), void *);
++extern struct inode *find_inode_by_ino_rcu(struct super_block *, u64);
++extern int insert_inode_locked4(struct inode *, u64, int (*test)(struct inode *, void *), void *);
+ extern int insert_inode_locked(struct inode *);
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
+ extern void lockdep_annotate_inode_mutex_key(struct inode *inode);
+@@ -3015,7 +3015,7 @@ int setattr_should_drop_sgid(struct mnt_idmap *idmap,
+  */
+ #define alloc_inode_sb(_sb, _cache, _gfp) kmem_cache_alloc_lru(_cache, &_sb->s_inode_lru, _gfp)
+ 
+-extern void __insert_inode_hash(struct inode *, unsigned long hashval);
++extern void __insert_inode_hash(struct inode *, u64 hashval);
+ static inline void insert_inode_hash(struct inode *inode)
+ {
+ 	__insert_inode_hash(inode, inode->i_ino);
 
----
-Jeff Layton (12):
-      vfs: widen inode hash/lookup functions to u64
-      audit: widen ino fields to u64
-      net: change sock.sk_ino and sock_i_ino() to u64
-      vfs: widen trace event i_ino fields to u64
-      cachefiles: widen trace event i_ino fields to u64
-      ext2: widen trace event i_ino fields to u64
-      hugetlbfs: widen trace event i_ino fields to u64
-      zonefs: widen trace event i_ino fields to u64
-      ext4: widen trace event i_ino fields to u64
-      f2fs: widen trace event i_ino fields to u64
-      nilfs2: widen trace event i_ino fields to u64
-      treewide: change inode->i_ino from unsigned long to u64
-
- drivers/dma-buf/dma-buf.c                  |   2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_object.c |   4 +-
- fs/9p/vfs_addr.c                           |   4 +-
- fs/9p/vfs_inode.c                          |   6 +-
- fs/9p/vfs_inode_dotl.c                     |   6 +-
- fs/affs/amigaffs.c                         |  10 +-
- fs/affs/bitmap.c                           |   2 +-
- fs/affs/dir.c                              |   2 +-
- fs/affs/file.c                             |  20 +-
- fs/affs/inode.c                            |  12 +-
- fs/affs/namei.c                            |  14 +-
- fs/affs/symlink.c                          |   2 +-
- fs/afs/dir.c                               |  10 +-
- fs/afs/dir_search.c                        |   2 +-
- fs/afs/dynroot.c                           |   2 +-
- fs/afs/inode.c                             |   2 +-
- fs/autofs/inode.c                          |   2 +-
- fs/befs/linuxvfs.c                         |  28 +-
- fs/bfs/dir.c                               |   4 +-
- fs/cachefiles/io.c                         |   6 +-
- fs/cachefiles/namei.c                      |  12 +-
- fs/cachefiles/xattr.c                      |   2 +-
- fs/ceph/crypto.c                           |   4 +-
- fs/coda/dir.c                              |   2 +-
- fs/coda/inode.c                            |   2 +-
- fs/cramfs/inode.c                          |   2 +-
- fs/crypto/crypto.c                         |   2 +-
- fs/crypto/hooks.c                          |   2 +-
- fs/crypto/keyring.c                        |   4 +-
- fs/crypto/keysetup.c                       |   2 +-
- fs/dcache.c                                |   4 +-
- fs/ecryptfs/crypto.c                       |   6 +-
- fs/ecryptfs/file.c                         |   2 +-
- fs/efs/inode.c                             |   6 +-
- fs/eventpoll.c                             |   2 +-
- fs/exportfs/expfs.c                        |   4 +-
- fs/ext2/dir.c                              |  10 +-
- fs/ext2/ialloc.c                           |   9 +-
- fs/ext2/inode.c                            |   2 +-
- fs/ext2/trace.h                            |   8 +-
- fs/ext2/xattr.c                            |  14 +-
- fs/ext4/dir.c                              |   2 +-
- fs/ext4/ext4.h                             |   4 +-
- fs/ext4/extents.c                          |   8 +-
- fs/ext4/extents_status.c                   |  28 +-
- fs/ext4/fast_commit.c                      |   8 +-
- fs/ext4/ialloc.c                           |  10 +-
- fs/ext4/indirect.c                         |   2 +-
- fs/ext4/inline.c                           |  14 +-
- fs/ext4/inode.c                            |  22 +-
- fs/ext4/ioctl.c                            |   4 +-
- fs/ext4/mballoc.c                          |   6 +-
- fs/ext4/migrate.c                          |   2 +-
- fs/ext4/move_extent.c                      |  20 +-
- fs/ext4/namei.c                            |  10 +-
- fs/ext4/orphan.c                           |  16 +-
- fs/ext4/page-io.c                          |  10 +-
- fs/ext4/super.c                            |  22 +-
- fs/ext4/xattr.c                            |  10 +-
- fs/f2fs/compress.c                         |   4 +-
- fs/f2fs/dir.c                              |   2 +-
- fs/f2fs/extent_cache.c                     |   8 +-
- fs/f2fs/f2fs.h                             |   6 +-
- fs/f2fs/file.c                             |  12 +-
- fs/f2fs/gc.c                               |   2 +-
- fs/f2fs/inline.c                           |   4 +-
- fs/f2fs/inode.c                            |  48 +--
- fs/f2fs/namei.c                            |   8 +-
- fs/f2fs/node.c                             |  12 +-
- fs/f2fs/recovery.c                         |  10 +-
- fs/f2fs/xattr.c                            |  10 +-
- fs/freevxfs/vxfs_bmap.c                    |   4 +-
- fs/fserror.c                               |   2 +-
- fs/hfs/catalog.c                           |   2 +-
- fs/hfs/extent.c                            |   4 +-
- fs/hfs/inode.c                             |   4 +-
- fs/hfsplus/attributes.c                    |  10 +-
- fs/hfsplus/catalog.c                       |   2 +-
- fs/hfsplus/dir.c                           |   6 +-
- fs/hfsplus/extents.c                       |   6 +-
- fs/hfsplus/inode.c                         |   8 +-
- fs/hfsplus/super.c                         |   6 +-
- fs/hfsplus/xattr.c                         |  10 +-
- fs/hpfs/dir.c                              |   4 +-
- fs/hpfs/dnode.c                            |   4 +-
- fs/hpfs/ea.c                               |   4 +-
- fs/hpfs/inode.c                            |   4 +-
- fs/inode.c                                 |  49 ++-
- fs/iomap/ioend.c                           |   2 +-
- fs/iomap/trace.h                           |   8 +-
- fs/isofs/compress.c                        |   2 +-
- fs/isofs/dir.c                             |   2 +-
- fs/isofs/inode.c                           |   6 +-
- fs/isofs/namei.c                           |   2 +-
- fs/jbd2/journal.c                          |   4 +-
- fs/jbd2/transaction.c                      |   2 +-
- fs/jffs2/dir.c                             |   4 +-
- fs/jffs2/file.c                            |   4 +-
- fs/jffs2/fs.c                              |  18 +-
- fs/jfs/inode.c                             |   2 +-
- fs/jfs/jfs_imap.c                          |   2 +-
- fs/jfs/jfs_metapage.c                      |   2 +-
- fs/lockd/svclock.c                         |   8 +-
- fs/lockd/svcsubs.c                         |   2 +-
- fs/locks.c                                 |   6 +-
- fs/minix/inode.c                           |  10 +-
- fs/nfs/dir.c                               |  20 +-
- fs/nfs/file.c                              |   8 +-
- fs/nfs/filelayout/filelayout.c             |   8 +-
- fs/nfs/flexfilelayout/flexfilelayout.c     |   8 +-
- fs/nfs/inode.c                             |   6 +-
- fs/nfs/nfs4proc.c                          |   4 +-
- fs/nfs/pnfs.c                              |  12 +-
- fs/nfsd/export.c                           |   2 +-
- fs/nfsd/nfs4state.c                        |   4 +-
- fs/nfsd/nfsfh.c                            |   4 +-
- fs/nfsd/vfs.c                              |   2 +-
- fs/nilfs2/alloc.c                          |  10 +-
- fs/nilfs2/bmap.c                           |   2 +-
- fs/nilfs2/btnode.c                         |   2 +-
- fs/nilfs2/btree.c                          |  12 +-
- fs/nilfs2/dir.c                            |  12 +-
- fs/nilfs2/direct.c                         |   4 +-
- fs/nilfs2/gcinode.c                        |   2 +-
- fs/nilfs2/inode.c                          |   8 +-
- fs/nilfs2/mdt.c                            |   2 +-
- fs/nilfs2/namei.c                          |   2 +-
- fs/nilfs2/segment.c                        |   2 +-
- fs/notify/fdinfo.c                         |   4 +-
- fs/nsfs.c                                  |   4 +-
- fs/ntfs3/super.c                           |   2 +-
- fs/ocfs2/alloc.c                           |   2 +-
- fs/ocfs2/aops.c                            |   4 +-
- fs/ocfs2/dir.c                             |   8 +-
- fs/ocfs2/dlmfs/dlmfs.c                     |  10 +-
- fs/ocfs2/extent_map.c                      |  12 +-
- fs/ocfs2/inode.c                           |   2 +-
- fs/ocfs2/quota_local.c                     |   2 +-
- fs/ocfs2/refcounttree.c                    |  10 +-
- fs/ocfs2/xattr.c                           |   4 +-
- fs/orangefs/inode.c                        |   2 +-
- fs/overlayfs/export.c                      |   2 +-
- fs/overlayfs/namei.c                       |   4 +-
- fs/overlayfs/util.c                        |   2 +-
- fs/pipe.c                                  |   2 +-
- fs/proc/fd.c                               |   2 +-
- fs/proc/task_mmu.c                         |   4 +-
- fs/qnx4/inode.c                            |   4 +-
- fs/qnx6/inode.c                            |   2 +-
- fs/ubifs/debug.c                           |   8 +-
- fs/ubifs/dir.c                             |  28 +-
- fs/ubifs/file.c                            |  28 +-
- fs/ubifs/journal.c                         |   6 +-
- fs/ubifs/super.c                           |  16 +-
- fs/ubifs/tnc.c                             |   4 +-
- fs/ubifs/xattr.c                           |  14 +-
- fs/udf/directory.c                         |  18 +-
- fs/udf/file.c                              |   2 +-
- fs/udf/inode.c                             |  12 +-
- fs/udf/namei.c                             |   8 +-
- fs/udf/super.c                             |   2 +-
- fs/ufs/balloc.c                            |   6 +-
- fs/ufs/dir.c                               |  10 +-
- fs/ufs/ialloc.c                            |   6 +-
- fs/ufs/inode.c                             |  18 +-
- fs/ufs/ufs_fs.h                            |   6 +-
- fs/ufs/util.c                              |   2 +-
- fs/verity/init.c                           |   2 +-
- fs/zonefs/super.c                          |   8 +-
- fs/zonefs/trace.h                          |  18 +-
- include/linux/audit.h                      |   2 +-
- include/linux/fs.h                         |  28 +-
- include/net/sock.h                         |   4 +-
- include/trace/events/cachefiles.h          |  18 +-
- include/trace/events/ext4.h                | 544 ++++++++++++++---------------
- include/trace/events/f2fs.h                | 242 ++++++-------
- include/trace/events/filelock.h            |  34 +-
- include/trace/events/filemap.h             |  20 +-
- include/trace/events/fs_dax.h              |  20 +-
- include/trace/events/fsverity.h            |  30 +-
- include/trace/events/hugetlbfs.h           |  42 +--
- include/trace/events/netfs.h               |   8 +-
- include/trace/events/nilfs2.h              |  12 +-
- include/trace/events/readahead.h           |  18 +-
- include/trace/events/timestamp.h           |  16 +-
- include/trace/events/writeback.h           | 162 ++++-----
- kernel/audit.h                             |  13 +-
- kernel/audit_fsnotify.c                    |   4 +-
- kernel/audit_watch.c                       |  12 +-
- kernel/auditsc.c                           |   4 +-
- kernel/events/uprobes.c                    |   4 +-
- net/ax25/af_ax25.c                         |   2 +-
- net/bluetooth/af_bluetooth.c               |   4 +-
- net/can/bcm.c                              |   2 +-
- net/ipv4/ping.c                            |   2 +-
- net/ipv4/raw.c                             |   2 +-
- net/ipv4/tcp_ipv4.c                        |   2 +-
- net/ipv4/udp.c                             |   2 +-
- net/ipv6/datagram.c                        |   2 +-
- net/ipv6/tcp_ipv6.c                        |   2 +-
- net/key/af_key.c                           |   2 +-
- net/netlink/af_netlink.c                   |   2 +-
- net/netlink/diag.c                         |   2 +-
- net/netrom/af_netrom.c                     |   4 +-
- net/packet/af_packet.c                     |   2 +-
- net/packet/diag.c                          |   2 +-
- net/phonet/socket.c                        |   4 +-
- net/rose/af_rose.c                         |   4 +-
- net/sctp/proc.c                            |   4 +-
- net/socket.c                               |   2 +-
- net/unix/af_unix.c                         |   2 +-
- net/unix/diag.c                            |   6 +-
- net/x25/x25_proc.c                         |   4 +-
- net/xdp/xsk_diag.c                         |   2 +-
- security/apparmor/apparmorfs.c             |   4 +-
- security/integrity/integrity_audit.c       |   2 +-
- security/ipe/audit.c                       |   2 +-
- security/lsm_audit.c                       |  10 +-
- security/selinux/hooks.c                   |  10 +-
- security/smack/smack_lsm.c                 |  12 +-
- 220 files changed, 1282 insertions(+), 1283 deletions(-)
----
-base-commit: 842cfe0733c5a03982a7ae496de6fdc0dd661a41
-change-id: 20260224-iino-u64-b44a3a72543c
-
-Best regards,
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.53.0
 
 
