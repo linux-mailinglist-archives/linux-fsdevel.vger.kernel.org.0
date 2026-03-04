@@ -1,121 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-79358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 8G4/G3oxqGm+pQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 14:19:54 +0100
+	id UNGXHuwyqGm+pQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 14:26:04 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DB692004DB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 14:19:53 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id D75A62005D3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 14:26:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 6A9DF305A854
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2026 13:19:24 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 37904318E5C5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2026 13:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B425E33DED5;
-	Wed,  4 Mar 2026 13:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5755A28DF07;
+	Wed,  4 Mar 2026 13:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fXnxO9o7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bMnjl+Xx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203FB2853E0;
-	Wed,  4 Mar 2026 13:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F2E1AF4D5;
+	Wed,  4 Mar 2026 13:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772630358; cv=none; b=YhZTpWzmNwF9Lz037nmytHB4ho1+e8r5RYaWFi6gTKaVgXvaK6IMGAw9gMXNOovgbEi7WRtKME6NNZAxrw4sI+RrLLhX4kUMj1/SN5EXFz4ntiRkJ15M5xopA8qoZD1EvboAfo+H3fuIB21R53KQJM071zmMudrVvCevLGtZ2hM=
+	t=1772630386; cv=none; b=UkpIHf+Rs5W5JTHYHMgZMTgMzvgH+CUyQlcwWNWR4+YrL2ZvhHiuHMYeVTBvTUeML6ZF3Uum8th+kpqDqMdPTEiY0BMSpibMibZomdQe41jC8tEZATHK/mX1CczivH3UAOC6gWUubwsuTH3IHzY9LhJgPNuORpLLcdTjPsLD93s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772630358; c=relaxed/simple;
-	bh=05ISfwLDgvF4qwFlNm4OxsFHu0x6DKVuxg32b84JgwU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Een/9UpON9UR57Wd80RFv03/T09ZaZqCOwFelzoDn27r0j5059WS8RqT59dJ9VMdA55HA65FYcgcTUNg1c2OWJywfI6NrmUuXVHUmLX5YOXlXkO8n+YMZ0QRaSjfE2hParqa6wiigbGgz8exfElv8Vq5BarHW2u/TBXrxmIwwz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fXnxO9o7; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=TMZH0WK1C4n56ljgVGIRCSTXXXU1JGue2xDQdEq2XRs=; b=fXnxO9o7WLxug4TIjrZkzTMZ/7
-	kWI6q60pGsZahi56N7QcRB3pg9gAxK6wALzpGHemg4FYrGsHq62k5MoFGDhZEi4xgD6Kx7xSPLtoM
-	Glap+HyhSQ2J382UBlQA7YYTYGcDhYf3GiA7Y/uhRlIFNUpmgNmaq9l8Bl+aVyD/I2xf5PvPEgpaw
-	ECRXXVFOwQd6rD7mAyXQAqbU117UDT2fcOTutKd8u/3TVim1cLSWLNKOt6LJ+5BB9OEfh+DyCUX0n
-	I2PK3ww6WzbbfHyzzZeOjXAhHnKz/0aS6UebU2c0DVagKj5Bqrvh1cnBmZbkg3H2ekPUsC4dcFimK
-	4tdwNMgQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vxm8B-0000000HEtk-3ses;
-	Wed, 04 Mar 2026 13:19:15 +0000
-Date: Wed, 4 Mar 2026 05:19:15 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>, linux-ext4@vger.kernel.org,
-	Ted Tso <tytso@mit.edu>,
-	"Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
-	David Sterba <dsterba@suse.com>,
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	David Hildenbrand <david@kernel.org>, linux-mm@kvack.org,
-	linux-aio@kvack.org, Benjamin LaHaise <bcrl@kvack.org>
-Subject: Re: [PATCH 18/32] fs: Provide operation for fetching
- mapping_metadata_bhs
-Message-ID: <aagxU5f1AI3y0wrw@infradead.org>
-References: <20260303101717.27224-1-jack@suse.cz>
- <20260303103406.4355-50-jack@suse.cz>
+	s=arc-20240116; t=1772630386; c=relaxed/simple;
+	bh=iMvm0f//FWJU5C6mRge/z/RIgnWYB5qR6a2WvDyeC80=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=axH96La+/Ec4Mu44QmmQ5Xt4bRElKMp8PLT4bpUfvH/Rq95t5fgkSgUC4jWaajUgLThE2sSrXjsGlVrMK7/GUyx0ag5jKB36fTqDnJafrLOd8fXfBk5rdQGMhzvINzepkKVs1Zd0Py+hcrzAAvr0+HzqM04HJz3guPkVmROVPfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bMnjl+Xx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62DA7C19423;
+	Wed,  4 Mar 2026 13:19:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772630386;
+	bh=iMvm0f//FWJU5C6mRge/z/RIgnWYB5qR6a2WvDyeC80=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bMnjl+XxUAi6xq3MCrUI+I4sc3Is1cfwRF/roQYjzK7R753JRS4569pcDq7GdBfKK
+	 CQc5lqlG68+6ivDBEmBNPt9HppAl8Uh5Zj8XYiuOzZyN1LLAOE2JJJ4y7hEKDP1Y3o
+	 OM4EBzgkPQynU/j6DDUB0VDutqFnUKxJESq/M1pKKGWJGZWEwYjZp57PLxdQaNo2yM
+	 PnT4jRDT1/ysGHAvA+3+d390Lpwrzx+rYtWvQUNSmHPdkuy+sj57lbhz965QX47OfY
+	 KfosAZ9Dri0jkzoSbao8jqI2druie66nlIbNeBotkYv1j59GVNUqDjzuTEtqdgWiea
+	 cN5gcxKvABsSA==
+From: Christian Brauner <brauner@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	djwong@kernel.org,
+	hch@infradead.org,
+	willy@infradead.org,
+	wegao@suse.com,
+	sashal@kernel.org,
+	stable@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 0/1] iomap: don't mark folio uptodate if read IO has bytes pending
+Date: Wed,  4 Mar 2026 14:19:40 +0100
+Message-ID: <20260304-appell-aufbrach-79e916696eb7@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260303233420.874231-1-joannelkoong@gmail.com>
+References: <20260303233420.874231-1-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260303103406.4355-50-jack@suse.cz>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Rspamd-Queue-Id: 0DB692004DB
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1638; i=brauner@kernel.org; h=from:subject:message-id; bh=iMvm0f//FWJU5C6mRge/z/RIgnWYB5qR6a2WvDyeC80=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSuMMwVrTNQWrXYNeKN8XZWhuSlc/wOtZdY39tkV8JwN TQ++/LsjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIls72X4X+DyaNuK7P6GJasW z23N3v/pStG9XwIH7zX8FFZ7pxlSspbhv2vZlr1xtZF95uu4p4sJOPCYNq3/6//swRz7Az85LZc 78AMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: D75A62005D3
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [2.34 / 15.00];
+	MID_END_EQ_FROM_USER_PART(4.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79358-lists,linux-fsdevel=lfdr.de];
+	FREEMAIL_TO(0.00)[gmail.com];
+	TAGGED_FROM(0.00)[bounces-79359-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,zeniv.linux.org.uk,mit.edu,gmail.com,suse.com,mail.parknet.co.jp,linux.dev,suse.de,kvack.org];
-	RCPT_COUNT_TWELVE(0.00)[15];
 	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@infradead.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[infradead.org:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:dkim,infradead.org:mid,sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo]
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On Tue, Mar 03, 2026 at 11:34:07AM +0100, Jan Kara wrote:
-> When we move mapping_metadata_bhs to fs-private part of an inode the
-> generic code will need a way to get to this struct from general struct
-> inode. Add inode operation for this similarly to operation for grabbing
-> offset_ctx.
+On Tue, 03 Mar 2026 15:34:19 -0800, Joanne Koong wrote:
+> This is a fix for this scenario:
+> 
+> ->read_folio() gets called on a folio size that is 16k while the file is 4k:
+>   a) ifs->read_bytes_pending gets initialized to 16k
+>   b) ->read_folio_range() is called for the 4k read
+>   c) the 4k read succeeds, ifs->read_bytes_pending is now 12k and the
+> 0 to 4k range is marked uptodate
+>   d) the post-eof blocks are zeroed and marked uptodate in the call to
+> iomap_set_range_uptodate()
+>   e) iomap_set_range_uptodate() sees all the ranges are marked
+> uptodate and it marks the folio uptodate
+>   f) iomap_read_end() gets called to subtract the 12k from
+> ifs->read_bytes_pending. it too sees all the ranges are marked
+> uptodate and marks the folio uptodate using XOR
+>   g) the XOR call clears the uptodate flag on the folio
+> 
+> [...]
 
-Do we even need this?  With your previous cleanups almost all of the
-places that need the buffers list are called more or less directly
-from the file systems.  Can we take it all the way and just pass the
-mapping_metadata_bhs to those functions?
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] iomap: don't mark folio uptodate if read IO has bytes pending
+      https://git.kernel.org/vfs/vfs/c/debc1a492b26
 
