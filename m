@@ -1,65 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-79391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +HqxA3E/qGl6rQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 15:19:29 +0100
+	id QIMYFVBDqGlOrwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 15:36:00 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08155201362
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 15:19:27 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id A74C9201A15
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 15:35:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id CE5B630908B4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2026 14:08:31 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id AF084322D653
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2026 14:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DE53BED68;
-	Wed,  4 Mar 2026 14:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66693C3C1A;
+	Wed,  4 Mar 2026 14:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HGfT70+k"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QMfSk23B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C253BE163
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Mar 2026 14:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BE53C3BFD
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Mar 2026 14:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772633127; cv=none; b=Wih72pjwt4NXvaI/m3L5rbIDo5SCGDS+yxqcmNqePgfcJcUaclTCIAkDzldyr9mmNhBpsFiosWB5QFyEzFBSFt7aJaWjtEjoy8cbNlxEDTGM15uWsPZ+nddui7NRfP0w7/VVq0tmfe/Ep0BDUnan6VNVXH8n78Lbst1D6mEYWqU=
+	t=1772633136; cv=none; b=s9RSuMN/5buNVGrieVA/qy33UGjYXUCiS1ssegyufecyUh7EkPTL249vIO6Q9rbikmGB6XdBaO3vwDd9tiH5w/5fckzRg4pcDND7DN2iLw3saiUwtIxyWLN/+OvRj0154LF4P5Ey90aXttlPVXdgps0tZViNv4O+Wjxo7wK7UG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772633127; c=relaxed/simple;
-	bh=AraPL1OSKmpaH5gBSzGDcSXdXyc3fxEPDz/pg/7wBf8=;
+	s=arc-20240116; t=1772633136; c=relaxed/simple;
+	bh=6VN1ewOcuiQK5sFqxXMsx+cstwSbHy0yDbBMJrRgEB0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FIHUkfTShWTgYrLEdMHP77duMRPzybMuKfvS2hiYd9VXu9EZnXphvj6/4HNQDTbphxAcA04wQ/MqpE0doJUDSk4mkal6xL5+IPI4BHXaZOlyqxIsnToGsmVInKs2DH8TO+V4GNDAbEzMQkb8hwHBBYYGfv8BrstEsh2aK+Reag0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HGfT70+k; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=UMq7mhV8WiafanfezoeHSY2McdpdDsjfJkrvRkXG5Huf+Ixeho9QD3d7aLreHdv6SHG5FgYI5zAHtq9hc3z+iWafDct0OD6cjUVP1Y/NX+7sIKPo7ycSrSPXh4pEgF6HqyB8cq4f3uDz2q6vRZpOxCKX2ypzD/DlZUjhIhilFYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QMfSk23B; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1772633122;
+	s=mimecast20190719; t=1772633132;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5N4Tp7WhbfGOl0t4/xOo3zAKE6foV1oI7IVqrxuvvXk=;
-	b=HGfT70+k/deeBYA8aKcjxsemXaQtGF4MU0TpPMGtNOyJJkVDmBGMM+wmQUWofjJJTRcWh6
-	X+YBQIaIa+yj38B/XfIDv8wKNyOXXM8UR37++GEhOtwK4Sh3+nFBmFjwV18i4Vf3Zkfgq0
-	BN3Aj2V3qUQkbikWQoXn2WJt8huztpc=
+	bh=fumhdzYIPGpYClcZxtDZtPkHXmqIkbTlOkkeMqUNdFc=;
+	b=QMfSk23ByRKPkytzOlVN8Tmg2M2OJeQGQsN5CX9fs4r/kCSHu38MGhRRAZAhw0w+GRlZLL
+	8FyJOsS9dYU6Bh8oK+6AaFldsTqnPG1Y4qOHUEOSrDHaJ8axUMWYtnWmzXXaPZ0bdKlbUY
+	pJtHaB5YYFaK/lBi8ivStPjvZv5LkD8=
 Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-421-bCa3m24RPL-M1HIdJBC1hw-1; Wed,
- 04 Mar 2026 09:05:18 -0500
-X-MC-Unique: bCa3m24RPL-M1HIdJBC1hw-1
-X-Mimecast-MFC-AGG-ID: bCa3m24RPL-M1HIdJBC1hw_1772633116
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-80-gLQBuz0gPWGkeC--3rlcNg-1; Wed,
+ 04 Mar 2026 09:05:25 -0500
+X-MC-Unique: gLQBuz0gPWGkeC--3rlcNg-1
+X-Mimecast-MFC-AGG-ID: gLQBuz0gPWGkeC--3rlcNg_1772633123
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 95C8419560B0;
-	Wed,  4 Mar 2026 14:05:16 +0000 (UTC)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 638FF19560B0;
+	Wed,  4 Mar 2026 14:05:23 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.44.32.194])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9A4BB18002A6;
-	Wed,  4 Mar 2026 14:05:11 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 54CA230001A1;
+	Wed,  4 Mar 2026 14:05:18 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Matthew Wilcox <willy@infradead.org>,
 	Christoph Hellwig <hch@infradead.org>,
@@ -78,9 +78,9 @@ Cc: David Howells <dhowells@redhat.com>,
 	linux-kernel@vger.kernel.org,
 	Paulo Alcantara <pc@manguebit.org>,
 	Steve French <sfrench@samba.org>
-Subject: [RFC PATCH 14/17] iov_iter: Remove ITER_FOLIOQ
-Date: Wed,  4 Mar 2026 14:03:21 +0000
-Message-ID: <20260304140328.112636-15-dhowells@redhat.com>
+Subject: [RFC PATCH 15/17] netfs: Remove folio_queue and rolling_buffer
+Date: Wed,  4 Mar 2026 14:03:22 +0000
+Message-ID: <20260304140328.112636-16-dhowells@redhat.com>
 In-Reply-To: <20260304140328.112636-1-dhowells@redhat.com>
 References: <20260304140328.112636-1-dhowells@redhat.com>
 Precedence: bulk
@@ -90,8 +90,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
-X-Rspamd-Queue-Id: 08155201362
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Rspamd-Queue-Id: A74C9201A15
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
@@ -99,7 +99,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
 	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
@@ -107,9 +107,9 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	RCPT_COUNT_TWELVE(0.00)[17];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79391-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79392-lists,linux-fsdevel=lfdr.de];
 	DKIM_TRACE(0.00)[redhat.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	MISSING_XM_UA(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[dhowells@redhat.com,linux-fsdevel@vger.kernel.org];
@@ -119,10 +119,10 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	NEURAL_HAM(-0.00)[-1.000];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:email,linux.dev:email,sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo,samba.org:email,manguebit.org:email]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:email,linux.dev:email,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,manguebit.org:email,samba.org:email]
 X-Rspamd-Action: no action
 
-Remove ITER_FOLIOQ as it's no longer used.
+Remove folio_queue and rolling_buffer as they're no longer used.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Paulo Alcantara <pc@manguebit.org>
@@ -133,897 +133,984 @@ cc: linux-cifs@vger.kernel.org
 cc: netfs@lists.linux.dev
 cc: linux-fsdevel@vger.kernel.org
 ---
- include/linux/iov_iter.h   |  65 +---------
- include/linux/uio.h        |  12 --
- lib/iov_iter.c             | 235 +---------------------------------
- lib/scatterlist.c          |  67 +---------
- lib/tests/kunit_iov_iter.c | 256 -------------------------------------
- 5 files changed, 5 insertions(+), 630 deletions(-)
+ Documentation/core-api/folio_queue.rst | 209 ------------------
+ Documentation/core-api/index.rst       |   1 -
+ fs/netfs/iterator.c                    | 149 -------------
+ fs/netfs/rolling_buffer.c              | 222 -------------------
+ include/linux/folio_queue.h            | 282 -------------------------
+ include/linux/rolling_buffer.h         |  61 ------
+ 6 files changed, 924 deletions(-)
+ delete mode 100644 Documentation/core-api/folio_queue.rst
+ delete mode 100644 fs/netfs/rolling_buffer.c
+ delete mode 100644 include/linux/folio_queue.h
+ delete mode 100644 include/linux/rolling_buffer.h
 
-diff --git a/include/linux/iov_iter.h b/include/linux/iov_iter.h
-index e0c129a3ca63..4b47454c5ca8 100644
---- a/include/linux/iov_iter.h
-+++ b/include/linux/iov_iter.h
-@@ -10,7 +10,6 @@
- 
- #include <linux/uio.h>
- #include <linux/bvec.h>
--#include <linux/folio_queue.h>
- 
- typedef size_t (*iov_step_f)(void *iter_base, size_t progress, size_t len,
- 			     void *priv, void *priv2);
-@@ -194,62 +193,6 @@ size_t iterate_bvecq(struct iov_iter *iter, size_t len, void *priv, void *priv2,
- 	return progress;
- }
- 
--/*
-- * Handle ITER_FOLIOQ.
-- */
--static __always_inline
--size_t iterate_folioq(struct iov_iter *iter, size_t len, void *priv, void *priv2,
--		      iov_step_f step)
--{
--	const struct folio_queue *folioq = iter->folioq;
--	unsigned int slot = iter->folioq_slot;
--	size_t progress = 0, skip = iter->iov_offset;
+diff --git a/Documentation/core-api/folio_queue.rst b/Documentation/core-api/folio_queue.rst
+deleted file mode 100644
+index b7628896d2b6..000000000000
+--- a/Documentation/core-api/folio_queue.rst
++++ /dev/null
+@@ -1,209 +0,0 @@
+-.. SPDX-License-Identifier: GPL-2.0+
 -
--	if (slot == folioq_nr_slots(folioq)) {
--		/* The iterator may have been extended. */
--		folioq = folioq->next;
--		slot = 0;
+-===========
+-Folio Queue
+-===========
+-
+-:Author: David Howells <dhowells@redhat.com>
+-
+-.. Contents:
+-
+- * Overview
+- * Initialisation
+- * Adding and removing folios
+- * Querying information about a folio
+- * Querying information about a folio_queue
+- * Folio queue iteration
+- * Folio marks
+- * Lockless simultaneous production/consumption issues
+-
+-
+-Overview
+-========
+-
+-The folio_queue struct forms a single segment in a segmented list of folios
+-that can be used to form an I/O buffer.  As such, the list can be iterated over
+-using the ITER_FOLIOQ iov_iter type.
+-
+-The publicly accessible members of the structure are::
+-
+-	struct folio_queue {
+-		struct folio_queue *next;
+-		struct folio_queue *prev;
+-		...
+-	};
+-
+-A pair of pointers are provided, ``next`` and ``prev``, that point to the
+-segments on either side of the segment being accessed.  Whilst this is a
+-doubly-linked list, it is intentionally not a circular list; the outward
+-sibling pointers in terminal segments should be NULL.
+-
+-Each segment in the list also stores:
+-
+- * an ordered sequence of folio pointers,
+- * the size of each folio and
+- * three 1-bit marks per folio,
+-
+-but these should not be accessed directly as the underlying data structure may
+-change, but rather the access functions outlined below should be used.
+-
+-The facility can be made accessible by::
+-
+-	#include <linux/folio_queue.h>
+-
+-and to use the iterator::
+-
+-	#include <linux/uio.h>
+-
+-
+-Initialisation
+-==============
+-
+-A segment should be initialised by calling::
+-
+-	void folioq_init(struct folio_queue *folioq);
+-
+-with a pointer to the segment to be initialised.  Note that this will not
+-necessarily initialise all the folio pointers, so care must be taken to check
+-the number of folios added.
+-
+-
+-Adding and removing folios
+-==========================
+-
+-Folios can be set in the next unused slot in a segment struct by calling one
+-of::
+-
+-	unsigned int folioq_append(struct folio_queue *folioq,
+-				   struct folio *folio);
+-
+-	unsigned int folioq_append_mark(struct folio_queue *folioq,
+-					struct folio *folio);
+-
+-Both functions update the stored folio count, store the folio and note its
+-size.  The second function also sets the first mark for the folio added.  Both
+-functions return the number of the slot used.  [!] Note that no attempt is made
+-to check that the capacity wasn't overrun and the list will not be extended
+-automatically.
+-
+-A folio can be excised by calling::
+-
+-	void folioq_clear(struct folio_queue *folioq, unsigned int slot);
+-
+-This clears the slot in the array and also clears all the marks for that folio,
+-but doesn't change the folio count - so future accesses of that slot must check
+-if the slot is occupied.
+-
+-
+-Querying information about a folio
+-==================================
+-
+-Information about the folio in a particular slot may be queried by the
+-following function::
+-
+-	struct folio *folioq_folio(const struct folio_queue *folioq,
+-				   unsigned int slot);
+-
+-If a folio has not yet been set in that slot, this may yield an undefined
+-pointer.  The size of the folio in a slot may be queried with either of::
+-
+-	unsigned int folioq_folio_order(const struct folio_queue *folioq,
+-					unsigned int slot);
+-
+-	size_t folioq_folio_size(const struct folio_queue *folioq,
+-				 unsigned int slot);
+-
+-The first function returns the size as an order and the second as a number of
+-bytes.
+-
+-
+-Querying information about a folio_queue
+-========================================
+-
+-Information may be retrieved about a particular segment with the following
+-functions::
+-
+-	unsigned int folioq_nr_slots(const struct folio_queue *folioq);
+-
+-	unsigned int folioq_count(struct folio_queue *folioq);
+-
+-	bool folioq_full(struct folio_queue *folioq);
+-
+-The first function returns the maximum capacity of a segment.  It must not be
+-assumed that this won't vary between segments.  The second returns the number
+-of folios added to a segments and the third is a shorthand to indicate if the
+-segment has been filled to capacity.
+-
+-Not that the count and fullness are not affected by clearing folios from the
+-segment.  These are more about indicating how many slots in the array have been
+-initialised, and it assumed that slots won't get reused, but rather the segment
+-will get discarded as the queue is consumed.
+-
+-
+-Folio marks
+-===========
+-
+-Folios within a queue can also have marks assigned to them.  These marks can be
+-used to note information such as if a folio needs folio_put() calling upon it.
+-There are three marks available to be set for each folio.
+-
+-The marks can be set by::
+-
+-	void folioq_mark(struct folio_queue *folioq, unsigned int slot);
+-	void folioq_mark2(struct folio_queue *folioq, unsigned int slot);
+-
+-Cleared by::
+-
+-	void folioq_unmark(struct folio_queue *folioq, unsigned int slot);
+-	void folioq_unmark2(struct folio_queue *folioq, unsigned int slot);
+-
+-And the marks can be queried by::
+-
+-	bool folioq_is_marked(const struct folio_queue *folioq, unsigned int slot);
+-	bool folioq_is_marked2(const struct folio_queue *folioq, unsigned int slot);
+-
+-The marks can be used for any purpose and are not interpreted by this API.
+-
+-
+-Folio queue iteration
+-=====================
+-
+-A list of segments may be iterated over using the I/O iterator facility using
+-an ``iov_iter`` iterator of ``ITER_FOLIOQ`` type.  The iterator may be
+-initialised with::
+-
+-	void iov_iter_folio_queue(struct iov_iter *i, unsigned int direction,
+-				  const struct folio_queue *folioq,
+-				  unsigned int first_slot, unsigned int offset,
+-				  size_t count);
+-
+-This may be told to start at a particular segment, slot and offset within a
+-queue.  The iov iterator functions will follow the next pointers when advancing
+-and prev pointers when reverting when needed.
+-
+-
+-Lockless simultaneous production/consumption issues
+-===================================================
+-
+-If properly managed, the list can be extended by the producer at the head end
+-and shortened by the consumer at the tail end simultaneously without the need
+-to take locks.  The ITER_FOLIOQ iterator inserts appropriate barriers to aid
+-with this.
+-
+-Care must be taken when simultaneously producing and consuming a list.  If the
+-last segment is reached and the folios it refers to are entirely consumed by
+-the IOV iterators, an iov_iter struct will be left pointing to the last segment
+-with a slot number equal to the capacity of that segment.  The iterator will
+-try to continue on from this if there's another segment available when it is
+-used again, but care must be taken lest the segment got removed and freed by
+-the consumer before the iterator was advanced.
+-
+-It is recommended that the queue always contain at least one segment, even if
+-that segment has never been filled or is entirely spent.  This prevents the
+-head and tail pointers from collapsing.
+-
+-
+-API Function Reference
+-======================
+-
+-.. kernel-doc:: include/linux/folio_queue.h
+diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
+index 13769d5c40bf..16c529a33ac4 100644
+--- a/Documentation/core-api/index.rst
++++ b/Documentation/core-api/index.rst
+@@ -39,7 +39,6 @@ Library functionality that is used throughout the kernel.
+    kref
+    cleanup
+    assoc_array
+-   folio_queue
+    xarray
+    maple_tree
+    idr
+diff --git a/fs/netfs/iterator.c b/fs/netfs/iterator.c
+index 5ae9279a2dfb..eda6e2ca02e7 100644
+--- a/fs/netfs/iterator.c
++++ b/fs/netfs/iterator.c
+@@ -134,152 +134,3 @@ ssize_t netfs_extract_iter(struct iov_iter *orig, size_t orig_len, size_t max_se
+ 	return extracted ?: ret;
+ }
+ EXPORT_SYMBOL_GPL(netfs_extract_iter);
+-
+-#if 0
+-/*
+- * Select the span of a bvec iterator we're going to use.  Limit it by both maximum
+- * size and maximum number of segments.  Returns the size of the span in bytes.
+- */
+-static size_t netfs_limit_bvec(const struct iov_iter *iter, size_t start_offset,
+-			       size_t max_size, size_t max_segs)
+-{
+-	const struct bio_vec *bvecs = iter->bvec;
+-	unsigned int nbv = iter->nr_segs, ix = 0, nsegs = 0;
+-	size_t len, span = 0, n = iter->count;
+-	size_t skip = iter->iov_offset + start_offset;
+-
+-	if (WARN_ON(!iov_iter_is_bvec(iter)) ||
+-	    WARN_ON(start_offset > n) ||
+-	    n == 0)
+-		return 0;
+-
+-	while (n && ix < nbv && skip) {
+-		len = bvecs[ix].bv_len;
+-		if (skip < len)
+-			break;
+-		skip -= len;
+-		n -= len;
+-		ix++;
 -	}
 -
--	do {
--		struct folio *folio = folioq_folio(folioq, slot);
--		size_t part, remain = 0, consumed;
--		size_t fsize;
--		void *base;
--
--		if (!folio)
+-	while (n && ix < nbv) {
+-		len = min3(n, bvecs[ix].bv_len - skip, max_size);
+-		span += len;
+-		nsegs++;
+-		ix++;
+-		if (span >= max_size || nsegs >= max_segs)
 -			break;
+-		skip = 0;
+-		n -= len;
+-	}
 -
--		fsize = folioq_folio_size(folioq, slot);
--		if (skip < fsize) {
--			base = kmap_local_folio(folio, skip);
--			part = umin(len, PAGE_SIZE - skip % PAGE_SIZE);
--			remain = step(base, progress, part, priv, priv2);
--			kunmap_local(base);
--			consumed = part - remain;
--			len -= consumed;
--			progress += consumed;
--			skip += consumed;
--		}
--		if (skip >= fsize) {
--			skip = 0;
--			slot++;
--			if (slot == folioq_nr_slots(folioq) && folioq->next) {
--				folioq = folioq->next;
--				slot = 0;
--			}
--		}
--		if (remain)
--			break;
--	} while (len);
--
--	iter->folioq_slot = slot;
--	iter->folioq = folioq;
--	iter->iov_offset = skip;
--	iter->count -= progress;
--	return progress;
+-	return min(span, max_size);
 -}
 -
- /*
-  * Handle ITER_XARRAY.
-  */
-@@ -361,8 +304,6 @@ size_t iterate_and_advance2(struct iov_iter *iter, size_t len, void *priv,
- 		return iterate_kvec(iter, len, priv, priv2, step);
- 	if (iov_iter_is_bvecq(iter))
- 		return iterate_bvecq(iter, len, priv, priv2, step);
--	if (iov_iter_is_folioq(iter))
--		return iterate_folioq(iter, len, priv, priv2, step);
- 	if (iov_iter_is_xarray(iter))
- 		return iterate_xarray(iter, len, priv, priv2, step);
- 	return iterate_discard(iter, len, priv, priv2, step);
-@@ -397,8 +338,8 @@ size_t iterate_and_advance(struct iov_iter *iter, size_t len, void *priv,
-  * buffer is presented in segments, which for kernel iteration are broken up by
-  * physical pages and mapped, with the mapped address being presented.
-  *
-- * [!] Note This will only handle BVEC, KVEC, BVECQ, FOLIOQ, XARRAY and
-- * DISCARD-type iterators; it will not handle UBUF or IOVEC-type iterators.
-+ * [!] Note This will only handle BVEC, KVEC, BVECQ, XARRAY and DISCARD-type
-+ * iterators; it will not handle UBUF or IOVEC-type iterators.
-  *
-  * A step functions, @step, must be provided, one for handling mapped kernel
-  * addresses and the other is given user addresses which have the potential to
-@@ -427,8 +368,6 @@ size_t iterate_and_advance_kernel(struct iov_iter *iter, size_t len, void *priv,
- 		return iterate_kvec(iter, len, priv, priv2, step);
- 	if (iov_iter_is_bvecq(iter))
- 		return iterate_bvecq(iter, len, priv, priv2, step);
--	if (iov_iter_is_folioq(iter))
--		return iterate_folioq(iter, len, priv, priv2, step);
- 	if (iov_iter_is_xarray(iter))
- 		return iterate_xarray(iter, len, priv, priv2, step);
- 	return iterate_discard(iter, len, priv, priv2, step);
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index aa50d348dfcc..e84a0c4f28c6 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -11,7 +11,6 @@
- #include <uapi/linux/uio.h>
- 
- struct page;
--struct folio_queue;
- 
- typedef unsigned int __bitwise iov_iter_extraction_t;
- 
-@@ -26,7 +25,6 @@ enum iter_type {
- 	ITER_IOVEC,
- 	ITER_BVEC,
- 	ITER_KVEC,
--	ITER_FOLIOQ,
- 	ITER_BVECQ,
- 	ITER_XARRAY,
- 	ITER_DISCARD,
-@@ -69,7 +67,6 @@ struct iov_iter {
- 				const struct iovec *__iov;
- 				const struct kvec *kvec;
- 				const struct bio_vec *bvec;
--				const struct folio_queue *folioq;
- 				const struct bvecq *bvecq;
- 				struct xarray *xarray;
- 				void __user *ubuf;
-@@ -79,7 +76,6 @@ struct iov_iter {
- 	};
- 	union {
- 		unsigned long nr_segs;
--		u8 folioq_slot;
- 		u16 bvecq_slot;
- 		loff_t xarray_start;
- 	};
-@@ -148,11 +144,6 @@ static inline bool iov_iter_is_discard(const struct iov_iter *i)
- 	return iov_iter_type(i) == ITER_DISCARD;
- }
- 
--static inline bool iov_iter_is_folioq(const struct iov_iter *i)
+-/*
+- * Select the span of an xarray iterator we're going to use.  Limit it by both
+- * maximum size and maximum number of segments.  It is assumed that segments
+- * can be larger than a page in size, provided they're physically contiguous.
+- * Returns the size of the span in bytes.
+- */
+-static size_t netfs_limit_xarray(const struct iov_iter *iter, size_t start_offset,
+-				 size_t max_size, size_t max_segs)
 -{
--	return iov_iter_type(i) == ITER_FOLIOQ;
+-	struct folio *folio;
+-	unsigned int nsegs = 0;
+-	loff_t pos = iter->xarray_start + iter->iov_offset;
+-	pgoff_t index = pos / PAGE_SIZE;
+-	size_t span = 0, n = iter->count;
+-
+-	XA_STATE(xas, iter->xarray, index);
+-
+-	if (WARN_ON(!iov_iter_is_xarray(iter)) ||
+-	    WARN_ON(start_offset > n) ||
+-	    n == 0)
+-		return 0;
+-	max_size = min(max_size, n - start_offset);
+-
+-	rcu_read_lock();
+-	xas_for_each(&xas, folio, ULONG_MAX) {
+-		size_t offset, flen, len;
+-		if (xas_retry(&xas, folio))
+-			continue;
+-		if (WARN_ON(xa_is_value(folio)))
+-			break;
+-		if (WARN_ON(folio_test_hugetlb(folio)))
+-			break;
+-
+-		flen = folio_size(folio);
+-		offset = offset_in_folio(folio, pos);
+-		len = min(max_size, flen - offset);
+-		span += len;
+-		nsegs++;
+-		if (span >= max_size || nsegs >= max_segs)
+-			break;
+-	}
+-
+-	rcu_read_unlock();
+-	return min(span, max_size);
 -}
 -
- static inline bool iov_iter_is_bvecq(const struct iov_iter *i)
- {
- 	return iov_iter_type(i) == ITER_BVECQ;
-@@ -303,9 +294,6 @@ void iov_iter_kvec(struct iov_iter *i, unsigned int direction, const struct kvec
- void iov_iter_bvec(struct iov_iter *i, unsigned int direction, const struct bio_vec *bvec,
- 			unsigned long nr_segs, size_t count);
- void iov_iter_discard(struct iov_iter *i, unsigned int direction, size_t count);
--void iov_iter_folio_queue(struct iov_iter *i, unsigned int direction,
--			  const struct folio_queue *folioq,
--			  unsigned int first_slot, unsigned int offset, size_t count);
- void iov_iter_bvec_queue(struct iov_iter *i, unsigned int direction,
- 			 const struct bvecq *bvecq,
- 			 unsigned int first_slot, unsigned int offset, size_t count);
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index df8d037894b1..d5a4f5e5a107 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -538,39 +538,6 @@ static void iov_iter_iovec_advance(struct iov_iter *i, size_t size)
- 	i->__iov = iov;
- }
- 
--static void iov_iter_folioq_advance(struct iov_iter *i, size_t size)
+-/*
+- * Select the span of a folio queue iterator we're going to use.  Limit it by
+- * both maximum size and maximum number of segments.  Returns the size of the
+- * span in bytes.
+- */
+-static size_t netfs_limit_folioq(const struct iov_iter *iter, size_t start_offset,
+-				 size_t max_size, size_t max_segs)
 -{
--	const struct folio_queue *folioq = i->folioq;
--	unsigned int slot = i->folioq_slot;
+-	const struct folio_queue *folioq = iter->folioq;
+-	unsigned int nsegs = 0;
+-	unsigned int slot = iter->folioq_slot;
+-	size_t span = 0, n = iter->count;
 -
--	if (!i->count)
--		return;
--	i->count -= size;
+-	if (WARN_ON(!iov_iter_is_folioq(iter)) ||
+-	    WARN_ON(start_offset > n) ||
+-	    n == 0)
+-		return 0;
+-	max_size = umin(max_size, n - start_offset);
 -
 -	if (slot >= folioq_nr_slots(folioq)) {
 -		folioq = folioq->next;
 -		slot = 0;
 -	}
 -
--	size += i->iov_offset; /* From beginning of current segment. */
+-	start_offset += iter->iov_offset;
 -	do {
--		size_t fsize = folioq_folio_size(folioq, slot);
+-		size_t flen = folioq_folio_size(folioq, slot);
 -
--		if (likely(size < fsize))
+-		if (start_offset < flen) {
+-			span += flen - start_offset;
+-			nsegs++;
+-			start_offset = 0;
+-		} else {
+-			start_offset -= flen;
+-		}
+-		if (span >= max_size || nsegs >= max_segs)
 -			break;
--		size -= fsize;
+-
 -		slot++;
--		if (slot >= folioq_nr_slots(folioq) && folioq->next) {
+-		if (slot >= folioq_nr_slots(folioq)) {
 -			folioq = folioq->next;
 -			slot = 0;
 -		}
--	} while (size);
+-	} while (folioq);
 -
--	i->iov_offset = size;
--	i->folioq_slot = slot;
--	i->folioq = folioq;
+-	return umin(span, max_size);
 -}
 -
- static void iov_iter_bvecq_advance(struct iov_iter *i, size_t by)
- {
- 	const struct bvecq *bq = i->bvecq;
-@@ -616,8 +583,6 @@ void iov_iter_advance(struct iov_iter *i, size_t size)
- 		iov_iter_iovec_advance(i, size);
- 	} else if (iov_iter_is_bvec(i)) {
- 		iov_iter_bvec_advance(i, size);
--	} else if (iov_iter_is_folioq(i)) {
--		iov_iter_folioq_advance(i, size);
- 	} else if (iov_iter_is_bvecq(i)) {
- 		iov_iter_bvecq_advance(i, size);
- 	} else if (iov_iter_is_discard(i)) {
-@@ -626,32 +591,6 @@ void iov_iter_advance(struct iov_iter *i, size_t size)
- }
- EXPORT_SYMBOL(iov_iter_advance);
- 
--static void iov_iter_folioq_revert(struct iov_iter *i, size_t unroll)
+-size_t netfs_limit_iter(const struct iov_iter *iter, size_t start_offset,
+-			size_t max_size, size_t max_segs)
 -{
--	const struct folio_queue *folioq = i->folioq;
--	unsigned int slot = i->folioq_slot;
--
--	for (;;) {
--		size_t fsize;
--
--		if (slot == 0) {
--			folioq = folioq->prev;
--			slot = folioq_nr_slots(folioq);
--		}
--		slot--;
--
--		fsize = folioq_folio_size(folioq, slot);
--		if (unroll <= fsize) {
--			i->iov_offset = fsize - unroll;
--			break;
--		}
--		unroll -= fsize;
--	}
--
--	i->folioq_slot = slot;
--	i->folioq = folioq;
+-	if (iov_iter_is_folioq(iter))
+-		return netfs_limit_folioq(iter, start_offset, max_size, max_segs);
+-	if (iov_iter_is_bvec(iter))
+-		return netfs_limit_bvec(iter, start_offset, max_size, max_segs);
+-	if (iov_iter_is_xarray(iter))
+-		return netfs_limit_xarray(iter, start_offset, max_size, max_segs);
+-	BUG();
 -}
--
- static void iov_iter_bvecq_revert(struct iov_iter *i, size_t unroll)
- {
- 	const struct bvecq *bq = i->bvecq;
-@@ -709,9 +648,6 @@ void iov_iter_revert(struct iov_iter *i, size_t unroll)
- 			}
- 			unroll -= n;
- 		}
--	} else if (iov_iter_is_folioq(i)) {
--		i->iov_offset = 0;
--		iov_iter_folioq_revert(i, unroll);
- 	} else if (iov_iter_is_bvecq(i)) {
- 		i->iov_offset = 0;
- 		iov_iter_bvecq_revert(i, unroll);
-@@ -744,8 +680,6 @@ size_t iov_iter_single_seg_count(const struct iov_iter *i)
- 	}
- 	if (!i->count)
- 		return 0;
--	if (unlikely(iov_iter_is_folioq(i)))
--		return umin(folioq_folio_size(i->folioq, i->folioq_slot), i->count);
- 	if (unlikely(iov_iter_is_bvecq(i)))
- 		return min(i->count, i->bvecq->bv[i->bvecq_slot].bv_len - i->iov_offset);
- 	return i->count;
-@@ -784,36 +718,6 @@ void iov_iter_bvec(struct iov_iter *i, unsigned int direction,
- }
- EXPORT_SYMBOL(iov_iter_bvec);
- 
--/**
-- * iov_iter_folio_queue - Initialise an I/O iterator to use the folios in a folio queue
-- * @i: The iterator to initialise.
-- * @direction: The direction of the transfer.
-- * @folioq: The starting point in the folio queue.
-- * @first_slot: The first slot in the folio queue to use
-- * @offset: The offset into the folio in the first slot to start at
-- * @count: The size of the I/O buffer in bytes.
+-EXPORT_SYMBOL(netfs_limit_iter);
+-#endif
+diff --git a/fs/netfs/rolling_buffer.c b/fs/netfs/rolling_buffer.c
+deleted file mode 100644
+index a17fbf9853a4..000000000000
+--- a/fs/netfs/rolling_buffer.c
++++ /dev/null
+@@ -1,222 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
+-/* Rolling buffer helpers
 - *
-- * Set up an I/O iterator to either draw data out of the pages attached to an
-- * inode or to inject data into those pages.  The pages *must* be prevented
-- * from evaporation, either by taking a ref on them or locking them by the
-- * caller.
+- * Copyright (C) 2024 Red Hat, Inc. All Rights Reserved.
+- * Written by David Howells (dhowells@redhat.com)
 - */
--void iov_iter_folio_queue(struct iov_iter *i, unsigned int direction,
--			  const struct folio_queue *folioq, unsigned int first_slot,
--			  unsigned int offset, size_t count)
--{
--	BUG_ON(direction & ~1);
--	*i = (struct iov_iter) {
--		.iter_type = ITER_FOLIOQ,
--		.data_source = direction,
--		.folioq = folioq,
--		.folioq_slot = first_slot,
--		.count = count,
--		.iov_offset = offset,
--	};
--}
--EXPORT_SYMBOL(iov_iter_folio_queue);
 -
- /**
-  * iov_iter_bvec_queue - Initialise an I/O iterator to use a segmented bvec queue
-  * @i: The iterator to initialise.
-@@ -982,9 +886,6 @@ unsigned long iov_iter_alignment(const struct iov_iter *i)
- 	if (iov_iter_is_bvec(i))
- 		return iov_iter_alignment_bvec(i);
- 
--	/* With both xarray and folioq types, we're dealing with whole folios. */
--	if (iov_iter_is_folioq(i))
--		return i->iov_offset | i->count;
- 	if (iov_iter_is_bvecq(i))
- 		return iov_iter_alignment_bvecq(i);
- 	if (iov_iter_is_xarray(i))
-@@ -1039,65 +940,6 @@ static int want_pages_array(struct page ***res, size_t size,
- 	return count;
- }
- 
--static ssize_t iter_folioq_get_pages(struct iov_iter *iter,
--				     struct page ***ppages, size_t maxsize,
--				     unsigned maxpages, size_t *_start_offset)
--{
--	const struct folio_queue *folioq = iter->folioq;
--	struct page **pages;
--	unsigned int slot = iter->folioq_slot;
--	size_t extracted = 0, count = iter->count, iov_offset = iter->iov_offset;
+-#include <linux/bitops.h>
+-#include <linux/pagemap.h>
+-#include <linux/rolling_buffer.h>
+-#include <linux/slab.h>
+-#include "internal.h"
 -
--	if (slot >= folioq_nr_slots(folioq)) {
--		folioq = folioq->next;
--		slot = 0;
--		if (WARN_ON(iov_offset != 0))
--			return -EIO;
+-static atomic_t debug_ids;
+-
+-/**
+- * netfs_folioq_alloc - Allocate a folio_queue struct
+- * @rreq_id: Associated debugging ID for tracing purposes
+- * @gfp: Allocation constraints
+- * @trace: Trace tag to indicate the purpose of the allocation
+- *
+- * Allocate, initialise and account the folio_queue struct and log a trace line
+- * to mark the allocation.
+- */
+-struct folio_queue *netfs_folioq_alloc(unsigned int rreq_id, gfp_t gfp,
+-				       unsigned int /*enum netfs_folioq_trace*/ trace)
+-{
+-	struct folio_queue *fq;
+-
+-	fq = kmalloc_obj(*fq, gfp);
+-	if (fq) {
+-		netfs_stat(&netfs_n_folioq);
+-		folioq_init(fq, rreq_id);
+-		fq->debug_id = atomic_inc_return(&debug_ids);
+-		trace_netfs_folioq(fq, trace);
 -	}
+-	return fq;
+-}
+-EXPORT_SYMBOL(netfs_folioq_alloc);
 -
--	maxpages = want_pages_array(ppages, maxsize, iov_offset & ~PAGE_MASK, maxpages);
--	if (!maxpages)
+-/**
+- * netfs_folioq_free - Free a folio_queue struct
+- * @folioq: The object to free
+- * @trace: Trace tag to indicate which free
+- *
+- * Free and unaccount the folio_queue struct.
+- */
+-void netfs_folioq_free(struct folio_queue *folioq,
+-		       unsigned int /*enum netfs_trace_folioq*/ trace)
+-{
+-	trace_netfs_folioq(folioq, trace);
+-	netfs_stat_d(&netfs_n_folioq);
+-	kfree(folioq);
+-}
+-EXPORT_SYMBOL(netfs_folioq_free);
+-
+-/*
+- * Initialise a rolling buffer.  We allocate an empty folio queue struct to so
+- * that the pointers can be independently driven by the producer and the
+- * consumer.
+- */
+-int rolling_buffer_init(struct rolling_buffer *roll, unsigned int rreq_id,
+-			unsigned int direction)
+-{
+-	struct folio_queue *fq;
+-
+-	fq = netfs_folioq_alloc(rreq_id, GFP_NOFS, netfs_trace_folioq_rollbuf_init);
+-	if (!fq)
 -		return -ENOMEM;
--	*_start_offset = iov_offset & ~PAGE_MASK;
--	pages = *ppages;
 -
--	for (;;) {
--		struct folio *folio = folioq_folio(folioq, slot);
--		size_t offset = iov_offset, fsize = folioq_folio_size(folioq, slot);
--		size_t part = PAGE_SIZE - offset % PAGE_SIZE;
--
--		if (offset < fsize) {
--			part = umin(part, umin(maxsize - extracted, fsize - offset));
--			count -= part;
--			iov_offset += part;
--			extracted += part;
--
--			*pages = folio_page(folio, offset / PAGE_SIZE);
--			get_page(*pages);
--			pages++;
--			maxpages--;
--		}
--
--		if (maxpages == 0 || extracted >= maxsize)
--			break;
--
--		if (iov_offset >= fsize) {
--			iov_offset = 0;
--			slot++;
--			if (slot == folioq_nr_slots(folioq) && folioq->next) {
--				folioq = folioq->next;
--				slot = 0;
--			}
--		}
--	}
--
--	iter->count = count;
--	iter->iov_offset = iov_offset;
--	iter->folioq = folioq;
--	iter->folioq_slot = slot;
--	return extracted;
+-	roll->head = fq;
+-	roll->tail = fq;
+-	iov_iter_folio_queue(&roll->iter, direction, fq, 0, 0, 0);
+-	return 0;
 -}
 -
- static ssize_t iter_xarray_populate_pages(struct page **pages, struct xarray *xa,
- 					  pgoff_t index, unsigned int nr_pages)
- {
-@@ -1249,8 +1091,6 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
- 		}
- 		return maxsize;
- 	}
--	if (iov_iter_is_folioq(i))
--		return iter_folioq_get_pages(i, pages, maxsize, maxpages, start);
- 	if (iov_iter_is_xarray(i))
- 		return iter_xarray_get_pages(i, pages, maxsize, maxpages, start);
- 	WARN_ON_ONCE(iov_iter_is_bvecq(i));
-@@ -1366,11 +1206,6 @@ int iov_iter_npages(const struct iov_iter *i, int maxpages)
- 		return iov_npages(i, maxpages);
- 	if (iov_iter_is_bvec(i))
- 		return bvec_npages(i, maxpages);
--	if (iov_iter_is_folioq(i)) {
--		unsigned offset = i->iov_offset % PAGE_SIZE;
--		int npages = DIV_ROUND_UP(offset + i->count, PAGE_SIZE);
--		return min(npages, maxpages);
--	}
- 	if (iov_iter_is_bvecq(i))
- 		return iov_npages_bvecq(i, maxpages);
- 	if (iov_iter_is_xarray(i)) {
-@@ -1654,68 +1489,6 @@ void iov_iter_restore(struct iov_iter *i, struct iov_iter_state *state)
- 	i->nr_segs = state->nr_segs;
- }
- 
 -/*
-- * Extract a list of contiguous pages from an ITER_FOLIOQ iterator.  This does
-- * not get references on the pages, nor does it get a pin on them.
+- * Add another folio_queue to a rolling buffer if there's no space left.
 - */
--static ssize_t iov_iter_extract_folioq_pages(struct iov_iter *i,
--					     struct page ***pages, size_t maxsize,
--					     unsigned int maxpages,
--					     iov_iter_extraction_t extraction_flags,
--					     size_t *offset0)
+-int rolling_buffer_make_space(struct rolling_buffer *roll)
 -{
--	const struct folio_queue *folioq = i->folioq;
--	struct page **p;
--	unsigned int nr = 0;
--	size_t extracted = 0, offset, slot = i->folioq_slot;
+-	struct folio_queue *fq, *head = roll->head;
 -
--	if (slot >= folioq_nr_slots(folioq)) {
--		folioq = folioq->next;
--		slot = 0;
--		if (WARN_ON(i->iov_offset != 0))
--			return -EIO;
--	}
+-	if (!folioq_full(head))
+-		return 0;
 -
--	offset = i->iov_offset & ~PAGE_MASK;
--	*offset0 = offset;
--
--	maxpages = want_pages_array(pages, maxsize, offset, maxpages);
--	if (!maxpages)
+-	fq = netfs_folioq_alloc(head->rreq_id, GFP_NOFS, netfs_trace_folioq_make_space);
+-	if (!fq)
 -		return -ENOMEM;
--	p = *pages;
+-	fq->prev = head;
 -
--	for (;;) {
--		struct folio *folio = folioq_folio(folioq, slot);
--		size_t offset = i->iov_offset, fsize = folioq_folio_size(folioq, slot);
--		size_t part = PAGE_SIZE - offset % PAGE_SIZE;
--
--		if (offset < fsize) {
--			part = umin(part, umin(maxsize - extracted, fsize - offset));
--			i->count -= part;
--			i->iov_offset += part;
--			extracted += part;
--
--			p[nr++] = folio_page(folio, offset / PAGE_SIZE);
--		}
--
--		if (nr >= maxpages || extracted >= maxsize)
--			break;
--
--		if (i->iov_offset >= fsize) {
--			i->iov_offset = 0;
--			slot++;
--			if (slot == folioq_nr_slots(folioq) && folioq->next) {
--				folioq = folioq->next;
--				slot = 0;
--			}
+-	roll->head = fq;
+-	if (folioq_full(head)) {
+-		/* Make sure we don't leave the master iterator pointing to a
+-		 * block that might get immediately consumed.
+-		 */
+-		if (roll->iter.folioq == head &&
+-		    roll->iter.folioq_slot == folioq_nr_slots(head)) {
+-			roll->iter.folioq = fq;
+-			roll->iter.folioq_slot = 0;
 -		}
 -	}
 -
--	i->folioq = folioq;
--	i->folioq_slot = slot;
--	return extracted;
+-	/* Make sure the initialisation is stored before the next pointer.
+-	 *
+-	 * [!] NOTE: After we set head->next, the consumer is at liberty to
+-	 * immediately delete the old head.
+-	 */
+-	smp_store_release(&head->next, fq);
+-	return 0;
 -}
 -
- /*
-  * Extract a list of virtually contiguous pages from an ITER_BVECQ iterator.
-  * This does not get references on the pages, nor does it get a pin on them.
-@@ -2078,8 +1851,8 @@ static ssize_t iov_iter_extract_user_pages(struct iov_iter *i,
-  *      added to the pages, but refs will not be taken.
-  *      iov_iter_extract_will_pin() will return true.
-  *
-- *  (*) If the iterator is ITER_KVEC, ITER_BVEC, ITER_FOLIOQ or ITER_XARRAY, the
-- *      pages are merely listed; no extra refs or pins are obtained.
-+ *  (*) If the iterator is ITER_KVEC, ITER_BVEC, ITER_XARRAY, the pages are
-+ *      merely listed; no extra refs or pins are obtained.
-  *      iov_iter_extract_will_pin() will return 0.
-  *
-  * Note also:
-@@ -2114,10 +1887,6 @@ ssize_t iov_iter_extract_pages(struct iov_iter *i,
- 		return iov_iter_extract_bvec_pages(i, pages, maxsize,
- 						   maxpages, extraction_flags,
- 						   offset0);
--	if (iov_iter_is_folioq(i))
--		return iov_iter_extract_folioq_pages(i, pages, maxsize,
--						     maxpages, extraction_flags,
--						     offset0);
- 	if (iov_iter_is_bvecq(i))
- 		return iov_iter_extract_bvecq_pages(i, pages, maxsize,
- 						    maxpages, extraction_flags,
-diff --git a/lib/scatterlist.c b/lib/scatterlist.c
-index 61ca42ac53f3..84a6e2983f2a 100644
---- a/lib/scatterlist.c
-+++ b/lib/scatterlist.c
-@@ -11,7 +11,6 @@
- #include <linux/kmemleak.h>
- #include <linux/bvec.h>
- #include <linux/uio.h>
+-/*
+- * Decant the list of folios to read into a rolling buffer.
+- */
+-ssize_t rolling_buffer_load_from_ra(struct rolling_buffer *roll,
+-				    struct readahead_control *ractl,
+-				    struct folio_batch *put_batch)
+-{
+-	struct folio_queue *fq;
+-	struct page **vec;
+-	int nr, ix, to;
+-	ssize_t size = 0;
+-
+-	if (rolling_buffer_make_space(roll) < 0)
+-		return -ENOMEM;
+-
+-	fq = roll->head;
+-	vec = (struct page **)fq->vec.folios;
+-	nr = __readahead_batch(ractl, vec + folio_batch_count(&fq->vec),
+-			       folio_batch_space(&fq->vec));
+-	ix = fq->vec.nr;
+-	to = ix + nr;
+-	fq->vec.nr = to;
+-	for (; ix < to; ix++) {
+-		struct folio *folio = folioq_folio(fq, ix);
+-		unsigned int order = folio_order(folio);
+-
+-		fq->orders[ix] = order;
+-		size += PAGE_SIZE << order;
+-		trace_netfs_folio(folio, netfs_folio_trace_read);
+-		if (!folio_batch_add(put_batch, folio))
+-			folio_batch_release(put_batch);
+-	}
+-	WRITE_ONCE(roll->iter.count, roll->iter.count + size);
+-
+-	/* Store the counter after setting the slot. */
+-	smp_store_release(&roll->next_head_slot, to);
+-	return size;
+-}
+-
+-/*
+- * Append a folio to the rolling buffer.
+- */
+-ssize_t rolling_buffer_append(struct rolling_buffer *roll, struct folio *folio,
+-			      unsigned int flags)
+-{
+-	ssize_t size = folio_size(folio);
+-	int slot;
+-
+-	if (rolling_buffer_make_space(roll) < 0)
+-		return -ENOMEM;
+-
+-	slot = folioq_append(roll->head, folio);
+-	if (flags & ROLLBUF_MARK_1)
+-		folioq_mark(roll->head, slot);
+-	if (flags & ROLLBUF_MARK_2)
+-		folioq_mark2(roll->head, slot);
+-
+-	WRITE_ONCE(roll->iter.count, roll->iter.count + size);
+-
+-	/* Store the counter after setting the slot. */
+-	smp_store_release(&roll->next_head_slot, slot);
+-	return size;
+-}
+-
+-/*
+- * Delete a spent buffer from a rolling queue and return the next in line.  We
+- * don't return the last buffer to keep the pointers independent, but return
+- * NULL instead.
+- */
+-struct folio_queue *rolling_buffer_delete_spent(struct rolling_buffer *roll)
+-{
+-	struct folio_queue *spent = roll->tail, *next = READ_ONCE(spent->next);
+-
+-	if (!next)
+-		return NULL;
+-	next->prev = NULL;
+-	netfs_folioq_free(spent, netfs_trace_folioq_delete);
+-	roll->tail = next;
+-	return next;
+-}
+-
+-/*
+- * Clear out a rolling queue.  Folios that have mark 1 set are put.
+- */
+-void rolling_buffer_clear(struct rolling_buffer *roll)
+-{
+-	struct folio_batch fbatch;
+-	struct folio_queue *p;
+-
+-	folio_batch_init(&fbatch);
+-
+-	while ((p = roll->tail)) {
+-		roll->tail = p->next;
+-		for (int slot = 0; slot < folioq_count(p); slot++) {
+-			struct folio *folio = folioq_folio(p, slot);
+-
+-			if (!folio)
+-				continue;
+-			if (folioq_is_marked(p, slot)) {
+-				trace_netfs_folio(folio, netfs_folio_trace_put);
+-				if (!folio_batch_add(&fbatch, folio))
+-					folio_batch_release(&fbatch);
+-			}
+-		}
+-
+-		netfs_folioq_free(p, netfs_trace_folioq_clear);
+-	}
+-
+-	folio_batch_release(&fbatch);
+-}
+diff --git a/include/linux/folio_queue.h b/include/linux/folio_queue.h
+deleted file mode 100644
+index adab609c972e..000000000000
+--- a/include/linux/folio_queue.h
++++ /dev/null
+@@ -1,282 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/* Queue of folios definitions
+- *
+- * Copyright (C) 2024 Red Hat, Inc. All Rights Reserved.
+- * Written by David Howells (dhowells@redhat.com)
+- *
+- * See:
+- *
+- *	Documentation/core-api/folio_queue.rst
+- *
+- * for a description of the API.
+- */
+-
+-#ifndef _LINUX_FOLIO_QUEUE_H
+-#define _LINUX_FOLIO_QUEUE_H
+-
+-#include <linux/pagevec.h>
+-#include <linux/mm.h>
+-
+-/*
+- * Segment in a queue of running buffers.  Each segment can hold a number of
+- * folios and a portion of the queue can be referenced with the ITER_FOLIOQ
+- * iterator.  The possibility exists of inserting non-folio elements into the
+- * queue (such as gaps).
+- *
+- * Explicit prev and next pointers are used instead of a list_head to make it
+- * easier to add segments to tail and remove them from the head without the
+- * need for a lock.
+- */
+-struct folio_queue {
+-	struct folio_batch	vec;		/* Folios in the queue segment */
+-	u8			orders[PAGEVEC_SIZE]; /* Order of each folio */
+-	struct folio_queue	*next;		/* Next queue segment or NULL */
+-	struct folio_queue	*prev;		/* Previous queue segment of NULL */
+-	unsigned long		marks;		/* 1-bit mark per folio */
+-	unsigned long		marks2;		/* Second 1-bit mark per folio */
+-#if PAGEVEC_SIZE > BITS_PER_LONG
+-#error marks is not big enough
+-#endif
+-	unsigned int		rreq_id;
+-	unsigned int		debug_id;
+-};
+-
+-/**
+- * folioq_init - Initialise a folio queue segment
+- * @folioq: The segment to initialise
+- * @rreq_id: The request identifier to use in tracelines.
+- *
+- * Initialise a folio queue segment and set an identifier to be used in traces.
+- *
+- * Note that the folio pointers are left uninitialised.
+- */
+-static inline void folioq_init(struct folio_queue *folioq, unsigned int rreq_id)
+-{
+-	folio_batch_init(&folioq->vec);
+-	folioq->next = NULL;
+-	folioq->prev = NULL;
+-	folioq->marks = 0;
+-	folioq->marks2 = 0;
+-	folioq->rreq_id = rreq_id;
+-	folioq->debug_id = 0;
+-}
+-
+-/**
+- * folioq_nr_slots: Query the capacity of a folio queue segment
+- * @folioq: The segment to query
+- *
+- * Query the number of folios that a particular folio queue segment might hold.
+- * [!] NOTE: This must not be assumed to be the same for every segment!
+- */
+-static inline unsigned int folioq_nr_slots(const struct folio_queue *folioq)
+-{
+-	return PAGEVEC_SIZE;
+-}
+-
+-/**
+- * folioq_count: Query the occupancy of a folio queue segment
+- * @folioq: The segment to query
+- *
+- * Query the number of folios that have been added to a folio queue segment.
+- * Note that this is not decreased as folios are removed from a segment.
+- */
+-static inline unsigned int folioq_count(struct folio_queue *folioq)
+-{
+-	return folio_batch_count(&folioq->vec);
+-}
+-
+-/**
+- * folioq_full: Query if a folio queue segment is full
+- * @folioq: The segment to query
+- *
+- * Query if a folio queue segment is fully occupied.  Note that this does not
+- * change if folios are removed from a segment.
+- */
+-static inline bool folioq_full(struct folio_queue *folioq)
+-{
+-	//return !folio_batch_space(&folioq->vec);
+-	return folioq_count(folioq) >= folioq_nr_slots(folioq);
+-}
+-
+-/**
+- * folioq_is_marked: Check first folio mark in a folio queue segment
+- * @folioq: The segment to query
+- * @slot: The slot number of the folio to query
+- *
+- * Determine if the first mark is set for the folio in the specified slot in a
+- * folio queue segment.
+- */
+-static inline bool folioq_is_marked(const struct folio_queue *folioq, unsigned int slot)
+-{
+-	return test_bit(slot, &folioq->marks);
+-}
+-
+-/**
+- * folioq_mark: Set the first mark on a folio in a folio queue segment
+- * @folioq: The segment to modify
+- * @slot: The slot number of the folio to modify
+- *
+- * Set the first mark for the folio in the specified slot in a folio queue
+- * segment.
+- */
+-static inline void folioq_mark(struct folio_queue *folioq, unsigned int slot)
+-{
+-	set_bit(slot, &folioq->marks);
+-}
+-
+-/**
+- * folioq_unmark: Clear the first mark on a folio in a folio queue segment
+- * @folioq: The segment to modify
+- * @slot: The slot number of the folio to modify
+- *
+- * Clear the first mark for the folio in the specified slot in a folio queue
+- * segment.
+- */
+-static inline void folioq_unmark(struct folio_queue *folioq, unsigned int slot)
+-{
+-	clear_bit(slot, &folioq->marks);
+-}
+-
+-/**
+- * folioq_is_marked2: Check second folio mark in a folio queue segment
+- * @folioq: The segment to query
+- * @slot: The slot number of the folio to query
+- *
+- * Determine if the second mark is set for the folio in the specified slot in a
+- * folio queue segment.
+- */
+-static inline bool folioq_is_marked2(const struct folio_queue *folioq, unsigned int slot)
+-{
+-	return test_bit(slot, &folioq->marks2);
+-}
+-
+-/**
+- * folioq_mark2: Set the second mark on a folio in a folio queue segment
+- * @folioq: The segment to modify
+- * @slot: The slot number of the folio to modify
+- *
+- * Set the second mark for the folio in the specified slot in a folio queue
+- * segment.
+- */
+-static inline void folioq_mark2(struct folio_queue *folioq, unsigned int slot)
+-{
+-	set_bit(slot, &folioq->marks2);
+-}
+-
+-/**
+- * folioq_unmark2: Clear the second mark on a folio in a folio queue segment
+- * @folioq: The segment to modify
+- * @slot: The slot number of the folio to modify
+- *
+- * Clear the second mark for the folio in the specified slot in a folio queue
+- * segment.
+- */
+-static inline void folioq_unmark2(struct folio_queue *folioq, unsigned int slot)
+-{
+-	clear_bit(slot, &folioq->marks2);
+-}
+-
+-/**
+- * folioq_append: Add a folio to a folio queue segment
+- * @folioq: The segment to add to
+- * @folio: The folio to add
+- *
+- * Add a folio to the tail of the sequence in a folio queue segment, increasing
+- * the occupancy count and returning the slot number for the folio just added.
+- * The folio size is extracted and stored in the queue and the marks are left
+- * unmodified.
+- *
+- * Note that it's left up to the caller to check that the segment capacity will
+- * not be exceeded and to extend the queue.
+- */
+-static inline unsigned int folioq_append(struct folio_queue *folioq, struct folio *folio)
+-{
+-	unsigned int slot = folioq->vec.nr++;
+-
+-	folioq->vec.folios[slot] = folio;
+-	folioq->orders[slot] = folio_order(folio);
+-	return slot;
+-}
+-
+-/**
+- * folioq_append_mark: Add a folio to a folio queue segment
+- * @folioq: The segment to add to
+- * @folio: The folio to add
+- *
+- * Add a folio to the tail of the sequence in a folio queue segment, increasing
+- * the occupancy count and returning the slot number for the folio just added.
+- * The folio size is extracted and stored in the queue, the first mark is set
+- * and and the second and third marks are left unmodified.
+- *
+- * Note that it's left up to the caller to check that the segment capacity will
+- * not be exceeded and to extend the queue.
+- */
+-static inline unsigned int folioq_append_mark(struct folio_queue *folioq, struct folio *folio)
+-{
+-	unsigned int slot = folioq->vec.nr++;
+-
+-	folioq->vec.folios[slot] = folio;
+-	folioq->orders[slot] = folio_order(folio);
+-	folioq_mark(folioq, slot);
+-	return slot;
+-}
+-
+-/**
+- * folioq_folio: Get a folio from a folio queue segment
+- * @folioq: The segment to access
+- * @slot: The folio slot to access
+- *
+- * Retrieve the folio in the specified slot from a folio queue segment.  Note
+- * that no bounds check is made and if the slot hasn't been added into yet, the
+- * pointer will be undefined.  If the slot has been cleared, NULL will be
+- * returned.
+- */
+-static inline struct folio *folioq_folio(const struct folio_queue *folioq, unsigned int slot)
+-{
+-	return folioq->vec.folios[slot];
+-}
+-
+-/**
+- * folioq_folio_order: Get the order of a folio from a folio queue segment
+- * @folioq: The segment to access
+- * @slot: The folio slot to access
+- *
+- * Retrieve the order of the folio in the specified slot from a folio queue
+- * segment.  Note that no bounds check is made and if the slot hasn't been
+- * added into yet, the order returned will be 0.
+- */
+-static inline unsigned int folioq_folio_order(const struct folio_queue *folioq, unsigned int slot)
+-{
+-	return folioq->orders[slot];
+-}
+-
+-/**
+- * folioq_folio_size: Get the size of a folio from a folio queue segment
+- * @folioq: The segment to access
+- * @slot: The folio slot to access
+- *
+- * Retrieve the size of the folio in the specified slot from a folio queue
+- * segment.  Note that no bounds check is made and if the slot hasn't been
+- * added into yet, the size returned will be PAGE_SIZE.
+- */
+-static inline size_t folioq_folio_size(const struct folio_queue *folioq, unsigned int slot)
+-{
+-	return PAGE_SIZE << folioq_folio_order(folioq, slot);
+-}
+-
+-/**
+- * folioq_clear: Clear a folio from a folio queue segment
+- * @folioq: The segment to clear
+- * @slot: The folio slot to clear
+- *
+- * Clear a folio from a sequence in a folio queue segment and clear its marks.
+- * The occupancy count is left unchanged.
+- */
+-static inline void folioq_clear(struct folio_queue *folioq, unsigned int slot)
+-{
+-	folioq->vec.folios[slot] = NULL;
+-	folioq_unmark(folioq, slot);
+-	folioq_unmark2(folioq, slot);
+-}
+-
+-#endif /* _LINUX_FOLIO_QUEUE_H */
+diff --git a/include/linux/rolling_buffer.h b/include/linux/rolling_buffer.h
+deleted file mode 100644
+index ac15b1ffdd83..000000000000
+--- a/include/linux/rolling_buffer.h
++++ /dev/null
+@@ -1,61 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/* Rolling buffer of folios
+- *
+- * Copyright (C) 2024 Red Hat, Inc. All Rights Reserved.
+- * Written by David Howells (dhowells@redhat.com)
+- */
+-
+-#ifndef _ROLLING_BUFFER_H
+-#define _ROLLING_BUFFER_H
+-
 -#include <linux/folio_queue.h>
- 
- /**
-  * sg_nents - return total count of entries in scatterlist
-@@ -1267,67 +1266,6 @@ static ssize_t extract_kvec_to_sg(struct iov_iter *iter,
- 	return ret;
- }
- 
--/*
-- * Extract up to sg_max folios from an FOLIOQ-type iterator and add them to
-- * the scatterlist.  The pages are not pinned.
-- */
--static ssize_t extract_folioq_to_sg(struct iov_iter *iter,
--				   ssize_t maxsize,
--				   struct sg_table *sgtable,
--				   unsigned int sg_max,
--				   iov_iter_extraction_t extraction_flags)
--{
--	const struct folio_queue *folioq = iter->folioq;
--	struct scatterlist *sg = sgtable->sgl + sgtable->nents;
--	unsigned int slot = iter->folioq_slot;
--	ssize_t ret = 0;
--	size_t offset = iter->iov_offset;
--
--	BUG_ON(!folioq);
--
--	if (slot >= folioq_nr_slots(folioq)) {
--		folioq = folioq->next;
--		if (WARN_ON_ONCE(!folioq))
--			return 0;
--		slot = 0;
--	}
--
--	do {
--		struct folio *folio = folioq_folio(folioq, slot);
--		size_t fsize = folioq_folio_size(folioq, slot);
--
--		if (offset < fsize) {
--			size_t part = umin(maxsize - ret, fsize - offset);
--
--			sg_set_page(sg, folio_page(folio, 0), part, offset);
--			sgtable->nents++;
--			sg++;
--			sg_max--;
--			offset += part;
--			ret += part;
--		}
--
--		if (offset >= fsize) {
--			offset = 0;
--			slot++;
--			if (slot >= folioq_nr_slots(folioq)) {
--				if (!folioq->next) {
--					WARN_ON_ONCE(ret < iter->count);
--					break;
--				}
--				folioq = folioq->next;
--				slot = 0;
--			}
--		}
--	} while (sg_max > 0 && ret < maxsize);
--
--	iter->folioq = folioq;
--	iter->folioq_slot = slot;
--	iter->iov_offset = offset;
--	iter->count -= ret;
--	return ret;
--}
--
- /*
-  * Extract up to sg_max folios from an BVECQ-type iterator and add them to
-  * the scatterlist.  The pages are not pinned.
-@@ -1452,7 +1390,7 @@ static ssize_t extract_xarray_to_sg(struct iov_iter *iter,
-  * addition of @sg_max elements.
-  *
-  * The pages referred to by UBUF- and IOVEC-type iterators are extracted and
-- * pinned; BVEC-, KVEC-, FOLIOQ- and XARRAY-type are extracted but aren't
-+ * pinned; BVEC-, KVEC-, BVECQ- and XARRAY-type are extracted but aren't
-  * pinned; DISCARD-type is not supported.
-  *
-  * No end mark is placed on the scatterlist; that's left to the caller.
-@@ -1485,9 +1423,6 @@ ssize_t extract_iter_to_sg(struct iov_iter *iter, size_t maxsize,
- 	case ITER_KVEC:
- 		return extract_kvec_to_sg(iter, maxsize, sgtable, sg_max,
- 					  extraction_flags);
--	case ITER_FOLIOQ:
--		return extract_folioq_to_sg(iter, maxsize, sgtable, sg_max,
--					    extraction_flags);
- 	case ITER_BVECQ:
- 		return extract_bvecq_to_sg(iter, maxsize, sgtable, sg_max,
- 					   extraction_flags);
-diff --git a/lib/tests/kunit_iov_iter.c b/lib/tests/kunit_iov_iter.c
-index 644a1b9eb2d3..7ab915f77732 100644
---- a/lib/tests/kunit_iov_iter.c
-+++ b/lib/tests/kunit_iov_iter.c
-@@ -12,7 +12,6 @@
- #include <linux/mm.h>
- #include <linux/uio.h>
- #include <linux/bvec.h>
--#include <linux/folio_queue.h>
- #include <kunit/test.h>
- 
- MODULE_DESCRIPTION("iov_iter testing");
-@@ -363,179 +362,6 @@ static void __init iov_kunit_copy_from_bvec(struct kunit *test)
- 	KUNIT_SUCCEED(test);
- }
- 
--static void iov_kunit_destroy_folioq(void *data)
--{
--	struct folio_queue *folioq, *next;
--
--	for (folioq = data; folioq; folioq = next) {
--		next = folioq->next;
--		for (int i = 0; i < folioq_nr_slots(folioq); i++)
--			if (folioq_folio(folioq, i))
--				folio_put(folioq_folio(folioq, i));
--		kfree(folioq);
--	}
--}
--
--static void __init iov_kunit_load_folioq(struct kunit *test,
--					struct iov_iter *iter, int dir,
--					struct folio_queue *folioq,
--					struct page **pages, size_t npages)
--{
--	struct folio_queue *p = folioq;
--	size_t size = 0;
--	int i;
--
--	for (i = 0; i < npages; i++) {
--		if (folioq_full(p)) {
--			p->next = kzalloc_obj(struct folio_queue);
--			KUNIT_ASSERT_NOT_ERR_OR_NULL(test, p->next);
--			folioq_init(p->next, 0);
--			p->next->prev = p;
--			p = p->next;
--		}
--		folioq_append(p, page_folio(pages[i]));
--		size += PAGE_SIZE;
--	}
--	iov_iter_folio_queue(iter, dir, folioq, 0, 0, size);
--}
--
--static struct folio_queue *iov_kunit_create_folioq(struct kunit *test)
--{
--	struct folio_queue *folioq;
--
--	folioq = kzalloc_obj(struct folio_queue);
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, folioq);
--	kunit_add_action_or_reset(test, iov_kunit_destroy_folioq, folioq);
--	folioq_init(folioq, 0);
--	return folioq;
--}
+-#include <linux/uio.h>
 -
 -/*
-- * Test copying to a ITER_FOLIOQ-type iterator.
+- * Rolling buffer.  Whilst the buffer is live and in use, folios and folio
+- * queue segments can be added to one end by one thread and removed from the
+- * other end by another thread.  The buffer isn't allowed to be empty; it must
+- * always have at least one folio_queue in it so that neither side has to
+- * modify both queue pointers.
+- *
+- * The iterator in the buffer is extended as buffers are inserted.  It can be
+- * snapshotted to use a segment of the buffer.
 - */
--static void __init iov_kunit_copy_to_folioq(struct kunit *test)
--{
--	const struct kvec_test_range *pr;
--	struct iov_iter iter;
--	struct folio_queue *folioq;
--	struct page **spages, **bpages;
--	u8 *scratch, *buffer;
--	size_t bufsize, npages, size, copied;
--	int i, patt;
--
--	bufsize = 0x100000;
--	npages = bufsize / PAGE_SIZE;
--
--	folioq = iov_kunit_create_folioq(test);
--
--	scratch = iov_kunit_create_buffer(test, &spages, npages);
--	for (i = 0; i < bufsize; i++)
--		scratch[i] = pattern(i);
--
--	buffer = iov_kunit_create_buffer(test, &bpages, npages);
--	memset(buffer, 0, bufsize);
--
--	iov_kunit_load_folioq(test, &iter, READ, folioq, bpages, npages);
--
--	i = 0;
--	for (pr = kvec_test_ranges; pr->from >= 0; pr++) {
--		size = pr->to - pr->from;
--		KUNIT_ASSERT_LE(test, pr->to, bufsize);
--
--		iov_iter_folio_queue(&iter, READ, folioq, 0, 0, pr->to);
--		iov_iter_advance(&iter, pr->from);
--		copied = copy_to_iter(scratch + i, size, &iter);
--
--		KUNIT_EXPECT_EQ(test, copied, size);
--		KUNIT_EXPECT_EQ(test, iter.count, 0);
--		KUNIT_EXPECT_EQ(test, iter.iov_offset, pr->to % PAGE_SIZE);
--		i += size;
--		if (test->status == KUNIT_FAILURE)
--			goto stop;
--	}
--
--	/* Build the expected image in the scratch buffer. */
--	patt = 0;
--	memset(scratch, 0, bufsize);
--	for (pr = kvec_test_ranges; pr->from >= 0; pr++)
--		for (i = pr->from; i < pr->to; i++)
--			scratch[i] = pattern(patt++);
--
--	/* Compare the images */
--	for (i = 0; i < bufsize; i++) {
--		KUNIT_EXPECT_EQ_MSG(test, buffer[i], scratch[i], "at i=%x", i);
--		if (buffer[i] != scratch[i])
--			return;
--	}
--
--stop:
--	KUNIT_SUCCEED(test);
--}
+-struct rolling_buffer {
+-	struct folio_queue	*head;		/* Producer's insertion point */
+-	struct folio_queue	*tail;		/* Consumer's removal point */
+-	struct iov_iter		iter;		/* Iterator tracking what's left in the buffer */
+-	u8			next_head_slot;	/* Next slot in ->head */
+-	u8			first_tail_slot; /* First slot in ->tail */
+-};
 -
 -/*
-- * Test copying from a ITER_FOLIOQ-type iterator.
+- * Snapshot of a rolling buffer.
 - */
--static void __init iov_kunit_copy_from_folioq(struct kunit *test)
+-struct rolling_buffer_snapshot {
+-	struct folio_queue	*curr_folioq;	/* Queue segment in which current folio resides */
+-	unsigned char		curr_slot;	/* Folio currently being read */
+-	unsigned char		curr_order;	/* Order of folio */
+-};
+-
+-/* Marks to store per-folio in the internal folio_queue structs. */
+-#define ROLLBUF_MARK_1	BIT(0)
+-#define ROLLBUF_MARK_2	BIT(1)
+-
+-int rolling_buffer_init(struct rolling_buffer *roll, unsigned int rreq_id,
+-			unsigned int direction);
+-int rolling_buffer_make_space(struct rolling_buffer *roll);
+-ssize_t rolling_buffer_load_from_ra(struct rolling_buffer *roll,
+-				    struct readahead_control *ractl,
+-				    struct folio_batch *put_batch);
+-ssize_t rolling_buffer_append(struct rolling_buffer *roll, struct folio *folio,
+-			      unsigned int flags);
+-struct folio_queue *rolling_buffer_delete_spent(struct rolling_buffer *roll);
+-void rolling_buffer_clear(struct rolling_buffer *roll);
+-
+-static inline void rolling_buffer_advance(struct rolling_buffer *roll, size_t amount)
 -{
--	const struct kvec_test_range *pr;
--	struct iov_iter iter;
--	struct folio_queue *folioq;
--	struct page **spages, **bpages;
--	u8 *scratch, *buffer;
--	size_t bufsize, npages, size, copied;
--	int i, j;
--
--	bufsize = 0x100000;
--	npages = bufsize / PAGE_SIZE;
--
--	folioq = iov_kunit_create_folioq(test);
--
--	buffer = iov_kunit_create_buffer(test, &bpages, npages);
--	for (i = 0; i < bufsize; i++)
--		buffer[i] = pattern(i);
--
--	scratch = iov_kunit_create_buffer(test, &spages, npages);
--	memset(scratch, 0, bufsize);
--
--	iov_kunit_load_folioq(test, &iter, READ, folioq, bpages, npages);
--
--	i = 0;
--	for (pr = kvec_test_ranges; pr->from >= 0; pr++) {
--		size = pr->to - pr->from;
--		KUNIT_ASSERT_LE(test, pr->to, bufsize);
--
--		iov_iter_folio_queue(&iter, WRITE, folioq, 0, 0, pr->to);
--		iov_iter_advance(&iter, pr->from);
--		copied = copy_from_iter(scratch + i, size, &iter);
--
--		KUNIT_EXPECT_EQ(test, copied, size);
--		KUNIT_EXPECT_EQ(test, iter.count, 0);
--		KUNIT_EXPECT_EQ(test, iter.iov_offset, pr->to % PAGE_SIZE);
--		i += size;
--	}
--
--	/* Build the expected image in the main buffer. */
--	i = 0;
--	memset(buffer, 0, bufsize);
--	for (pr = kvec_test_ranges; pr->from >= 0; pr++) {
--		for (j = pr->from; j < pr->to; j++) {
--			buffer[i++] = pattern(j);
--			if (i >= bufsize)
--				goto stop;
--		}
--	}
--stop:
--
--	/* Compare the images */
--	for (i = 0; i < bufsize; i++) {
--		KUNIT_EXPECT_EQ_MSG(test, scratch[i], buffer[i], "at i=%x", i);
--		if (scratch[i] != buffer[i])
--			return;
--	}
--
--	KUNIT_SUCCEED(test);
+-	iov_iter_advance(&roll->iter, amount);
 -}
 -
- static void iov_kunit_destroy_bvecq(void *data)
- {
- 	struct bvecq *bq, *next;
-@@ -1028,85 +854,6 @@ static void __init iov_kunit_extract_pages_bvec(struct kunit *test)
- 	KUNIT_SUCCEED(test);
- }
- 
--/*
-- * Test the extraction of ITER_FOLIOQ-type iterators.
-- */
--static void __init iov_kunit_extract_pages_folioq(struct kunit *test)
--{
--	const struct kvec_test_range *pr;
--	struct folio_queue *folioq;
--	struct iov_iter iter;
--	struct page **bpages, *pagelist[8], **pages = pagelist;
--	ssize_t len;
--	size_t bufsize, size = 0, npages;
--	int i, from;
--
--	bufsize = 0x100000;
--	npages = bufsize / PAGE_SIZE;
--
--	folioq = iov_kunit_create_folioq(test);
--
--	iov_kunit_create_buffer(test, &bpages, npages);
--	iov_kunit_load_folioq(test, &iter, READ, folioq, bpages, npages);
--
--	for (pr = kvec_test_ranges; pr->from >= 0; pr++) {
--		from = pr->from;
--		size = pr->to - from;
--		KUNIT_ASSERT_LE(test, pr->to, bufsize);
--
--		iov_iter_folio_queue(&iter, WRITE, folioq, 0, 0, pr->to);
--		iov_iter_advance(&iter, from);
--
--		do {
--			size_t offset0 = LONG_MAX;
--
--			for (i = 0; i < ARRAY_SIZE(pagelist); i++)
--				pagelist[i] = (void *)(unsigned long)0xaa55aa55aa55aa55ULL;
--
--			len = iov_iter_extract_pages(&iter, &pages, 100 * 1024,
--						     ARRAY_SIZE(pagelist), 0, &offset0);
--			KUNIT_EXPECT_GE(test, len, 0);
--			if (len < 0)
--				break;
--			KUNIT_EXPECT_LE(test, len, size);
--			KUNIT_EXPECT_EQ(test, iter.count, size - len);
--			if (len == 0)
--				break;
--			size -= len;
--			KUNIT_EXPECT_GE(test, (ssize_t)offset0, 0);
--			KUNIT_EXPECT_LT(test, offset0, PAGE_SIZE);
--
--			for (i = 0; i < ARRAY_SIZE(pagelist); i++) {
--				struct page *p;
--				ssize_t part = min_t(ssize_t, len, PAGE_SIZE - offset0);
--				int ix;
--
--				KUNIT_ASSERT_GE(test, part, 0);
--				ix = from / PAGE_SIZE;
--				KUNIT_ASSERT_LT(test, ix, npages);
--				p = bpages[ix];
--				KUNIT_EXPECT_PTR_EQ(test, pagelist[i], p);
--				KUNIT_EXPECT_EQ(test, offset0, from % PAGE_SIZE);
--				from += part;
--				len -= part;
--				KUNIT_ASSERT_GE(test, len, 0);
--				if (len == 0)
--					break;
--				offset0 = 0;
--			}
--
--			if (test->status == KUNIT_FAILURE)
--				goto stop;
--		} while (iov_iter_count(&iter) > 0);
--
--		KUNIT_EXPECT_EQ(test, size, 0);
--		KUNIT_EXPECT_EQ(test, iter.count, 0);
--	}
--
--stop:
--	KUNIT_SUCCEED(test);
--}
--
- /*
-  * Test the extraction of ITER_XARRAY-type iterators.
-  */
-@@ -1191,15 +938,12 @@ static struct kunit_case __refdata iov_kunit_cases[] = {
- 	KUNIT_CASE(iov_kunit_copy_from_kvec),
- 	KUNIT_CASE(iov_kunit_copy_to_bvec),
- 	KUNIT_CASE(iov_kunit_copy_from_bvec),
--	KUNIT_CASE(iov_kunit_copy_to_folioq),
--	KUNIT_CASE(iov_kunit_copy_from_folioq),
- 	KUNIT_CASE(iov_kunit_copy_to_bvecq),
- 	KUNIT_CASE(iov_kunit_copy_from_bvecq),
- 	KUNIT_CASE(iov_kunit_copy_to_xarray),
- 	KUNIT_CASE(iov_kunit_copy_from_xarray),
- 	KUNIT_CASE(iov_kunit_extract_pages_kvec),
- 	KUNIT_CASE(iov_kunit_extract_pages_bvec),
--	KUNIT_CASE(iov_kunit_extract_pages_folioq),
- 	KUNIT_CASE(iov_kunit_extract_pages_xarray),
- 	{}
- };
+-#endif /* _ROLLING_BUFFER_H */
 
 
