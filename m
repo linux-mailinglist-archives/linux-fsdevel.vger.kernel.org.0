@@ -1,204 +1,231 @@
-Return-Path: <linux-fsdevel+bounces-79440-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79441-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id kOCyE0KmqGkYwQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79440-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 22:38:10 +0100
+	id IGZhBGCnqGlMwQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79441-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 22:42:56 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E66820807C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 22:38:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9281E2081BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 22:42:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1937B304DF15
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2026 21:37:51 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E2C4230A4543
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2026 21:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C163932E2;
-	Wed,  4 Mar 2026 21:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77143D4127;
+	Wed,  4 Mar 2026 21:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PeOv4i62"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOy+ahU5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EC5273D8D
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Mar 2026 21:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F229327BFB;
+	Wed,  4 Mar 2026 21:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772660269; cv=none; b=IFcZ88IrE5VySuK+tUTUIh8xHTfAawDYeBYCSJJ6mDyT/jn6+biLyQp8rkWXSn0gfOGsGQzLY1FgyUXlapuoUqDg7wyAzHamDT6XeOUlZg8zgHHq17mDZaqg/V7ztm40FY6UgD4+o0DF+Xc/MIUvyy4C6uWw3Em6QSQmM2OrMU4=
+	t=1772660508; cv=none; b=Sw+pyDYSj5GGyKQkh5PJeOWD5VmG87070nFTyihXeVoAmnxEjU3wcvp37vxTqwTTmxGU++tGIPesOxd1b7JixuRdvuf1j4gWqeB4FZf4ENZ9n0eeQSSTmQr/wCdQChvDlFbA5kY6tmcaIE8ZbEbj42ydFYCAGTSebHjuhEI2gAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772660269; c=relaxed/simple;
-	bh=DHFzucvKQo9mJnpiOC/mpjemhEuJZ6EV4obLrcNxNYQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=F8N0Lcv9OlCzOH/fAn42pF2TfuGmZQMkem1PApNhOLlRKNTSK9JDQAc0y/KSMvvdJMBA2fNcdCc7y9ybvmpSK52qUtnjeO/KZOkto5QgUHSJfgoMcSDXY1t8twWRKBPwzio3noZkiUpt3qP2Pql2zGVZobDyTZMgHDE6Gkm2GoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PeOv4i62; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4836b7c302fso75279565e9.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Mar 2026 13:37:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1772660267; x=1773265067; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=H3B6twlxs7RG5L5HQ0RR3EQNIcTaBDOh7BWXSLk64tU=;
-        b=PeOv4i62mPdMN5GCFB4SI/nked8GOPruvrh9hLhH7seF6Tu+9ZCDjzdlYqv62xeyEW
-         w4bltHeaJRElv1u9HArZLc8VCUn7rYhZEHNBN0vtn61qpT32va6U703RD/F9lQd97qPv
-         cp/DAmuziaoS1QaGnaxh0eRi8xYxxqPEWV0XP0WrojV2DFLpdt03C1DRawQoDmqTevaQ
-         GNHzje+jMWE/zSGPzDR6ZeCz1+bQAzSzQ/hAH+dZTOG/otHkGxknlSPeVxfv7JHpuP7c
-         E7ykQzdlFb6hBoMqkCh0L9LNFSePPC6QctcitDd8VtTOy1eRPZPMO1afwSCM3q6LyjaF
-         Dc1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772660267; x=1773265067;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H3B6twlxs7RG5L5HQ0RR3EQNIcTaBDOh7BWXSLk64tU=;
-        b=jp2XME7KwCj85WfeGxZrSFQpZiubgM5prvbS4VDttMAd9FI1wgkTKgLvw4rclytjUl
-         pSKNgg1vjV0uN+r5UNc1NHCsQlkyN3wOHHlX4yquilE7Bt3MsFVJ08T/MYvhS1rxPudg
-         UId+NzbY6o0b2MBnw6awsIdWOclEUG9SuFcvbTXdteebDI7rIk1p2WwMiHCjJHBa6FvC
-         QUZNCfFWdAYrddt5bey/9nw/ddFgMGzFq2g6RndmUOx15uUPDuvv/qjq70NR0yUnuhnD
-         SnuO7Xq+bq2Plk1snnhHbNqkb0CiWFmEfqdtg+imOtkL+x7ieNzjQGLlwT099/NfIah5
-         D4FA==
-X-Forwarded-Encrypted: i=1; AJvYcCW5D5hDsvAO8d+6AlnzKP5yR/918m+bO7tS7SANbgzx69mZh+MK7ks2zWpBoCYucP+mL2yv52omoOzqn5nx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxojalre6mln5X8b4ouZSVtQom6EU7L3bo02ruFqRUNTbeH/NxI
-	ksBmi6YRJcXYwVbtCygxQSPASavMnwcxBeSKxdSpbCfreNeBq5YUHmilAHxEDKWVVSCFFFdMnt2
-	Sp2EC//lbQlCug6Wd7Q==
-X-Received: from wmjx23.prod.google.com ([2002:a05:600c:21d7:b0:482:ef67:407f])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:a087:b0:485:110f:5b7f with SMTP id 5b1f17b1804b1-48519888e6amr59392995e9.19.1772660266742;
- Wed, 04 Mar 2026 13:37:46 -0800 (PST)
-Date: Wed, 4 Mar 2026 21:37:45 +0000
-In-Reply-To: <aahd2DIXFJiUKy0S@tardis.local>
+	s=arc-20240116; t=1772660508; c=relaxed/simple;
+	bh=PV67OS/91fsa6EbIf+u5pJQmbMnqcMaw7mOqQaMZtc4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lfld2e8/PbdfaAtjfigBPh7E9dFW1n7G05AkucJry/6w46kgIFNyvq8Ec74bhrTMwT2u9Fs/hHRofFqKVS5l0aZXWocJDGl6q3qSWRzXAzvRXgGgyISAtQ65Mjbz52nMmgXXLwGijR+1/0Kp5egn+4O2VOcNn5aQK2iGIdfrkCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WOy+ahU5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFDDDC4CEF7;
+	Wed,  4 Mar 2026 21:41:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772660507;
+	bh=PV67OS/91fsa6EbIf+u5pJQmbMnqcMaw7mOqQaMZtc4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WOy+ahU5UARQ0yTbDyVVAn1fSlv8RpYZwjPT+Gigf4F6vtlQM47BUEAaHpPl28jTi
+	 zijTiFmnsokrQhTEwusFFZyPjXjLpzptmexKVrqiO7zalnrs6jCk/4Dtvo7p2Wi1b1
+	 deFntjfjHaMPD1GtY9aIYLocTQHgNd9upu9na/Ju2G9Ir6nNYqwGJRWtco86cB0/5r
+	 uO2UQtHfq4CG7HDfigIocItuDJOTEaZae9H5bHTqKAx9IDkUJuakGJN2s0X8q9pydZ
+	 YUjxavtU51Dm29ViV1Ch1zVWrQIQ2z11hjkuPtHX/LzHUzaMqMA8RcsW3Ko5J8lxOB
+	 JCi7YwgNkSxnQ==
+Message-ID: <d5ef252a-02db-42d1-8ffa-1769189ae60a@kernel.org>
+Date: Thu, 5 Mar 2026 06:41:21 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20260213-upgrade-poll-v2-0-984a0fb184fb@google.com>
- <20260213-upgrade-poll-v2-1-984a0fb184fb@google.com> <aadbyBmaV8zCYiog@tardis.local>
- <aafmf5icyPIFcwf_@google.com> <aahd2DIXFJiUKy0S@tardis.local>
-Message-ID: <aaimKbwAbPfBUPG6@google.com>
-Subject: Re: [PATCH v2 1/2] rust: poll: make PollCondVar upgradable
-From: Alice Ryhl <aliceryhl@google.com>
-To: Boqun Feng <boqun@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Gary Guo <gary@garyguo.net>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Carlos Llamas <cmllamas@google.com>, 
-	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-X-Rspamd-Queue-Id: 9E66820807C
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 12/12] treewide: change inode->i_ino from unsigned long
+ to u64
+To: Jeff Layton <jlayton@kernel.org>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Dan Williams <dan.j.williams@intel.com>, Eric Biggers <ebiggers@kernel.org>,
+ "Theodore Y. Ts'o" <tytso@mit.edu>, Muchun Song <muchun.song@linux.dev>,
+ Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@kernel.org>,
+ David Howells <dhowells@redhat.com>, Paulo Alcantara <pc@manguebit.org>,
+ Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+ Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
+ Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>,
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+ Tom Talpey <tom@talpey.com>, Steve French <sfrench@samba.org>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Bharath SM
+ <bharathsm@microsoft.com>, Alexander Aring <alex.aring@gmail.com>,
+ Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+ Viacheslav Dubeyko <slava@dubeyko.com>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
+ <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>,
+ Christian Schoenebeck <linux_oss@crudebyte.com>,
+ David Sterba <dsterba@suse.com>, Marc Dionne <marc.dionne@auristor.com>,
+ Ian Kent <raven@themaw.net>, Luis de Bethencourt <luisbg@kernel.org>,
+ Salah Triki <salah.triki@gmail.com>,
+ "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
+ Ilya Dryomov <idryomov@gmail.com>, Alex Markuze <amarkuze@redhat.com>,
+ Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
+ Nicolas Pitre <nico@fluxnic.net>, Tyler Hicks <code@tyhicks.com>,
+ Amir Goldstein <amir73il@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Yangtao Li <frank.li@vivo.com>,
+ Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
+ David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>,
+ Dave Kleikamp <shaggy@kernel.org>,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+ Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+ Joseph Qi <joseph.qi@linux.alibaba.com>, Mike Marshall
+ <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>,
+ Miklos Szeredi <miklos@szeredi.hu>, Anders Larsen <al@alarsen.net>,
+ Zhihao Cheng <chengzhihao1@huawei.com>, Naohiro Aota <naohiro.aota@wdc.com>,
+ Johannes Thumshirn <jth@kernel.org>,
+ John Johansen <john.johansen@canonical.com>, Paul Moore
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>,
+ Casey Schaufler <casey@schaufler-ca.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Sumit Semwal <sumit.semwal@linaro.org>, Eric Dumazet <edumazet@google.com>,
+ Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Willem de Bruijn <willemb@google.com>, "David S. Miller"
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Simon Horman <horms@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, James Clark
+ <james.clark@linaro.org>, "Darrick J. Wong" <djwong@kernel.org>,
+ Martin Schiller <ms@dev.tdt.de>, Eric Paris <eparis@redhat.com>,
+ Joerg Reuter <jreuter@yaina.de>, Marcel Holtmann <marcel@holtmann.org>,
+ Johan Hedberg <johan.hedberg@gmail.com>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Oliver Hartkopp <socketcan@hartkopp.net>,
+ Marc Kleine-Budde <mkl@pengutronix.de>, David Ahern <dsahern@kernel.org>,
+ Neal Cardwell <ncardwell@google.com>,
+ Steffen Klassert <steffen.klassert@secunet.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Remi Denis-Courmont <courmisch@gmail.com>,
+ Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+ Xin Long <lucien.xin@gmail.com>, Magnus Karlsson
+ <magnus.karlsson@intel.com>,
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+ Stanislav Fomichev <sdf@fomichev.me>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+ fsverity@lists.linux.dev, linux-mm@kvack.org, netfs@lists.linux.dev,
+ linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+ samba-technical@lists.samba.org, linux-nilfs@vger.kernel.org,
+ v9fs@lists.linux.dev, linux-afs@lists.infradead.org, autofs@vger.kernel.org,
+ ceph-devel@vger.kernel.org, codalist@coda.cs.cmu.edu,
+ ecryptfs@vger.kernel.org, linux-mtd@lists.infradead.org,
+ jfs-discussion@lists.sourceforge.net, ntfs3@lists.linux.dev,
+ ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org,
+ linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
+ selinux@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org, netdev@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-hams@vger.kernel.org,
+ linux-x25@vger.kernel.org, audit@vger.kernel.org,
+ linux-bluetooth@vger.kernel.org, linux-can@vger.kernel.org,
+ linux-sctp@vger.kernel.org, bpf@vger.kernel.org
+References: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
+ <20260304-iino-u64-v3-12-2257ad83d372@kernel.org>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20260304-iino-u64-v3-12-2257ad83d372@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 9281E2081BE
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MV_CASE(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
-	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79440-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[kernel.org,gmail.com,garyguo.net,linuxfoundation.org,google.com,vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-79441-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[google.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[aliceryhl@google.com,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FREEMAIL_TO(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,goodmis.org,efficios.com,intel.com,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,infradead.org,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,yaina.de,holtmann.org,hartkopp.net,pengutronix.de,secunet.com,gondor.apana.org.au,fomichev.me,iogearbox.net];
+	HAS_ORG_HEADER(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[170];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[dlemoal@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	NEURAL_HAM(-0.00)[-0.998];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On Wed, Mar 04, 2026 at 08:29:12AM -0800, Boqun Feng wrote:
-> On Wed, Mar 04, 2026 at 07:59:59AM +0000, Alice Ryhl wrote:
-> [...]
-> > > > +        // If a normal waiter registers in parallel with us, then either:
-> > > > +        // * We took the lock first. In that case, the waiter sees the above cmpxchg.
-> > > > +        // * They took the lock first. In that case, we wake them up below.
-> > > > +        drop(lock.lock());
-> > > > +        self.simple.notify_all();
-> > > 
-> > > Hmm.. what if the waiter gets its `&CondVar` before `upgrade()` and use
-> > > that directly?
-> > > 
-> > > 	<waiter>				<in upgrade()>
-> > > 	let poll_cv: &UpgradePollCondVar = ...;
-> > > 	let cv = poll_cv.deref();
-> > > 						cmpxchg();
-> > > 						drop(lock.lock());
-> > > 						self.simple.notify_all();
-> > > 	let mut guard = lock.lock();
-> > > 	cv.wait(&mut guard);
-> > > 
-> > > we still miss the wake-up, right?
-> > > 
-> > > It's creative, but I particularly hate we use an empty lock critical
-> > > section to synchronize ;-)
-> > 
-> > I guess instead of exposing Deref, I can just implement `wait` directly
-> > on `UpgradePollCondVar`. Then this API misuse is not possible.
-> > 
+On 3/5/26 00:32, Jeff Layton wrote:
+> On 32-bit architectures, unsigned long is only 32 bits wide, which
+> causes 64-bit inode numbers to be silently truncated. Several
+> filesystems (NFS, XFS, BTRFS, etc.) can generate inode numbers that
+> exceed 32 bits, and this truncation can lead to inode number collisions
+> and other subtle bugs on 32-bit systems.
 > 
-> If we do that,then we can avoid the `drop(lock.lock())` as well, if we
-> do:
+> Change the type of inode->i_ino from unsigned long to u64 to ensure that
+> inode numbers are always represented as 64-bit values regardless of
+> architecture. Update all format specifiers treewide from %lu/%lx to
+> %llu/%llx to match the new type, along with corresponding local variable
+> types.
 > 
->     impl UpgradePollCondVar {
->         pub fn wait(...) {
-> 	    prepare_to_wait_exclusive(); // <- this will take lock in
->                                          // simple.wait_queue_head. So
->                                          // either upgrade() comes
->                                          // first, or they observe the
->                                          // wait being queued.
->             let cv_ptr = self.active.load(Relaxed);
-> 	    if !ptr_eq(cv_ptr, &self.simple) { // We have moved from
-> 	                                       // simple, so need to
->                                                // need to wake up and
->                                                // redo the wait.
-> 	        finish_wait();
-> 	    } else {
-> 	        guard.do_unlock(|| { schedule_timeout(); });
-> 		finish_wait();
-> 	    }
-> 	}
->     }
+> This is the bulk treewide conversion. Earlier patches in this series
+> handled trace events separately to allow trace field reordering for
+> better struct packing on 32-bit.
 > 
-> (CondVar::notify*() will take the wait_queue_head lock as well)
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-Yeah but then I have to actually re-implement those methods and not just
-call them. Seems not worth it.
+For the zonefs bits:
 
-> > > Do you think the complexity of a dynamic upgrading is worthwhile, or we
-> > > should just use the box-allocated PollCondVar unconditionally?
-> > > 
-> > > I think if the current users won't benefit from the dynamic upgrading
-> > > then we can avoid the complexity. We can always add it back later.
-> > > Thoughts?
-> > 
-> > I do actually think it's worthwhile to consider:
-> > 
-> > I started an Android device running this. It created 3961 instances of
-> > `UpgradePollCondVar` during the hour it ran, but only 5 were upgraded.
-> > 
-> 
-> That makes sense, thank you for providing the data! But still I think we
-> should be more informative about the performance difference between
-> dynamic upgrading vs. unconditionally box-allocated PollCondVar, because
-> I would assume when a `UpgradePollCondVar` is created, other allocations
-> also happen as well (e.g. when creating a Arc<binder::Thread>), so the
-> extra cost of the allocation may be unnoticeable.
+Acked-by: Damien Le Moal <dlemoal@kernel.org>
 
-Perf-wise it doesn't matter, but I'm concerned about memory usage.
-
-Alice
+-- 
+Damien Le Moal
+Western Digital Research
 
