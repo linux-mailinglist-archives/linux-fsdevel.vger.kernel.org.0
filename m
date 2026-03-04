@@ -1,186 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-79337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cG+QK4AKqGn2nQAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 11:33:36 +0100
+	id mFMUN2kKqGn2nQAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 11:33:13 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25E441FE65F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 11:33:35 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B36B1FE638
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 11:33:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 5B82730CC185
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2026 10:27:48 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 6C98D30898C9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2026 10:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799043A255F;
-	Wed,  4 Mar 2026 10:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1683A2573;
+	Wed,  4 Mar 2026 10:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GI7h/3MW"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="siZp4t3A";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hRWnixAt";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sucmmmmn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yA1+3gNC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB413A255E
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Mar 2026 10:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D943A256F
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Mar 2026 10:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772620065; cv=none; b=ja+Hk1jaoBw0UVsKKFnKY2juCmgeOIH9GzlWLQQDJ4zmFewImNEvl54R5WhGVtVkoH7ZTovvQeY+2YlnMuQI2Jb/RD8h2Rqgh06GtIgUKJ1JGwPXmhxqbwZ4BOYVyNQXmuHq4enDpCEWCucY+gj3BVt3bUX/ZePH/dyi177/FgQ=
+	t=1772620224; cv=none; b=d/gv9wkH55s2edaQIFo9AEdo+/FogHDo7puAeCUDDS8Y6vYlyXJu4UscGU5w50jVVuDerKjr60fxgv0e8d2X/zoXZ1idhPwPvPIOpVxi68Yi+TwAcneXMX37p2R4FFry/x+WJ8wm7gwAQbFkdtl5z02Me5YfIYwHGMnl3v4Y5q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772620065; c=relaxed/simple;
-	bh=E100ka1dL4bibW3CFmfapEd76zJ5jr+xC7IyF30CAHQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WJlQDWKG2pzNLpyD5yeryeOqy7hPnGhfeo8nE70cSQw2vt8WRP10qHHLvDfJGMzhPZPf+BF3DuYamsTaLvH/MKWWhVyZbhck2Qd+Mzu9YoY87rqN8SKSJMa9FlWUciRa4jDSJB3LsJSRAmZPxL0EzJEY0HJ1IkNimysI6VAl1sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GI7h/3MW; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2ab39b111b9so31771035ad.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Mar 2026 02:27:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772620063; x=1773224863; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BlvRFcaaKrlIcfTaPcJpKe4F/scRPAHs6ZtzwYHkQv0=;
-        b=GI7h/3MW7j8dUW6bl+bBc8qjMACjPLUkmIFa8bhQCR6xBBZ5SzBcByP0RNk06NGiqz
-         UTh2dv9Bs9MtPcXTBcQY92F+CBv5gSHDYx/DupmUlvAXMJIUY2hoAMd/6NYs3kt7Akic
-         7/uGNrbRAJ1EBqeUQVR2xQcx9M0m9CO75Xi48ueDahY60/jvlx9U22xeQaJQoVuQKfrW
-         1KbEJIC3MvLv+f2PbCk+CsA8Q/Vyn1b8dqElOU2srv/sXdsK1fMiYENqJwXqhmmHmkGY
-         Ybem8PpAgOA5DGfzr2rkFObsZt9iWVM6MnHqd8K5wweKmqF9DVGar2hNiR5BDcMOwdz9
-         BhVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772620063; x=1773224863;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BlvRFcaaKrlIcfTaPcJpKe4F/scRPAHs6ZtzwYHkQv0=;
-        b=ZksdbYXalgbw9bK8POwIonPlkG5UOzithdBJ9bAnMWAJL4e0GOfuVwiDvfkvVYQMxb
-         oMimwuLD/UYiI/iS0gZcUDOABH/I6Pg0Fo5BKzOWJLfU+6nY0HOFozNWC9VYV42f2JMY
-         3lHqUuOGwEc82xK2zZ0V3yADFbsp1W42XE3DdJYcF0cpFKqS3QFyTWpShAtYSRijlJtB
-         I05n/xlbvjzBtArqp50GGrKcEH9pKu9XKltH2E5ad5Ux4JHRIs7RXC4EagmZLpB3ialh
-         pfIXJQ1w7ZHrAU0N0UcmJZEOSijNgP0qyEEqW6eULN37kdVWe21uzqRUCP+oS+pZfsmx
-         UvkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYr4cUs8QbRvykZUX4DhcNT89u91JV8lsXQZ783LtHNZpUcmtWXu0BmumP/CKWh13B8Cs7St4qD974brTJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaA0vpSOIOMNKPIzZtgtrYTv6De9wbh3xpCsyJqVUgY+gxi5ab
-	+APZ1txW6fNn5K3D2BE8Fr7LZ2OCbbVhrKkM6suwu9hF+GD71qBoNXapW8xVRGKxfTc=
-X-Gm-Gg: ATEYQzwliVbXrixO3lzw/m5v4OIdXRt8FdObkmYp0dy8hLADpy5pfB01xAT7oCaFwA9
-	JJ5rDYpHLg4QV37SHWzVus5FEQwnmp2MPm0IHcvZzZLl1hQqTRXg1xQPm8bValOF2u0qdukmEjs
-	ED+ofN0Qs72Wc6V8Dd0yH37DTNyuLmR1kDJojV1xtMapZCgD8faeHO83AF2iz6GGUOLSx59aLhE
-	2xqutXvGU4a3THxhGxr+uxaTi5RhBX+a3scUsCgKc6v3B9O2wuwsikOklm5K6fX/5NY24YsCzEr
-	EjH5sF+GyU9gzg9oohykDxuyZL5O86qCl4fxZtcaaVbsQBiS5ETUSBpLzOUlpvV6NtyTIDC7lm3
-	dQ428sHCdl/aCe7iEIteb2s75RaDS8Wkz3iQhSQrU47FtTlcLUVgGUNtWGt8408yIxOvfdZIWWS
-	zZg2FzScoa60m9nzs1V0qK84727st3C4PBhQ==
-X-Received: by 2002:a17:902:db0f:b0:2ad:6e26:abbb with SMTP id d9443c01a7336-2ae6ab9ecd3mr14619845ad.54.1772620063275;
-        Wed, 04 Mar 2026 02:27:43 -0800 (PST)
-Received: from yangwen.localdomain ([121.225.53.117])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2adfb5c3b01sm202391855ad.31.2026.03.04.02.27.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2026 02:27:42 -0800 (PST)
-From: Yang Wen <anmuxixixi@gmail.com>
-To: linkinjeon@kernel.org,
-	sj1557.seo@samsung.com
-Cc: yuezhang.mo@sony.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yang Wen <anmuxixixi@gmail.com>
-Subject: [PATCH v3] exfat: initialize caching fields during inode allocation
-Date: Wed,  4 Mar 2026 18:27:32 +0800
-Message-ID: <20260304102732.3928-1-anmuxixixi@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1772620224; c=relaxed/simple;
+	bh=7a/WUUQxacqPYN/i8eDfaudF6ynDdM6mXdn4w7XcwU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LnsucRUk6uygzDzXSlwEHW1vCnurBLF0xSUYlYCAOiHwK4esWn53G+W/gBNfZ7B3qAa7otBRmTpwGtD2BwBY+CEH8EZnfQP7XLjyjSeP2daulrsZxZ7D5ylLJ584eNSff4zHoonZzPwW53JsWTMyGaBrgPKx7RJ810An6aijojk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=siZp4t3A; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hRWnixAt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sucmmmmn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yA1+3gNC; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B41D45BDE4;
+	Wed,  4 Mar 2026 10:30:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1772620220; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sA285zy6QvyW+5GYqPLWOMtmxarDFnIGsLox5OjCH6I=;
+	b=siZp4t3A6Gf7DGpcxsRRqAstaAJIVoTJ994JqZJ/yzRrFrOsdoZfaoBS/Eyhe87hyvPA6V
+	ACbOl0dkkPmrlELO+M4o7JsWRHqGmA/3Et7bHuhWfPXJJNQc3bJda66Hz5nrMN3c07qkn8
+	brVXr3gB0cqoE93ekYMuAdwUe3mH1rU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1772620220;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sA285zy6QvyW+5GYqPLWOMtmxarDFnIGsLox5OjCH6I=;
+	b=hRWnixAtmwxt16gQu446BAjJv3l0nr8nlvQ2Y2YP7RqDe3+cF9h8sOnCox5H4/p8I4ATlu
+	9KBD82KihbPdmGBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1772620219; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sA285zy6QvyW+5GYqPLWOMtmxarDFnIGsLox5OjCH6I=;
+	b=sucmmmmnugeUmrf/mrx7P0vgvqWX5k1t//3lGg5lXWEFgGqkO7enjSQGkoD+bl+uIrL0A1
+	LzxnMykHZHeYYQ7dbmpG1Szz+IVO/cZq4nFgfrK3Kqd6rta6XPvnnxnBbXGYmTHT+XiXON
+	A6tZeLKBsCIWIy+dxSwdE3CXglxjUtk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1772620219;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sA285zy6QvyW+5GYqPLWOMtmxarDFnIGsLox5OjCH6I=;
+	b=yA1+3gNCGVL6lZ/iRstT5HJ6afRStjV0CxO209O7gedN2drYGBQdK9Tc9YwtNB62iHONEH
+	X7suKX7Zsk9/HoBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A41743EA6C;
+	Wed,  4 Mar 2026 10:30:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IWsNKLsJqGmFDgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 04 Mar 2026 10:30:19 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 67F9AA0A1B; Wed,  4 Mar 2026 11:30:19 +0100 (CET)
+Date: Wed, 4 Mar 2026 11:30:19 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, linux-ext4@vger.kernel.org, 
+	Ted Tso <tytso@mit.edu>, "Tigran A. Aivazian" <aivazian.tigran@gmail.com>, 
+	David Sterba <dsterba@suse.com>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
+	Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
+	David Hildenbrand <david@kernel.org>, linux-mm@kvack.org, linux-aio@kvack.org, 
+	Benjamin LaHaise <bcrl@kvack.org>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Subject: Re: [PATCH 21/32] bdev: Drop pointless invalidate_mapping_buffers()
+ call
+Message-ID: <7irr5gqmatluutbkywhvom7ryzn6j7cl4sw7q2d7e5q3grd7u2@mk54kpnqbi52>
+References: <20260303101717.27224-1-jack@suse.cz>
+ <20260303103406.4355-53-jack@suse.cz>
+ <aabqTRvKIWo2mHz1@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 25E441FE65F
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aabqTRvKIWo2mHz1@infradead.org>
+X-Spam-Flag: NO
+X-Spam-Score: -2.30
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 5B36B1FE638
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [0.34 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[sony.com,vger.kernel.org,gmail.com];
-	TAGGED_FROM(0.00)[bounces-79337-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[];
+	TAGGED_FROM(0.00)[bounces-79338-lists,linux-fsdevel=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,suse.cz:dkim];
+	DMARC_NA(0.00)[suse.cz];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,kernel.org,zeniv.linux.org.uk,mit.edu,gmail.com,suse.com,mail.parknet.co.jp,linux.dev,suse.de,kvack.org,kernel.dk];
+	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[anmuxixixi@gmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	RCVD_COUNT_FIVE(0.00)[5];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	DKIM_TRACE(0.00)[suse.cz:+];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCPT_COUNT_FIVE(0.00)[6];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TO_DN_SOME(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	RCVD_COUNT_SEVEN(0.00)[7]
 X-Rspamd-Action: no action
 
-exfat_alloc_inode() does not initialize the cache_lru list head of
-struct exfat_inode_info.
+On Tue 03-03-26 06:03:57, Christoph Hellwig wrote:
+> > diff --git a/block/bdev.c b/block/bdev.c
+> > index ed022f8c48c7..ad1660b6b324 100644
+> > --- a/block/bdev.c
+> > +++ b/block/bdev.c
+> > @@ -420,7 +420,6 @@ static void init_once(void *data)
+> >  static void bdev_evict_inode(struct inode *inode)
+> >  {
+> >  	truncate_inode_pages_final(&inode->i_data);
+> > -	invalidate_inode_buffers(inode); /* is it needed here? */
+> >  	clear_inode(inode);
+> >  }
+> 
+> With this, bdev_evict_inode can go away as it is equivalent to the
+> default action when no ->evict_inode is provided.
 
-If an inode is evicted before its cache structures are properly
-initialized (e.g., during a forced unmount), the cleanup
-path in __exfat_cache_inval_inode() may observe an uninitialized
-list head.
+Good point. I'll remove bdev_evict_inode(). Thanks!
 
-The check:
-
-    while (!list_empty(&ei->cache_lru))
-
-may incorrectly succeed when stale pointers remain from a reused
-slab object. Subsequent list traversal can then operate on invalid
-entries, potentially leading to a NULL pointer dereference or
-memory corruption.
-
-Initialize cache_lru, cache_lru_lock, nr_caches, and cache_valid_id
-in exfat_alloc_inode() to ensure a well-defined state at allocation
-time.
-
-Signed-off-by: Yang Wen <anmuxixixi@gmail.com>
----
- fs/exfat/super.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index 83396fd265cd..4f99986f390a 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -195,6 +195,12 @@ static struct inode *exfat_alloc_inode(struct super_block *sb)
- 	if (!ei)
- 		return NULL;
- 
-+	spin_lock_init(&ei->cache_lru_lock);
-+	ei->nr_caches = 0;
-+	ei->cache_valid_id = EXFAT_CACHE_VALID + 1;
-+	INIT_LIST_HEAD(&ei->cache_lru);
-+	INIT_HLIST_NODE(&ei->i_hash_fat);
-+
- 	init_rwsem(&ei->truncate_lock);
- 	return &ei->vfs_inode;
- }
-@@ -879,11 +885,6 @@ static void exfat_inode_init_once(void *foo)
- {
- 	struct exfat_inode_info *ei = (struct exfat_inode_info *)foo;
- 
--	spin_lock_init(&ei->cache_lru_lock);
--	ei->nr_caches = 0;
--	ei->cache_valid_id = EXFAT_CACHE_VALID + 1;
--	INIT_LIST_HEAD(&ei->cache_lru);
--	INIT_HLIST_NODE(&ei->i_hash_fat);
- 	inode_init_once(&ei->vfs_inode);
- }
- 
+								Honza
 -- 
-2.43.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
