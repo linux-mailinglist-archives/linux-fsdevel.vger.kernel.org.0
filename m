@@ -1,56 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-79299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79300-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aEORDi15p2kshwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 01:13:33 +0100
+	id yEaFDDR5p2kshwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79300-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 01:13:40 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB9961F8C4C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 01:13:32 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 821BE1F8C53
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 01:13:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7F7293066BEC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2026 00:10:38 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 6B67D3037D40
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2026 00:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D415B1EB;
-	Wed,  4 Mar 2026 00:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1D078F26;
+	Wed,  4 Mar 2026 00:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iqU1HAh1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m9ilY0LJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB311643B
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Mar 2026 00:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59553BA21
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Mar 2026 00:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772583036; cv=none; b=R1/vqsbFieSnOoEvEnnpWetO7fedWuUTELgfpv09fm1y6OJstwfvAEHSRO4UDmEJ48l+2At0tde32XuGP6KLHPAhbBcOZdaQUBT4J8B8bdrpPqXPXD/Z+1fy1JtwE8h/aTNNuQLErP0IRwUtMkvkKsNQ+hPHnAXw8AM2qpyLUTI=
+	t=1772583052; cv=none; b=U7gxr2VU1ixFHpC165P6dOk/11pukzF4N9wNebNXUEmMuzODqIpd/Z86W2By9T4d/8b3+ee1hGy+zSs1tW44QTuJE+/1/KoaL76UdxS+knMcgh9gH18iEedjQXzXYfWvLhp22+r6rNS5pmF2wdXjA446X+qCTr1INOtC2EVayrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772583036; c=relaxed/simple;
-	bh=fTKKoLNMyP1LnYIpGjnJ5YMLrL8M5nLQ5w0OC3j9WJ4=;
+	s=arc-20240116; t=1772583052; c=relaxed/simple;
+	bh=8LyY1E9+xKJ753CrsiBMwAWAxDAi8TKb1sIBIkKGEqM=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aAyXHBbG4gBXVQHXTDXTfbsYehMfx8FR161MoKUJGmsjD03zyygp2iKg+aZbkZEnd8TwNrLHW0w/Uxgvimf9oCf+F/Cd9IglupiKfQBXdnzpwhOXfucqZTuYzrDBUXUDH6x8TxHZ0Ma5O+IYO3s6AiY60juxkvimrraWa72LDc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iqU1HAh1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42615C116C6;
-	Wed,  4 Mar 2026 00:10:36 +0000 (UTC)
+	 MIME-Version:Content-Type; b=qBKqsFGTQaDrmtTdG/2oKHmuAn4RxZKGKxRnacbuhPUtfjKl3R677rk0S0Sgv1XU/P+HGlWDV7XvIgaV41DWKj7h5JmEICGW3yQe/oghYqa3XWate0yBWfZhoSvT3plpuNESOdX/+pzAeEd2o/cpNdV9NxYXPh8afAJHE35Om8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m9ilY0LJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEC56C116C6;
+	Wed,  4 Mar 2026 00:10:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772583036;
-	bh=fTKKoLNMyP1LnYIpGjnJ5YMLrL8M5nLQ5w0OC3j9WJ4=;
+	s=k20201202; t=1772583052;
+	bh=8LyY1E9+xKJ753CrsiBMwAWAxDAi8TKb1sIBIkKGEqM=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=iqU1HAh1qOwrFTSAcUlzlUmmTAL2IkrXEejvjX7UsDWN/yd2OGQxIq4sLwatL5/aH
-	 sQho+mBR0+nr9+Oa+8pKHXNTOCHEAxcB+1wRHiSsBXIuBvs6MKdf+5KQpqt+Kp8cWD
-	 Iem1LF/n2S9fyMYIJeNs3jiA6POo59zy+acKyqABaEN1hhKyrdXNlWt2rYYMUvDTfp
-	 bHspFfsk2HyDKGHaVyX52XWEwsdQSkIYC0ArZsWrRU1TW6/n43W5mZdplKAYBPG6m6
-	 roq/Q/3uPAzx0m68ckptJUDkByS9eewBMaJJ0LJPaW/GGBC0HeAX7OV2lnd/bW2cuQ
-	 HMx3LB3feEB8w==
-Date: Tue, 03 Mar 2026 16:10:35 -0800
-Subject: [PATCH 2/3] libfuse: integrate fuse services into mount.fuse3
+	b=m9ilY0LJkWR71aH4BZT4g+kol0MttfGIRzIi+pKC3O0xZ/Gm+7MVHG6/315CPQAxL
+	 /favNWndPD5vld9ZjEC3cykvGgolp3SDQZWHwGIMH8NPIMUaByeCcxTH5+7TZVcRnI
+	 Dp5CYj6waeapS0zQHpVDOMQsPaULAppF9UB5h6nYQ+dUA/MoCloMgdkAHD4u2E8SN9
+	 +DXX4I3nr/EmDnjmdRuT55tfhO5dM6qLkdGsLWhpqu6pTt4boB1xbCcSzP+/i4bIXV
+	 VJ0DFTHhqgb979TWHhSCaB6t9LUHmY5YKdnBBRXoR94UxnoEWsBaZFAL3YORH0GZ5e
+	 YMQ4Ul9t+tDKA==
+Date: Tue, 03 Mar 2026 16:10:51 -0800
+Subject: [PATCH 3/3] example/service_ll: create a sample systemd service fuse
+ server
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: bschubert@ddn.com, djwong@kernel.org
 Cc: miklos@szeredi.hu, neal@gompa.dev, joannelkoong@gmail.com,
  linux-fsdevel@vger.kernel.org, bernd@bsbernd.com
-Message-ID: <177258266087.1161627.15882939941749159980.stgit@frogsfrogsfrogs>
+Message-ID: <177258266106.1161627.16915862975333696912.stgit@frogsfrogsfrogs>
 In-Reply-To: <177258266040.1161627.14968799557253463876.stgit@frogsfrogsfrogs>
 References: <177258266040.1161627.14968799557253463876.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,26 +62,26 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: CB9961F8C4C
+X-Rspamd-Queue-Id: 821BE1F8C53
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_RHS_NOT_FQDN(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_CC(0.00)[szeredi.hu,gompa.dev,gmail.com,vger.kernel.org,bsbernd.com];
-	TAGGED_FROM(0.00)[bounces-79299-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79300-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	MIME_TRACE(0.00)[0:+];
 	TO_DN_NONE(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
@@ -90,269 +91,1011 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[7];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,socket.in:url,ll.ro:url,ll.se:url]
 X-Rspamd-Action: no action
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Teach mount.fuse3 how to start fuse via service, if present.
+Create a simple fuse server that can be run as a systemd service.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- util/mount_service.h  |    9 ++++++++
- doc/fuservicemount3.8 |   10 ++++++++
- util/fuservicemount.c |   48 +++++++++++++++++++++++++++++++++++++++++
- util/meson.build      |    4 +++
- util/mount.fuse.c     |   58 +++++++++++++++++++++++++++++++------------------
- util/mount_service.c  |   18 +++++++++++++++
- 6 files changed, 124 insertions(+), 23 deletions(-)
+ example/meson.build          |    7 
+ example/service_ll.c         |  823 ++++++++++++++++++++++++++++++++++++++++++
+ example/service_ll.socket.in |   16 +
+ example/service_ll@.service  |   99 +++++
+ meson.build                  |    1 
+ 5 files changed, 946 insertions(+)
+ create mode 100644 example/service_ll.c
+ create mode 100644 example/service_ll.socket.in
+ create mode 100644 example/service_ll@.service
 
 
-diff --git a/util/mount_service.h b/util/mount_service.h
-index 16e120da10765e..b211c7ede4e034 100644
---- a/util/mount_service.h
-+++ b/util/mount_service.h
-@@ -29,4 +29,13 @@ int mount_service_main(int argc, char *argv[]);
-  */
- const char *mount_service_subtype(const char *fstype);
- 
-+/**
-+ * Discover if there is a fuse service socket for the given fuse subtype.
-+ *
-+ * @param subtype subtype of a fuse filesystem type (e.g. Y from
-+ *                mount_service_subtype)
-+ * @return true if available, false if not
-+ */
-+bool mount_service_present(const char *subtype);
-+
- #endif /* MOUNT_SERVICE_H_ */
-diff --git a/doc/fuservicemount3.8 b/doc/fuservicemount3.8
-index e45d6a89c8b81a..aa2167cb4872c6 100644
---- a/doc/fuservicemount3.8
-+++ b/doc/fuservicemount3.8
-@@ -7,12 +7,20 @@ .SH SYNOPSIS
- .B mountpoint
- .BI -t " fstype"
- [
--.I options
-+.BI -o " options"
- ]
-+
-+.B fuservicemount3
-+.BI -t " fstype"
-+.B --check
-+
- .SH DESCRIPTION
- Mount a filesystem using a FUSE server that runs as a socket service.
- These servers can be contained using the platform's service management
- framework.
-+
-+The second form checks if there is a FUSE service available for the given
-+filesystem type.
- .SH "AUTHORS"
- .LP
- The author of the fuse socket service code is Darrick J. Wong <djwong@kernel.org>.
-diff --git a/util/fuservicemount.c b/util/fuservicemount.c
-index 860c512a34e30f..13b80b3150e3bf 100644
---- a/util/fuservicemount.c
-+++ b/util/fuservicemount.c
-@@ -9,10 +9,58 @@
- /* This program does the mounting of FUSE filesystems that run in systemd */
- 
- #define _GNU_SOURCE
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <string.h>
-+#include <stdlib.h>
- #include "fuse_config.h"
- #include "mount_service.h"
- 
-+static int check_service(const char *fstype)
-+{
-+	const char *subtype;
-+
-+	if (!fstype) {
-+		fprintf(stderr,
-+			"fuservicemount: expected fs type for --check\n");
-+		return EXIT_FAILURE;
-+	}
-+
-+	subtype = mount_service_subtype(fstype);
-+	return mount_service_present(subtype) ? EXIT_SUCCESS : EXIT_FAILURE;
-+}
-+
- int main(int argc, char *argv[])
- {
-+	char *fstype = NULL;
-+	bool check = false;
-+	int i;
-+
-+	/*
-+	 * If the user passes us exactly the args -t FSTYPE --check then
-+	 * we'll just check if there's a service for the FSTYPE fuse server.
-+	 */
-+	for (i = 1; i < argc; i++) {
-+		if (!strcmp(argv[i], "--check")) {
-+			if (check) {
-+				check = false;
-+				break;
-+			}
-+			check = true;
-+		} else if (!strcmp(argv[i], "-t") && i + 1 < argc) {
-+			if (fstype) {
-+				check = false;
-+				break;
-+			}
-+			fstype = argv[i + 1];
-+			i++;
-+		} else {
-+			check = false;
-+			break;
-+		}
-+	}
-+	if (check)
-+		return check_service(fstype);
-+
- 	return mount_service_main(argc, argv);
- }
-diff --git a/util/meson.build b/util/meson.build
-index 68d8bb11f92955..3adf395bfb6386 100644
---- a/util/meson.build
-+++ b/util/meson.build
-@@ -6,7 +6,9 @@ executable('fusermount3', ['fusermount.c', '../lib/mount_util.c', '../lib/util.c
-            install_dir: get_option('bindir'),
-            c_args: '-DFUSE_CONF="@0@"'.format(fuseconf_path))
- 
-+mount_fuse3_sources = ['mount.fuse.c']
- if private_cfg.get('HAVE_SERVICEMOUNT', false)
-+  mount_fuse3_sources += ['mount_service.c']
-   executable('fuservicemount3', ['mount_service.c', 'fuservicemount.c'],
-              include_directories: include_dirs,
-              link_with: [ libfuse ],
-@@ -15,7 +17,7 @@ if private_cfg.get('HAVE_SERVICEMOUNT', false)
-              c_args: '-DFUSE_USE_VERSION=317')
+diff --git a/example/meson.build b/example/meson.build
+index 76cf2d96db0349..90730252aa6377 100644
+--- a/example/meson.build
++++ b/example/meson.build
+@@ -12,6 +12,13 @@ if not platform.endswith('bsd') and platform != 'dragonfly'
+     examples += [ 'null' ]
  endif
  
--executable('mount.fuse3', ['mount.fuse.c'],
-+executable('mount.fuse3', mount_fuse3_sources,
-            include_directories: include_dirs,
-            link_with: [ libfuse ],
-            install: true,
-diff --git a/util/mount.fuse.c b/util/mount.fuse.c
-index f1a90fe8abae7c..b6a55eebb7f88b 100644
---- a/util/mount.fuse.c
-+++ b/util/mount.fuse.c
-@@ -49,6 +49,9 @@
- #endif
- 
- #include "fuse.h"
-+#ifdef HAVE_SERVICEMOUNT
-+# include "mount_service.h"
-+#endif
- 
- static char *progname;
- 
-@@ -280,9 +283,7 @@ int main(int argc, char *argv[])
- 	mountpoint = argv[2];
- 
- 	for (i = 3; i < argc; i++) {
--		if (strcmp(argv[i], "-v") == 0) {
--			continue;
--		} else if (strcmp(argv[i], "-t") == 0) {
-+		if (strcmp(argv[i], "-t") == 0) {
- 			i++;
- 
- 			if (i == argc) {
-@@ -303,6 +304,39 @@ int main(int argc, char *argv[])
- 					progname);
- 				exit(1);
- 			}
-+		}
-+	}
++if platform.endswith('linux')
++    examples += [ 'service_ll' ]
++    configure_file(input: 'service_ll.socket.in',
++                   output: 'service_ll.socket',
++                   configuration: private_cfg)
++endif
 +
-+	if (!type) {
-+		if (source) {
-+			dup_source = xstrdup(source);
-+			type = dup_source;
-+			source = strchr(type, '#');
-+			if (source)
-+				*source++ = '\0';
-+			if (!type[0]) {
-+				fprintf(stderr, "%s: empty filesystem type\n",
-+					progname);
-+				exit(1);
-+			}
-+		} else {
-+			fprintf(stderr, "%s: empty source\n", progname);
-+			exit(1);
-+		}
-+	}
+ threaded_examples = [ 'notify_inval_inode',
+                       'invalidate_path',
+                       'notify_store_retrieve',
+diff --git a/example/service_ll.c b/example/service_ll.c
+new file mode 100644
+index 00000000000000..6e6518f0107bd3
+--- /dev/null
++++ b/example/service_ll.c
+@@ -0,0 +1,823 @@
++/*
++  FUSE: Filesystem in Userspace
++  Copyright (C) 2026 Oracle.
 +
-+#ifdef HAVE_SERVICEMOUNT
-+	/*
-+	 * Now that we know the desired filesystem type, see if we can find
-+	 * a socket service implementing that.
-+	 */
-+	if (mount_service_present(type))
-+		return mount_service_main(argc, argv);
++  This program can be distributed under the terms of the GNU GPLv2.
++  See the file GPL2.txt.
++*/
++
++/** @file
++ *
++ * minimal example filesystem using low-level API and systemd service api
++ *
++ * Compile with:
++ *
++ *     gcc -Wall service_ll.c `pkg-config fuse3 --cflags --libs` -o service_ll
++ *
++ * Note: If the pkg-config command fails due to the absence of the fuse3.pc
++ *     file, you should configure the path to the fuse3.pc file in the
++ *     PKG_CONFIG_PATH variable.
++ *
++ * ## Source code ##
++ * \include service_ll.c
++ */
++
++#define FUSE_USE_VERSION FUSE_MAKE_VERSION(3, 19)
++
++#ifndef _GNU_SOURCE
++#define _GNU_SOURCE
 +#endif
 +
-+	for (i = 3; i < argc; i++) {
-+		if (strcmp(argv[i], "-v") == 0) {
-+			continue;
- 		} else	if (strcmp(argv[i], "-o") == 0) {
- 			char *opts;
- 			char *opt;
-@@ -366,24 +400,6 @@ int main(int argc, char *argv[])
- 	if (suid)
- 		options = add_option("suid", options);
- 
--	if (!type) {
--		if (source) {
--			dup_source = xstrdup(source);
--			type = dup_source;
--			source = strchr(type, '#');
--			if (source)
--				*source++ = '\0';
--			if (!type[0]) {
--				fprintf(stderr, "%s: empty filesystem type\n",
--					progname);
--				exit(1);
--			}
--		} else {
--			fprintf(stderr, "%s: empty source\n", progname);
--			exit(1);
--		}
--	}
--
- 	if (setuid_name && setuid_name[0]) {
- #ifdef linux
- 		if (drop_privileges) {
-diff --git a/util/mount_service.c b/util/mount_service.c
-index 4bee10bba2b18b..02901443553f89 100644
---- a/util/mount_service.c
-+++ b/util/mount_service.c
-@@ -1036,3 +1036,21 @@ int mount_service_main(int argc, char *argv[])
- 	mount_service_destroy(&mo);
- 	return ret;
- }
++#include <fuse_lowlevel.h>
++#include <fuse_service.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <unistd.h>
++#include <assert.h>
++#include <pthread.h>
++#include <sys/ioctl.h>
++#include <sys/stat.h>
++#include <linux/fs.h>
++#include <linux/stat.h>
 +
-+bool mount_service_present(const char *fstype)
++struct service_ll {
++	struct fuse_session *se;
++	char *device;
++	uint64_t isize;
++	uint64_t blocks;
++	struct fuse_service *service;
++	int fusedev_fd;
++	int fd;
++	mode_t mode;
++
++	/* really booleans */
++	int debug;
++	int ro;
++	int allow_dio;
++	int sync;
++
++	int dev_index;
++	unsigned int blocksize;
++
++	struct timespec atime;
++	struct timespec mtime;
++
++	pthread_mutex_t lock;
++};
++
++static struct service_ll ll = {
++	.fd = -1,
++	.allow_dio = 1,
++	.mode = S_IFREG | 0444,
++	.lock = PTHREAD_MUTEX_INITIALIZER,
++};
++static const char *file_name = "svc_bdev";
++
++struct service_ll_stat {
++	struct fuse_entry_param entry;
++};
++
++static inline uint64_t round_up(uint64_t b, unsigned int align)
 +{
-+	struct stat stbuf;
-+	char path[PATH_MAX];
++	unsigned int m;
++
++	if (align == 0)
++		return b;
++	m = b % align;
++	if (m)
++		b += align - m;
++	return b;
++}
++
++static inline uint64_t round_down(uint64_t b, unsigned int align)
++{
++	unsigned int m;
++
++	if (align == 0)
++		return b;
++	m = b % align;
++	return b - m;
++}
++
++static inline uint64_t howmany(uint64_t b, unsigned int align)
++{
++	unsigned int m;
++
++	if (align == 0)
++		return b;
++	m = (b % align) ? 1 : 0;
++	return (b / align) + m;
++}
++
++static inline uint64_t b_to_fsbt(uint64_t off)
++{
++	return off / ll.blocksize;
++}
++
++static inline uint64_t b_to_fsb(uint64_t off)
++{
++	return (off + ll.blocksize - 1) / ll.blocksize;
++}
++
++static inline uint64_t fsb_to_b(uint64_t fsb)
++{
++	return fsb * ll.blocksize;
++}
++
++static int service_stat(fuse_ino_t ino, struct service_ll_stat *llstat)
++{
++	struct fuse_entry_param *entry = &llstat->entry;
++	struct stat *stbuf = &entry->attr;
++
++	stbuf->st_ino = ino;
++	switch (ino) {
++	case 1:
++		stbuf->st_mode = S_IFDIR | 0755;
++		stbuf->st_nlink = 2;
++		break;
++
++	case 2:
++		stbuf->st_mode = ll.mode;
++		stbuf->st_nlink = 1;
++		stbuf->st_size = ll.isize;
++		stbuf->st_blksize = ll.blocksize;
++		stbuf->st_blocks = howmany(ll.isize, 512);
++		stbuf->st_atim = ll.atime;
++		stbuf->st_mtim = ll.mtime;
++		break;
++
++	default:
++		return ENOENT;
++	}
++
++	entry->generation = ino + 1;
++	entry->attr_timeout = 0.0;
++	entry->entry_timeout = 0.0;
++	entry->ino = ino;
++
++	return 0;
++}
++
++#if defined(STATX_BASIC_STATS)
++static inline void service_set_statx_attr(struct statx *stx,
++					    uint64_t statx_flag, int set)
++{
++	if (set)
++		stx->stx_attributes |= statx_flag;
++	stx->stx_attributes_mask |= statx_flag;
++}
++
++static void service_statx_directio(struct statx *stx)
++{
++	struct statx devx;
 +	int ret;
 +
-+	snprintf(path, sizeof(path), FUSE_SERVICE_SOCKET_DIR "/%s", fstype);
-+	ret = stat(path, &stbuf);
++	ret = statx(ll.fd, "", AT_EMPTY_PATH, STATX_DIOALIGN, &devx);
 +	if (ret)
-+		return false;
++		return;
++	if (!(devx.stx_mask & STATX_DIOALIGN))
++		return;
 +
-+	if (!S_ISSOCK(stbuf.st_mode))
-+		return false;
-+
-+	ret = access(path, R_OK | W_OK);
-+	return ret == 0;
++	stx->stx_mask |= STATX_DIOALIGN;
++	stx->stx_dio_mem_align = devx.stx_dio_mem_align;
++	stx->stx_dio_offset_align = devx.stx_dio_offset_align;
 +}
++
++static int service_statx(fuse_ino_t ino, int statx_mask, struct statx *stx)
++{
++	(void)statx_mask;
++
++	stx->stx_mask = STATX_BASIC_STATS;
++	stx->stx_ino = ino;
++	switch (ino) {
++	case 1:
++		stx->stx_mode = S_IFDIR | 0755;
++		stx->stx_nlink = 2;
++		break;
++
++	case 2:
++		stx->stx_mode = ll.mode;
++		stx->stx_nlink = 1;
++		stx->stx_size = ll.isize;
++		stx->stx_blksize = ll.blocksize;
++		stx->stx_blocks = howmany(ll.isize, 512);
++		stx->stx_atime.tv_sec = ll.atime.tv_sec;
++		stx->stx_atime.tv_nsec = ll.atime.tv_nsec;
++		stx->stx_mtime.tv_sec = ll.mtime.tv_sec;
++		stx->stx_mtime.tv_nsec = ll.mtime.tv_nsec;
++		break;
++
++	default:
++		return ENOENT;
++	}
++
++	service_set_statx_attr(stx, STATX_ATTR_IMMUTABLE, ll.ro);
++	service_statx_directio(stx);
++
++	return 0;
++}
++
++static void service_ll_statx(fuse_req_t req, fuse_ino_t ino, int flags,
++			       int mask, struct fuse_file_info *fi)
++{
++	struct statx stx = { };
++	int ret = 0;
++
++	(void)flags;
++	(void)fi;
++
++	pthread_mutex_lock(&ll.lock);
++	ret = service_statx(ino, mask, &stx);
++	pthread_mutex_unlock(&ll.lock);
++	if (ret)
++		fuse_reply_err(req, ret);
++	else
++		fuse_reply_statx(req, 0, &stx, 0.0);
++}
++#else
++# define service_ll_statx		NULL
++#endif /* STATX_BASIC_STATS */
++
++static void service_ll_statfs(fuse_req_t req, fuse_ino_t ino)
++{
++	struct statvfs buf;
++
++	(void)ino;
++
++	pthread_mutex_lock(&ll.lock);
++	buf.f_bsize = ll.blocksize;
++	buf.f_frsize = 0;
++
++	buf.f_blocks = ll.blocks;
++	buf.f_bfree = 0;
++	buf.f_bavail = 0;
++	buf.f_files = 1;
++	buf.f_ffree = 0;
++	buf.f_favail = 0;
++	buf.f_fsid = 0x50C00L;
++	buf.f_flag = 0;
++	if (ll.ro)
++		buf.f_flag |= ST_RDONLY;
++	buf.f_namemax = 255;
++	pthread_mutex_unlock(&ll.lock);
++
++	fuse_reply_statfs(req, &buf);
++}
++
++static void service_ll_init(void *userdata, struct fuse_conn_info *conn)
++{
++	(void)userdata;
++
++	conn->time_gran = 1;
++}
++
++static void service_ll_getattr(fuse_req_t req, fuse_ino_t ino,
++				 struct fuse_file_info *fi)
++{
++	struct service_ll_stat llstat;
++	int ret;
++
++	(void) fi;
++
++	memset(&llstat, 0, sizeof(llstat));
++	pthread_mutex_lock(&ll.lock);
++	ret = service_stat(ino, &llstat);
++	pthread_mutex_unlock(&ll.lock);
++	if (ret)
++		fuse_reply_err(req, ret);
++	else
++		fuse_reply_attr(req, &llstat.entry.attr,
++				llstat.entry.attr_timeout);
++}
++
++static void service_ll_setattr(fuse_req_t req, fuse_ino_t ino,
++				 struct stat *attr, int to_set,
++				 struct fuse_file_info *fi)
++{
++	pthread_mutex_lock(&ll.lock);
++	if (to_set & FUSE_SET_ATTR_MODE)
++		ll.mode = attr->st_mode;
++	if (to_set & FUSE_SET_ATTR_ATIME)
++		ll.atime = attr->st_atim;
++	if (to_set & FUSE_SET_ATTR_MTIME)
++		ll.mtime = attr->st_mtim;
++	pthread_mutex_unlock(&ll.lock);
++
++	service_ll_getattr(req, ino, fi);
++}
++
++static void service_ll_lookup(fuse_req_t req, fuse_ino_t parent,
++				const char *name)
++{
++	struct service_ll_stat llstat;
++	int ret = ENOENT;
++
++	if (parent != 1 || strcmp(name, file_name) != 0)
++		goto enoent;
++
++	memset(&llstat, 0, sizeof(llstat));
++	pthread_mutex_lock(&ll.lock);
++	ret = service_stat(2, &llstat);
++	pthread_mutex_unlock(&ll.lock);
++	if (ret)
++		goto enoent;
++
++	fuse_reply_entry(req, &llstat.entry);
++	return;
++
++enoent:
++	fuse_reply_err(req, ret);
++}
++
++struct dirbuf {
++	char *p;
++	size_t size;
++};
++
++static void dirbuf_add(fuse_req_t req, struct dirbuf *b, const char *name,
++		       fuse_ino_t ino)
++{
++	struct stat stbuf;
++	size_t oldsize = b->size;
++	b->size += fuse_add_direntry(req, NULL, 0, name, NULL, 0);
++	b->p = (char *) realloc(b->p, b->size);
++	memset(&stbuf, 0, sizeof(stbuf));
++	stbuf.st_ino = ino;
++	fuse_add_direntry(req, b->p + oldsize, b->size - oldsize, name, &stbuf,
++			  b->size);
++}
++
++#define max(x, y) ((x) > (y) ? (x) : (y))
++#define min(x, y) ((x) < (y) ? (x) : (y))
++
++static int reply_buf_limited(fuse_req_t req, const char *buf, size_t bufsize,
++			     off_t off, size_t maxsize)
++{
++	if (off < bufsize)
++		return fuse_reply_buf(req, buf + off,
++				      min(bufsize - off, maxsize));
++	else
++		return fuse_reply_buf(req, NULL, 0);
++}
++
++static void service_ll_readdir(fuse_req_t req, fuse_ino_t ino, size_t size,
++				 off_t off, struct fuse_file_info *fi)
++{
++	(void) fi;
++
++	if (ino != 1)
++		fuse_reply_err(req, ENOTDIR);
++	else {
++		struct dirbuf b;
++
++		memset(&b, 0, sizeof(b));
++		dirbuf_add(req, &b, ".", 1);
++		dirbuf_add(req, &b, "..", 1);
++		dirbuf_add(req, &b, file_name, 2);
++		reply_buf_limited(req, b.p, b.size, off, size);
++		free(b.p);
++	}
++}
++
++static void service_ll_open(fuse_req_t req, fuse_ino_t ino,
++			      struct fuse_file_info *fi)
++{
++	if (ino != 2)
++		fuse_reply_err(req, EISDIR);
++	else if (ll.ro && (fi->flags & O_ACCMODE) != O_RDONLY)
++		fuse_reply_err(req, EACCES);
++	else
++		fuse_reply_open(req, fi);
++}
++
++static void service_ll_fsync(fuse_req_t req, fuse_ino_t ino, int datasync,
++			       struct fuse_file_info *fp)
++{
++	int ret = 0;
++
++	(void)datasync;
++	(void)fp;
++
++	if (ino == 2) {
++		ret = fsync(ll.fd);
++		if (ret)
++			ret = -errno;
++	}
++
++	fuse_reply_err(req, ret);
++}
++
++static void service_ll_read(fuse_req_t req, fuse_ino_t ino, size_t count,
++			    off_t pos, struct fuse_file_info *fp)
++{
++	void *buf = NULL;
++	ssize_t got;
++	int ret;
++
++	if (ino != 2) {
++		ret = EIO;
++		goto out_reply;
++	}
++
++	if (ll.debug)
++		fprintf(stderr, "%s: pos 0x%llx count 0x%llx\n",
++			__func__,
++			(unsigned long long)pos,
++			(unsigned long long)count);
++
++	if (!ll.allow_dio && fp->direct_io) {
++		ret = ENOSYS;
++		goto out_reply;
++	}
++
++	buf = malloc(count);
++	if (!buf) {
++		ret = ENOMEM;
++		goto out_reply;
++	}
++
++	got = pread(ll.fd, buf, count, pos);
++	if (got < 0) {
++		ret = -errno;
++		goto out_reply;
++	}
++
++	fuse_reply_buf(req, buf, got);
++	goto out_buf;
++
++out_reply:
++	fuse_reply_err(req, ret);
++out_buf:
++	free(buf);
++}
++
++static void service_ll_write(fuse_req_t req, fuse_ino_t ino, const char *buf,
++			     size_t count, off_t pos,
++			     struct fuse_file_info *fp)
++{
++	ssize_t got;
++	int ret;
++
++	if (ino != 2) {
++		ret = EIO;
++		goto out_reply;
++	}
++
++	if (ll.debug)
++		fprintf(stderr, "%s: pos 0x%llx count 0x%llx\n",
++			__func__,
++			(unsigned long long)pos,
++			(unsigned long long)count);
++
++	if (!ll.allow_dio && fp->direct_io) {
++		ret = ENOSYS;
++		goto out_reply;
++	}
++
++	if (pos >= ll.isize) {
++		ret = EFBIG;
++		goto out_reply;
++	}
++
++	if (pos >= ll.isize - count)
++		count = ll.isize - pos;
++
++	got = pwrite(ll.fd, buf, count, pos);
++	if (got < 0) {
++		ret = -errno;
++		goto out_reply;
++	}
++
++	if (ll.sync) {
++		ret = fsync(ll.fd);
++		if (ret < 0) {
++			ret = -errno;
++			goto out_reply;
++		}
++	}
++
++	fuse_reply_write(req, got);
++	return;
++
++out_reply:
++	fuse_reply_err(req, ret);
++}
++
++static const struct fuse_lowlevel_ops service_ll_oper = {
++	.init		= service_ll_init,
++	.lookup		= service_ll_lookup,
++	.getattr	= service_ll_getattr,
++	.setattr	= service_ll_setattr,
++	.readdir	= service_ll_readdir,
++	.open		= service_ll_open,
++	.fsync		= service_ll_fsync,
++	.statfs		= service_ll_statfs,
++	.statx		= service_ll_statx,
++	.read		= service_ll_read,
++	.write		= service_ll_write,
++};
++
++enum {
++	SERVICE_LL_SIZE,
++	SERVICE_LL_BLOCKSIZE,
++};
++
++#define SERVICE_LL_OPT(t, p, v) { t, offsetof(struct service_ll, p), v }
++
++static struct fuse_opt service_ll_opts[] = {
++	SERVICE_LL_OPT("debug",		debug,			1),
++	SERVICE_LL_OPT("ro",		ro,			1),
++	SERVICE_LL_OPT("rw",		ro,			0),
++	SERVICE_LL_OPT("dio",		allow_dio,		1),
++	SERVICE_LL_OPT("nodio",		allow_dio,		0),
++	SERVICE_LL_OPT("sync",		sync,			1),
++	SERVICE_LL_OPT("nosync",	sync,			0),
++	FUSE_OPT_KEY("size=%s",		SERVICE_LL_SIZE),
++	FUSE_OPT_KEY("blocksize=%s",	SERVICE_LL_BLOCKSIZE),
++	FUSE_OPT_END
++};
++
++static unsigned long long parse_num_blocks2(const char *arg, int log_block_size)
++{
++	char *p;
++	unsigned long long num;
++
++	num = strtoull(arg, &p, 0);
++
++	if (p[0] && p[1])
++		return 0;
++
++	switch (*p) {		/* Using fall-through logic */
++	case 'T': case 't':
++		num <<= 10;
++		/* fallthrough */
++	case 'G': case 'g':
++		num <<= 10;
++		/* fallthrough */
++	case 'M': case 'm':
++		num <<= 10;
++		/* fallthrough */
++	case 'K': case 'k':
++		if (log_block_size < 0)
++			num <<= 10;
++		else
++			num >>= log_block_size;
++		break;
++	case 's':
++		if (log_block_size < 0)
++			num <<= 9;
++		else
++			num >>= (1+log_block_size);
++		break;
++	case '\0':
++		break;
++	default:
++		return 0;
++	}
++	return num;
++}
++
++static int service_ll_opt_proc(void *data, const char *arg, int key,
++				 struct fuse_args *outargs)
++{
++	(void)data;
++	(void)outargs;
++
++	switch (key) {
++	case FUSE_OPT_KEY_NONOPT:
++		if (!ll.device) {
++			ll.device = strdup(arg);
++			return 0;
++		}
++		return 1;
++	case SERVICE_LL_BLOCKSIZE:
++		ll.blocksize = parse_num_blocks2(arg + 10, -1);
++		if (ll.blocksize < 1 || ll.blocksize > INT32_MAX ||
++		    (ll.blocksize & (ll.blocksize - 1)) != 0) {
++			fprintf(stderr,
++ "%s: block size must be power of two between 1 block and 2GB.\n",
++				arg + 10);
++			return -1;
++		}
++
++		/* do not pass through to libfuse */
++		return 0;
++	case SERVICE_LL_SIZE:
++		ll.isize = parse_num_blocks2(arg + 5, -1);
++		if (ll.isize < 1 || (ll.isize & 511) != 0) {
++			fprintf(stderr,
++ "%s: size must be multiple of 512 and larger than zero.\n\n",
++				arg + 5);
++			return -1;
++		}
++
++		/* do not pass through to libfuse */
++		return 0;
++	}
++
++	return 1;
++}
++
++static int service_get_config(void)
++{
++	int open_flags = (ll.ro ? O_RDONLY : O_RDWR) | O_EXCL;
++	int ret;
++
++again:
++	if (ll.blocksize)
++		ret = fuse_service_request_blockdev(ll.service, ll.device,
++						    open_flags, 0, 0,
++						    ll.blocksize);
++	else
++		ret = fuse_service_request_file(ll.service, ll.device,
++						open_flags, 0, 0);
++	if (ret)
++		return ret;
++
++	ret = fuse_service_receive_file(ll.service, ll.device, &ll.fd);
++	if (ret)
++		return ret;
++
++	if (ll.fd < 0 &&
++	    (errno == EPERM || errno == EACCES) &&
++	    (open_flags & O_ACCMODE) != O_RDONLY) {
++		open_flags = O_RDONLY | O_EXCL;
++		goto again;
++	}
++
++	if (ll.fd < 0) {
++		printf("%s: opening device: %s.\n", ll.device,
++		       strerror(errno));
++		return -1;
++	}
++
++	ret = fuse_service_finish_file_requests(ll.service);
++	if (ret)
++		return ret;
++
++	ll.fusedev_fd = fuse_service_take_fusedev(ll.service);
++	return 0;
++}
++
++
++int main(int argc, char *argv[])
++{
++	struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
++	struct fuse_cmdline_opts opts;
++	struct fuse_loop_config *config;
++	struct stat statbuf;
++	unsigned long long bdev_size;
++	int lbasize;
++	int ret = -1;
++
++	if (fuse_service_accept(&ll.service) != 0) {
++		printf("service acceptance failed\n");
++		return 1;
++	}
++	if (!fuse_service_accepted(ll.service)) {
++		printf("service not accepted\n");
++		return 1;
++	}
++	fuse_service_append_args(ll.service, &args);
++
++	if (fuse_opt_parse(&args, &ll, service_ll_opts,
++			   service_ll_opt_proc) != 0) {
++		printf("parsing existing cli options failed\n");
++		return 1;
++	}
++	if (fuse_service_parse_cmdline_opts(&args, &opts) != 0) {
++		printf("parsing service cli options failed\n");
++		return 1;
++	}
++
++	if (opts.show_help) {
++		printf("usage: %s [options] <mountpoint>\n\n", argv[0]);
++		fuse_cmdline_help();
++		fuse_lowlevel_help();
++		ret = 0;
++		goto err_out1;
++	} else if (opts.show_version) {
++		printf("FUSE library version %s\n", fuse_pkgversion());
++		fuse_lowlevel_version();
++		ret = 0;
++		goto err_out1;
++	}
++
++	if (opts.mountpoint == NULL || !ll.device) {
++		printf("usage: %s [options] <device> <mountpoint>\n", argv[0]);
++		printf("       %s --help\n", argv[0]);
++		ret = 1;
++		goto err_out1;
++	}
++
++	ret = service_get_config();
++	if (ret) {
++		printf("could not get service config: %s\n", strerror(-errno));
++		ret = -1;
++		goto err_out1;
++	}
++
++	if (!ll.blocksize)
++		ll.blocksize = sysconf(_SC_PAGESIZE);
++
++	ret = fstat(ll.fd, &statbuf);
++	if (ret) {
++		perror(ll.device);
++		ret = -1;
++		goto err_out1;
++	}
++
++	if (S_ISBLK(statbuf.st_mode)) {
++		ret = ioctl(ll.fd, BLKSSZGET, &lbasize);
++		if (ret) {
++			perror(ll.device);
++			ret = -1;
++			goto err_out1;
++		}
++
++		ret = ioctl(ll.fd, BLKGETSIZE64, &bdev_size);
++		if (ret) {
++			perror(ll.device);
++			ret = -1;
++			goto err_out1;
++		}
++	} else {
++		lbasize = statbuf.st_blksize;
++		bdev_size = statbuf.st_size;
++	}
++	if (lbasize > ll.blocksize) {
++		fprintf(stderr,
++ "%s: lba size %u smaller than blocksize %u\n",
++		       ll.device, lbasize, ll.blocksize);
++		ret = -1;
++		goto err_out1;
++	}
++	if (ll.isize % ll.blocksize > 0) {
++		fprintf(stderr,
++ "%s: size parameter %llu not congruent with blocksize %u\n",
++			ll.device, (unsigned long long)ll.isize,
++			ll.blocksize);
++		ret = -1;
++		goto err_out1;
++	}
++	if (ll.isize > bdev_size) {
++		fprintf(stderr,
++ "%s: block device size %llu smaller than size param %llu\n",
++			ll.device, bdev_size,
++			(unsigned long long)ll.isize);
++		ret = -1;
++		goto err_out1;
++	}
++	if (!ll.isize)
++		ll.isize = bdev_size;
++	ll.isize = round_down(ll.isize, ll.blocksize);
++	ll.blocks = ll.isize / ll.blocksize;
++
++	ll.se = fuse_session_new(&args, &service_ll_oper,
++				 sizeof(service_ll_oper), NULL);
++	if (ll.se == NULL)
++	    goto err_out1;
++
++	if (fuse_set_signal_handlers(ll.se) != 0)
++	    goto err_out2;
++
++	if (fuse_service_session_mount(ll.service, ll.se, &opts) != 0) {
++		printf("%s: could not mount fuse filesystem: %s\n",
++		       ll.device, strerror(errno));
++		ret = -1;
++		goto err_out3;
++	}
++
++	fuse_service_send_goodbye(ll.service, 0);
++	fuse_service_release(ll.service);
++
++	fuse_daemonize(opts.foreground);
++
++	/* Block until ctrl+c or fusermount -u */
++	if (opts.singlethread)
++		ret = fuse_session_loop(ll.se);
++	else {
++		config = fuse_loop_cfg_create();
++		fuse_loop_cfg_set_clone_fd(config, opts.clone_fd);
++		fuse_loop_cfg_set_max_threads(config, opts.max_threads);
++		ret = fuse_session_loop_mt(ll.se, config);
++		fuse_loop_cfg_destroy(config);
++		config = NULL;
++	}
++
++	fuse_session_unmount(ll.se);
++err_out3:
++	fuse_remove_signal_handlers(ll.se);
++err_out2:
++	fuse_session_destroy(ll.se);
++err_out1:
++	fuse_service_destroy(&ll.service);
++	free(opts.mountpoint);
++	free(ll.device);
++	close(ll.fd);
++	fuse_opt_free_args(&args);
++	return fuse_service_exit(ret);
++}
+diff --git a/example/service_ll.socket.in b/example/service_ll.socket.in
+new file mode 100644
+index 00000000000000..16bcaf1f21df36
+--- /dev/null
++++ b/example/service_ll.socket.in
+@@ -0,0 +1,16 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++#
++# Copyright (C) 2026 Oracle.  All Rights Reserved.
++# Author: Darrick J. Wong <djwong@kernel.org>
++[Unit]
++Description=Socket for service_ll Service
++
++[Socket]
++# Typically the socket path is /run/filesystems/service_ll
++ListenSequentialPacket=@FUSE_SERVICE_SOCKET_DIR_RAW@/service_ll
++Accept=yes
++SocketMode=0660
++RemoveOnStop=yes
++
++[Install]
++WantedBy=sockets.target
+diff --git a/example/service_ll@.service b/example/service_ll@.service
+new file mode 100644
+index 00000000000000..0f460ea88c9fcf
+--- /dev/null
++++ b/example/service_ll@.service
+@@ -0,0 +1,99 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++#
++# Copyright (C) 2026 Oracle.  All Rights Reserved.
++# Author: Darrick J. Wong <djwong@kernel.org>
++[Unit]
++Description=service_ll Sample Fuse Service
++
++[Service]
++Type=exec
++ExecStart=/path/to/service_ll
++
++# Try to capture core dumps
++LimitCORE=infinity
++
++SyslogIdentifier=%N
++
++# No realtime CPU scheduling
++RestrictRealtime=true
++
++# Don't let us see anything in the regular system, and don't run as root
++DynamicUser=true
++ProtectSystem=strict
++ProtectHome=true
++PrivateTmp=true
++PrivateDevices=true
++PrivateUsers=true
++
++# No network access
++PrivateNetwork=true
++ProtectHostname=true
++RestrictAddressFamilies=none
++IPAddressDeny=any
++
++# Don't let the program mess with the kernel configuration at all
++ProtectKernelLogs=true
++ProtectKernelModules=true
++ProtectKernelTunables=true
++ProtectControlGroups=true
++ProtectProc=invisible
++RestrictNamespaces=true
++RestrictFileSystems=
++
++# Hide everything in /proc, even /proc/mounts
++ProcSubset=pid
++
++# Only allow the default personality Linux
++LockPersonality=true
++
++# No writable memory pages
++MemoryDenyWriteExecute=true
++
++# Don't let our mounts leak out to the host
++PrivateMounts=true
++
++# Restrict system calls to the native arch and only enough to get things going
++SystemCallArchitectures=native
++SystemCallFilter=@system-service
++SystemCallFilter=~@privileged
++SystemCallFilter=~@resources
++
++SystemCallFilter=~@clock
++SystemCallFilter=~@cpu-emulation
++SystemCallFilter=~@debug
++SystemCallFilter=~@module
++SystemCallFilter=~@reboot
++SystemCallFilter=~@swap
++
++SystemCallFilter=~@mount
++
++# libfuse io_uring wants to pin cores and memory
++SystemCallFilter=mbind
++SystemCallFilter=sched_setaffinity
++
++# Leave a breadcrumb if we get whacked by the system call filter
++SystemCallErrorNumber=EL3RST
++
++# Log to the kernel dmesg, just like an in-kernel filesystem driver
++StandardOutput=append:/dev/ttyprintk
++StandardError=append:/dev/ttyprintk
++
++# Run with no capabilities at all
++CapabilityBoundingSet=
++AmbientCapabilities=
++NoNewPrivileges=true
++
++# We don't create files
++UMask=7777
++
++# No access to hardware /dev files at all
++ProtectClock=true
++DevicePolicy=closed
++
++# Don't mess with set[ug]id anything.
++RestrictSUIDSGID=true
++
++# Don't let OOM kills of processes in this containment group kill the whole
++# service, because we don't want filesystem drivers to go down.
++OOMPolicy=continue
++OOMScoreAdjust=-1000
+diff --git a/meson.build b/meson.build
+index ed05a245b48df2..e9d57216f07170 100644
+--- a/meson.build
++++ b/meson.build
+@@ -73,6 +73,7 @@ service_socket_dir = get_option('service-socket-dir')
+ if service_socket_dir == ''
+   service_socket_dir = '/run/filesystems'
+ endif
++private_cfg.set('FUSE_SERVICE_SOCKET_DIR_RAW', service_socket_dir)
+ private_cfg.set_quoted('FUSE_SERVICE_SOCKET_DIR', service_socket_dir)
+ 
+ # Test for presence of some functions
 
 
