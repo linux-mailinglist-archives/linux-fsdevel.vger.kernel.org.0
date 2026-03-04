@@ -1,201 +1,215 @@
-Return-Path: <linux-fsdevel+bounces-79398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cAiGM7VFqGlOrwAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 15:46:13 +0100
+	id cA3XFPNDqGlOrwAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 15:38:43 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE53201DF6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 15:46:13 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 794DD201B0A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 04 Mar 2026 15:38:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1B7BB3436132
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2026 14:19:36 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id BCCFB3107154
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2026 14:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3825B3B7B9A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E3C3B892D;
 	Wed,  4 Mar 2026 14:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=dev.snart.me header.i=@dev.snart.me header.b="vs705sP3"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ENg61SKE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from embla.dev.snart.me (embla.dev.snart.me [54.252.183.203])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9559D3B3BEF
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F1737E30A
 	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Mar 2026 14:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.252.183.203
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772633861; cv=none; b=sTwMGc7MV85enA4c+ZTvOYsIYNrzDSIsifoWLV1W3SX6fUSVkQ1qWuCqPV/60oUnzOJ9VG9z4y7NVh7ZtK6lzh8uKz4lkwnY79uufPs2yVVf5FSlCt2eYZkUd9sjlWDfZ8graA6BSkFndKQx2qZ5ov3WyfmG9vMGnDAAAT0psA8=
+	t=1772633862; cv=none; b=kyvmHZTbr9pPLpXJ08eHEyvChxCaKYgyCnYCny6A2z1ZCMtKctcBUm6JNV/16rdDoA5I+a/jFO18zG8JbopKfAZ9ztpYcv/j2YNoQn9+rVelwDwOXnX3KR40h6rvwkfFejNOLNgCgeG+Ycyq7D+2LypigkJxXz8hm6VXR+RGiXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772633861; c=relaxed/simple;
-	bh=gEqid7c+m6ijx5jTrpg4wSZ7TosE7r2GvCBJXx9+aGs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y4eeiFg2BfFXPs3y/GE++vsnkhniA+QvNHPu6ZsHpoPPuNGsNYAIK57mfMwdYE1gXOHwjZD05oQeRQXiqJ+QLEeYDRrts/H6G0ug3qi5e8pnvavvj0JTWuWeHdOr4krx1Ks6b/tKmIVpCuVei0sAV6v7US504AZbWKq40icyZBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=dev.snart.me; spf=pass smtp.mailfrom=dev.snart.me; dkim=pass (1024-bit key) header.d=dev.snart.me header.i=@dev.snart.me header.b=vs705sP3; arc=none smtp.client-ip=54.252.183.203
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=dev.snart.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.snart.me
-Received: from embla.dev.snart.me (localhost [IPv6:::1])
-	by embla.dev.snart.me (Postfix) with ESMTP id E04831CBC3;
-	Wed,  4 Mar 2026 14:17:31 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 embla.dev.snart.me E04831CBC3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dev.snart.me; s=00;
-	t=1772633852; bh=gEqid7c+m6ijx5jTrpg4wSZ7TosE7r2GvCBJXx9+aGs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vs705sP3x9AQaDJCOauGKGwASn0bQc/xkNp3UN5c9faKKnvd8cKN+TuIDmKb1GMmP
-	 Q5N7zxs945l2K3RGo/eo0U1ezsmkTHn5jhpaskrM+8/7MnZbYU0q4ZwbQsk0DLFuIV
-	 A5cjEICZsYman8QFDDKKPEN+VnCdZcAPVdlIkeg4=
-Received: from maya.d.snart.me ([182.226.25.243])
-	by embla.dev.snart.me with ESMTPSA
-	id ZxyOLvk+qGnLtgEA8KYfjw:T2
-	(envelope-from <dxdt@dev.snart.me>); Wed, 04 Mar 2026 14:17:31 +0000
-From: David Timber <dxdt@dev.snart.me>
-To: linux-fsdevel@vger.kernel.org
-Cc: Namjae Jeon <linkinjeon@kernel.org>,
-	Sungjong Seo <sj1557.seo@samsung.com>,
-	Yuezhang Mo <yuezhang.mo@sony.com>,
-	David Timber <dxdt@dev.snart.me>
-Subject: [PATCH v2 1/1] exfat: EXFAT_IOC_GET_VALID_DATA ioctl
-Date: Wed,  4 Mar 2026 23:16:45 +0900
-Message-ID: <20260304141713.533168-2-dxdt@dev.snart.me>
-X-Mailer: git-send-email 2.53.0.1.ga224b40d3f.dirty
-In-Reply-To: <20260304141713.533168-1-dxdt@dev.snart.me>
-References: <CAKYAXd_8vG6V0NRT_kb76n_yo+d9vvcx6JZbMARC5+C1ovboqw@mail.gmail.com>
- <20260304141713.533168-1-dxdt@dev.snart.me>
+	s=arc-20240116; t=1772633862; c=relaxed/simple;
+	bh=6JtS69mYUoBbU7O0h20B2ARRKM1cOUFfRPOspk6wUGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CYR8O9bD9x9xCJGPOWlP+MG9S2VrF8jSvoBoDtTDSwSaJAQwfG649/0TQYuLheckCSGLOVIi18sUYZGyGpeNZZwNxWaegkuUxSARJyv/q1BQMlm6ePc0MDvU7CgBQTGpPNzzyeHHMqbdyTn/SOqVUenmaxQFqqapKNDr7OiN9Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ENg61SKE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1772633860;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s+rfuylRovf4/Oqh1rAeQkQoGs+Chd5zhIaqFe+tJyI=;
+	b=ENg61SKE67bHqwdfLMy5AILo05GI2BAAt0TKWtWhwgqFBGf9YoaTvGpzIKg+S8GShbQUMG
+	RkhYqewuxfD0CzOMucODYtyhoOKIcimiLYeh5zNHSBK2OiB3waSdUjh4gC9pG0X/4Jcg/2
+	CR9NhxvApYy6XeqJh9UBV2tdGFnZe4M=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-241-UOXJ1lTDMLu7yu-6TgFfvw-1; Wed,
+ 04 Mar 2026 09:17:37 -0500
+X-MC-Unique: UOXJ1lTDMLu7yu-6TgFfvw-1
+X-Mimecast-MFC-AGG-ID: UOXJ1lTDMLu7yu-6TgFfvw_1772633856
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 070061800365;
+	Wed,  4 Mar 2026 14:17:36 +0000 (UTC)
+Received: from bfoster (unknown [10.22.64.114])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5CF0B1958DC2;
+	Wed,  4 Mar 2026 14:17:35 +0000 (UTC)
+Date: Wed, 4 Mar 2026 09:17:33 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] iomap, xfs: lift zero range hole mapping flush
+ into xfs
+Message-ID: <aag-_c8G_L5MQ42m@bfoster>
+References: <20260129155028.141110-1-bfoster@redhat.com>
+ <20260129155028.141110-2-bfoster@redhat.com>
+ <aY6_eqkIrMkOr039@infradead.org>
+ <aY9hY7TwgMXJNzkI@bfoster>
+ <aaXesgEmu46X7OwD@bfoster>
+ <aabyFY0l7GTEHnoQ@infradead.org>
+ <aacv39AZ5P9ubOZ5@bfoster>
+ <aagv8y96vGHvbOdX@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 5CE53201DF6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aagv8y96vGHvbOdX@infradead.org>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Rspamd-Queue-Id: 794DD201B0A
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [2.34 / 15.00];
+	MID_END_EQ_FROM_USER_PART(4.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[dev.snart.me,reject];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[dev.snart.me:s=00];
+	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79398-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[dxdt@dev.snart.me,linux-fsdevel@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-79399-lists,linux-fsdevel=lfdr.de];
+	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[redhat.com:+];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	MISSING_XM_UA(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[bfoster@redhat.com,linux-fsdevel@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[3];
+	RCVD_COUNT_FIVE(0.00)[6];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	NEURAL_HAM(-0.00)[-1.000];
-	DKIM_TRACE(0.00)[dev.snart.me:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,dev.snart.me:dkim,dev.snart.me:mid,snart.me:email]
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-When a file in exfat fs gets truncated up or fallocated up, only
-additional clusters are allocated and isize updated whilst VDL(valid
-data length) remains unchanged. If an application writes to the file
-past the VDL, significant IO delay can occur as the skipped range
-[VDL, offset) has to be zeroed out before returning to userspace. Some
-users may find this caveat unacceptible.
+On Wed, Mar 04, 2026 at 05:13:23AM -0800, Christoph Hellwig wrote:
+> On Tue, Mar 03, 2026 at 02:00:47PM -0500, Brian Foster wrote:
+> > Oh I see. If I follow the high level flow here, zoned mode always writes
+> > through COW fork delalloc, and then writeback appears to remove the
+> > delalloc mapping and then does whatever physical zone allocation magic
+> > further down in the submission path. So there are no unwritten extents
+> > nor COW fork preallocation as far as I can tell.
+> 
+> Yes.
+> 
+> > I think that actually means the IOMAP_ZERO logic for the zoned
+> > iomap_begin handler is slightly wrong as it is. I was originally
+> > thinking this was just another COW fork prealloc situation, but in
+> > actuality it looks like zoned mode intentionally creates this COW fork
+> > blocks over data fork hole scenario on first write to a previously
+> > unallocated file range.
+> 
+> Yes.
+> 
+> > IOMAP_ZERO returns a hole whenever one exists in the data fork, so that
+> > means we're not properly reporting a data mapping up until the range is
+> > allocated in the data fork (i.e. writeback occurs at least once). The
+> > reason this has worked is presumably because iomap does the flush when
+> > the range of a reported hole is dirty, so it retries the mapping lookup
+> 
+> Yeah.
+> 
+> > So the fix I posted works just the same.. lifting the flush just
+> > preserves how things work today. But I think what this means is that we
+> > should also be able to rework zoned mode IOMAP_ZERO handling to require
+> > neither the flush nor dirty folio lookup. It should be able to return a
+> > mapping to zero if blocks exist in either fork (allocating to COW fork
+> > if necessary), otherwise report a hole.
+> 
+> Yeah.  If there still is a delalloc mapping in the COW fork we could
+> actually steal that for zeroing.
+> 
+> 
 
-Some niche applications(especially embedded systems) may want to query
-the discrepancy between the VDL and isize before doing lseek() and
-write() to estimate the delay from implicit zeroring.
+I tested the change below but it ended up failing xfs/131. Some fast and
+loose (i.e. LLM assisted) trace analysis suggests the issue is that this
+particular situation is racy. I.e., we write to a sparse file range and
+add COW fork dellaloc, writeback kicks in and drops the delalloc
+mapping, then zeroing occurs over said range and finds holes in both
+forks, then zone I/O completion occurs and maps blocks into the data
+fork.
 
-The commit introduces a new ioctl,
+So this still seems like generally the right idea to me, but we probably
+need to find a way to avoid the transient hole situation on an unlocked
+inode. For example, maybe the COW fork delalloc could stay around
+longer, or transfer to the data fork at writeback time if the data fork
+range happens to be a hole.
 
-	#define EXFAT_IOC_GET_VALID_DATA	_IOR('r', 0x14, __u64)
+But that's just handwaving and beyond the scope of this series. For now
+I'll probably go back to the flush fix and document some of this in the
+patch for future reference..
 
-which correspond to
+Brian
 
-	`fsutil file queryvaliddata ...`
+--- 8< ---
 
-command in Windows.
-
-With the new ioctl, applications could assess the delay that may incur
-and make decisions accordingly before seeking past the VDL to write.
-
-Signed-off-by: David Timber <dxdt@dev.snart.me>
----
- fs/exfat/file.c            | 22 ++++++++++++++++++++++
- include/uapi/linux/exfat.h |  4 +++-
- 2 files changed, 25 insertions(+), 1 deletion(-)
-
-diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-index 90cd540afeaa..a13044a7065a 100644
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@ -449,6 +449,22 @@ static int exfat_ioctl_set_attributes(struct file *file, u32 __user *user_attr)
- 	return err;
- }
+diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+index 255b650c3790..533d44633177 100644
+--- a/fs/xfs/xfs_iomap.c
++++ b/fs/xfs/xfs_iomap.c
+@@ -1651,14 +1651,6 @@ xfs_zoned_buffered_write_iomap_begin(
+ 				&smap))
+ 			smap.br_startoff = end_fsb; /* fake hole until EOF */
+ 		if (smap.br_startoff > offset_fsb) {
+-			/*
+-			 * We never need to allocate blocks for zeroing a hole.
+-			 */
+-			if (flags & IOMAP_ZERO) {
+-				xfs_hole_to_iomap(ip, iomap, offset_fsb,
+-						smap.br_startoff);
+-				goto out_unlock;
+-			}
+ 			end_fsb = min(end_fsb, smap.br_startoff);
+ 		} else {
+ 			end_fsb = min(end_fsb,
+@@ -1690,6 +1682,15 @@ xfs_zoned_buffered_write_iomap_begin(
+ 	count_fsb = min3(end_fsb - offset_fsb, XFS_MAX_BMBT_EXTLEN,
+ 			 XFS_B_TO_FSB(mp, 1024 * PAGE_SIZE));
  
-+static int exfat_ioctl_get_valid_data(struct inode *inode, unsigned long arg)
-+{
-+	u64 valid_size;
-+
 +	/*
-+	 * Doesn't really make sense to acquire lock for a getter op but we have
-+	 * to stay consistent with the grandfather clause -
-+	 * ioctl_get_attributes().
++	 * We don't allocate blocks for zeroing a hole, but we only report a
++	 * hole in zoned mode if one exists in both the COW and data forks.
 +	 */
-+	inode_lock(inode);
-+	valid_size = EXFAT_I(inode)->valid_size;
-+	inode_unlock(inode);
++	if ((flags & IOMAP_ZERO) && srcmap->type == IOMAP_HOLE) {
++		xfs_hole_to_iomap(ip, iomap, offset_fsb, end_fsb);
++		goto out_unlock;
++	}
 +
-+	return put_user(valid_size, (__u64 __user *)arg);
-+}
-+
- static int exfat_ioctl_fitrim(struct inode *inode, unsigned long arg)
- {
- 	struct fstrim_range range;
-@@ -544,10 +560,15 @@ long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	u32 __user *user_attr = (u32 __user *)arg;
- 
- 	switch (cmd) {
-+	/* inode-specific ops */
- 	case FAT_IOCTL_GET_ATTRIBUTES:
- 		return exfat_ioctl_get_attributes(inode, user_attr);
- 	case FAT_IOCTL_SET_ATTRIBUTES:
- 		return exfat_ioctl_set_attributes(filp, user_attr);
-+	case EXFAT_IOC_GET_VALID_DATA:
-+		return exfat_ioctl_get_valid_data(inode, arg);
-+
-+	/* fs-wide ops */
- 	case EXFAT_IOC_SHUTDOWN:
- 		return exfat_ioctl_shutdown(inode->i_sb, arg);
- 	case FITRIM:
-@@ -556,6 +577,7 @@ long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return exfat_ioctl_get_volume_label(inode->i_sb, arg);
- 	case FS_IOC_SETFSLABEL:
- 		return exfat_ioctl_set_volume_label(inode->i_sb, arg);
-+
- 	default:
- 		return -ENOTTY;
- 	}
-diff --git a/include/uapi/linux/exfat.h b/include/uapi/linux/exfat.h
-index 46d95b16fc4b..da65aef416cc 100644
---- a/include/uapi/linux/exfat.h
-+++ b/include/uapi/linux/exfat.h
-@@ -12,7 +12,9 @@
-  * exfat-specific ioctl commands
-  */
- 
--#define EXFAT_IOC_SHUTDOWN _IOR('X', 125, __u32)
-+#define EXFAT_IOC_SHUTDOWN		_IOR('X', 125, __u32)
-+/* Get the current valid data length(VDL) of a file */
-+#define EXFAT_IOC_GET_VALID_DATA	_IOR('r', 0x14, __u64)
- 
- /*
-  * Flags used by EXFAT_IOC_SHUTDOWN
--- 
-2.53.0.1.ga224b40d3f.dirty
+ 	/*
+ 	 * The block reservation is supposed to cover all blocks that the
+ 	 * operation could possible write, but there is a nasty corner case
 
 
