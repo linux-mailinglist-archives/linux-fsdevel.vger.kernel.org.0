@@ -1,51 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-79465-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79466-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UCTyJfBCqWk83gAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79465-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 09:46:40 +0100
+	id gBEUMvFCqWk83gAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79466-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 09:46:41 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EB9220DAAE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 09:46:39 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id E109B20DAB5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 09:46:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 0A74C3023E29
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 08:46:01 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id E3E90301FDAC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 08:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476E1374E7D;
-	Thu,  5 Mar 2026 08:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F82374E6B;
+	Thu,  5 Mar 2026 08:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eNkwpWXC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/NmWyfJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6340374E54;
-	Thu,  5 Mar 2026 08:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CA03264C6
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Mar 2026 08:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772700358; cv=none; b=IMXKYdi+XnmWAmsp2JC8Nws811kvcFYr4RVbf2MgI6X3nqWOKn/BhmEqZMraNIAFk4o6/iQcJLNNAoKce1s0m2qZYiEUwAAoqRS8737nrejKsboep0bd4DvDgBk1kwt3LmjdkVgV0wX/Q7YM4cL5rP1cTcxieR/Ty9RDzs8yuQI=
+	t=1772700393; cv=none; b=IDybDhb6yKuZowIicxYbkQ+nUe4rUWho96W/cmBUHMbj3LRGp4zJTdZnv/jycEczxTp0EWBCWvSMNGHVqHLF+MNvOwI/qzzYa/AhmSIXFrRubpBHZvGf1TTH2xlA0PYZAGVSOl0r9+Z0ZCEWObJJxApUpjr8i+wxzjXx6zermu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772700358; c=relaxed/simple;
-	bh=s6pLjGUg2KXOqOul98dDTFwqWjkNiixnlgGf1DeELvQ=;
+	s=arc-20240116; t=1772700393; c=relaxed/simple;
+	bh=fyVzRgMWMfn3zGWnwhkhoImi31MZExIN1JROrOw0QNA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m+LVZG2msrQ/8jyLb2Aa8qNacsTUK4e7JVt+H4R0fChWIybQWgzoS3hMfgiWYAnLhcw7jIGUPmmzeLaq+7SYkLaxNMAT/gYYqzBSoXDkfzHlBAdzpRTyF4zgWS0yjqiI0lsNxSMCr8TM9yytMZEzxVuH35TttQD9o6q0v6za08A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eNkwpWXC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A8E7C116C6;
-	Thu,  5 Mar 2026 08:45:52 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=ZIhtJ6jyAW64/R0zqBYFqxeCxw1KRUefO777s6QDcP7Eq5ooq8llZXKfl/zb5M82d/s4rFTuMmykolcY0hq/PQkUY6buXOpOyFFeeoP6JUiFJJ8UlC1nmwJpMgOjiescdTuuq36Cth7T2tCfOzZx0NXG/DqbpkiIyoebQlsfcVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/NmWyfJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB3DBC116C6;
+	Thu,  5 Mar 2026 08:46:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772700358;
-	bh=s6pLjGUg2KXOqOul98dDTFwqWjkNiixnlgGf1DeELvQ=;
+	s=k20201202; t=1772700393;
+	bh=fyVzRgMWMfn3zGWnwhkhoImi31MZExIN1JROrOw0QNA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eNkwpWXCCwpzVVy4+fEqwpuyc5ESopWXOVNu7wBXfG4yZwnYR0o0PiiioXRuepWgS
-	 boX/Ep3agnqb7BRov2vB4siErMYbHjzcsqXocMwmpII2XNPfl4XIwaK92GN3TOD3LW
-	 QNwFDF7/e6SJVEeOMopZmlNiQBawjlwJczyTC43ZJ+II9Ervgg4L7StTLhm1TgLI/h
-	 RJIe7nWkp/mjU3BEgt+HJmDn5nT8KqOtAVt95sY3BjTQ5k8ghyKL65MvTcPzL3xdqI
-	 mw1FiDZ6YnLQGYwVDox+lSMFm2EC38gNq5jSZBpgqcRNLSfK3tZE824ULQ4Vk1w1x5
-	 qY67ZDkmkw85A==
-Message-ID: <650cda1b-bc15-4d41-b6f1-d85ded0c7872@kernel.org>
-Date: Thu, 5 Mar 2026 09:45:49 +0100
+	b=m/NmWyfJo8yyCM6A3RkFwXmUbJIPhBpZOF7aXEWBmGJVnEdl+4fneNINNbBe2AeZ7
+	 PhPafWXDJXvz5HYwpM2uXM/foYdr3VpYbRz7mr22buOvMf387rFKsJv20slrVhyg8K
+	 ha6AXfaDrlxGIBE777goNZVDHCiCsjekavrkVBgIJ403EuwCqv6Ow09jhWrSdW3oCj
+	 dXCP9WjlMLs984Ee9CVlf2W51Z/7raoSDl2mB9bcgYfErEfXPUe764N71iPHV0gS3t
+	 mR8ezg6NIiWnRblOaXWU7UJSBNw3pfns29sOb1WXwHBd9hl7LgMgWRXCx1zp3dTdaD
+	 pRpXKXqxNqgPA==
+Message-ID: <31f26c9c-1596-40b0-832c-89f4134b9e58@kernel.org>
+Date: Thu, 5 Mar 2026 09:46:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,21 +53,15 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] docs: filesystems: clarify KernelPageSize vs.
- MMUPageSize in smaps
-To: Andi Kleen <ak@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-mm@kvack.org,
+Subject: Re: [PATCH] MAINTAINERS: add mm-related procfs files to MM sections
+To: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>,
  Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
- <npache@redhat.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
- Usama Arif <usamaarif642@gmail.com>
-References: <20260304155636.77433-1-david@kernel.org>
- <aaiUmx8yRsn2LBMW@tassilo>
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <ljs@kernel.org>
+Cc: Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org
+References: <20260305-maintainers-proc-v1-1-d6d09b3db3b6@kernel.org>
 From: "David Hildenbrand (Arm)" <david@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=david@kernel.org; keydata=
@@ -114,77 +108,53 @@ Autocrypt: addr=david@kernel.org; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <aaiUmx8yRsn2LBMW@tassilo>
+In-Reply-To: <20260305-maintainers-proc-v1-1-d6d09b3db3b6@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 0EB9220DAAE
+X-Rspamd-Queue-Id: E109B20DAB5
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-79466-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79465-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,linux-foundation.org,oracle.com,nvidia.com,linux.alibaba.com,redhat.com,arm.com,kernel.org,linux.dev,lwn.net,linuxfoundation.org,gmail.com];
-	RCPT_COUNT_TWELVE(0.00)[17];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[david@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,2mb:email,lkml.org:url,4kb:email]
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On 3/4/26 21:22, Andi Kleen wrote:
-> On Wed, Mar 04, 2026 at 04:56:36PM +0100, David Hildenbrand (Arm) wrote:
->> There was recently some confusion around THPs and the interaction with
->> KernelPageSize / MMUPageSize. Historically, these entries always
->> correspond to the smallest size we could encounter, not any current
->> usage of transparent huge pages or larger sizes used by the MMU.
+On 3/5/26 09:26, Vlastimil Babka (SUSE) wrote:
+> Some procfs files are very much related to memory management so let's
+> have MAINTAINERS reflect that.
 > 
-> It still seems like a bug to me, only documented now, but seems
-> I'm in the minority on that.
-
-I'd agree that something smarter and more future proof should have been
-done if THPs wouldn't have been added (checks notes) 15 years ago and
-how KernelPageSize / MMUPageSize behaves and what it means would already
-be set in stone for a long time.
-
-People decided to add things like "AnonHugePages" (which I also detest,
-but here we are) instead.
-
-I wish we would have never exposed MMUPageSize (in 2009) to handle some
-ppc oddity.
-
-While digging through some history, there were earlier conclusions
-(around 10 years ago) that MMUPageSize [1] is not a good fit, and people
-even tried exposing actual amounts (Ptes@4kB, Ptes@2MB). I don't think
-that's the right approach either for various reasons raised already
-(e.g., doesn't really tell you the full TLB/MMU story).
-
+> Add fs/proc/meminfo.c to MEMORY MANAGEMENT - CORE.
 > 
-> But anyways if you change this file you should probably remove
-> the duplicated KernelPageSize/MMUPageSize entries in the example
-> too. That triped me up the last time.
+> Add fs/proc/task_[no]mmu.c to MEMORY MAPPING.
+> 
+> Signed-off-by: Vlastimil Babka (SUSE) <vbabka@kernel.org>
+> ---
 
-Good point. I also discovered that that PPC64 thing is still in place
-(maybe it's dead code, but at least code-wise, it's not a thing from the
-past ).
+Thanks!
 
-[1] https://lkml.org/lkml/2016/11/29/882
+Acked-by: David Hildenbrand (Arm) <david@kernel.org>
 
 -- 
 Cheers,
