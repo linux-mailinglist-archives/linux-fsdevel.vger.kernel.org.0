@@ -1,51 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-79517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79518-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aHjqFr/VqWnbFwEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 20:13:03 +0100
+	id KI7pLevVqWnbFwEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79518-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 20:13:47 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 051D02174C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 20:13:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D6C32174FD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 20:13:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D892C3195832
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 19:08:39 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8BFE030EB6F1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 19:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10DA3043BE;
-	Thu,  5 Mar 2026 19:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736AA3043CF;
+	Thu,  5 Mar 2026 19:09:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q3N/+4+0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fB5u5dyt"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FC735979;
-	Thu,  5 Mar 2026 19:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97E8299922;
+	Thu,  5 Mar 2026 19:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772737717; cv=none; b=JcNAkQYigUa6if36DL4yz7kkmCkRL/xwS0jAL+8ZOMoaDe/JFTD0OrvOybko/YQ4nahmGuGrqcmP/extN5rKB0N1rST5DQ3/Q/g60QmcpBuI1VnBJLV8UtwBhi8KcK93t0VAe2i72ltm1VQ5tHDDn9y9AAK3Y264niRNAMh5/lk=
+	t=1772737748; cv=none; b=IXOf3GT1TOlJihCsbgO8CqPlVAI6F4UNzCx3RHAlkBfazmlONtt0ec7zwlKDjLLybQsAJq+gk8lIBocSzPilFUDMWCxNcGyQNIHPA0uh7DBLz7rppyr0b3fqhFqDDhg8+zelHvj3z/dXuxe8uah5j44ndgHSAJtF5c1kpI9SUBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772737717; c=relaxed/simple;
-	bh=rFxDMFnHn7NVWKzcWxLVfwwtfRfhIslRczAFZUg6KWY=;
+	s=arc-20240116; t=1772737748; c=relaxed/simple;
+	bh=xnFSI//R+BzfODKG1aZ4cttDCVjiU+SClWrr7aM8b7Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MQk4WQ7iO7LVa9cle8aqELop626QLPaVccZHI2DkQRCmqXXZwUrQwxyPj7o5kcpjxqEYsxh/tJMwQ0PRIoMjDv1kr4x55bzd/9I6NbbM8ctCjmPPDff4drRrTpoht1rPAKTojpMAy7X/iHTtnsaY02FPNTUlgSciAf79oO1F6F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q3N/+4+0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1400C116C6;
-	Thu,  5 Mar 2026 19:08:07 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Hu/xZbKPXjaWNetYhDn7zqH5TCivO/NiDbRhxcCIAWnFNfbVSYU3Vby15gN0a1sEbVCbzYcyUN8DxY1HLa5heTV/jsCcerFf0IAKJ04UExw1tFIeNKz2b/Ek6FORjV/X7j8AdnEQub4qwk0ooS+poUwRFHxpVFOWfaZBfucm1T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fB5u5dyt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DA3AC2BC9E;
+	Thu,  5 Mar 2026 19:08:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772737716;
-	bh=rFxDMFnHn7NVWKzcWxLVfwwtfRfhIslRczAFZUg6KWY=;
+	s=k20201202; t=1772737747;
+	bh=xnFSI//R+BzfODKG1aZ4cttDCVjiU+SClWrr7aM8b7Q=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Q3N/+4+0i0EO9IlQjPY866MKsnGCcaV8il9G9v8afE5GenLk7AYiRbB/Y1FP1o2rB
-	 /km7o1NSkyROG4dOhtAnOplRx3jIyWDOSjpHOoNgRz3S5vqarQqw4eOzeGOoAsKKRK
-	 pBNEo3zpnTLgSEbpBOWGlEAS+sRZSsaccxeDDZnXPvMZMuA3D1Qtdp8ACveWMwDxeW
-	 JxtgRKqR/YY7Tt16ltVGihj5vXooPa8s+gxnBT9XkFW1HzTkkqySR4HYdgnwY6Ne1V
-	 FQTtGMm2qyJITjlOcPA10iSdVy53WpsJzKFrW6b5tIpK9XJ24nycfGMMJZgWIPKIcm
-	 F2Y9yv/syW9kQ==
-Message-ID: <6603615d-109f-461b-9939-737c05923957@kernel.org>
-Date: Thu, 5 Mar 2026 20:08:03 +0100
+	b=fB5u5dytoZH+98uvrjhJSL5NnZlmf5fZGsPzyhYrfyvhJwXiRppGmJoTmejP5T5Fz
+	 M5bhvSqL7jNYBfd44Mmd8LdzPSbjjn000TOHUGTfXPSvvD1K6sHJQheZgf9+2anLeE
+	 KQj+KiDnMsmWGniNFlZcWw4yp+uiBDungqoO4t1eBUfLMmYHda4BK70uoqKyb0GZlu
+	 0fE/39irRV0Yhqn6CgM40sNBVNXmpzvmeSC/QK46uQ/PUoNFYSTAP1qunpWSnetVz8
+	 0APFZjBhTQzg0DrLw6zK1CTVW6w3sXi7p0RCCw/fdSIa+0Ekybcr8xgpjtAE0ge5y3
+	 l5gh4QLZuMQrQ==
+Message-ID: <b1a79a08-d99a-492a-8baf-e83127154a5a@kernel.org>
+Date: Thu, 5 Mar 2026 20:08:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 07/15] KVM: x86: define
+Subject: Re: [PATCH v10 08/15] KVM: arm64: define
  kvm_arch_gmem_supports_no_direct_map()
 To: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
  "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
@@ -146,7 +146,7 @@ Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>,
  "Manwaring, Derek" <derekmn@amazon.com>, "Cali, Marco"
  <xmarcalx@amazon.co.uk>
 References: <20260126164445.11867-1-kalyazin@amazon.com>
- <20260126164445.11867-8-kalyazin@amazon.com>
+ <20260126164445.11867-9-kalyazin@amazon.com>
 From: "David Hildenbrand (Arm)" <david@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=david@kernel.org; keydata=
@@ -193,21 +193,21 @@ Autocrypt: addr=david@kernel.org; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20260126164445.11867-8-kalyazin@amazon.com>
+In-Reply-To: <20260126164445.11867-9-kalyazin@amazon.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 051D02174C7
+X-Rspamd-Queue-Id: 1D6C32174FD
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79517-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79518-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	TO_DN_EQ_ADDR_SOME(0.00)[];
@@ -232,11 +232,25 @@ X-Rspamd-Action: no action
 On 1/26/26 17:50, Kalyazin, Nikita wrote:
 > From: Patrick Roy <patrick.roy@linux.dev>
 > 
-> x86 supports GUEST_MEMFD_FLAG_NO_DIRECT_MAP whenever direct map
-> modifications are possible (which is always the case).
+> Support for GUEST_MEMFD_FLAG_NO_DIRECT_MAP on arm64 depends on 1) direct
+> map manipulations at 4k granularity being possible, and 2) FEAT_S2FWB.
 > 
+> 1) is met whenever the direct map is set up at 4k granularity (e.g. not
+>  with huge/gigantic pages) at boottime, as due to ARM's
+> break-before-make semantics, breaking huge mappings into 4k mappings in
+> the direct map is not possible (BBM would require temporary invalidation
+> of the entire huge mapping, even if only a 4k subrange should be zapped,
+> which will probably crash the kernel). However, the current default for
+> rodata_full is true, which forces a 4k direct map.
+> 
+> 2) is required to allow KVM to elide cache coherency operations when
+> installing stage 2 page tables, which require the direct map to be
+> entry for the newly mapped memory to be present (which it will not be,
+> as guest_memfd would have removed direct map entries in
+> kvm_gmem_get_pfn()).
+> 
+> Cc: Will Deacon <will@kernel.org>
 > Signed-off-by: Patrick Roy <patrick.roy@linux.dev>
-> Reviewed-by: Ackerley Tng <ackerleytng@google.com>
 > Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
 > ---
 
