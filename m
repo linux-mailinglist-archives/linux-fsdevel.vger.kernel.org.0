@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-79531-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79532-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +A0NEMQSqmkGKwEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79531-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 00:33:24 +0100
+	id MMk4HuESqmnFKgEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79532-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 00:33:53 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9734621950D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 00:33:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2C2A219524
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 00:33:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id AADE630528B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 23:30:37 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E5720310CC2C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 23:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03641368291;
-	Thu,  5 Mar 2026 23:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73EAD368260;
+	Thu,  5 Mar 2026 23:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uQQIgiGP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2OUrLt7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA131459FA;
-	Thu,  5 Mar 2026 23:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0FE367F5C;
+	Thu,  5 Mar 2026 23:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772753436; cv=none; b=WIqe8OGZiGa0vvGoVUjwG4mHoSDvP2wzwTxfelVZixIcGEYoLkQWKrPD/ZrFa5F1+brN0shykmQSpRHKk+3+Ns6phPSOnunu00fJ8czX/BW+ax0Nu1d/I+qPS/PvAdWyTcCOCP9ceYyCGZTaNABeGtuv7mnftzh2/1DrBDqzGU0=
+	t=1772753439; cv=none; b=BB5aN5nieTkOwCRGaG8ef90FE6S1OZyxLAPgaqWSwx6ilWudK0wu9rClgTPwQKWwtzwilEinp/BO1ndNDr9AbDfOeif9Cx2FaeU8+917Z8q5NTUU3dyWab5kfLIxQJgCuisd2ZL7Lgcsc1GAhDviwBVphKE+aibv8+ZG58IxugM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772753436; c=relaxed/simple;
-	bh=mTnIonLZYMjXHvkplxKLW57Mj6daBEBoDy+9bwPX4hU=;
+	s=arc-20240116; t=1772753439; c=relaxed/simple;
+	bh=tqh5LkBF8hJuRKX1E/HzPe/YDkw6eJT1HDZFcFDFrFw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AgzxpVlt97hamqugxw3sBu73miKc72NQdEPmSQLU8CNpAhL7goZvwHD9nrGuv0iGdDvxbc/9dJE/gMMZTy4OBjfa9fOe+tfk2m545MxXYH7FkLmjAn7Vn2PXEPJfMqn7bqFlo+iro+GZ871swu6BSQiRcx/8To0qfAIM2bUijm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uQQIgiGP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F927C19423;
-	Thu,  5 Mar 2026 23:30:33 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=df0lY9UlKRRxwh3wOZ6Xfdbsc1DAU56uMp8/f97C+SGFJKFa5GN0BD8AUXmVOWQ/hWIlpb05u3bEw3h8QLHQT6d3zS3MxiAVjze9fxRxly9pJRSD+2tJIGsPKuLPA11V4T5/odw57niuA4QwX2qjnTCbQPSAWGADQqtUeXYbZI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m2OUrLt7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97513C116C6;
+	Thu,  5 Mar 2026 23:30:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772753436;
-	bh=mTnIonLZYMjXHvkplxKLW57Mj6daBEBoDy+9bwPX4hU=;
+	s=k20201202; t=1772753438;
+	bh=tqh5LkBF8hJuRKX1E/HzPe/YDkw6eJT1HDZFcFDFrFw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=uQQIgiGP+4KPGYq7C7y6G/gliGx1mtDkiMChTpymclR689L/QwD+oIBBarKzFi1W9
-	 f9pncDpq+uu6s3tKyaZVcVVQ0fvlqx6gBj8jvCvLvZqw6D3coRSeOrQZprnFVRzWll
-	 lwQ7+x+gwm6fmnYFbl85sczKOlW8cRNFRFI5YXxbZ3Q+hBkDxxNtrL7KUStrY8pQzO
-	 23vDoSpZ1MX+GSwfJZpHVRxhtO05pC5u96QckujXHhEn81oQLgrtcEQaxWu5ydhZpO
-	 Ujh46CL4Vz2E9/xN+FnVtylo0k1Zoa7NfMnJKi/N4ZTecU9ELTplV2Esg0apefwY5b
-	 67e9ALnZe+6eQ==
+	b=m2OUrLt73UwQ/lxAfzRzhYaoDhkGrPtQPRx88GbPQHL24NApX4RUExXzLxgyKoMmI
+	 WNerIxdoaZAvdY7SDfDgV4Q1u6DP3/+QNfMi1XjMkAT8KE9TXvdTxYD8b9/7aEwDHg
+	 BNKEd4Oq/cv1wtj2lz/LZOZac9488yxCzjXEWjv6ltIPeH6Z8AjM/+7vo9P71SJUHj
+	 ECj0H4B4IrZMhRXae1790ToaNBEUYJ+NhxFcdICEx2+LLz9dctcIeIqvJdX/uX+xjm
+	 a5ukCfWDsZwjwp+x2okLtHRE1HQGqHZTqxGVYkTUloG4XseMRdnVRAE1U+bDpjcN9b
+	 A9nDZo3B+SHGQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 06 Mar 2026 00:30:09 +0100
-Subject: [PATCH RFC v2 06/23] scsi: target: use scoped_with_init_fs() for
- APTPL metadata
+Date: Fri, 06 Mar 2026 00:30:10 +0100
+Subject: [PATCH RFC v2 07/23] btrfs: use scoped_with_init_fs() for
+ update_dev_time()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260306-work-kthread-nullfs-v2-6-ad1b4bed7d3e@kernel.org>
+Message-Id: <20260306-work-kthread-nullfs-v2-7-ad1b4bed7d3e@kernel.org>
 References: <20260306-work-kthread-nullfs-v2-0-ad1b4bed7d3e@kernel.org>
 In-Reply-To: <20260306-work-kthread-nullfs-v2-0-ad1b4bed7d3e@kernel.org>
 To: linux-fsdevel@vger.kernel.org, 
@@ -66,15 +66,15 @@ Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
  Tejun Heo <tj@kernel.org>, Jann Horn <jannh@google.com>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-47773
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1199; i=brauner@kernel.org;
- h=from:subject:message-id; bh=mTnIonLZYMjXHvkplxKLW57Mj6daBEBoDy+9bwPX4hU=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSuEuKsmjqjXar5znadQiOzaRcErlx47xt+0uTcXxcdo
- TXhCWdsOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZyj5fhn03l9ZyZj5z278p6
- Xan3RivySPWrc/2MuXaLlkbFB2zy/MXwz3jaFbnbXiK1Fafma97s6/qg2qOvnfhxb7q/NV9DEec
- hHgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1460; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=tqh5LkBF8hJuRKX1E/HzPe/YDkw6eJT1HDZFcFDFrFw=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSuEuJ8tH650LHMx1ekNoRxbvzdl860/JBK5w7lhJgp6
+ pduxz/K7ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjI+TcM/zNaDEWed9w94av/
+ 9/PK1xtfhf6Il+G1Sp4/IWSaaE+FfAcjwxp7d+NV518rCU89EWn7a6qVoc1sD/Wpept5365fsX8
+ hIxsA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-X-Rspamd-Queue-Id: 9734621950D
+X-Rspamd-Queue-Id: D2C2A219524
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
@@ -84,7 +84,7 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79531-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79532-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -104,40 +104,52 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
+update_dev_time() can be called from both kthread and process context.
 Use scoped_with_init_fs() to temporarily override current->fs for
-the filp_open() call in __core_scsi3_write_aptpl_to_file() so the
-path lookup happens in init's filesystem context.
+the kern_path() call when running in kthread context so the path
+lookup happens in init's filesystem context.
 
-__core_scsi3_write_aptpl_to_file() ← core_scsi3_update_and_write_aptpl()
-← PR command handlers ← target_queued_submit_work() ← kworker
+update_dev_time() ← btrfs_scratch_superblocks() ←
+btrfs_dev_replace_finishing() ← btrfs_dev_replace_kthread()
+← kthread (kthread_run)
+
+Also called from ioctl (user process).
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- drivers/target/target_core_pr.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/btrfs/volumes.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/target/target_core_pr.c b/drivers/target/target_core_pr.c
-index f88e63aefcd8..2a030f119b24 100644
---- a/drivers/target/target_core_pr.c
-+++ b/drivers/target/target_core_pr.c
-@@ -18,6 +18,7 @@
- #include <linux/file.h>
- #include <linux/fcntl.h>
- #include <linux/fs.h>
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index 648bb09fc416..b42e93c8e5b1 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -12,6 +12,7 @@
+ #include <linux/uuid.h>
+ #include <linux/list_sort.h>
+ #include <linux/namei.h>
 +#include <linux/fs_struct.h>
- #include <scsi/scsi_proto.h>
- #include <linux/unaligned.h>
+ #include "misc.h"
+ #include "disk-io.h"
+ #include "extent-tree.h"
+@@ -2119,8 +2120,16 @@ static int btrfs_add_dev_item(struct btrfs_trans_handle *trans,
+ static void update_dev_time(const char *device_path)
+ {
+ 	struct path path;
++	int err;
  
-@@ -1969,7 +1970,8 @@ static int __core_scsi3_write_aptpl_to_file(
- 	if (!path)
- 		return -ENOMEM;
- 
--	file = filp_open(path, flags, 0600);
-+	scoped_with_init_fs()
-+		file = filp_open(path, flags, 0600);
- 	if (IS_ERR(file)) {
- 		pr_err("filp_open(%s) for APTPL metadata"
- 			" failed\n", path);
+-	if (!kern_path(device_path, LOOKUP_FOLLOW, &path)) {
++	if (tsk_is_kthread(current)) {
++		scoped_with_init_fs()
++			err = kern_path(device_path, LOOKUP_FOLLOW, &path);
++	} else {
++		err = kern_path(device_path, LOOKUP_FOLLOW, &path);
++	}
++
++	if (!err) {
+ 		vfs_utimes(&path, NULL);
+ 		path_put(&path);
+ 	}
 
 -- 
 2.47.3
