@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-79545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +KZUNJUSqmnFKgEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 00:32:37 +0100
+	id WLA7NI8UqmmYKwEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 00:41:03 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 831F42194E8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 00:32:37 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34A9D2196AA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 00:41:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 8EAEF3026B61
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 23:32:18 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0B29E31953B0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 23:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9517236C0D7;
-	Thu,  5 Mar 2026 23:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6036536CDEC;
+	Thu,  5 Mar 2026 23:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KB1g9v7Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qzq4+aMM"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FBA36C0BA;
-	Thu,  5 Mar 2026 23:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCCE936C9E2;
+	Thu,  5 Mar 2026 23:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772753472; cv=none; b=PMiqWys2CoYLrgJ287sJM8SAyTIYYM61ZAKvpfbSXkjzHG7qTVfrGKy6wEu21w/ZDUNHxcEeOyuYq/b/+m302cM4VInb+E/PgKursxCiv6H9iTzdBlH0uc8HPejmrPVlrhQEaVxFyl8dGrAxG718lwhsOT/uWVNin3KD04gUt4g=
+	t=1772753474; cv=none; b=fBR7599YhclIsoDl0z8ezagbgzMB1ybSp6fO+Ie4RGzxN/X/Mg7nGhdxxVnybaS4KnMfKDhLSLSd7zT8+GoGIzK9xBCGzMQykg09AO0dXgFGSNl12Rc+fsR4AQE7WKwWPWD3il5ijvLXua4/pz38cghr3+uHIXlt/jkDE+yvhYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772753472; c=relaxed/simple;
-	bh=LEkYCP2B26VM04U/Xfgf30JgLqLChdLWXV57GkA2dNs=;
+	s=arc-20240116; t=1772753474; c=relaxed/simple;
+	bh=cEdUQUlFBerrrjll65RYnh0FxEaBJ8BqmqOAkJYC198=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mVY4Q/eDSVjRcxjIbM42bmThly5bQiRHQX7MXvgvFObpX6qUUJ5bH3+tje0+yoJWkYRNLcnJ7EMLeTbfwRbrxSOBkvM23yXH8Kp8aWpwpmpyGjYDiEW2oui2eOfqnCPgKrlB2WKAq+FGXxGUiBDpUBgjJNO/9cTCNv3s1K7oC3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KB1g9v7Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E557EC19423;
-	Thu,  5 Mar 2026 23:31:09 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=mxSUD2p1dTd4bpgK5f/kbd/miXpti56W8f7OCU4qSbwhRsAK1XCAgFodYT4sClr8XO2aKTkiTXuuzMjwyoVDfR6c1CjAX90rAjWh0bAFZ7CYg5pmil3DiVhddjl0JwRHtcpNtWfji3dds9tZnKvt6QvhZ3IbnESObYE5mQfIY28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qzq4+aMM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A699C19423;
+	Thu,  5 Mar 2026 23:31:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772753472;
-	bh=LEkYCP2B26VM04U/Xfgf30JgLqLChdLWXV57GkA2dNs=;
+	s=k20201202; t=1772753474;
+	bh=cEdUQUlFBerrrjll65RYnh0FxEaBJ8BqmqOAkJYC198=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=KB1g9v7YNo2cA5LeGftvekrvEjpF6FqnB/NDLsnF04wG4bVMhWyWdenXwEi8YzdTu
-	 Zzlqr2sA2PSNBJGSE2dO7HGMYE5QMCTdfM7l+Ys8wHsOXWf4n+uy7j+ysrNq9Ft12x
-	 E9E+1G84CYzF+0weUXpW3yrI2yHDUGsShw5bsSkVycnPjwS8mmBEM8BPhED1C9SH5B
-	 /noyRtjci8xfFDs+tElqlvDKZ8BSTXna1KOfugtOV89pbGA+vpqs9w6/vkIJoDwR/O
-	 PuCeFwWTaRRucpcVuEnupg7RdWnGZ963iBNYyC3GD9eSaC/gh8FhxIKiC5+nym62KS
-	 kHP4m0EuHuw0Q==
+	b=qzq4+aMMy3XptoROLLxxvWTFnkzdLo8JrA3JBoCmCLaX+SKz7xD4Cuo5T+dKJ00oW
+	 nRkZuGrBhEjKyXLKFBlveAR/h5KOwVTM2rB4kZyarP04jnP9A8tj1mCAGzYhP91ypa
+	 dqEVSQl9Wb+VXh9mTa7OVPkxAdnNMjMAXJfG0kuDAh2XFHUlFqIAXiDp1tOSLKqM8I
+	 ZxqaX9XKImyzqwbawnuaCWpRApI0iUNbT8NBx2FUUqjgptCODVLOF24maTX18eTPMj
+	 brf5ZDhE/gwCl2xKtA29sk37n0xJEQQEkqF9PRTe5/HG1UkS6DsgjGKq6E+kqjoDTI
+	 qGLHzxWhdv4/Q==
 From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 06 Mar 2026 00:30:23 +0100
-Subject: [PATCH RFC v2 20/23] devtmpfs: create private mount namespace
+Date: Fri, 06 Mar 2026 00:30:24 +0100
+Subject: [PATCH RFC v2 21/23] nullfs: make nullfs multi-instance
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260306-work-kthread-nullfs-v2-20-ad1b4bed7d3e@kernel.org>
+Message-Id: <20260306-work-kthread-nullfs-v2-21-ad1b4bed7d3e@kernel.org>
 References: <20260306-work-kthread-nullfs-v2-0-ad1b4bed7d3e@kernel.org>
 In-Reply-To: <20260306-work-kthread-nullfs-v2-0-ad1b4bed7d3e@kernel.org>
 To: linux-fsdevel@vger.kernel.org, 
@@ -65,25 +65,25 @@ Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
  Tejun Heo <tj@kernel.org>, Jann Horn <jannh@google.com>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-47773
-X-Developer-Signature: v=1; a=openpgp-sha256; l=792; i=brauner@kernel.org;
- h=from:subject:message-id; bh=LEkYCP2B26VM04U/Xfgf30JgLqLChdLWXV57GkA2dNs=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSuEuJy3csm/W8Rm6p7/AmmpRdiQlncdVk1zu9vY5s+q
- b76wb6ZHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPJ/sjI0GGnvvropTn2jgrR
- Wb+PfNr4r5Mhdsq9g5VLnMykY7U3/GH4Z/Ql2HF5yPGL0r+05m77fWXG5zgLzq0e76cEmpcd0s9
- MZQQA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1007; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=cEdUQUlFBerrrjll65RYnh0FxEaBJ8BqmqOAkJYC198=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSuEuIq9t5TYMl60PXIZpGDnXxB/OtUimaoXYn62XXfz
+ O2v4RPjjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlUdzL84eSX/CxkeOP5ubDL
+ Rlluj61ulhwJMlnse+iQz9q5F/Ksihn+pz2/6drLmSzu8i7zcHmAQ/2P9wH9wTxPD4n73zm2m/k
+ fKwA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-X-Rspamd-Queue-Id: 831F42194E8
+X-Rspamd-Queue-Id: 34A9D2196AA
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79545-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79546-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -95,36 +95,43 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[9];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-Kernel threads are located in a completely isolated nullfs mount.
-Make it possible for a kthread to create a private mount namespace so it
-can mount private filesystem instances. This is only used by devtmpfs.
+Allow multiple instances of nullfs to be created. Right now we're only
+going to use it for kernel-internal purposes but ultimately we can allow
+userspace to use it too to e.g., safely overmount stuff.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- drivers/base/devtmpfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/nullfs.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
-index b1c4ceb65026..246ac0b331fe 100644
---- a/drivers/base/devtmpfs.c
-+++ b/drivers/base/devtmpfs.c
-@@ -413,7 +413,7 @@ static noinline int __init devtmpfs_setup(void *p)
- {
- 	int err;
+diff --git a/fs/nullfs.c b/fs/nullfs.c
+index fdbd3e5d3d71..88ba4f3fc3a2 100644
+--- a/fs/nullfs.c
++++ b/fs/nullfs.c
+@@ -40,14 +40,9 @@ static int nullfs_fs_fill_super(struct super_block *s, struct fs_context *fc)
+ 	return 0;
+ }
  
--	err = ksys_unshare(CLONE_NEWNS);
-+	err = kthread_mntns();
- 	if (err)
- 		goto out;
- 	err = init_mount("devtmpfs", "/", "devtmpfs", DEVTMPFS_MFLAGS, NULL);
+-/*
+- * For now this is a single global instance. If needed we can make it
+- * mountable by userspace at which point we will need to make it
+- * multi-instance.
+- */
+ static int nullfs_fs_get_tree(struct fs_context *fc)
+ {
+-	return get_tree_single(fc, nullfs_fs_fill_super);
++	return get_tree_nodev(fc, nullfs_fs_fill_super);
+ }
+ 
+ static const struct fs_context_operations nullfs_fs_context_ops = {
 
 -- 
 2.47.3
