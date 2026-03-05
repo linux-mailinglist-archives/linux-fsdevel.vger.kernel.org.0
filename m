@@ -1,51 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-79516-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aKt4MjXVqWnbFwEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79516-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 20:10:45 +0100
+	id aHjqFr/VqWnbFwEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 20:13:03 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F04B21747A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 20:10:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 051D02174C7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 20:13:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id F182D314356E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 19:07:54 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D892C3195832
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 19:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FB9303C83;
-	Thu,  5 Mar 2026 19:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10DA3043BE;
+	Thu,  5 Mar 2026 19:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dj+S9NqJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q3N/+4+0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9203002AB;
-	Thu,  5 Mar 2026 19:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FC735979;
+	Thu,  5 Mar 2026 19:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772737672; cv=none; b=MJzKKSRB1b/QoWwQsiHpJulhwRy9tIbYy98xWOIF2kFpHwE/8uNUyLnkSmLy70y+YgZXUl2iEE6fNZx4uJPmhZAmnu4Im5WBLGKM6o9gCXEfX0mGLRTRcv5Cs+ah5C9ZIXY9YH640PXxdhAAHIOgd9iAcEy7t2s8OtyZ+XyKc8A=
+	t=1772737717; cv=none; b=JcNAkQYigUa6if36DL4yz7kkmCkRL/xwS0jAL+8ZOMoaDe/JFTD0OrvOybko/YQ4nahmGuGrqcmP/extN5rKB0N1rST5DQ3/Q/g60QmcpBuI1VnBJLV8UtwBhi8KcK93t0VAe2i72ltm1VQ5tHDDn9y9AAK3Y264niRNAMh5/lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772737672; c=relaxed/simple;
-	bh=5pMLMYsqUq30caMaqSsCRxg/LUKm2ZwH02Nogw/kZgk=;
+	s=arc-20240116; t=1772737717; c=relaxed/simple;
+	bh=rFxDMFnHn7NVWKzcWxLVfwwtfRfhIslRczAFZUg6KWY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XRLrFtTAsJ96XaztqsTxRGahVaRYVryGqloISOz8aLpE7bnLcaOAz+i5YfKY2T7ejVIGdFlCQJAYHSSURD52zUZCzcjvY6qKJ9YShvZvHFYnjy4hivEiNtkIvqSQtJt1zVin94yYCykAjsqYNzPhhlJW172a9asiZgLYk1dm7Eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dj+S9NqJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DEB6C116C6;
-	Thu,  5 Mar 2026 19:07:22 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=MQk4WQ7iO7LVa9cle8aqELop626QLPaVccZHI2DkQRCmqXXZwUrQwxyPj7o5kcpjxqEYsxh/tJMwQ0PRIoMjDv1kr4x55bzd/9I6NbbM8ctCjmPPDff4drRrTpoht1rPAKTojpMAy7X/iHTtnsaY02FPNTUlgSciAf79oO1F6F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q3N/+4+0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1400C116C6;
+	Thu,  5 Mar 2026 19:08:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772737672;
-	bh=5pMLMYsqUq30caMaqSsCRxg/LUKm2ZwH02Nogw/kZgk=;
+	s=k20201202; t=1772737716;
+	bh=rFxDMFnHn7NVWKzcWxLVfwwtfRfhIslRczAFZUg6KWY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Dj+S9NqJtdWz6RBKFzR5acMgUZFQJ3W9fnbktBvz0MaAXoouPnMmfQ67JZmI9sVaH
-	 XQQn6nGUQIhWbu93psky7lo+eqRxXjl34agykwtcFCvJvewXz2H9sBqggtK338M1DH
-	 xMqK0z98I7O58rU2ZExHxgDfn0muFBjv+va4ZBeTvQF1Iwu5bpIwVn7xVrLxpkhupp
-	 DOdrZ4sFZpJOpYA2rNekO31hBtA1G0t1/f5tBT933AusAvejWixb3X2YXLYp78nijl
-	 5WoPlj74YRUASEEXS5XuY65yzkQQnpYLuAnUfI3m9ww+joTZUYCqAu4oOizyBIoyL/
-	 rUJ6jp5aQodrA==
-Message-ID: <ebb4beec-13dc-4b94-a1f8-756e7a8ef5af@kernel.org>
-Date: Thu, 5 Mar 2026 20:07:19 +0100
+	b=Q3N/+4+0i0EO9IlQjPY866MKsnGCcaV8il9G9v8afE5GenLk7AYiRbB/Y1FP1o2rB
+	 /km7o1NSkyROG4dOhtAnOplRx3jIyWDOSjpHOoNgRz3S5vqarQqw4eOzeGOoAsKKRK
+	 pBNEo3zpnTLgSEbpBOWGlEAS+sRZSsaccxeDDZnXPvMZMuA3D1Qtdp8ACveWMwDxeW
+	 JxtgRKqR/YY7Tt16ltVGihj5vXooPa8s+gxnBT9XkFW1HzTkkqySR4HYdgnwY6Ne1V
+	 FQTtGMm2qyJITjlOcPA10iSdVy53WpsJzKFrW6b5tIpK9XJ24nycfGMMJZgWIPKIcm
+	 F2Y9yv/syW9kQ==
+Message-ID: <6603615d-109f-461b-9939-737c05923957@kernel.org>
+Date: Thu, 5 Mar 2026 20:08:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,8 +53,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 04/15] mm/gup: drop local variable in
- gup_fast_folio_allowed
+Subject: Re: [PATCH v10 07/15] KVM: x86: define
+ kvm_arch_gmem_supports_no_direct_map()
 To: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
  "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
  "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
@@ -146,7 +146,7 @@ Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>,
  "Manwaring, Derek" <derekmn@amazon.com>, "Cali, Marco"
  <xmarcalx@amazon.co.uk>
 References: <20260126164445.11867-1-kalyazin@amazon.com>
- <20260126164445.11867-5-kalyazin@amazon.com>
+ <20260126164445.11867-8-kalyazin@amazon.com>
 From: "David Hildenbrand (Arm)" <david@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=david@kernel.org; keydata=
@@ -193,10 +193,10 @@ Autocrypt: addr=david@kernel.org; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20260126164445.11867-5-kalyazin@amazon.com>
+In-Reply-To: <20260126164445.11867-8-kalyazin@amazon.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 6F04B21747A
+X-Rspamd-Queue-Id: 051D02174C7
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
@@ -207,7 +207,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79516-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79517-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	TO_DN_EQ_ADDR_SOME(0.00)[];
@@ -226,75 +226,21 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MID_RHS_MATCH_FROM(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On 1/26/26 17:47, Kalyazin, Nikita wrote:
-> From: Nikita Kalyazin <kalyazin@amazon.com>
+On 1/26/26 17:50, Kalyazin, Nikita wrote:
+> From: Patrick Roy <patrick.roy@linux.dev>
 > 
-> Move the check for pinning closer to where the result is used.
-> No functional changes.
+> x86 supports GUEST_MEMFD_FLAG_NO_DIRECT_MAP whenever direct map
+> modifications are possible (which is always the case).
 > 
+> Signed-off-by: Patrick Roy <patrick.roy@linux.dev>
+> Reviewed-by: Ackerley Tng <ackerleytng@google.com>
 > Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
 > ---
->  mm/gup.c | 19 ++++++++-----------
->  1 file changed, 8 insertions(+), 11 deletions(-)
-> 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 9cad53acbc99..e72dacce3e34 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -2737,18 +2737,9 @@ EXPORT_SYMBOL(get_user_pages_unlocked);
->   */
->  static bool gup_fast_folio_allowed(struct folio *folio, unsigned int flags)
->  {
-> -	bool reject_file_backed = false;
->  	struct address_space *mapping;
->  	unsigned long mapping_flags;
->  
-> -	/*
-> -	 * If we aren't pinning then no problematic write can occur. A long term
-> -	 * pin is the most egregious case so this is the one we disallow.
-> -	 */
-> -	if ((flags & (FOLL_PIN | FOLL_LONGTERM | FOLL_WRITE)) ==
-> -	    (FOLL_PIN | FOLL_LONGTERM | FOLL_WRITE))
-> -		reject_file_backed = true;
-> -
->  	/* We hold a folio reference, so we can safely access folio fields. */
->  	if (WARN_ON_ONCE(folio_test_slab(folio)))
->  		return false;
-> @@ -2793,8 +2784,14 @@ static bool gup_fast_folio_allowed(struct folio *folio, unsigned int flags)
->  	 */
->  	if (secretmem_mapping(mapping))
->  		return false;
-> -	/* The only remaining allowed file system is shmem. */
-> -	return !reject_file_backed || shmem_mapping(mapping);
-> +
-> +	/*
-> +	 * If we aren't pinning then no problematic write can occur. A long term
-> +	 * pin is the most egregious case so this is the one we disallow.
-> +	 * Also check the only remaining allowed file system - shmem.
-> +	 */
-> +	return (flags & (FOLL_PIN | FOLL_LONGTERM | FOLL_WRITE)) !=
-> +	    (FOLL_PIN | FOLL_LONGTERM | FOLL_WRITE) || shmem_mapping(mapping);
 
-Best to keep this split and a bit more readable.
-
-/*
- * If we aren't pinning then no problematic write can occur. A writable
- * long term pin is the most egregious case, so this is the one we
- * allow only for ...
- */
-if ((flags & (FOLL_PIN | FOLL_LONGTERM | FOLL_WRITE)) !=
-    (FOLL_PIN | FOLL_LONGTERM | FOLL_WRITE)
-	return true;
-/* ... hugetlb (which we allowed above already) and shared memory. */
-return shmem_mapping(mapping);
-
->  }
->  
->  static void __maybe_unused gup_fast_undo_dev_pagemap(int *nr, int nr_start,
-
+Reviewed-by: David Hildenbrand (Arm) <david@kernel.org>
 
 -- 
 Cheers,
