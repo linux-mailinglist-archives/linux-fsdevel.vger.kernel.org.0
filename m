@@ -1,209 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-79458-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id qCZmAjIlqWkL2gAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79458-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 07:39:46 +0100
+	id kPdQOxYwqWmO2wAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 08:26:14 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F9FF20BBCE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 07:39:45 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4581720CA06
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 08:26:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id C314D300B8FE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 06:39:33 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 371373013255
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 07:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5EE309F00;
-	Thu,  5 Mar 2026 06:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED6331B114;
+	Thu,  5 Mar 2026 07:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ZHEW3Rr9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com [209.85.161.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD91307AC6
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Mar 2026 06:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46AA6191F91;
+	Thu,  5 Mar 2026 07:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772692768; cv=none; b=i2neeX2XfKJ+eLI2cHRP3v2TuWu1X9nMOTsnsj5FwLk7azUsOHRciG3vGVNYh0NMzbX+jSzMwBI/aJP6kZPIQ0QQw+CoqARpDox3soUqTHUduENQKfEABLpfymAcgni5rhQcoNRPqb9X6ZW7I0Nw2Utx9IIjobk62lAG3eVhIEU=
+	t=1772695563; cv=none; b=hzNiU0HckWkuP7D2J4LNSkHNT+X78dFmPiwqayaC9qxISdkNXMN9ysIea74+4/vLson+yiuMz7YM/g4o1ACBIWUSbDRNcM96nJbF8pTA/zO3TPhY/hOsfIC7u1ZKp50ZYTCyEaC+lYWcYv9HL03A/lrsAwIa3bTG0NEHOn3pjRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772692768; c=relaxed/simple;
-	bh=5atin/QyTMJPaHN908vw3jHVrcVvtUrPmM/HRy6F4Nc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OIA5UwC5jWDSZnIBJ/mNetxhpbGPe+191Ty3cXToR8Lau+Vk6RzhCi0lX5vUY6wsS/DRKDARa41UZel7huq+RYK+N6cjD6K2009zTSWn4d3TQ/Lgko6CKrmXSCNOLYklP/MkaqN29hc+KF6CcsGplG0M7p5ccW3jJGGhO5+iqEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-67999893008so64118845eaf.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Mar 2026 22:39:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772692765; x=1773297565;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=T69q03Ql39fiZ9I4Pdgi0mPljH+4/RNKrqL5XYzH1fU=;
-        b=RrYaUgxay9fvYCaC0jO3AT3KbquBE3oIrYRJ0hv+9QP4nVlU4zEHLZzd1oZ+XG+ESF
-         yPZ7ftN6ESyC82R/tdPXEvkdWpDf7DJM1QPbNkYNe3lgeff/DRPlCIHJmVXAU4yoAZiu
-         ZLq9X5FV6s7FEkcS+tbZp212zfALv0fafaLVxWa8j72VWU0UQ+cEyvBfv3oZz9p5A/Rf
-         yqCUOnzdtPPqr9SkEZsAfSSOu2Xf/Q1D23/y0AKcZU3TxpXvug2rJAvTorKsWzeHfrtU
-         GfXAGnCaCt+yPKNhheHDb7JdnMWjvU3HuAWDUyOX4/oKwkXyaCo9I1h01Of1DGKlWufV
-         HtpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnePkgdKvgIVOBc9/v6UhXw6sYi9tuhMoJhk9Q3H7kI3oNMs3ZMb3j7owKsacmOe4boFY7GRtc05F1cMKf@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZhf+lR0kkxZ/7PLOJL2r6PN5nRppN/YQ0fW9tg+VLBdGxb4a7
-	do2Vi2G2zIb6urRsFNzMI1jzZiqEEM/ubfjahRthPojPH8mLEaicgaOVHvrodB0c+i80Ds7gRlY
-	eb/mIH/xtPY6lVWK0bfKpt6HGaTGNtAuSG/DDxt8gN8YvDbR1K+MZZyOZPCc=
+	s=arc-20240116; t=1772695563; c=relaxed/simple;
+	bh=serZQOjnyKdUf+Hv6YV4uym9KicUIWkjWuwieX7M2VY=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=OK1TaItzo0tU1xxLBEA0LILAnmurMajQP+dVq/yeu0A/D8jAD1GY8a1VJzTsqUovXgcBQEmeiZPiVoqhPWRKouoMNX+3LQmoCjokci4Y/kXL1D8LMsALfe1jVyOcPKLhJzho/vE2pGtmy4x3cMi+JP5kIO5f+dWqwdpP+KRo+Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ZHEW3Rr9; arc=none smtp.client-ip=162.62.57.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1772695550; bh=tpTsQ2K114SC6xh+ee+XJnACDZ9x/Yy2EK81NPiw8jY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ZHEW3Rr96kLoXWdqopctCfbDv+EVwGSAevgEPMNNVu7EV5f9IyzzMVvYDLRiqBQlf
+	 fQRhnjcPcV2NFHPr9sYlGrbi42S0kOrgjGlXDCkJcEa+2LCwOD3D1KmLDllBAtPtWI
+	 sPEAR0LAGkXvGtloIPYHC2u480lfRGQCM4varWh0=
+Received: from lxu-ped-host.. ([111.201.4.63])
+	by newxmesmtplogicsvrszb51-1.qq.com (NewEsmtp) with SMTP
+	id 66EB40F4; Thu, 05 Mar 2026 15:25:46 +0800
+X-QQ-mid: xmsmtpt1772695546tlk118xcc
+Message-ID: <tencent_722F916D689510E89EEE92CD8C78226D480A@qq.com>
+X-QQ-XMAILINFO: NKDEJ657lpu+IGcb52ag05LJhLwenjCN9xNlMgJ6/gYss4YmkT0oDFCNR1S6SZ
+	 0uK4ps7p/NaTt9+dsX3mqt4OPhWKb+FmDWE4beqp+A/Ncjjvd7fOZnpiPiVLox6KLv86K4P+vRAH
+	 EDYxJc9M+kipg9jU3NJCVddWXFKH0HkL6it4G7V31GvLWQsH8QOIoP1WoAVGm1qDzvxUNsojKtWS
+	 AH6EMOuHgMmeSHlIQwjDbN6s9Ur2GgKQGddrtnoES+kN1tGKR4xkXW4ebF0TYaEpCOMDrnRz4pw/
+	 NfIKSmNWNwVD1rin5T+I43uNWBHJWykSFeU7zJwyYw/5Y4TOnWOc27XYa8ZsVWCiRRFDfVt2cCQX
+	 HOIeCoKop/hK7BaFxShD1h1bqa+R2n6PBLXOJu3nCNU4EeYEGR9oGikK6YlTX+osLy28z4ZJrpCA
+	 Ka1mFGZK04QQE5XREanKOLSSb7NNk70Cb5TvWFUQUeI5/RkhfjhU6ktku1JcAD6ZylhyBp0pMxaq
+	 3D4HZr7QnyHRU8FFI7WJF4C/q8BQPnu50UdWI8LGpS+GUA4BChXL3MHXuA06DYy9gKva7d5uSRhZ
+	 b5eM99rgHRMu/YjMvsUb2+e+pNLxTLsz+hJ77t2b9YGWotSN1lk4QBnuYlrFl32M8NeGFDNHaRFS
+	 DECLiZZzApCclrL8OiUu57o3hUi3ZeHVSLVyv3IkdUJK22SSH8F2hq1LqKMwCKlqSFqzTGARqTbl
+	 9tRd2u8Zd9yU67wE41gYPdUdexeI0cHnWXIIvwJSqJl4EUigZYBWpTkXcyGA0H+VmxYdSCc6tpKh
+	 zwMsVf0X2UId6Wk0LxYGKbd9sUQmQP4SVk8Fd/dKOaXtfzrYjDaL6mpfJNfXQt5ukzy2odnVKCgb
+	 V1NwIsOle9IlE++QwpryMEdJkSzFrfcsbYRkVJ2WXjwwpDxC8pmzHPv9L4xKKSwGftcgq+To7IX7
+	 qP649uOyKsHv8cLkGojsT9NfcIGTh+/78Ph932ZCAOFbw74s1OxDHvUVqge/YRnqR+85pjWfOT5d
+	 QyVyfK9fzOqTLXlezH6pMlmEBYDT5vbWqId8p+3g==
+X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
+From: Edward Adam Davis <eadavis@qq.com>
+To: jack@suse.cz
+Cc: brauner@kernel.org,
+	eadavis@qq.com,
+	linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com,
+	viro@zeniv.linux.org.uk
+Subject: [PATCH v3] ext4: avoid infinite loops caused by residual data
+Date: Thu,  5 Mar 2026 15:25:46 +0800
+X-OQ-MSGID: <20260305072546.414952-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <4x3xixojbclwq45cpitmylbhis4ya4g3sugtnmj2yzv6avngqb@5xkwu6l467rm>
+References: <4x3xixojbclwq45cpitmylbhis4ya4g3sugtnmj2yzv6avngqb@5xkwu6l467rm>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:1c9e:b0:679:e595:ff30 with SMTP id
- 006d021491bc7-67b17750586mr3093380eaf.36.1772692765699; Wed, 04 Mar 2026
- 22:39:25 -0800 (PST)
-Date: Wed, 04 Mar 2026 22:39:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69a9251d.a70a0220.2f119.0003.GAE@google.com>
-Subject: [syzbot] [exfat?] [gfs2?] WARNING in filename_symlinkat
-From: syzbot <syzbot+2ed46b6b748df855347f@syzkaller.appspotmail.com>
-To: brauner@kernel.org, gfs2@lists.linux.dev, jack@suse.cz, 
-	linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Rspamd-Queue-Id: 0F9FF20BBCE
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4581720CA06
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.36 / 15.00];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=c5c49ee0942d1cdb];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	DMARC_POLICY_ALLOW(-0.50)[qq.com,quarantine];
+	R_MISSING_CHARSET(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[qq.com:s=s201512];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	TAGGED_FROM(0.00)[bounces-79458-lists,linux-fsdevel=lfdr.de,2ed46b6b748df855347f];
-	SUBJECT_HAS_QUESTION(0.00)[];
-	REDIRECTOR_URL(0.00)[goo.gl];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-79459-lists,linux-fsdevel=lfdr.de];
 	TO_DN_NONE(0.00)[];
-	R_DKIM_NA(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,qq.com,vger.kernel.org,syzkaller.appspotmail.com,googlegroups.com,zeniv.linux.org.uk];
+	MIME_TRACE(0.00)[0:+];
+	FROM_NEQ_ENVFROM(0.00)[eadavis@qq.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	DKIM_TRACE(0.00)[qq.com:+];
 	RCPT_COUNT_SEVEN(0.00)[9];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo,appspotmail.com:email,syzkaller.appspot.com:url,storage.googleapis.com:url]
+	FREEMAIL_FROM(0.00)[qq.com];
+	TAGGED_RCPT(0.00)[linux-fsdevel,1659aaaaa8d9d11265d7];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[qq.com:dkim,qq.com:email,qq.com:mid,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,syzkaller.appspot.com:url]
 X-Rspamd-Action: no action
 
-Hello,
+On the mkdir/mknod path, when mapping logical blocks to physical blocks,
+if inserting a new extent into the extent tree fails (in this example,
+because the file system disabled the huge file feature when marking the
+inode as dirty), ext4_ext_map_blocks() only calls ext4_free_blocks() to
+reclaim the physical block without deleting the corresponding data in
+the extent tree. This causes subsequent mkdir operations to reference
+the previously reclaimed physical block number again, even though this
+physical block is already being used by the xattr block. Therefore, a
+situation arises where both the directory and xattr are using the same
+buffer head block in memory simultaneously.
 
-syzbot found the following issue on:
+The above causes ext4_xattr_block_set() to enter an infinite loop about
+"inserted" and cannot release the inode lock, ultimately leading to the
+143s blocking problem mentioned in [1].
 
-HEAD commit:    ecc64d2dc9ff Merge tag 'sysctl-7.00-fixes-rc3' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1754b5aa580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c5c49ee0942d1cdb
-dashboard link: https://syzkaller.appspot.com/bug?extid=2ed46b6b748df855347f
-compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=123dbe4a580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15c99b5a580000
+By using ext4_ext_remove_space() to delete the inserted logical block
+and reclaim the physical block when inserting a new extent fails during
+extent block mapping, residual extent data can be prevented from affecting
+subsequent logical block physical mappings. 
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-ecc64d2d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/86a2ecaacd1b/vmlinux-ecc64d2d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b1dad86775e5/bzImage-ecc64d2d.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/1d38e5a93707/mount_4.gz
-  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=17c57006580000)
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2ed46b6b748df855347f@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) && !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE)): count = 0x0, magic = 0xffff8880460da1f8, owner = 0x0, curr 0xffff8880371624c0, list empty
-WARNING: kernel/locking/rwsem.c:1381 at __up_write kernel/locking/rwsem.c:1380 [inline], CPU#0: syz.0.31/5575
-WARNING: kernel/locking/rwsem.c:1381 at up_write+0x2d6/0x410 kernel/locking/rwsem.c:1643, CPU#0: syz.0.31/5575
-Modules linked in:
-CPU: 0 UID: 0 PID: 5575 Comm: syz.0.31 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-RIP: 0010:__up_write kernel/locking/rwsem.c:1380 [inline]
-RIP: 0010:up_write+0x388/0x410 kernel/locking/rwsem.c:1643
-Code: cc 8b 49 c7 c2 80 eb cc 8b 4c 0f 44 d0 48 8b 7c 24 08 48 c7 c6 e0 ed cc 8b 48 8b 14 24 4c 89 f1 4d 89 e0 4c 8b 4c 24 10 41 52 <67> 48 0f b9 3a 48 83 c4 08 e8 5a 83 0b 03 e9 67 fd ff ff 48 c7 c1
-RSP: 0018:ffffc9000298fd80 EFLAGS: 00010246
-RAX: ffffffff8bcceb60 RBX: ffff8880460da1f8 RCX: ffff8880460da1f8
-RDX: 0000000000000000 RSI: ffffffff8bccede0 RDI: ffffffff901501f0
-RBP: ffff8880460da250 R08: 0000000000000000 R09: ffff8880371624c0
-R10: ffffffff8bcceb60 R11: ffffed1008c1b441 R12: 0000000000000000
-R13: dffffc0000000000 R14: ffff8880460da1f8 R15: 1ffff11008c1b440
-FS:  00007fbd46c406c0(0000) GS:ffff88808ca58000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fbd45de9e80 CR3: 00000000412ea000 CR4: 0000000000352ef0
+[1]
+INFO: task syz.0.17:5995 blocked for more than 143 seconds.
 Call Trace:
- <TASK>
- inode_unlock include/linux/fs.h:1038 [inline]
- end_dirop fs/namei.c:2947 [inline]
- end_creating include/linux/namei.h:126 [inline]
- end_creating_path fs/namei.c:4962 [inline]
- filename_symlinkat+0x222/0x410 fs/namei.c:5642
- __do_sys_symlinkat fs/namei.c:5660 [inline]
- __se_sys_symlinkat+0x4e/0x2b0 fs/namei.c:5655
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fbd45d9c799
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fbd46c40028 EFLAGS: 00000246 ORIG_RAX: 000000000000010a
-RAX: ffffffffffffffda RBX: 00007fbd46016090 RCX: 00007fbd45d9c799
-RDX: 00002000000003c0 RSI: 0000000000000007 RDI: 0000200000000240
-RBP: 00007fbd45e32bd9 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fbd46016128 R14: 00007fbd46016090 R15: 00007ffcbe33eb58
- </TASK>
-----------------
-Code disassembly (best guess), 2 bytes skipped:
-   0:	49 c7 c2 80 eb cc 8b 	mov    $0xffffffff8bcceb80,%r10
-   7:	4c 0f 44 d0          	cmove  %rax,%r10
-   b:	48 8b 7c 24 08       	mov    0x8(%rsp),%rdi
-  10:	48 c7 c6 e0 ed cc 8b 	mov    $0xffffffff8bccede0,%rsi
-  17:	48 8b 14 24          	mov    (%rsp),%rdx
-  1b:	4c 89 f1             	mov    %r14,%rcx
-  1e:	4d 89 e0             	mov    %r12,%r8
-  21:	4c 8b 4c 24 10       	mov    0x10(%rsp),%r9
-  26:	41 52                	push   %r10
-* 28:	67 48 0f b9 3a       	ud1    (%edx),%rdi <-- trapping instruction
-  2d:	48 83 c4 08          	add    $0x8,%rsp
-  31:	e8 5a 83 0b 03       	call   0x30b8390
-  36:	e9 67 fd ff ff       	jmp    0xfffffda2
-  3b:	48                   	rex.W
-  3c:	c7                   	.byte 0xc7
-  3d:	c1                   	.byte 0xc1
+ inode_lock_nested include/linux/fs.h:1073 [inline]
+ __start_dirop fs/namei.c:2923 [inline]
+ start_dirop fs/namei.c:2934 [inline]
 
-
+Reported-by: syzbot+512459401510e2a9a39f@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=1659aaaaa8d9d11265d7
+Tested-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
+Reported-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=512459401510e2a9a39f
+Tested-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+v1 -> v2: fix ci reported issues
+v2 -> v3: new fix for removing residual data and update subject and coments
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ fs/ext4/extents.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index ae3804f36535..0bed3379f2d2 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -4458,19 +4458,13 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
+ 	if (IS_ERR(path)) {
+ 		err = PTR_ERR(path);
+ 		if (allocated_clusters) {
+-			int fb_flags = 0;
+-
+ 			/*
+ 			 * free data blocks we just allocated.
+ 			 * not a good idea to call discard here directly,
+ 			 * but otherwise we'd need to call it every free().
+ 			 */
+ 			ext4_discard_preallocations(inode);
+-			if (flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE)
+-				fb_flags = EXT4_FREE_BLOCKS_NO_QUOT_UPDATE;
+-			ext4_free_blocks(handle, inode, NULL, newblock,
+-					 EXT4_C2B(sbi, allocated_clusters),
+-					 fb_flags);
++			ext4_ext_remove_space(inode, newex.ee_block, newex.ee_block);
+ 		}
+ 		goto out;
+ 	}
+-- 
+2.43.0
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
