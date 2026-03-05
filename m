@@ -1,220 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-79500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79501-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OMkKId6lqWnwBgEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 16:48:46 +0100
+	id eKrYMYSmqWnwBgEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79501-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 16:51:32 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D69A4214D29
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 16:48:45 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E5BC214DE8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 16:51:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4290030F6CDE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 15:38:47 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id DA0BB30BEEEE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 15:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B59F3CB2F3;
-	Thu,  5 Mar 2026 15:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2822E3C6A58;
+	Thu,  5 Mar 2026 15:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tAX0d2xs"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RQg2dzKQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gwR5u1ah";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RQg2dzKQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gwR5u1ah"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75EB3CF68C;
-	Thu,  5 Mar 2026 15:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393E33BE16E
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Mar 2026 15:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772725044; cv=none; b=Ka4IeSGFn67QnB4Z9k75aBkDrWcTSG9rVPb0IpSjZN+xIYZ/eVT4V8Q/x1+63zcIMuW/5gRjpP6Ag2v0PhQvrAUWIwjDfVddXgYyauTyI19dQdwRYn31rQQPWzGpw8cwslEry77qYkj1aqOdodI90UI8yrK3YJgA8xVI6PCdeT8=
+	t=1772725318; cv=none; b=pblkbnwyXSdfA2UIIEjpVFPPzwbrU/02uHewoxXG7T6VR2ofj4ZqCGjG30EveuFabhgDKxvn6MTfOJ+cLEoCIhY2wD7SbntbITIT+3EWz/GxGQpZpIWrLQ+C2q+Is6jJlXoTyCfeBMRb3GXYFhwRGVsJJGltzVNUi5TFysgNp+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772725044; c=relaxed/simple;
-	bh=XFt9mQ0GoAaRGLyHFbiJBRtbs41U6XC+bGWSWZaeqBI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i6JkaMSZr3Qcp4avDikyAjXmv0FA2HI7WSLjFTMHCPS4ToYmSZbT2su+0dZbdpRW95DrdEBJ4u5iu3MfKWIb6OmXjokYlhE8SBR8Vlk13jSa9Vk7kqE1f7DxaDI+IeJwQHKbU/jOxbKpoqlf9qtgzYel4N+ltvdyTSt4h10Eha4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tAX0d2xs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2894C116C6;
-	Thu,  5 Mar 2026 15:37:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772725044;
-	bh=XFt9mQ0GoAaRGLyHFbiJBRtbs41U6XC+bGWSWZaeqBI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tAX0d2xsd+dWP58XDaYd+b2pAg7W6azVXtBh07m+h4ow/F7Ro44PigDc+XZTv3Eow
-	 NIy6wmsvn8I9LxA6wJdNlj7Osxpuirdg+jgPYnIVM3pTzeWDUp5y+wJaW0m7pxKdaA
-	 APSd2TWDoPkaM4dOEjhXQ36qFuDJ2osGU2jUjpQUxHziZMEosnLHZYZeoadKQZl04q
-	 F+ssm3LKPRQ0eNLIcVE+PRWoE1a/QsoRaBlhn2NS/qxKh7Qz6Szgc5HW5BgOmXJ87h
-	 6VEMe9AFTrs1sN4DVllqzTpCpcskoJ8EXm4cTDW4dBTMCT6bx0/J3Yk+RoqUJHubps
-	 QFYCX17MdQe/Q==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Edward Adam Davis <eadavis@qq.com>,
-	syzbot+7c31755f2cea07838b0c@syzkaller.appspotmail.com,
-	Christian Brauner <brauner@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.19-6.18] fs: init flags_valid before calling vfs_fileattr_get
-Date: Thu,  5 Mar 2026 10:36:56 -0500
-Message-ID: <20260305153704.106918-13-sashal@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260305153704.106918-1-sashal@kernel.org>
-References: <20260305153704.106918-1-sashal@kernel.org>
+	s=arc-20240116; t=1772725318; c=relaxed/simple;
+	bh=V4x1iTM9LwSTCDUHxnbz1KkO6RzwODIh2/sbZS340U4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FB8Wd4g92Cexm/kvkihLnnqpj2BOUe2zgNbHnmZ9exmUHaoVQqGiWd3CCEw55aZ2snXkoeqA7gaymR+zLv6FuMgs0JSsZD0ZjB/SKF515/52/5LVILKpLKFBl2XNIEtUanbvZrCGmy6Sie/5LqltYJaLQlbqW4jmYPZmXkRf/+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RQg2dzKQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gwR5u1ah; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RQg2dzKQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gwR5u1ah; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 86DDB3E6C5;
+	Thu,  5 Mar 2026 15:41:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1772725315; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lrzDyxKRVxtm06Q3viz4lf80R5PhuY3L7nadSex6cZk=;
+	b=RQg2dzKQT8Qq35fCaXblDOHoYrsS4+zd7263qBOQuX14RM3Tg3BNQUXP7MGaiV724sxs1H
+	iF9q+u55Azk5qokCuSvSBR9Z0RMplQtxNzJD6kDoqzBgiRgqFvlLW+b+YNDE8z8S5m9ZEL
+	lzseh3n6YY7I2hN/51kIAuKa6At+vvA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1772725315;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lrzDyxKRVxtm06Q3viz4lf80R5PhuY3L7nadSex6cZk=;
+	b=gwR5u1ahgScQxB2s0KBdKQVvO7JZs2Lu59/BsAwaWhxdgdvcczXENHcDc0GaktgsGss9qa
+	qmYQ5oxbOmLajNAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1772725315; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lrzDyxKRVxtm06Q3viz4lf80R5PhuY3L7nadSex6cZk=;
+	b=RQg2dzKQT8Qq35fCaXblDOHoYrsS4+zd7263qBOQuX14RM3Tg3BNQUXP7MGaiV724sxs1H
+	iF9q+u55Azk5qokCuSvSBR9Z0RMplQtxNzJD6kDoqzBgiRgqFvlLW+b+YNDE8z8S5m9ZEL
+	lzseh3n6YY7I2hN/51kIAuKa6At+vvA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1772725315;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lrzDyxKRVxtm06Q3viz4lf80R5PhuY3L7nadSex6cZk=;
+	b=gwR5u1ahgScQxB2s0KBdKQVvO7JZs2Lu59/BsAwaWhxdgdvcczXENHcDc0GaktgsGss9qa
+	qmYQ5oxbOmLajNAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7DDF13EA68;
+	Thu,  5 Mar 2026 15:41:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 2pO1HkOkqWkaQwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 05 Mar 2026 15:41:55 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 2564CA0A8D; Thu,  5 Mar 2026 16:41:55 +0100 (CET)
+Date: Thu, 5 Mar 2026 16:41:55 +0100
+From: Jan Kara <jack@suse.cz>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: jack@suse.cz, brauner@kernel.org, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v4] ext4: avoid infinite loops caused by residual data
+Message-ID: <agn2b2tn4h3whokr262gca5s6eoautng2u2vt6535w7myuyk6x@6kgv6h7pco5g>
+References: <uweckkartekmwpzpt2kt34bbjyn3a2a4tc3lw7qyyghkxhfl5l@st7yfcuu73f4>
+ <tencent_3ADDAE194DCFFD8DC925858DC11278DDA907@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.19.6
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: D69A4214D29
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_3ADDAE194DCFFD8DC925858DC11278DDA907@qq.com>
+X-Spam-Score: -2.30
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 0E5BC214DE8
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.84 / 15.00];
+X-Spamd-Result: default: False [0.34 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[qq.com,syzkaller.appspotmail.com,kernel.org,zeniv.linux.org.uk,vger.kernel.org];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79500-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-79501-lists,linux-fsdevel=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,qq.com:email,appspotmail.com:email,suse.com:email,suse.cz:dkim,sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo];
+	DMARC_NA(0.00)[suse.cz];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_TO(0.00)[qq.com];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	MISSING_XM_UA(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[sashal@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[linux-fsdevel,7c31755f2cea07838b0c];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-0.996];
+	TAGGED_RCPT(0.00)[linux-fsdevel,1659aaaaa8d9d11265d7];
 	RCPT_COUNT_SEVEN(0.00)[9];
 	TO_DN_SOME(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[appspotmail.com:email,qq.com:email,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,msgid.link:url,syzkaller.appspot.com:url]
+	RCVD_COUNT_SEVEN(0.00)[7]
 X-Rspamd-Action: no action
 
-From: Edward Adam Davis <eadavis@qq.com>
+On Thu 05-03-26 22:12:03, Edward Adam Davis wrote:
+> On the mkdir/mknod path, when mapping logical blocks to physical blocks,
+> if inserting a new extent into the extent tree fails (in this example,
+> because the file system disabled the huge file feature when marking the
+> inode as dirty), ext4_ext_map_blocks() only calls ext4_free_blocks() to
+> reclaim the physical block without deleting the corresponding data in
+> the extent tree. This causes subsequent mkdir operations to reference
+> the previously reclaimed physical block number again, even though this
+> physical block is already being used by the xattr block. Therefore, a
+> situation arises where both the directory and xattr are using the same
+> buffer head block in memory simultaneously.
+> 
+> The above causes ext4_xattr_block_set() to enter an infinite loop about
+> "inserted" and cannot release the inode lock, ultimately leading to the
+> 143s blocking problem mentioned in [1].
+> 
+> By using ext4_ext_remove_space() to delete the inserted logical block
+> and reclaim the physical block when inserting a new extent fails during
+> extent block mapping, either delete both as described above, or retain
+> the data completely (i.e., neither delete the physical block nor the
+> data in the extent tree), residual extent data can be prevented from
+> affecting subsequent logical block physical mappings. 
+> 
+> Besides the errors ENOSPC or EDQUOT, this means metadata is corrupted.
+> We should strive to do as few modifications as possible to limit damage.
+> So just skip freeing of allocated blocks.
+> 
+> [1]
+> INFO: task syz.0.17:5995 blocked for more than 143 seconds.
+> Call Trace:
+>  inode_lock_nested include/linux/fs.h:1073 [inline]
+>  __start_dirop fs/namei.c:2923 [inline]
+>  start_dirop fs/namei.c:2934 [inline]
+> 
+> Reported-by: syzbot+512459401510e2a9a39f@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=1659aaaaa8d9d11265d7
+> Tested-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
+> Reported-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=512459401510e2a9a39f
+> Tested-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 
-[ Upstream commit cb184dd19154fc486fa3d9e02afe70a97e54e055 ]
+...
 
-syzbot reported a uninit-value bug in [1].
+> @@ -4457,20 +4457,19 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
+>  	path = ext4_ext_insert_extent(handle, inode, path, &newex, flags);
+>  	if (IS_ERR(path)) {
+>  		err = PTR_ERR(path);
+> -		if (allocated_clusters) {
+> -			int fb_flags = 0;
+> -
+> +		/*
+> +		 * Gracefully handle out of space conditions. If the filesystem
+> +		 * is inconsistent, we'll just leak allocated blocks to avoid
+> +		 * causing even more damage.
+> +		 */
+> +		if (allocated_clusters && (err == -EDQUOT || err == -ENOSPC)) {
 
-Similar to the "*get" context where the kernel's internal file_kattr
-structure is initialized before calling vfs_fileattr_get(), we should
-use the same mechanism when using fa.
+This is fine now...
 
-[1]
-BUG: KMSAN: uninit-value in fuse_fileattr_get+0xeb4/0x1450 fs/fuse/ioctl.c:517
- fuse_fileattr_get+0xeb4/0x1450 fs/fuse/ioctl.c:517
- vfs_fileattr_get fs/file_attr.c:94 [inline]
- __do_sys_file_getattr fs/file_attr.c:416 [inline]
+>  			/*
+>  			 * free data blocks we just allocated.
+>  			 * not a good idea to call discard here directly,
+>  			 * but otherwise we'd need to call it every free().
+>  			 */
+>  			ext4_discard_preallocations(inode);
+> -			if (flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE)
+> -				fb_flags = EXT4_FREE_BLOCKS_NO_QUOT_UPDATE;
+> -			ext4_free_blocks(handle, inode, NULL, newblock,
+> -					 EXT4_C2B(sbi, allocated_clusters),
+> -					 fb_flags);
+> +			ext4_ext_remove_space(inode, newex.ee_block, newex.ee_block);
 
-Local variable fa.i created at:
- __do_sys_file_getattr fs/file_attr.c:380 [inline]
- __se_sys_file_getattr+0x8c/0xbd0 fs/file_attr.c:372
+But this won't work because in case of errors like ENOSPC there's no extent
+inserted into the tree so ext4_ext_remove_space() won't do anything. Just
+don't touch the freeing code and things will be fine...
 
-Reported-by: syzbot+7c31755f2cea07838b0c@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=7c31755f2cea07838b0c
-Tested-by: syzbot+7c31755f2cea07838b0c@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-Link: https://patch.msgid.link/tencent_B6C4583771D76766D71362A368696EC3B605@qq.com
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
+								Honza
 
-LLM Generated explanations, may be completely bogus:
-
-This confirms the bug: `fuse_fileattr_get()` reads `fa->flags_valid`
-(line 517), but in the `file_getattr` syscall, `fa` was declared
-uninitialized. The `flags_valid` field could contain any stack garbage,
-leading to the KMSAN report. The fix initializes it to `{ .flags_valid =
-true }`, matching the pattern used by `ioctl_getflags()` at line 313.
-
-## Analysis
-
-**What the commit fixes:** An uninitialized memory read (KMSAN uninit-
-value) in the `file_getattr` syscall path. The `struct file_kattr fa`
-variable is declared on the stack without initialization, then passed to
-`vfs_fileattr_get()` which calls filesystem-specific `fileattr_get()`
-implementations. The FUSE implementation (`fuse_fileattr_get`) reads
-`fa->flags_valid` before writing to it, triggering use of uninitialized
-memory.
-
-**Bug severity:** This is a real bug reportable by KMSAN. The
-uninitialized `flags_valid` field determines which code path is taken in
-`fuse_fileattr_get()` (line 517). If `flags_valid` happens to be false
-(zero), the fuse driver takes the wrong code path (xattr-based instead
-of ioctl-based), potentially returning incorrect or garbage data to
-userspace.
-
-**Fix quality:** The fix is a one-line change - initializing the struct
-with `{ .flags_valid = true }`. This exactly matches the existing
-pattern at line 313 (`ioctl_getflags`), making it obviously correct. The
-`/* hint only */` comment also matches.
-
-**Scope:** Only the 6.19 stable tree is affected. The `file_getattr`
-syscall was introduced in commit `be7efb2d20d67` which first appeared in
-v6.17-rc1. The code was moved to `fs/file_attr.c` as part of that
-series. Older stable trees (6.12.y, 6.6.y, 5.15.y, etc.) don't have this
-syscall and are unaffected.
-
-**Risk:** Extremely low. The change only adds initialization of a single
-struct field, matching an existing pattern in the same file.
-
-**Stable criteria check:**
-- Obviously correct: Yes, matches existing pattern
-- Fixes a real bug: Yes, KMSAN-detected uninit read, syzbot-reported
-- Small and contained: Yes, one-line change
-- No new features: Correct
-- Tested: Yes, syzbot Tested-by tag
-
-## Verification
-
-- Read `fs/file_attr.c:380` - confirmed `struct file_kattr fa;` is
-  uninitialized in `file_getattr` syscall
-- Read `fs/file_attr.c:313` - confirmed `ioctl_getflags` uses `{
-  .flags_valid = true }` (the pattern the fix replicates)
-- Read `fs/file_attr.c:82-94` - confirmed `vfs_fileattr_get()` passes
-  `fa` directly to filesystem's `fileattr_get` callback without
-  initializing it
-- Read `fs/fuse/ioctl.c:517` - confirmed `fuse_fileattr_get` reads
-  `fa->flags_valid` before writing, triggering the KMSAN report
-- `git tag --contains be7efb2d20d67` showed the syscall was introduced
-  in v6.17-rc1 (not v6.19-rc1 as might be assumed)
-- `git show v6.19.6:fs/file_attr.c` confirmed the fix is NOT yet in
-  6.19.6 stable
-- `git log v6.12.75 -- fs/file_attr.c` returned empty, confirming older
-  stable trees don't have this file/code
-
-**YES**
-
- fs/file_attr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/file_attr.c b/fs/file_attr.c
-index 13cdb31a3e947..4889cf59b2562 100644
---- a/fs/file_attr.c
-+++ b/fs/file_attr.c
-@@ -377,7 +377,7 @@ SYSCALL_DEFINE5(file_getattr, int, dfd, const char __user *, filename,
- 	struct filename *name __free(putname) = NULL;
- 	unsigned int lookup_flags = 0;
- 	struct file_attr fattr;
--	struct file_kattr fa;
-+	struct file_kattr fa = { .flags_valid = true }; /* hint only */
- 	int error;
- 
- 	BUILD_BUG_ON(sizeof(struct file_attr) < FILE_ATTR_SIZE_VER0);
+>  		}
+>  		goto out;
+>  	}
+> -- 
+> 2.43.0
+> 
 -- 
-2.51.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
