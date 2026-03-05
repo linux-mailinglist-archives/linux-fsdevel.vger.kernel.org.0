@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-79542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 8OuHD3YSqmnFKgEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 00:32:06 +0100
+	id KJjRDoESqmnFKgEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 00:32:17 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA0492194BC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 00:32:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E73AB2194CA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 00:32:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 51AE33031206
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 23:31:54 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 99741302FE67
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 23:32:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0176336B055;
-	Thu,  5 Mar 2026 23:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A671436B078;
+	Thu,  5 Mar 2026 23:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIB7Z1ev"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LJBkZmau"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DEEE36AB7D;
-	Thu,  5 Mar 2026 23:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AAC35E92F;
+	Thu,  5 Mar 2026 23:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772753464; cv=none; b=Ar22Yf5Qx5Gk279u4MLThRZ0thP3olnrS6elhYNDKS9+I2zVCrkIqmn1/d+LGtVJnisAUCn6ODG72v+sM0aB8InGem2MAmN5VSNg5NSKPrchT1fwRTPg92RG9LhZfxNqhg/wEBiFynDqSAIg4YF3m8qGQAgNGkbMnZalyW57soA=
+	t=1772753467; cv=none; b=iz3y63UiepgXj1SRGH2lAoCHuydkRgpz6I3fAGD4fN10+qpOnqoMP22THsORRjIn4IcGyV21kyag9lLXdJpEvT+VbhTbydbC6jxmyfnizm0a8lMf/UYkEKW4Bm8acHLc1FGluG6Zfaof0fhF8NO6hyych9Thyved5TO0R7DDuXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772753464; c=relaxed/simple;
-	bh=cEPoxGsNVeZpiXD7WHSwi6VwLjjrPPIdV4amCA7QCoA=;
+	s=arc-20240116; t=1772753467; c=relaxed/simple;
+	bh=EOCV2pb/HqDWEobk9WOoHPEHdvd/YNkEMUQqkx9ABNo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iG/2I4IFlrXzEqw7cL/h8rZ3XmxSL0bYPEBFJQBSGbIDlsTPFYTojXjG+a3FRAtFDvrXdYZ3Gyc6a8TU5LtLfVQ1bTS5MsU44adUYZQYFWN37enowYBzGU/kx34GbESFzbl4+2+6YwbxjsNAR0006HclpAvu5eGyfV9SZEIsUYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIB7Z1ev; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F4EEC2BCB5;
-	Thu,  5 Mar 2026 23:31:02 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=ihi5zdqnKxaMpJhPmijdyQiuNSEyvC6R7SWRMZ5f0Ffuwzw1nSWnxQBqX2Hqblj9a+aSMycqKq/r5luKS7vzy+3ntgs2/2WGaknZLQFehFme6KC3fhzn7dC82RkAx47eTvcU1wdrkCwWdmmKvYKD2H61x6vILDHbf3b6bh9TcXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LJBkZmau; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D65A5C19423;
+	Thu,  5 Mar 2026 23:31:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772753464;
-	bh=cEPoxGsNVeZpiXD7WHSwi6VwLjjrPPIdV4amCA7QCoA=;
+	s=k20201202; t=1772753466;
+	bh=EOCV2pb/HqDWEobk9WOoHPEHdvd/YNkEMUQqkx9ABNo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=KIB7Z1evOY0WoqgIkwpMcntDF/poLiogO+/Vq2d9DVVU5YQw+dRXYBprykI4QnTe/
-	 T+SaRyC4Qqa/KN0+kUDedtkcnKHxiFk0q4ZUqRegUMnF/LLpKR1EstkRh17ViHUe8q
-	 G9lRjrDHH4jbXcbQCP2SVqlz1lx9H5NKyhaw3foTUdvap2GM552SDzBHRJ34OkAu4t
-	 eIQbdUKBUQ/pQVv/kPK1wKTc/M8B95c2apHMw8gO67B/bJY6qsSMZdlhE23Q84i6id
-	 YQvzrCoEhFaK4aoESbxjz9c2PVIWkVylfBiZZm+XQSJ+xOjeIgpB+SG99/XWL6szuj
-	 uTsMiG+keS5PQ==
+	b=LJBkZmau2fuzxZNEkJEO1aEWOuWZWF/64JfEUirOHCD300jFpkCI+M9J45yIDx3kl
+	 qN7Aczw4/GpoijDWeVoKvcgOn4LZQlUetKGFM2P5w4KoXyLIVpR+l486KfqFcf5gJP
+	 sgKuMPLaJ35hem/fqh10oeLy4hhbjObzDjsx3LAzok0MTdq7qWK39j3c37+O2oLPFE
+	 YB1z99SX4+a3UO+t+dFPXaekqZ53CJOnjPhi2qPa2C3mIfEjwC2NqwiNVHE22PAQgA
+	 iDy/FNlZmEROvIB1ctcpIBhiqxWr2ADt/ctyRYMivZusUGmj4s5ZxRo51+4ifdxM1D
+	 LtZh/BbBpzVhA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 06 Mar 2026 00:30:20 +0100
-Subject: [PATCH RFC v2 17/23] fs: stop sharing fs_struct between init_task
- and pid 1
+Date: Fri, 06 Mar 2026 00:30:21 +0100
+Subject: [PATCH RFC v2 18/23] fs: add umh argument to struct
+ kernel_clone_args
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260306-work-kthread-nullfs-v2-17-ad1b4bed7d3e@kernel.org>
+Message-Id: <20260306-work-kthread-nullfs-v2-18-ad1b4bed7d3e@kernel.org>
 References: <20260306-work-kthread-nullfs-v2-0-ad1b4bed7d3e@kernel.org>
 In-Reply-To: <20260306-work-kthread-nullfs-v2-0-ad1b4bed7d3e@kernel.org>
 To: linux-fsdevel@vger.kernel.org, 
@@ -66,15 +66,15 @@ Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
  Tejun Heo <tj@kernel.org>, Jann Horn <jannh@google.com>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-47773
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1574; i=brauner@kernel.org;
- h=from:subject:message-id; bh=cEPoxGsNVeZpiXD7WHSwi6VwLjjrPPIdV4amCA7QCoA=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSuEuJyuTX5zxGlXs0Tv461ayz1aOAtqu4VuCp5cnvlp
- gPPjf1ndJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExEqoHhf+X+o+XWs/5ZqS6X
- 6bxhZFNa7yTbuuiXsePxpToFZXM/H2X4H+5yWs3qxtSOXf2KVlbVaxoWny71ed3nmNET6z6v6EU
- kFwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2817; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=EOCV2pb/HqDWEobk9WOoHPEHdvd/YNkEMUQqkx9ABNo=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSuEuJi+7lI0uFPjenneRu09zimPHrdeXh+aPnksK7PG
+ Y+D2l9O6ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhIqRsjw/caU7fMfpffpnXv
+ 77Jtuyd7Rap8b7N5RG1PYUnm+7zqWEaGP58tZXon/4i7r7fiQ/RuqReR1vdmHd7p/3zOw7j6O3c
+ KmAE=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-X-Rspamd-Queue-Id: EA0492194BC
+X-Rspamd-Queue-Id: E73AB2194CA
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
@@ -84,7 +84,7 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79542-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79543-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -104,48 +104,87 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-Spawn kernel_init (PID 1) via kernel_clone() directly instead of
-user_mode_thread(), without CLONE_FS. This gives PID 1 its own private
-copy of init_task's fs_struct rather than sharing it.
+Add a umh field to struct kernel_clone_args. When set, copy_fs() copies
+from pid 1's fs_struct instead of the kthread's fs_struct. This ensures
+usermodehelper threads always get init's filesystem state regardless of
+their parent's (kthreadd's) fs.
 
-This is a prerequisite for isolating kthreads in nullfs: when
-init_task's fs is later pointed at nullfs, PID 1 must not share it
-or init_userspace_fs() would modify init_task's fs as well, defeating
-the isolation.
+Usermodehelper threads are not allowed to create mount namespaces
+(CLONE_NEWNS), share filesystem state (CLONE_FS), or be started from
+a non-initial mount namespace. No usermodehelper currently does this so
+we don't need to worry about this restriction.
 
-At this stage PID 1 still gets rootfs (a private copy rather than a
-shared reference), so there is no functional change.
+Set .umh = 1 in user_mode_thread(). At this stage pid 1's fs points to
+rootfs which is the same as kthreadd's fs, so this is functionally
+equivalent.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- init/main.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ include/linux/sched/task.h |  1 +
+ kernel/fork.c              | 23 ++++++++++++++++++++---
+ 2 files changed, 21 insertions(+), 3 deletions(-)
 
-diff --git a/init/main.c b/init/main.c
-index 5ccc642a5aa7..6633d4bea52b 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -714,6 +714,11 @@ static __initdata DECLARE_COMPLETION(kthreadd_done);
+diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+index 41ed884cffc9..e0c1ca8c6a18 100644
+--- a/include/linux/sched/task.h
++++ b/include/linux/sched/task.h
+@@ -31,6 +31,7 @@ struct kernel_clone_args {
+ 	u32 io_thread:1;
+ 	u32 user_worker:1;
+ 	u32 no_files:1;
++	u32 umh:1;
+ 	unsigned long stack;
+ 	unsigned long stack_size;
+ 	unsigned long tls;
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 73f4ed82f656..c740fe2ad1ef 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1590,9 +1590,25 @@ static int copy_mm(u64 clone_flags, struct task_struct *tsk)
+ 	return 0;
+ }
  
- static noinline void __ref __noreturn rest_init(void)
+-static int copy_fs(u64 clone_flags, struct task_struct *tsk)
++static int copy_fs(u64 clone_flags, struct task_struct *tsk, bool umh)
  {
-+	struct kernel_clone_args init_args = {
-+		.flags		= (CLONE_VM | CLONE_UNTRACED),
-+		.fn		= kernel_init,
-+		.fn_arg		= NULL,
-+	};
- 	struct task_struct *tsk;
- 	int pid;
+-	struct fs_struct *fs = current->fs;
++	struct fs_struct *fs;
++
++	/*
++	 * Usermodehelper may use userspace_init_fs filesystem state but
++	 * they don't get to create mount namespaces, share the
++	 * filesystem state, or be started from a non-initial mount
++	 * namespace.
++	 */
++	if (umh) {
++		if (clone_flags & (CLONE_NEWNS | CLONE_FS))
++			return -EINVAL;
++		if (current->nsproxy->mnt_ns != &init_mnt_ns)
++			return -EINVAL;
++		fs = userspace_init_fs;
++	} else {
++		fs = current->fs;
++	}
  
-@@ -723,7 +728,7 @@ static noinline void __ref __noreturn rest_init(void)
- 	 * the init task will end up wanting to create kthreads, which, if
- 	 * we schedule it before we create kthreadd, will OOPS.
- 	 */
--	pid = user_mode_thread(kernel_init, NULL, CLONE_FS);
-+	pid = kernel_clone(&init_args);
- 	/*
- 	 * Pin init on the boot CPU. Task migration is not properly working
- 	 * until sched_init_smp() has been run. It will set the allowed
+ 	VFS_WARN_ON_ONCE(current->fs != current->real_fs);
+ 	if (clone_flags & CLONE_FS) {
+@@ -2213,7 +2229,7 @@ __latent_entropy struct task_struct *copy_process(
+ 	retval = copy_files(clone_flags, p, args->no_files);
+ 	if (retval)
+ 		goto bad_fork_cleanup_semundo;
+-	retval = copy_fs(clone_flags, p);
++	retval = copy_fs(clone_flags, p, args->umh);
+ 	if (retval)
+ 		goto bad_fork_cleanup_files;
+ 	retval = copy_sighand(clone_flags, p);
+@@ -2727,6 +2743,7 @@ pid_t user_mode_thread(int (*fn)(void *), void *arg, unsigned long flags)
+ 		.exit_signal	= (flags & CSIGNAL),
+ 		.fn		= fn,
+ 		.fn_arg		= arg,
++		.umh		= 1,
+ 	};
+ 
+ 	return kernel_clone(&args);
 
 -- 
 2.47.3
