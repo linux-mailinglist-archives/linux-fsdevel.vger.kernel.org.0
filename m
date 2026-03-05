@@ -1,104 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-79473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UPagGG9dqWkL6AAAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 11:39:43 +0100
+	id IBuGNMlfqWnj6QAAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 11:49:45 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id A625E20FCD6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 11:39:42 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8977A20FF83
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 11:49:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 55F9E3039EF7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 10:38:05 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 1300D3072A53
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 10:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1887D378D77;
-	Thu,  5 Mar 2026 10:38:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F97A37A485;
+	Thu,  5 Mar 2026 10:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T4U8lXHa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2uBYj8KJ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T4U8lXHa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2uBYj8KJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P8iMxX5n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5967529B799
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Mar 2026 10:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF90436404A;
+	Thu,  5 Mar 2026 10:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772707083; cv=none; b=m451tXHRc2Fyj9afzrg0qCjuycJCK+QmJ8fc2lmFPhCBTaqNmJ3zL/QhZNSDp/wz0sgwIzTY6mjXV5BAOfXt9AtT6/odl54fN8lo4+Goxrgo0vEWOvwBmnCUwmwtwnVR2T5XNrkRnvuuE1EnFaFUe4BGDMP4vdwmMxHL1K5X5bo=
+	t=1772707620; cv=none; b=eMppiopIZ493GYJYhm5+fo+1o/2qRs2cYwlxvGb/tZTt65bPE47DnghQvfhWhPBzOxf6icRuJ+KiBedcyJuXYpCxQguPT8K86+qWu2XS+Y0sn3Bre1bzzq9i0nCIfROAm9F/z7Ws2lr8O6oRRVlI7nvYRtAVXuD8BBCSTEH4ul8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772707083; c=relaxed/simple;
-	bh=VigSnPVm/okTMSqMzhaj46e+75281h7Jzob4La0gaxk=;
+	s=arc-20240116; t=1772707620; c=relaxed/simple;
+	bh=fKOrLuMwio1ZP0YPBsS9inqCOMrl5JjAkwjIp9f4jAI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gen90uvXTgDSGEbQ+vcZjEHcZVFYPr2OBYdsupsCx9b9Pe/j3ccxZ1r3poTdIFBmf8c7qNAPuJ3sgn7nuhH3LZbVQSzKpM3/cz2tEzsHBcn2XNOkBsrbfaL8f7sHm0VSyYUlTa+yAimmQG5t5KosBSPzYxvD7lXmOYsk8oMQcYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T4U8lXHa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2uBYj8KJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T4U8lXHa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2uBYj8KJ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 96A7E3F881;
-	Thu,  5 Mar 2026 10:38:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1772707080; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sKiKcuS9WLvU+XvNNfUoARrCbK1SOIwG1zdBgYVHWrQ=;
-	b=T4U8lXHakbq9U0MrYtrLFTf+giSJQZwDi3CrrvT/trb3FSK85wyBCxGiYfg71rfKCaglB1
-	dAo/rkhDoRKJ8z1U+1Va2hR9xr+xGzbrtOrZNw4qlMkhrf3ui+nraqYxDgxsuZtERy/hUa
-	ifw+fj3XsfGjcddoen6OPwLQGN5VmeE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1772707080;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sKiKcuS9WLvU+XvNNfUoARrCbK1SOIwG1zdBgYVHWrQ=;
-	b=2uBYj8KJXEJPqd1UyXdIgo6yTnb/cyxcrxATqTa6mdBP9sp0W44cw2wDAUArlWiWX4JO8V
-	OtjXRe/ZAGCbsqAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1772707080; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sKiKcuS9WLvU+XvNNfUoARrCbK1SOIwG1zdBgYVHWrQ=;
-	b=T4U8lXHakbq9U0MrYtrLFTf+giSJQZwDi3CrrvT/trb3FSK85wyBCxGiYfg71rfKCaglB1
-	dAo/rkhDoRKJ8z1U+1Va2hR9xr+xGzbrtOrZNw4qlMkhrf3ui+nraqYxDgxsuZtERy/hUa
-	ifw+fj3XsfGjcddoen6OPwLQGN5VmeE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1772707080;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sKiKcuS9WLvU+XvNNfUoARrCbK1SOIwG1zdBgYVHWrQ=;
-	b=2uBYj8KJXEJPqd1UyXdIgo6yTnb/cyxcrxATqTa6mdBP9sp0W44cw2wDAUArlWiWX4JO8V
-	OtjXRe/ZAGCbsqAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 733C33EA68;
-	Thu,  5 Mar 2026 10:38:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id HyMcHAhdqWnEeAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 05 Mar 2026 10:38:00 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3760DA0AB1; Thu,  5 Mar 2026 11:38:00 +0100 (CET)
-Date: Thu, 5 Mar 2026 11:38:00 +0100
-From: Jan Kara <jack@suse.cz>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: jack@suse.cz, brauner@kernel.org, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v3] ext4: avoid infinite loops caused by residual data
-Message-ID: <uweckkartekmwpzpt2kt34bbjyn3a2a4tc3lw7qyyghkxhfl5l@st7yfcuu73f4>
-References: <4x3xixojbclwq45cpitmylbhis4ya4g3sugtnmj2yzv6avngqb@5xkwu6l467rm>
- <tencent_722F916D689510E89EEE92CD8C78226D480A@qq.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hz792yI0dSzqxKQPOLLzAcJzuj/T81LvPkcLxLPYthB/7Bsd5NgfYnDA72L7PSU5FEkoWwRFGeGMcZBNuIqyXQpKenfKpjbX7p7BR0TsWIhzsoUG3SsEM1Pn2n2LGfG/RsVae0YiuaPXUZCTeHETEvWx45PXojcHmFTAAlvQGyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P8iMxX5n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38A19C116C6;
+	Thu,  5 Mar 2026 10:46:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772707620;
+	bh=fKOrLuMwio1ZP0YPBsS9inqCOMrl5JjAkwjIp9f4jAI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P8iMxX5nSzneOSi9DkWzhHtCk3Bken5y71jhO21gleP/c48oYbeayMLPMHsuL12JA
+	 wF94j45h8dI+3TNWOoFhQspiV32f2HKTRjYN1NFX7eWGSjyJ66KA+WrrZstwjrHCP6
+	 p3f0Wfu8IX7Sy1s+jLr4AGoI5oJfRQFN9DMLGyyRjW4AQoHnMhNBSFdh71iEdfsT7n
+	 2lmqiBbKrnynCaD1Y6GsxPJq0EO8HTAwOnWoXOOMhBTJpPJJe/FBnCCocCfxn73LRI
+	 nV2+QniAS3KN6RQEeKnoVoaRlR4X2EpYY6ZW+ogBDifX1F25fQ8U5dUgxnJKQ5kWVJ
+	 m1etZQ4+03aBQ==
+Date: Thu, 5 Mar 2026 10:46:57 +0000
+From: "Lorenzo Stoakes (Oracle)" <ljs@kernel.org>
+To: "David Hildenbrand (Arm)" <david@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+	Lance Yang <lance.yang@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Usama Arif <usamaarif642@gmail.com>, 
+	Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v1] docs: filesystems: clarify KernelPageSize vs.
+ MMUPageSize in smaps
+Message-ID: <b24be8c2-32d3-4e3e-9fbf-8a0068c360d6@lucifer.local>
+References: <20260304155636.77433-1-david@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -107,143 +67,207 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <tencent_722F916D689510E89EEE92CD8C78226D480A@qq.com>
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
-X-Spam-Level: 
-X-Rspamd-Queue-Id: A625E20FCD6
+In-Reply-To: <20260304155636.77433-1-david@kernel.org>
+X-Rspamd-Queue-Id: 8977A20FF83
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.34 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-79474-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79473-lists,linux-fsdevel=lfdr.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,suse.com:email,appspotmail.com:email,qq.com:email,syzkaller.appspot.com:url,suse.cz:dkim];
-	DMARC_NA(0.00)[suse.cz];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[qq.com];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,linux-foundation.org,oracle.com,nvidia.com,linux.alibaba.com,redhat.com,arm.com,kernel.org,linux.dev,lwn.net,linuxfoundation.org,gmail.com,linux.intel.com];
+	RCPT_COUNT_TWELVE(0.00)[18];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.998];
-	TAGGED_RCPT(0.00)[linux-fsdevel,1659aaaaa8d9d11265d7];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	TO_DN_SOME(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[ljs@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[7]
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On Thu 05-03-26 15:25:46, Edward Adam Davis wrote:
-> On the mkdir/mknod path, when mapping logical blocks to physical blocks,
-> if inserting a new extent into the extent tree fails (in this example,
-> because the file system disabled the huge file feature when marking the
-> inode as dirty),
+On Wed, Mar 04, 2026 at 04:56:36PM +0100, David Hildenbrand (Arm) wrote:
+> There was recently some confusion around THPs and the interaction with
+> KernelPageSize / MMUPageSize. Historically, these entries always
+> correspond to the smallest size we could encounter, not any current
+> usage of transparent huge pages or larger sizes used by the MMU.
+>
+> Ever since we added THP support many, many years ago, these entries
+> would keep reporting the smallest (fallback) granularity in a VMA.
+>
+> For this reason, they default to PAGE_SIZE for all VMAs except for
+> VMAs where we have the guarantee that the system and the MMU will
+> always use larger page sizes. hugetlb, for example, exposes a custom
+> vm_ops->pagesize callback to handle that. Similarly, dax/device
+> exposes a custom vm_ops->pagesize callback and provides similar
+> guarantees.
+>
+> Let's clarify the historical meaning of KernelPageSize / MMUPageSize,
+> and point at "AnonHugePages", "ShmemPmdMapped" and "FilePmdMapped"
+> regarding PMD entries.
+>
+> While at it, document "FilePmdMapped", clarify what the "AnonHugePages"
+> and "ShmemPmdMapped" entries really mean, and make it clear that there
+> are no other entries for other THP/folio sizes or mappings.
+>
+> Link: https://lore.kernel.org/all/20260225232708.87833-1-ak@linux.intel.com/
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Cc: Zi Yan <ziy@nvidia.com>
+> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
+> Cc: Nico Pache <npache@redhat.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com
+> Cc: Dev Jain <dev.jain@arm.com>
+> Cc: Barry Song <baohua@kernel.org>
+> Cc: Lance Yang <lance.yang@linux.dev>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Shuah Khan <skhan@linuxfoundation.org>
+> Cc: Usama Arif <usamaarif642@gmail.com>
+> Cc: Andi Kleen <ak@linux.intel.com>
+> Signed-off-by: David Hildenbrand (Arm) <david@kernel.org>
 
-I don't quite understand what you mean here but I think you say that
-ext4_ext_dirty() -> ext4_mark_inode_dirty() returns error due to whatever
-corruption it has hit.
+Overall this is great, some various nits and comments below so we can tweak it.
 
-> ext4_ext_map_blocks() only calls ext4_free_blocks() to
-> reclaim the physical block without deleting the corresponding data in
-> the extent tree. This causes subsequent mkdir operations to reference
-> the previously reclaimed physical block number again, even though this
-> physical block is already being used by the xattr block. Therefore, a
-> situation arises where both the directory and xattr are using the same
-> buffer head block in memory simultaneously.
+Cheers, Lorenzo
 
-OK, this indeed looks like "not so great" error handling. Thanks for
-digging into this.
-
-> The above causes ext4_xattr_block_set() to enter an infinite loop about
-> "inserted" and cannot release the inode lock, ultimately leading to the
-> 143s blocking problem mentioned in [1].
-> 
-> By using ext4_ext_remove_space() to delete the inserted logical block
-> and reclaim the physical block when inserting a new extent fails during
-> extent block mapping, residual extent data can be prevented from affecting
-> subsequent logical block physical mappings. 
-> 
-> [1]
-> INFO: task syz.0.17:5995 blocked for more than 143 seconds.
-> Call Trace:
->  inode_lock_nested include/linux/fs.h:1073 [inline]
->  __start_dirop fs/namei.c:2923 [inline]
->  start_dirop fs/namei.c:2934 [inline]
-> 
-> Reported-by: syzbot+512459401510e2a9a39f@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=1659aaaaa8d9d11265d7
-> Tested-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
-> Reported-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=512459401510e2a9a39f
-> Tested-by: syzbot+1659aaaaa8d9d11265d7@syzkaller.appspotmail.com
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 > ---
-...
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index ae3804f36535..0bed3379f2d2 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -4458,19 +4458,13 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
->  	if (IS_ERR(path)) {
->  		err = PTR_ERR(path);
->  		if (allocated_clusters) {
-> -			int fb_flags = 0;
-> -
->  			/*
->  			 * free data blocks we just allocated.
->  			 * not a good idea to call discard here directly,
->  			 * but otherwise we'd need to call it every free().
->  			 */
->  			ext4_discard_preallocations(inode);
-> -			if (flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE)
-> -				fb_flags = EXT4_FREE_BLOCKS_NO_QUOT_UPDATE;
-> -			ext4_free_blocks(handle, inode, NULL, newblock,
-> -					 EXT4_C2B(sbi, allocated_clusters),
-> -					 fb_flags);
-> +			ext4_ext_remove_space(inode, newex.ee_block, newex.ee_block);
+>  Documentation/filesystems/proc.rst | 37 ++++++++++++++++++++++--------
+>  1 file changed, 27 insertions(+), 10 deletions(-)
+>
+> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+> index b0c0d1b45b99..0f67e47528fc 100644
+> --- a/Documentation/filesystems/proc.rst
+> +++ b/Documentation/filesystems/proc.rst
+> @@ -464,6 +464,7 @@ Memory Area, or VMA) there is a series of lines such as the following::
+>      KSM:                   0 kB
+>      LazyFree:              0 kB
+>      AnonHugePages:         0 kB
+> +    FilePmdMapped:         0 kB
+>      ShmemPmdMapped:        0 kB
+>      Shared_Hugetlb:        0 kB
+>      Private_Hugetlb:       0 kB
+> @@ -477,13 +478,25 @@ Memory Area, or VMA) there is a series of lines such as the following::
+>
+>  The first of these lines shows the same information as is displayed for
+>  the mapping in /proc/PID/maps.  Following lines show the size of the
+> -mapping (size); the size of each page allocated when backing a VMA
+> -(KernelPageSize), which is usually the same as the size in the page table
+> -entries; the page size used by the MMU when backing a VMA (in most cases,
+> -the same as KernelPageSize); the amount of the mapping that is currently
+> -resident in RAM (RSS); the process's proportional share of this mapping
+> -(PSS); and the number of clean and dirty shared and private pages in the
+> -mapping.
+> +mapping (size); the smallest possible page size allocated when
+> +backing a VMA (KernelPageSize), which is the granularity in which VMA
+> +modifications can be performed; the smallest possible page size that could
+> +be used by the MMU (MMUPageSize) when backing a VMA; the amount of the
 
-So I'm concerned that if the metadata is corrupted, then trying to remove
-some extent space can do even more harm. Also in case
-EXT4_GET_BLOCKS_DELALLOC_RESERVE was passed, we now wrongly update quota
-information. So this definitely isn't a correct fix. What I'd do instead
-would be distinguishing two cases:
+Is it worth retaining 'in most cases the same as KernelPageSize' here?
 
-1) The error is ENOSPC or EDQUOT - in this case the filesystem is fully
-consistent and we must maintain its consistency including all the
-accounting. However these errors can happen only early before we've
-inserted the extent into the extent tree. So current code works correctly
-for this case.
+Ah wait you dedicate a whole paragraph after this to tha :)
 
-2) Some other error - this means metadata is corrupted. We should strive to
-do as few modifications as possible to limit damage. So I'd just skip
-freeing of allocated blocks.
+> +mapping that is currently resident in RAM (RSS); the process's proportional
+> +share of this mapping (PSS); and the number of clean and dirty shared and
+> +private pages in the mapping.
+> +
+> +Historically, the "KernelPageSize" always corresponds to the "MMUPageSize",
+> +except when a larger kernel page size is emulated on a system with a smaller
 
-Long story short I think we should just modify the above condition:
+NIT: is -> was, as historically implies past tense.
 
-	if (allocated_clusters)
+But it's maybe better to say:
 
-to
++Historically, the "KernelPageSize" has always corresponded to the "MMUPageSize",
 
-	/*
-	 * Gracefully handle out of space conditions. If the filesystem is
-	 * inconsistent, we'll just leak allocated blocks to avoid causing
-	 * even more damage.
-	 */
-	if (allocated_clusters && (err == -EDQUOT || err == -ENOSPC))
+And:
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
++except when a larger kernel page size is being emulated on a system with a smaller
+
+> +page size used by the MMU, which was the case for PPC64 in the past.
+> +Further, "KernelPageSize" and "MMUPageSize" always correspond to the
+
+NIT: Further -> Furthermore
+
+> +smallest possible granularity (fallback) that could be encountered in a
+
+could be -> can be
+
+Since we are really talking about the current situation, even if this, is
+effect, a legacy thing.
+
+> +VMA throughout its lifetime.  These values are not affected by any current
+> +transparent grouping of pages by Linux (Transparent Huge Pages) or any
+
+'transparent grouping of pages' reads a bit weirdly.
+
+Maybe simplify to:
+
++These values are not affected by Transparent Huge Pages being in effect, or any...
+
+> +current usage of larger MMU page sizes (either through architectural
+
+NIT: current usage -> usage
+
+> +huge-page mappings or other transparent groupings done by the MMU).
+
+Again I think 'transparent groupings' is a bit unclear. Perhaps instead:
+
++huge-page mappings or other explicit or implicit coalescing of virtual ranges
++performed by the MMU).
+
+?
+
+> +"AnonHugePages", "ShmemPmdMapped" and "FilePmdMapped" provide insight into
+> +the usage of some architectural huge-page mappings.
+
+Is 'some' necessary here? Seems to make it a bit vague.
+
+>
+>  The "proportional set size" (PSS) of a process is the count of pages it has
+>  in memory, where each page is divided by the number of processes sharing it.
+> @@ -528,10 +541,14 @@ pressure if the memory is clean. Please note that the printed value might
+>  be lower than the real value due to optimizations used in the current
+>  implementation. If this is not desirable please file a bug report.
+>
+> -"AnonHugePages" shows the amount of memory backed by transparent hugepage.
+> +"AnonHugePages", "ShmemPmdMapped" and "FilePmdMapped" show the amount of
+> +memory backed by transparent hugepages that are currently mapped through
+> +architectural huge-page mappings (PMD). "AnonHugePages" corresponds to memory
+
+'mapped through architectural huge-page mappings (PMD)' reads a bit strangely to
+me,
+
+Perhaps 'mapped by transparent huge pages at a PMD page table level' instead?
+
+> +that does not belong to a file, "ShmemPmdMapped" to shared memory (shmem/tmpfs)
+> +and "FilePmdMapped" to file-backed memory (excluding shmem/tmpfs).
+>
+> -"ShmemPmdMapped" shows the amount of shared (shmem/tmpfs) memory backed by
+> -huge pages.
+> +There are no dedicated entries for transparent huge pages (or similar concepts)
+> +that are not mapped through architectural huge-page mappings (PMD).
+
+similarly, perhaps better as 'are not mapped by transparent huge pages at a PMD
+page table level'?
+
+>
+>  "Shared_Hugetlb" and "Private_Hugetlb" show the amounts of memory backed by
+>  hugetlbfs page which is *not* counted in "RSS" or "PSS" field for historical
+> --
+> 2.43.0
+>
 
