@@ -1,51 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-79511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 2NuzJGO8qWnNDQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 18:24:51 +0100
+	id oKTkA2+/qWnNDQEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 18:37:51 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 533A7216236
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 18:24:51 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CF9B216594
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 05 Mar 2026 18:37:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id EF93E3058461
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 17:24:00 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 5FF0330603EC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 17:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EEF39E17A;
-	Thu,  5 Mar 2026 17:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D593E51DE;
+	Thu,  5 Mar 2026 17:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="liGHR+qS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SNJUfyAa"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649F73E51C3;
-	Thu,  5 Mar 2026 17:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACEC25A2C9;
+	Thu,  5 Mar 2026 17:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772731432; cv=none; b=kl8aBoarTOSajN799v4esKYj3fJQErtUUJsx2Wbkkg8J0cF2ArwxN30uhgfEl316T+5Js5rc61ZC1437VEH+TVH7N8Gu7rIQl+BbJFDZ85opy1TUI3e1NURVz6Y1k+E08590zdKseAzl3XI31U/hc7JbDOusu2u3kuubk9k02cc=
+	t=1772732101; cv=none; b=XURwewBV8SSYRVYkmevXopJGum/RiVxQ/CI1FOJ3aA2jEPOkyjsSV8XMEQW4AWQujGPYaAlhAgt8DpkL3EcnImqhBUMzueR482++/WTvbhJDKRtPK1JTe6BcKdnoUWqPRsWFAWjDVsdyF4orXBNYGnImppb6GrcxqPwpY56ARLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772731432; c=relaxed/simple;
-	bh=nWVIE+EcOlng0HrFjPyZg3oytXG4qO8Zesx2+80/tV4=;
+	s=arc-20240116; t=1772732101; c=relaxed/simple;
+	bh=56aRoAVzPeQ+dwVrdE3T5LIBh/tHK5LhrXeg2GPGARY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LxwTll/1lrf/N+jduMtFi0qb9wQmQSYcMOW6/Bv8rdaime777E5nKlGTPfpRI1myDEB6jqlNcrwqYWQJHP0bV5G6greeXyWDyVdBUVVPuuAUTdzEXUMo8cMTV2Tn+zS8lmz68/YUPxgEhwlFi9mCqvq7aUHGed+vcCL/1clpxKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=liGHR+qS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 666F9C116C6;
-	Thu,  5 Mar 2026 17:23:28 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=tTf54Mr5kqyr2ta0HrvfFW4GtJjf16YP240JOIIsHd4IZv8A+vMdjepaVbMoOso35PLZWs2Rr9ICTsIFxVNvPOsShjrDcW0ULTYflfHgU7Tj763RZVtzvha1pnf4BjDptx8d2+j4NxdBR6bvoMz7pFhpbvoWFPykRCSnUmt6kl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SNJUfyAa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFEACC19425;
+	Thu,  5 Mar 2026 17:34:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772731432;
-	bh=nWVIE+EcOlng0HrFjPyZg3oytXG4qO8Zesx2+80/tV4=;
+	s=k20201202; t=1772732101;
+	bh=56aRoAVzPeQ+dwVrdE3T5LIBh/tHK5LhrXeg2GPGARY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=liGHR+qS+rFsKhFEQN3jyTl6XqDh5yQD/UWppvFiK/lQIT5Qb6Q0aBhzH71MPQcAv
-	 LrSPhZmx7K86W/kFvmue9PeQWAExuvDdObhyXSts6NPTlvWFjcgxKfygwmork60M+g
-	 dBIy7Yy576mBRn2IuAN9ySZ2RQcePi/Ke5pUfyvnm/XAG++/Tq7VvtFZmshaVtEVc3
-	 FR9aDcCnN/h4gaeAs+uGaX1Xu4WhdCdbdAqPgUIJq/uvJAOWN8AsM0hWbC57YGzYZi
-	 sKOjUhNJrCLiR9L/LwRrMishVebJnDW2/j2UczveIPT34F40cZjxym7eUdJiU9GBfa
-	 tD3oPKelTfPcg==
-Message-ID: <90058ff2-9dea-4090-b2e6-da4c3cdba81b@kernel.org>
-Date: Thu, 5 Mar 2026 18:23:25 +0100
+	b=SNJUfyAa+pOGSpSVWJhLtY5AZnRO7etbHovFucUT8TXtqWY9985XSqGU8RMWCDSMd
+	 1ZFYbjOd3UTSfkRHwfCNAbUOR8czgn3AP5sdfd3NDuMTwlejtHcBQywUKbAkce4nTe
+	 dEwNcN9AYGiADUff+P0WNpX+woEHoHermioN+npeoYqsCJHEP5pDpw9nhdmbj8i1n9
+	 S8ZG8tpuRHozTfhieeF2eQimOT3Mr+dJeCNLypIAETyKi3durz59wMY2erlZRNGn7t
+	 n1IaS6Ru9j6oE8qY8qN5jctLVXgDfFP9P0eHUpDtsiPtIGlce9evGXASnm9NnTQCF0
+	 DnFXPOqZ3moTA==
+Message-ID: <af2d4dcd-60a8-4a5a-b508-d9600b1f2275@kernel.org>
+Date: Thu, 5 Mar 2026 18:34:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 01/15] set_memory: set_direct_map_* to take address
+Subject: Re: [PATCH v10 02/15] set_memory: add folio_{zap,restore}_direct_map
+ helpers
 To: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
  "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
  "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
@@ -145,7 +146,7 @@ Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>,
  "Manwaring, Derek" <derekmn@amazon.com>, "Cali, Marco"
  <xmarcalx@amazon.co.uk>
 References: <20260126164445.11867-1-kalyazin@amazon.com>
- <20260126164445.11867-2-kalyazin@amazon.com>
+ <20260126164445.11867-3-kalyazin@amazon.com>
 From: "David Hildenbrand (Arm)" <david@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=david@kernel.org; keydata=
@@ -192,123 +193,136 @@ Autocrypt: addr=david@kernel.org; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20260126164445.11867-2-kalyazin@amazon.com>
+In-Reply-To: <20260126164445.11867-3-kalyazin@amazon.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 533A7216236
+X-Rspamd-Queue-Id: 7CF9B216594
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[redhat.com,lwn.net,kernel.org,arm.com,huawei.com,google.com,alien8.de,linux.intel.com,zytor.com,infradead.org,linux-foundation.org,oracle.com,suse.cz,suse.com,iogearbox.net,linux.dev,gmail.com,fomichev.me,ziepe.ca,nvidia.com,suse.de,surriel.com,intel.com,loongson.cn,amd.com,linux.ibm.com,ghiti.fr,eecs.berkeley.edu,dabbelt.com,os.amperecomputing.com,bytedance.com,shopee.com,amazon.co.uk,amazon.com];
-	TAGGED_FROM(0.00)[bounces-79511-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-79512-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[4];
 	TO_DN_EQ_ADDR_SOME(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	FREEMAIL_CC(0.00)[redhat.com,lwn.net,kernel.org,arm.com,huawei.com,google.com,alien8.de,linux.intel.com,zytor.com,infradead.org,linux-foundation.org,oracle.com,suse.cz,suse.com,iogearbox.net,linux.dev,gmail.com,fomichev.me,ziepe.ca,nvidia.com,suse.de,surriel.com,intel.com,loongson.cn,amd.com,linux.ibm.com,ghiti.fr,eecs.berkeley.edu,dabbelt.com,os.amperecomputing.com,bytedance.com,shopee.com,amazon.co.uk,amazon.com];
 	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCPT_COUNT_GT_50(0.00)[103];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[david@kernel.org,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On 1/26/26 17:46, Kalyazin, Nikita wrote:
+On 1/26/26 17:47, Kalyazin, Nikita wrote:
 > From: Nikita Kalyazin <kalyazin@amazon.com>
 > 
-> This is to avoid excessive conversions folio->page->address when adding
-> helpers on top of set_direct_map_valid_noflush() in the next patch.
+> These allow guest_memfd to remove its memory from the direct map.
+> Only implement them for architectures that have direct map.
+> In folio_zap_direct_map(), flush TLB on architectures where
+> set_direct_map_valid_noflush() does not flush it internally.
+
+"Let's provide folio_{zap,restore}_direct_map helpers as preparation for
+supporting removal of the direct map for guest_memfd folios. ...
+
 > 
+> The new helpers need to be accessible to KVM on architectures that
+> support guest_memfd (x86 and arm64).  Since arm64 does not support
+> building KVM as a module, only export them on x86.
+> 
+> Direct map removal gives guest_memfd the same protection that
+> memfd_secret does, such as hardening against Spectre-like attacks
+> through in-kernel gadgets.
+
+Would it be possible to convert mm/secretmem.c as well?
+
+There, we use
+
+	set_direct_map_invalid_noflush(folio_page(folio, 0));
+
+and
+
+	set_direct_map_default_noflush(folio_page(folio, 0));
+
+Which is a bit different to below code. At least looking at the x86
+variants, I wonder why we don't simply use set_direct_map_valid_noflush().
+
+
+If so, can you add a patch to do the conversion, pleeeeassse ? :)
+
+> 
+> Reviewed-by: Ackerley Tng <ackerleytng@google.com>
 > Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
 > ---
->  arch/arm64/include/asm/set_memory.h     |  7 ++++---
->  arch/arm64/mm/pageattr.c                | 19 +++++++++----------
->  arch/loongarch/include/asm/set_memory.h |  7 ++++---
->  arch/loongarch/mm/pageattr.c            | 25 ++++++++++++-------------
->  arch/riscv/include/asm/set_memory.h     |  7 ++++---
->  arch/riscv/mm/pageattr.c                | 17 +++++++++--------
->  arch/s390/include/asm/set_memory.h      |  7 ++++---
->  arch/s390/mm/pageattr.c                 | 13 +++++++------
->  arch/x86/include/asm/set_memory.h       |  7 ++++---
->  arch/x86/mm/pat/set_memory.c            | 23 ++++++++++++-----------
->  include/linux/set_memory.h              |  9 +++++----
->  kernel/power/snapshot.c                 |  4 ++--
->  mm/execmem.c                            |  6 ++++--
->  mm/secretmem.c                          |  6 +++---
->  mm/vmalloc.c                            | 11 +++++++----
->  15 files changed, 90 insertions(+), 78 deletions(-)
-
-[...]
-
-> --- a/arch/loongarch/mm/pageattr.c
-> +++ b/arch/loongarch/mm/pageattr.c
-> @@ -198,32 +198,31 @@ bool kernel_page_present(struct page *page)
->  	return pte_present(ptep_get(pte));
+>  arch/arm64/include/asm/set_memory.h     |  2 ++
+>  arch/arm64/mm/pageattr.c                | 12 ++++++++++++
+>  arch/loongarch/include/asm/set_memory.h |  2 ++
+>  arch/loongarch/mm/pageattr.c            | 12 ++++++++++++
+>  arch/riscv/include/asm/set_memory.h     |  2 ++
+>  arch/riscv/mm/pageattr.c                | 12 ++++++++++++
+>  arch/s390/include/asm/set_memory.h      |  2 ++
+>  arch/s390/mm/pageattr.c                 | 12 ++++++++++++
+>  arch/x86/include/asm/set_memory.h       |  2 ++
+>  arch/x86/mm/pat/set_memory.c            | 20 ++++++++++++++++++++
+>  include/linux/set_memory.h              | 10 ++++++++++
+>  11 files changed, 88 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/set_memory.h b/arch/arm64/include/asm/set_memory.h
+> index c71a2a6812c4..49fd54f3c265 100644
+> --- a/arch/arm64/include/asm/set_memory.h
+> +++ b/arch/arm64/include/asm/set_memory.h
+> @@ -15,6 +15,8 @@ int set_direct_map_invalid_noflush(const void *addr);
+>  int set_direct_map_default_noflush(const void *addr);
+>  int set_direct_map_valid_noflush(const void *addr, unsigned long numpages,
+>  				 bool valid);
+> +int folio_zap_direct_map(struct folio *folio);
+> +int folio_restore_direct_map(struct folio *folio);
+>  bool kernel_page_present(struct page *page);
+>  
+>  int set_memory_encrypted(unsigned long addr, int numpages);
+> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
+> index e2bdc3c1f992..0b88b0344499 100644
+> --- a/arch/arm64/mm/pageattr.c
+> +++ b/arch/arm64/mm/pageattr.c
+> @@ -356,6 +356,18 @@ int set_direct_map_valid_noflush(const void *addr, unsigned long numpages,
+>  	return set_memory_valid((unsigned long)addr, numpages, valid);
 >  }
 >  
-> -int set_direct_map_default_noflush(struct page *page)
-> +int set_direct_map_default_noflush(const void *addr)
->  {
-> -	unsigned long addr = (unsigned long)page_address(page);
-> -
-> -	if (addr < vm_map_base)
-> +	if ((unsigned long)addr < vm_map_base)
->  		return 0;
->  
-> -	return __set_memory(addr, 1, PAGE_KERNEL, __pgprot(0));
-> +	return __set_memory((unsigned long)addr, 1, PAGE_KERNEL, __pgprot(0));
->  }
->  
-> -int set_direct_map_invalid_noflush(struct page *page)
-> +int set_direct_map_invalid_noflush(const void *addr)
->  {
-> -	unsigned long addr = (unsigned long)page_address(page);
-> +	unsigned long addr = (unsigned long)addr;
+> +int folio_zap_direct_map(struct folio *folio)
+> +{
+> +	return set_direct_map_valid_noflush(folio_address(folio),
+> +					    folio_nr_pages(folio), false);
+> +}
+> +
+> +int folio_restore_direct_map(struct folio *folio)
+> +{
+> +	return set_direct_map_valid_noflush(folio_address(folio),
+> +					    folio_nr_pages(folio), true);
+> +}
 
-Are you sure you want a local variable with the exact same name
+Is there a good reason why we cannot have two generic inline functions
+that simply call set_direct_map_valid_noflush() ?
 
-...
-
->  
-> -	if (addr < vm_map_base)
-> +	if ((unsigned long)addr < vm_map_base)
->  		return 0;
->  
-> -	return __set_memory(addr, 1, __pgprot(0), __pgprot(_PAGE_PRESENT | _PAGE_VALID));
-> +	return __set_memory((unsigned long)addr, 1, __pgprot(0),
-> +			    __pgprot(_PAGE_PRESENT | _PAGE_VALID));
-
-And cast it to (unsigned long) even though not required two times? :)
-
-I assume you wanted to get rid of the local varable.
-
->  }
->  
-> -int set_direct_map_valid_noflush(struct page *page, unsigned nr, bool valid)
-> +int set_direct_map_valid_noflush(const void *addr, unsigned long numpages,
-> +				 bool valid)
+Is it because of some flushing behavior? (which we could figure out)
 
 
-
-Nothing else jumped at me.
-
-Acked-by: David Hildenbrand (Arm) <david@kernel.org>
-
-It would be good to get some ACK from some arch people that are CCed :)
+In particular, a single set of functions could have a beautiful
+centralized kerneldoc, right?! :)
 
 -- 
 Cheers,
