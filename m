@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-79546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WLA7NI8UqmmYKwEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 00:41:03 +0100
+	id OLPMJJkUqmmYKwEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 00:41:13 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34A9D2196AA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 00:41:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 349AE2196B1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 00:41:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0B29E31953B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 23:32:27 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4374C30D6D1C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2026 23:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6036536CDEC;
-	Thu,  5 Mar 2026 23:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C3036D50A;
+	Thu,  5 Mar 2026 23:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qzq4+aMM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pMtVEnfE"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCCE936C9E2;
-	Thu,  5 Mar 2026 23:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1DB36D4E2;
+	Thu,  5 Mar 2026 23:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772753474; cv=none; b=fBR7599YhclIsoDl0z8ezagbgzMB1ybSp6fO+Ie4RGzxN/X/Mg7nGhdxxVnybaS4KnMfKDhLSLSd7zT8+GoGIzK9xBCGzMQykg09AO0dXgFGSNl12Rc+fsR4AQE7WKwWPWD3il5ijvLXua4/pz38cghr3+uHIXlt/jkDE+yvhYM=
+	t=1772753477; cv=none; b=F6C1tNYs2ngoPLdRPrU6VUUg3r0k1efwI9T7akIEMnHadav+VTQfu2O5u0QYcq3EaBJiOLqaikthOUfTcsn0MtuWND9qJdamkYduQA2Dj9YaaI4dupv2eXiKO2Q+OCcgnT6LmYcDqcSGBC17/coV/4PIpnnY8H+0leYyGIVAKdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772753474; c=relaxed/simple;
-	bh=cEdUQUlFBerrrjll65RYnh0FxEaBJ8BqmqOAkJYC198=;
+	s=arc-20240116; t=1772753477; c=relaxed/simple;
+	bh=XeqX3QrUV4KI7Elsw6ZcveYXCtC1JO/XPb2z64xgwOU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mxSUD2p1dTd4bpgK5f/kbd/miXpti56W8f7OCU4qSbwhRsAK1XCAgFodYT4sClr8XO2aKTkiTXuuzMjwyoVDfR6c1CjAX90rAjWh0bAFZ7CYg5pmil3DiVhddjl0JwRHtcpNtWfji3dds9tZnKvt6QvhZ3IbnESObYE5mQfIY28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qzq4+aMM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A699C19423;
-	Thu,  5 Mar 2026 23:31:12 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=PG/LaGDzZ9bQpmTuVgC2q9Fj4AZo5rOZRN4Hi6Ek6o2jIRBhk54Q5B3FUOrlN+tXnvzRqch7vnV4jYxGjEeUfT86q9/fEAlDHMBCOGhIidIK7pz0y9q5kwELTpFkpJVH7UmPcgrpOD6YKKGTYVLEdw3TbHzg2ftAMcv5LKI8Af8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pMtVEnfE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F068FC2BC87;
+	Thu,  5 Mar 2026 23:31:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772753474;
-	bh=cEdUQUlFBerrrjll65RYnh0FxEaBJ8BqmqOAkJYC198=;
+	s=k20201202; t=1772753476;
+	bh=XeqX3QrUV4KI7Elsw6ZcveYXCtC1JO/XPb2z64xgwOU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=qzq4+aMMy3XptoROLLxxvWTFnkzdLo8JrA3JBoCmCLaX+SKz7xD4Cuo5T+dKJ00oW
-	 nRkZuGrBhEjKyXLKFBlveAR/h5KOwVTM2rB4kZyarP04jnP9A8tj1mCAGzYhP91ypa
-	 dqEVSQl9Wb+VXh9mTa7OVPkxAdnNMjMAXJfG0kuDAh2XFHUlFqIAXiDp1tOSLKqM8I
-	 ZxqaX9XKImyzqwbawnuaCWpRApI0iUNbT8NBx2FUUqjgptCODVLOF24maTX18eTPMj
-	 brf5ZDhE/gwCl2xKtA29sk37n0xJEQQEkqF9PRTe5/HG1UkS6DsgjGKq6E+kqjoDTI
-	 qGLHzxWhdv4/Q==
+	b=pMtVEnfEH4590Wd0+8vGienC6LVlQWzL5D5c1eNuCP8294VcItsYYcK4cNfQSxtrR
+	 V9szetLWv3W19RIyhTN1LYrY3eAabAOxWPUKnjkkwMEhnO9zFf3qEEAQVDHE9PAxXv
+	 R6xs30pu594612yY9uW79rx4T4dXyaR3fId0oiyU4Bs5aESlM2ZwpeFk87gLsnIY5d
+	 RIT1+RM1OyQe6li9s1fWAxJxnYwu0LQXcRtkg806s+VRWEIF/2FmEpnDzEtiT98RLb
+	 1uT1Ix9MxpArf/xdoZHfK2VbtUisDAtXuNDInSD5pE7N1QUy89J3Kv873Fn5DzNcTA
+	 DsyXaLAHrllRQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 06 Mar 2026 00:30:24 +0100
-Subject: [PATCH RFC v2 21/23] nullfs: make nullfs multi-instance
+Date: Fri, 06 Mar 2026 00:30:25 +0100
+Subject: [PATCH RFC v2 22/23] fs: start all kthreads in nullfs
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260306-work-kthread-nullfs-v2-21-ad1b4bed7d3e@kernel.org>
+Message-Id: <20260306-work-kthread-nullfs-v2-22-ad1b4bed7d3e@kernel.org>
 References: <20260306-work-kthread-nullfs-v2-0-ad1b4bed7d3e@kernel.org>
 In-Reply-To: <20260306-work-kthread-nullfs-v2-0-ad1b4bed7d3e@kernel.org>
 To: linux-fsdevel@vger.kernel.org, 
@@ -65,15 +65,15 @@ Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
  Tejun Heo <tj@kernel.org>, Jann Horn <jannh@google.com>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-47773
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1007; i=brauner@kernel.org;
- h=from:subject:message-id; bh=cEdUQUlFBerrrjll65RYnh0FxEaBJ8BqmqOAkJYC198=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSuEuIq9t5TYMl60PXIZpGDnXxB/OtUimaoXYn62XXfz
- O2v4RPjjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlUdzL84eSX/CxkeOP5ubDL
- Rlluj61ulhwJMlnse+iQz9q5F/Ksihn+pz2/6drLmSzu8i7zcHmAQ/2P9wH9wTxPD4n73zm2m/k
- fKwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1493; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=XeqX3QrUV4KI7Elsw6ZcveYXCtC1JO/XPb2z64xgwOU=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSuEuJaf+dRTOCPxulfLslOv2oklmf1fP6yJD9Xb1s+U
+ zNXIQPPjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlMlWBkWCFzrDuKP39mawzD
+ zyu5iwsml+frLricuGvzFyfOOwoVeowMjbazeH8HSvyeuEbVMyp6t75zCe/unTMXel2tmxgYcvo
+ xMwA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-X-Rspamd-Queue-Id: 34A9D2196AA
+X-Rspamd-Queue-Id: 349AE2196B1
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
@@ -83,7 +83,7 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79546-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79547-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -103,35 +103,47 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-Allow multiple instances of nullfs to be created. Right now we're only
-going to use it for kernel-internal purposes but ultimately we can allow
-userspace to use it too to e.g., safely overmount stuff.
+Point init_task's fs_struct (root and pwd) at a private nullfs instance
+instead of the mutable rootfs. All kthreads now start isolated in nullfs
+and must use scoped_with_init_fs() for any path resolution.
+
+PID 1 is moved from nullfs into the initramfs by init_userspace_fs().
+Usermodehelper threads use userspace_init_fs via the umh flag in
+copy_fs(). All subsystems that need init's filesystem state for path
+resolution already use scoped_with_init_fs() from earlier commits in
+this series.
+
+This isolates kthreads from userspace filesystem state and makes it
+hard to perform filesystem operations from kthread context.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/nullfs.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ fs/namespace.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/fs/nullfs.c b/fs/nullfs.c
-index fdbd3e5d3d71..88ba4f3fc3a2 100644
---- a/fs/nullfs.c
-+++ b/fs/nullfs.c
-@@ -40,14 +40,9 @@ static int nullfs_fs_fill_super(struct super_block *s, struct fs_context *fc)
- 	return 0;
- }
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 668131aa5de1..2a530109eb36 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -6188,12 +6188,14 @@ static void __init init_mount_tree(void)
+ 		init_mnt_ns.nr_mounts++;
+ 	}
  
--/*
-- * For now this is a single global instance. If needed we can make it
-- * mountable by userspace at which point we will need to make it
-- * multi-instance.
-- */
- static int nullfs_fs_get_tree(struct fs_context *fc)
- {
--	return get_tree_single(fc, nullfs_fs_fill_super);
-+	return get_tree_nodev(fc, nullfs_fs_fill_super);
- }
++	nullfs_mnt = kern_mount(&nullfs_fs_type);
++	if (IS_ERR(nullfs_mnt))
++		panic("VFS: Failed to create private nullfs instance");
++	root.mnt	= nullfs_mnt;
++	root.dentry	= nullfs_mnt->mnt_root;
++
+ 	init_task.nsproxy->mnt_ns = &init_mnt_ns;
+ 	get_mnt_ns(&init_mnt_ns);
+-
+-	/* The root and pwd always point to the mutable rootfs. */
+-	root.mnt	= mnt;
+-	root.dentry	= mnt->mnt_root;
+ 	set_fs_pwd(current->fs, &root);
+ 	set_fs_root(current->fs, &root);
  
- static const struct fs_context_operations nullfs_fs_context_ops = {
 
 -- 
 2.47.3
