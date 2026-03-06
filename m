@@ -1,177 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-79558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id wIpyCwkhqmn2LgEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 01:34:17 +0100
+	id UOKdIH8iqmnMLwEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 01:40:31 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 859F9219DBA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 01:34:16 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD3C5219E47
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 01:40:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2D19B3083392
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 00:33:32 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 375B4303FFF6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 00:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F232E2C3254;
-	Fri,  6 Mar 2026 00:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4132DE702;
+	Fri,  6 Mar 2026 00:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y9oVmiFG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SKkm3pnq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1F32D9EC4
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Mar 2026 00:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8732D876B
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Mar 2026 00:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772757204; cv=none; b=XtmxrkD2oGvcOLhBz4oy+Y/4os8RLqfnggDGuJbBhwpZg+1lKL4Hoql3KZ7kacCb/425B02cXoxZQ5LrfKDEHyBHP0+srMuDJxO+8mNbmcL3wUyaX2EPFcBV6sJC0V1J/Qj2ajCu5ZJe3c+JyxdLoFIVHEiYpgCuWXcA1t5B4R0=
+	t=1772757622; cv=none; b=kkljQDHTAq242iYob0KOdaLwMO9ICSeYf7b6Hb182/nP6dwFjG1lASoiK/gw+0EwPSMxDiynPygq8C8HC96umWZN//v8OwXwPRWBqNfejnULltWW7Zc3tYDE4v+c+AYa5ogUnzFbrJVUPTF1E7uvEZhATxcnBaWt6hRDrXSxxP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772757204; c=relaxed/simple;
-	bh=YOKLjYb3aosVgKUH+3EKnfo2DuR5P/YMNSMFB5BVVSE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ww4wYYkGQSV8c3I49CyJs286+gxjNUi3Jxjqj1WJuQk0BFGC81HlS2db4zM2BRUD2PRNwFxCzkPDSvkwfWajWRExOpe/jRtXu7yqn+2l5AuyX9MlwJdy00G3R9RfLQ5kj9DdY2c47e8DMcWDn2azN1sWWMew86w71mKE6rlbYWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y9oVmiFG; arc=none smtp.client-ip=209.85.210.178
+	s=arc-20240116; t=1772757622; c=relaxed/simple;
+	bh=jGeYHXh3LlQv45gi9ZQhGp4yio/AGub7iPItilfYkQw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p5D3UqdF/01ZxYwOiSx9xmKFj0Q6cpwgzceDODoHOgma6hrolWiArIFU/eaMPOyQSPGNYFqUGAwx85diQH5cgmvgq/Ab4M8ZOjKwmva1Qeqbvsmk9lBCJ/PFAlv71p9s23IonPcqT+Rr15apMQS+IghyhRRjKa1v5WmrTqxs36E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SKkm3pnq; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-829759ca646so1304470b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Mar 2026 16:33:21 -0800 (PST)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-82418b0178cso4867225b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Mar 2026 16:40:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772757200; x=1773362000; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=35rUcLF1fMo1V5tT79EtOKmiA1OjiL0xPdfdOliHziY=;
-        b=Y9oVmiFGxV0ymT/VSsB/VMim8vuXVh+od0ZzwQS44jZaiJwV/tEuRnoy2rVAPmHzzX
-         Jf/274p3dqEOLxtdUARzgL58qSpEQuuFGZRC166EOsRT0mF9m9kc9ZSUqTtWeXexquEE
-         84IAuXjmlUVSzK18VNMPKjDqnksaGOJsTjz9n8UjQ2ke/vskk3R2kzNi/qwuDFGxmrcP
-         hhMAP8Th3jt/lSFssJ6N8LgTMkHJgA4Z3IKFsayt3f291PzaKqE5xlqTklCaSReF2ToX
-         3lztRyWSSn3B80KJ9nDQwkT9dkJs97eK3WkXYGiuiXkrlgE5GigeKR11q/+81OG6yqEj
-         aQ5Q==
+        d=gmail.com; s=20230601; t=1772757620; x=1773362420; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vwm3wwvpSH+RZbikS9WmeaWeWABu5ZF4Jeo4IRWuDNQ=;
+        b=SKkm3pnqrONZcf3GIeifQ7+UrEb7eTV+U5vW/z38cm3jO5qEj04huTGCMu/OK1yk8I
+         SQtI1MNtP4k9YMJ2K0vgOvoScrWY3xdhc7vvjbevVLEPc5LmRDU4FJxm8U0tumeLDtcn
+         FRL1k6XITPzcUPaes6TXcI9sgb4Cv0JwngTmh6rlSNuR602spK/R+dyDz2nF+7OaR1iD
+         9RUYEGJj8/jKlllfBtMOtXJXLASerAJItIhHRLVvB6P7RaHo4uDbDhKy9UcAXTjWOwr/
+         9uE0hwFdw4ZIhYItwESX7Ytvko7MXMllqf7B/RExJgxpSFfBy8UUYjjOkdCYDn7a25JV
+         GNsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772757200; x=1773362000;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=35rUcLF1fMo1V5tT79EtOKmiA1OjiL0xPdfdOliHziY=;
-        b=O7/HsDP7Xs0r/pcPnZysTs5NzfRpbbsa4u58LsjVdBVhYWVkGu55uPkDStkqe3+nWF
-         6fO2jtJ6MxLg6kcxWXd3L1ckQhvz1zJb2qHXgwMb25zrh/gf1neNB7C0wjiaeiNEEQ41
-         JY6ejiIt8GBAZMubO7uA5iNrjaArHLUq17pGmkZ6WlefY62eLwHLfesSIlxSFA7aBnlJ
-         rR9Gya5t2OMQGmNwdu6CBubak6heAR128GrVTOM9Cxju0i6JBJ00VbxaH6VPK2N4/qtI
-         jmIPKtK58jRC3jwXrS7pGQMuRQN89u00+o4ewlv3tyS//3nHZ2f3ulCUoBEp0YthJqab
-         6SNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmK7IZzbjRkalxtL+pIRS5hw8a3WTIZrQyyLRNFmITV9eXdM6X8nedF05wHwl2hNdiwXnRDNd9BQ1cjMhp@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpyT3bVMIOBWwCfJHFOB6CkC7Jd2g7PshesUqWptA7SDWGbtv8
-	QXz4n5JtEdZttC0WbO3DmUG5Qhk3rHIONIwkXpu1q7Uxxebg+1cmoRqQ
-X-Gm-Gg: ATEYQzzFwuTIDtSIu3k95j6nMN0lKGz/tmv2B00TQYuN4Bk2NhJvBGiosa3F5EhbaL/
-	R0UcqhqKaB2/ljW84Z3uqrXuhpUxwAKj8Sjhk2KrMDJoTqxpjCLZYR+ABvmNN48WOlWymB/Alr3
-	06yVgeTXbmB7TsG0L1YMVo0U6W34sfkS2bvNn4kGE4mCwbif4L3X6h5q+BppCMjPHuJ2dSUzA+x
-	p9I6/Jyhh+NYSNsGaFOSh8GlkHffVuCve4Eg5U95NDt3C6wSJdEPaTetjH3SQzeMMgk6RtGcQct
-	AbBYF5nKRJwXIwzVYAyINQbPj6i1Ri623dxprYRz3VQgMKk3OJJiZ1wPJ/RrQ7HTZytjvFy6JuR
-	2kh6iNNnkvVbmfQPVJ3UKM+WVLe7D1B1ZQq2SC8ixRKqWOmDrc2HQDs3WFkvnIvBBRH4/mkW4Y4
-	Cc02jwfM87TNtQsr6wfQ==
-X-Received: by 2002:a05:6300:670e:b0:394:f972:43cc with SMTP id adf61e73a8af0-398590d65d4mr358716637.71.1772757200514;
-        Thu, 05 Mar 2026 16:33:20 -0800 (PST)
-Received: from localhost ([2a03:2880:ff:55::])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c7377062904sm5600331a12.30.2026.03.05.16.33.20
+        d=1e100.net; s=20230601; t=1772757620; x=1773362420;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vwm3wwvpSH+RZbikS9WmeaWeWABu5ZF4Jeo4IRWuDNQ=;
+        b=xPnsuqSOPQaj+AYytTHUXc27AGGPy5sZMNdh3I8QfZn5WTCyqgKtmfpPtr97DUqbRE
+         WwzqemlD/Riq8ueqmk4aD3IHpkidz7/UPhjtPgxsN0eJF9jFL3pDaL2cITFU/S1v8qSO
+         GVTUEzFC5qhyJIcKroM3iYcMhQKFVe74Isbe1Mcs53me2PDex0XEDqENZ4F5WrxsVhmm
+         ZPvfancBjixd5yNhYyXmMhn49tZbzhopAg3vm+s0krmz0ChZ/WXlWjgeWs3UUPss3DQr
+         r1+aZcZUkrENtYZsnErvW+avzkGmAKvfihPPwBOu1ZxB6axMreNE6PZpS20jQumT2dpK
+         V3oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXlhb6YAUq6vi2jyoOLilQvwOJo366HRuVWNC/XREiNtTd4eTx35aYB3V8MMXRJskzW1bzhH4IZ2X5DGrYt@vger.kernel.org
+X-Gm-Message-State: AOJu0YztTqXWA2A1Avq4MMP1kTq7g8uY7mCj3aSSYPMh05aojZgmpB8j
+	jKesqAQha7xUextAu5mAde+KeEpds9nCtRDQ7NT7VkCooye/vvZ9Rnmz
+X-Gm-Gg: ATEYQzz54npWVlBPL5Wpg6WGfo21h5TX3Sw9O/570nDNfqueXOpTkp+7zXpFLg5Lbew
+	Y2hCbwh6hJvLOP1LXB3ds4iYORm2rh+WKySisavWPLVC4MuWsqK/tOHVAZ2FvqxzOzrWKDmJtet
+	Y5klc9r0f5rYq+G9134UuswJ0P0trZGgpo7eeyb9DFtn3VhEDI88urXyW/5odV3cmjktoaY8GT3
+	E+xBPPB5Me5II1HOxqD4reZtl2lvVQz2cYZ1q93KtDHqH3OQmZXfCMzretV7uYC3OLJAoct/E9l
+	Xi3pJ2nndT3BEx9ZaM/Nzm29JQuHY879RX2dsOSm53o6s7s7zw/C7SkOqNko4enE5UQTeROer5o
+	YejbtLbTldByzUpsSFkSosqGs+Rxy1Ejy5r2YqOA9GQPsm0K5RxoabPluZUujtO91Oc6VeDQAaD
+	+zYzgdTcJpG8PXKw==
+X-Received: by 2002:a05:6a00:9510:b0:81a:883d:cd05 with SMTP id d2e1a72fcca58-829a30d0307mr163580b3a.64.1772757620313;
+        Thu, 05 Mar 2026 16:40:20 -0800 (PST)
+Received: from localhost ([27.122.242.71])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8273a01080fsm22107684b3a.46.2026.03.05.16.40.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2026 16:33:20 -0800 (PST)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: axboe@kernel.dk
-Cc: hch@infradead.org,
-	asml.silence@gmail.com,
-	bernd@bsbernd.com,
-	csander@purestorage.com,
-	krisman@suse.de,
-	linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: [PATCH v3 8/8] io_uring/cmd: set selected buffer index in __io_uring_cmd_done()
-Date: Thu,  5 Mar 2026 16:32:24 -0800
-Message-ID: <20260306003224.3620942-9-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260306003224.3620942-1-joannelkoong@gmail.com>
-References: <20260306003224.3620942-1-joannelkoong@gmail.com>
+        Thu, 05 Mar 2026 16:40:19 -0800 (PST)
+Date: Fri, 6 Mar 2026 09:40:17 +0900
+From: Hyunchul Lee <hyc.lee@gmail.com>
+To: "hch@infradead.org" <hch@infradead.org>
+Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+	"glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+	"frank.li@vivo.com" <frank.li@vivo.com>,
+	"slava@dubeyko.com" <slava@dubeyko.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"cheol.lee@lge.com" <cheol.lee@lge.com>
+Subject: Re: [PATCH] hfsplus: limit sb_maxbytes to partition size
+Message-ID: <aaoicV1cxDCfKpbO@hyunchul-PC02>
+References: <20260303082807.750679-1-hyc.lee@gmail.com>
+ <aaguv09zaPCgdzWO@infradead.org>
+ <5c670210661f30038070616c65492fa2a96b028c.camel@ibm.com>
+ <aajObSSRGVXG3sI_@hyunchul-PC02>
+ <aamS1roqYDyEz0P3@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 859F9219DBA
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aamS1roqYDyEz0P3@infradead.org>
+X-Rspamd-Queue-Id: CD3C5219E47
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.84 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_MISSING_CHARSET(0.50)[];
+	MID_RHS_NOT_FQDN(0.50)[];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-79559-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79558-lists,linux-fsdevel=lfdr.de];
-	TO_DN_NONE(0.00)[];
 	RECEIVED_HELO_LOCALHOST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[infradead.org,gmail.com,bsbernd.com,purestorage.com,suse.de,vger.kernel.org];
 	MIME_TRACE(0.00)[0:+];
-	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	TO_DN_SOME(0.00)[];
 	DKIM_TRACE(0.00)[gmail.com:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	MISSING_XM_UA(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[hyclee@gmail.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	RCPT_COUNT_SEVEN(0.00)[8];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	FREEMAIL_FROM(0.00)[gmail.com];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[]
 X-Rspamd-Action: no action
 
-When uring_cmd operations select a buffer, the completion queue entry
-should indicate which buffer was selected.
+On Thu, Mar 05, 2026 at 06:27:34AM -0800, hch@infradead.org wrote:
+> On Thu, Mar 05, 2026 at 09:29:33AM +0900, Hyunchul Lee wrote:
+> > Sorry it's generic/285, not generic/268.
+> > in generic/285, there is a test that creates a hole exceeding the block
+> > size and appends small data to the file. hfsplus fails because it fills
+> > the block device and returns ENOSPC. However if it returns EFBIG
+> > instead, the test is skipped.
+> 
+> generic/285 needs to call _require_sparse_files.
+> 
 
-Set IORING_CQE_F_BUFFER on the completed entry and encode the buffer
-index if a buffer was selected.
+The generic/258(src/seek_sanity_test.c) is considering filesystems
+that don't support sparse files[1].
 
-This change is needed in order to relay to userspace which selected
-buffer contains the data.
+int test_basic_support()
+  ...
+  pos = lseek(fd, 0, SEEK_HOLE);
+  ...
+  if (pos == filsze) {
+    default_behavior = 1;
+    fprintf(stderr, "File system supports the default behavior.\n");
+  ...
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
----
- io_uring/uring_cmd.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+The issue is that there are some tests which write to offsets larger
+than the block device. How about skipping for such test cases when
+dealing with filesystems that don't support sparse files?
 
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index ee7b49f47cb5..6d38df1a812d 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -151,6 +151,7 @@ void __io_uring_cmd_done(struct io_uring_cmd *ioucmd, s32 ret, u64 res2,
- 		       unsigned issue_flags, bool is_cqe32)
- {
- 	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
-+	u32 cflags = 0;
- 
- 	if (WARN_ON_ONCE(req->flags & REQ_F_APOLL_MULTISHOT))
- 		return;
-@@ -160,7 +161,10 @@ void __io_uring_cmd_done(struct io_uring_cmd *ioucmd, s32 ret, u64 res2,
- 	if (ret < 0)
- 		req_set_fail(req);
- 
--	io_req_set_res(req, ret, 0);
-+	if (req->flags & (REQ_F_BUFFER_SELECTED | REQ_F_BUFFER_RING))
-+		cflags |= IORING_CQE_F_BUFFER |
-+			(req->buf_index << IORING_CQE_BUFFER_SHIFT);
-+	io_req_set_res(req, ret, cflags);
- 	if (is_cqe32) {
- 		if (req->ctx->flags & IORING_SETUP_CQE_MIXED)
- 			req->cqe.flags |= IORING_CQE_F_32;
+[1]: https://github.com/kdave/xfstests/blob/master/src/seek_sanity_test.c#L1244
+
 -- 
-2.47.3
-
+Thanks,
+Hyunchul
 
