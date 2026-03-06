@@ -1,51 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-79627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OJErJFzxqmncYwEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 16:23:08 +0100
+	id eBBFMjHwqmncYwEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 16:18:09 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE51A223B1F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 16:23:07 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id E79C8223A37
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 16:18:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4E2BD3130560
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 15:16:52 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id DE20A3023797
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 15:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D816B34B683;
-	Fri,  6 Mar 2026 15:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030D435E942;
+	Fri,  6 Mar 2026 15:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZKwXk10t"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="meKsfZG7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D18311958;
-	Fri,  6 Mar 2026 15:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA3333B97D;
+	Fri,  6 Mar 2026 15:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772810209; cv=none; b=gbNb4ruPtUBTqC6OB/O/BoSPve6o+1JoXMdzcb9DdXS0hj+OgL5Al6QNeqbTEf/dGbQTp2Wy9PLQpO37iCWkPooaUlFmWLHtjvIEwNQfAbWE0aEsPkETK8LpWWkOG8UCZm48AnYmIe/rjnv8J8yEttMk3CEUgNEtQsHicGihmw4=
+	t=1772810276; cv=none; b=Fbu/KPFmxI1x1a94YFPzXli+4jv1vjCyVqcJI4dVp420CQ6wGVPdka26/U22M5HKTSeiOJk7QPDBKdeQinAu/jCd21wfOBpxL+sL0Da65vuHP5I8zRjvYVWnMvAKPIFAzhBP0UVk72ErBg2t92C2gVJ57CtrDW1LzF6oNExIziU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772810209; c=relaxed/simple;
-	bh=at+HTAAsuB1KLZbXFCgnkpzyMoXZFrE3H8GRM4s9e5k=;
+	s=arc-20240116; t=1772810276; c=relaxed/simple;
+	bh=ahO2AWbp+Wup5w2IFEsZm9ygIb5iPaDoKCmt+8dJ1FI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g6QTXaerD1EHZoVLi6e94Imnv/gN9fnqfkWhvrL90Jx9HsOKa2kscRbafSNc5kDzuPEShBVURe/Ei8wIoE7cvBTkMHHwvNoXdNUoub0hI1Y9IH3R5wfIvRz9p6J48h10KR+pDAfU41eaKXzcTjcJ2uDX0L3t9nkW46hPb2CegeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZKwXk10t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEAC4C4CEF7;
-	Fri,  6 Mar 2026 15:16:22 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=M2mdcZIHwNDrpzLPTr9sa+biRLvOMoV7oBmWm40x8crPHm+C8OnjotB+JQzyVin6qWvBdEtlNTVDfoo8mHtk6JUI14ZEjSSXJhfhsPS4cJmFlI+3Dpx3kZB2LiEUIWBWlRak6SI+k4r9CIF+c2lWh0WNmlgx3b0HJQ5zMdnlypM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=meKsfZG7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65CD5C2BC87;
+	Fri,  6 Mar 2026 15:17:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772810208;
-	bh=at+HTAAsuB1KLZbXFCgnkpzyMoXZFrE3H8GRM4s9e5k=;
+	s=k20201202; t=1772810276;
+	bh=ahO2AWbp+Wup5w2IFEsZm9ygIb5iPaDoKCmt+8dJ1FI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZKwXk10t3KvnpEDSJQebHfUK+3bQguAKrVSqADBK9iE76YbYNwZ3dt9/Z2YKsClBT
-	 pAcdPluWKqTcp3tgG9FsZRFIUIfinnubH9tqyFCvM6WMXXE/XPJyXpMMZrsaZblncq
-	 DmayVqJwfFbGpYEAfNUd7BZ4pOGD7v74lth2RwPcWKTxdmDjyXT8v/BYAFbfZ6CDH0
-	 sGihCC9IxBd22g5DMKnaqH34bYCNJXeShs4SP6TbHGZssSVQGZCPcMH1bLQDiPC+in
-	 TO1W6JUZb0PqCXP+Na94lG8jsCKyjjUHGr3NNxirNMWyzFWitM+jHdnBDxFh3GzmEb
-	 zH0SqpwRo19Pw==
-Message-ID: <9b4b9f48-595d-46c9-8f77-fc021ac2619c@kernel.org>
-Date: Fri, 6 Mar 2026 16:16:18 +0100
+	b=meKsfZG7Mz03e3WAkn/HPFLDZOmTDBOKCSQFOevvDp5edvLDhQ5ZaQhN18w6YvQF+
+	 bI32Gu8m6ecxnGvhRxpwRzPZWTvaaVVzIycqlEjadO0UbBx+XZYFIILDfRDueqoTog
+	 k2NgYqmYDC1lNbevKho3uOIbztKbXULKniiln52RmnIiXcqjXnG+5k/GdY2kZB9ILm
+	 cz+Nis4gfBaA9P8uAeQVKFWF2cIx27KqN2LOEooqj+EKwkMqGvcjSfWkxxn4R9zvTY
+	 H7WKDOR11p0ysMu3+uD4m8LpHBqBHzW3fjjYUSvDCcRfuo1DDrMiodMi70noRcLb0n
+	 0IkidHKKgSxUw==
+Message-ID: <efc1c39c-7eb5-488f-819c-0ca2149898c3@kernel.org>
+Date: Fri, 6 Mar 2026 16:17:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,8 +53,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 09/15] KVM: guest_memfd: Add flag to remove from
- direct map
+Subject: Re: [PATCH v10 02/15] set_memory: add folio_{zap, restore}_direct_map
+ helpers
 To: kalyazin@amazon.com, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
  "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
  "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
@@ -146,11 +146,11 @@ Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>,
  "Manwaring, Derek" <derekmn@amazon.com>, "Cali, Marco"
  <xmarcalx@amazon.co.uk>
 References: <20260126164445.11867-1-kalyazin@amazon.com>
- <20260126164445.11867-10-kalyazin@amazon.com>
- <13ed00e1-f0db-4326-a800-2ba306833921@kernel.org>
- <690c22f9-b71a-4f14-9857-008c7c858373@amazon.com>
- <0c0b911c-cda2-44a4-897e-361e02be7da5@kernel.org>
- <936fa782-d937-4b14-b92d-cc8707336e5e@amazon.com>
+ <20260126164445.11867-3-kalyazin@amazon.com>
+ <af2d4dcd-60a8-4a5a-b508-d9600b1f2275@kernel.org>
+ <e2834fd9-e4ec-473c-90cd-6c3a5049747f@amazon.com>
+ <40bd6f9b-d5c0-4844-81bc-d221cd9b058f@kernel.org>
+ <38deb26a-918c-4743-b35f-92a1330dbf40@amazon.com>
 From: "David Hildenbrand (Arm)" <david@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=david@kernel.org; keydata=
@@ -197,21 +197,21 @@ Autocrypt: addr=david@kernel.org; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <936fa782-d937-4b14-b92d-cc8707336e5e@amazon.com>
+In-Reply-To: <38deb26a-918c-4743-b35f-92a1330dbf40@amazon.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: EE51A223B1F
+X-Rspamd-Queue-Id: E79C8223A37
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79627-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79628-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	TO_DN_EQ_ADDR_SOME(0.00)[];
@@ -219,63 +219,78 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCPT_COUNT_GT_50(0.00)[104];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[david@kernel.org,linux-fsdevel@vger.kernel.org];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	NEURAL_HAM(-0.00)[-0.985];
+	NEURAL_HAM(-0.00)[-0.986];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROM(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo,intel.com:email]
 X-Rspamd-Action: no action
 
-On 3/6/26 15:49, Nikita Kalyazin wrote:
+On 3/6/26 15:48, Nikita Kalyazin wrote:
 > 
 > 
-> On 06/03/2026 14:22, David Hildenbrand (Arm) wrote:
->> [...]
->>
+> On 06/03/2026 14:17, David Hildenbrand (Arm) wrote:
+>> On 3/6/26 13:48, Nikita Kalyazin wrote:
 >>>
->>> Dave pointed earlier that the failures were possible [1].  Do you think
->>> we can document it better?
+>>>
+>>>
+>>> Will update, thanks.
+>>>
+>>>
+>>> Absolutely!
+>>>
+>>>
+>>> Yes, on x86 we need an explicit flush.  Other architectures deal with it
+>>> internally.
 >>
->> I'm fine with checking that somewhere (to catch any future problems).
->>
->> Why not do the WARN_ON_ONCE() in folio_restore_direct_map()?
->>
->> Then, carefully document (in the new kerneldoc for
->> folio_restore_direct_map() etc) that folio_restore_direct_map() is only
->> allowed after a prior successful folio_zap_direct_map(), and add a
->> helpful comment above the WARN_ON_ONCE() in folio_restore_direct_map()
->> that we don't expect errors etc.
+>> So, we call a _noflush function and it performs a ... flush. What.
 > 
-> My only concern about that is the assumptions we make in KVM may not
-> apply to the general case and the WARN_ON_ONCE may become too
-> restrictive compared to proper error handling in some (rare) cases.  For
-> example, is it possible for the folio to migrate in between?
+> Yeah, that's unfortunately the status quo as pointed by Aneesh [1]
+> 
+> [1] https://lore.kernel.org/kvm/yq5ajz07czvz.fsf@kernel.org/
+> 
+>>
+>> Take a look at secretmem_fault(), where we do an unconditional
+>> flush_tlb_kernel_range().
+>>
+>> Do we end up double-flushing in that case?
+> 
+> Yes, looks like that.  I'll remove the explicit flush and rely on
+> folio_zap_direct_map().
+> 
+>>
+>>> Do you propose a bespoke implementation for x86 and a
+>>> "generic" one for others?
+>>
+>> We have to find a way to have a single set of functions for all archs
+>> that support directmap removal.
+> 
+> I believe Dave meant to address that with folio_{zap,restore}
+> _direct_map() [2].
+> 
+> [2] https://lore.kernel.org/kvm/9409531b-589b-4a54-
+> b122-06a3cf0846f3@intel.com/
+> 
+>>
+>> One option might be to have some indication from the architecture that
+>> no flush_tlb_kernel_range() is required.
+>>
+>> Could be a config option or some simple helper function.
+> 
+> I'd be inclined to know what arch maintainers think because I don't have
+> a strong opinion on that.
 
-Not without migration support. But then, migration would have to make
-sure that the destination folio has the direct map removed. So I
-wouldn't worry about that.
+You could also just perform a double flush, and let people that
+implemented a _noflush() to perform a flush optimize that later.
 
-Once you return an error from folio_restore_direct_map(), you better
-document when/why it happens and how the caller should handle it.
-
-There is nothing existing callers could really do, so it's an
-implementation detail of the
-folio_zap_direct_map()/folio_restore_direct_map() functions to make sure
-it keeps working.
-
-If it ever fails, we'll have to figure out how to keep the interface
-working.
-
-You can document any restrictions regarding when
-folio_zap_direct_map()/folio_restore_direct_map() is allowed to be used
-in the kerneldoc.
+I mean, that's what secretmem did :)
 
 -- 
 Cheers,
