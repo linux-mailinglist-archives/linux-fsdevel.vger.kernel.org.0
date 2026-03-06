@@ -1,151 +1,236 @@
-Return-Path: <linux-fsdevel+bounces-79561-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 2PH2NA0mqmkPMAEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79561-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 01:55:41 +0100
+	id 8LJ0M84mqmkPMAEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 01:58:54 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4710521A0ED
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 01:55:40 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A62321A131
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 01:58:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 08037309CCBB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 00:53:27 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id E0E6D306C531
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 00:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B84E2F60A7;
-	Fri,  6 Mar 2026 00:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597BB29AB1D;
+	Fri,  6 Mar 2026 00:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bpyL1Aba"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kHMKvdiJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09412F12CF
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Mar 2026 00:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10F58460
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Mar 2026 00:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772758406; cv=none; b=W5Nuq1ShWTmGyZLqu0ylANtOKYmNt0JbgbvpAzHxrU18TBdF9YxhC/be/5ou3Zy8j5WJB14pcarwmpxIoXnJ+IDQHne7t+zJY1NMI2r6axfsVfXpDjgOrsiCi0vlmAbqem4IOHy2/x57QHxSwuPdeT2xbGJ1uuWw91/q2QkH+8I=
+	t=1772758675; cv=none; b=dXkjZ6ZMuAP9mI/Q8TlW7fq+1+Loteau4jugq6TnPb3F4Hhtlf1DhdkoYg4skdoVKa8dXPEEayR0bLXK9oskNiLUobJ4jJ3EYdP+0SA5GoylqM3RMohtAYTUOho2lTO3iOuX5n4jQGZqPNMwjBuxzov6wmzdWlgYq4O6RqQ5xhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772758406; c=relaxed/simple;
-	bh=q+1OHkZxuaWPjZLatNGpXSxU4+CbbXGnHjb3Ye+yGiI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dmhAjkZR6McQvPoTC5bz4SdAx3DpSRGWz0lyurEE4Pw+5V/Zj2FYLZtHWeB+pU0kHXtJH7YY6Ru+GaaeJTkV/r0MruDJCMDHOMoA0M2WNtEp8AAaIOcp9kcSEji4aaWQYbrQK1mHcUTzLgtbiBi/AF81V41cJkL22Y7LhTOaH/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bpyL1Aba; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1772758403;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=My480qFBpGNx50hRnNAsXaFyKvXvDH1yGohElc/bFek=;
-	b=bpyL1AbaKaZpKyRUjHB4kYI8rCc65vUr5dAZCeMKXqFX+Di+c8GY+ql0v6ZHtxqw0zKraU
-	l3Ry0e3zc3W3vDZZu3Y7wrHKvXuoZb2eP5tBca7e4SVcR6pHHWNajIfjNRa+WOnvaXB2bp
-	K62Pl5TmOi6F9CNhqze1plNZwVzfd0o=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-484-qrluC5POMC-PjA9ucEVRag-1; Thu,
- 05 Mar 2026 19:53:20 -0500
-X-MC-Unique: qrluC5POMC-PjA9ucEVRag-1
-X-Mimecast-MFC-AGG-ID: qrluC5POMC-PjA9ucEVRag_1772758399
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E78C919560B7;
-	Fri,  6 Mar 2026 00:53:18 +0000 (UTC)
-Received: from [10.22.88.171] (unknown [10.22.88.171])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CB0301800762;
-	Fri,  6 Mar 2026 00:53:16 +0000 (UTC)
-Message-ID: <886ceaf1-16dd-4403-bfaf-5164a598a20d@redhat.com>
-Date: Thu, 5 Mar 2026 19:53:15 -0500
+	s=arc-20240116; t=1772758675; c=relaxed/simple;
+	bh=H/noKFijjQAfvZCSx1FwetyN0avY2FIuEC59BiOhtN4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RQTKxY9OHrNCgSataKbFSr7ZzTL7UkPaaQgcqo6NkM5lCRn0vwwANUmhU27bQtqsiXuaRwCfZ0eMD4KPZZqmx/zkWyldClLbZAHyCkOtrDByrkQOj2DsiIWGTKZUY5XZ+M6nOruYu3QMWHoy2obB05B0VgRPm+d8vHWSDsD2Oe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kHMKvdiJ; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-824a829f9bbso4189678b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Mar 2026 16:57:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772758674; x=1773363474; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NyEJhbPGTj4iMvGkLm4FmHRGU2FBZ4orT9yHK/RJcWo=;
+        b=kHMKvdiJbrfr86M3ZzdXUhPdzm4JN9O5LwqNLRLFrJWnzLD3zKVYUozEUTCCcsmVkH
+         qNq/Iew70LnKX1iRBkM9eMIOCmQfNmx49LXhv+5GO005AaZZbhRFqKA/G+ceilAceAyS
+         kpP5Xml04f+3LdRH15ZtFhgH1xrZN+zjyFOXvBHj9vq/U3Xnhgx4W2V7zWO0YQ1U7PWG
+         D/TwaBbuWpS7z61uQn4spLCOV/0AZL0oIpwQCjebjF9Eg4xGzhU+ZqbknfJyZ3UtuODO
+         kzNBvA3E/SZPeYd30f/oh5IjmZDuzPEWC0c/UD/eTww8/SwivY95tAMUtB+Zd6xyAPni
+         BgaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772758674; x=1773363474;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NyEJhbPGTj4iMvGkLm4FmHRGU2FBZ4orT9yHK/RJcWo=;
+        b=bV/eltoMNEQJsxac1Bx1h3QJ7cTfoRWrJq3jbAK593PWRWGk5I7l8V6wqkolJXYmaK
+         FjATdnl/DCFhpuAyegn9cdbnIjeuvmZQ91urqN/FR/XdQKHfgf0HoFxAsQ4SPw1OkkD4
+         fZxsug/g3KxIVatmqA5gZ7a7rJxsllbUK9prQ+6gA4ZFiKh0rWH7To7n5VT17NLHhlzy
+         UIoNePNNF6bLjaRqerVVGGVrrLcgpgG0DqStCQO7H3ZNPmPOKl5Sq7TL980pPEqssR7k
+         TLyevftS19yREx4NCsBbgNcQxylNRp8zPtrt535GiKO7u0rDiXoYLviOou1NEUAcHHWn
+         3f5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUYZfIVWY20ju5KAdeJsPQJwvhiTu4rbaAdN11fJD3jd2AgSQJNJw0M9x+FGCUgtuiDCyMIVSjc9JMvft+w@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2Sxx2750O85uxYNuXtU+kef926/N4n4yL1Baas1GiWrdEo0Aw
+	5IWUpApKrcY8XtngP9OFkLb0qkWBpk3apDabirGLNrVJURGUOl4vlBxG
+X-Gm-Gg: ATEYQzwzn9pPcEIqSj9zyI6tjX3DkRrBTGBIFipTFVBCSIiilAvLoLR//Qmz6i3bpqx
+	B0bz5UPCLJGyMXfmrfIItm8P9+zWp+l8x9WCjw4f7uaFK9CgSdaMRCb9eRiXTwwS4QwQ87l3FhH
+	HK+8wMyAb6ZgT57SRFnrlom2yAovx/itqfK4ttCCcGAS7+ogK4jMZ8ZGLRWHn1Ni0daKtC+T+Wn
+	5GV3CWb+2loNkNj+xbAz/lb9rK8Z3zMg8vbC6GuydSRzi3xbp0tqygf1+EfCeSVjUp85dScj0qA
+	WmHwSCb4lHheEiEz9IVT9ePZzdbaOpzv4Hh0Kf3DiD9Vbej833Es8Q4aDemXzTuvNZXNNVnv9Yg
+	FX5Fi+45kP5pHA7P5UivYigBjtWL1fgXszdyYJD5Z1JJpcebA5KzOK+0fcu3lW8Dk2NL9cpXCJ/
+	t6zqRz50Ljffptdg==
+X-Received: by 2002:a05:6a00:2d19:b0:81f:9f14:ecc8 with SMTP id d2e1a72fcca58-829a2e11182mr225838b3a.27.1772758673940;
+        Thu, 05 Mar 2026 16:57:53 -0800 (PST)
+Received: from localhost ([27.122.242.71])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8298cf9bf14sm2584932b3a.48.2026.03.05.16.57.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2026 16:57:53 -0800 (PST)
+Date: Fri, 6 Mar 2026 09:57:51 +0900
+From: Hyunchul Lee <hyc.lee@gmail.com>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+	"frank.li@vivo.com" <frank.li@vivo.com>,
+	"slava@dubeyko.com" <slava@dubeyko.com>,
+	"hch@infradead.org" <hch@infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"cheol.lee@lge.com" <cheol.lee@lge.com>
+Subject: Re: [PATCH] hfsplus: limit sb_maxbytes to partition size
+Message-ID: <aaomj9LgbfSem-aF@hyunchul-PC02>
+References: <20260303082807.750679-1-hyc.lee@gmail.com>
+ <aaguv09zaPCgdzWO@infradead.org>
+ <5c670210661f30038070616c65492fa2a96b028c.camel@ibm.com>
+ <aajObSSRGVXG3sI_@hyunchul-PC02>
+ <532c5cdf12ced8eee5e5a93efe592937b63b889d.camel@ibm.com>
+ <CANFS6bZm3G9HA3X5Bi2_KGZDNGuguQzG44-cMcQHto2+qe_05g@mail.gmail.com>
+ <e979abaf61fa6d7fab444eac293fcbc2993c78ee.camel@ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/2] fs, audit: Avoid excessive dput/dget in
- audit_context setup and reset paths
-To: Christian Brauner <brauner@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
- Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- audit@vger.kernel.org, Richard Guy Briggs <rgb@redhat.com>,
- Ricardo Robaina <rrobaina@redhat.com>
-References: <20260228182757.90528-1-longman@redhat.com>
- <20260305-vorlieben-gefesselt-1673d7845270@brauner>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20260305-vorlieben-gefesselt-1673d7845270@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Rspamd-Queue-Id: 4710521A0ED
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <e979abaf61fa6d7fab444eac293fcbc2993c78ee.camel@ibm.com>
+X-Rspamd-Queue-Id: 3A62321A131
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DKIM_TRACE(0.00)[redhat.com:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79561-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	TAGGED_FROM(0.00)[bounces-79562-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[longman@redhat.com,linux-fsdevel@vger.kernel.org];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[hyclee@gmail.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	REDIRECTOR_URL(0.00)[proofpoint.com];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,proofpoint.com:url]
 X-Rspamd-Action: no action
 
-On 3/5/26 4:46 PM, Christian Brauner wrote:
-> On Sat, Feb 28, 2026 at 01:27:55PM -0500, Waiman Long wrote:
->>   v4:
->>    - Add ack and review tags
->>    - Simplify put_fs_pwd_pool() in patch 1 as suggested by Paul Moore
->>
->>   v3:
->>    - https://lore.kernel.org/lkml/20260206201918.1988344-1-longman@redhat.com/
->>
->> When the audit subsystem is enabled, it can do a lot of get_fs_pwd()
->> calls to get references to fs->pwd and then releasing those references
->> back with path_put() later. That may cause a lot of spinlock contention
->> on a single pwd's dentry lock because of the constant changes to the
->> reference count when there are many processes on the same working
->> directory actively doing open/close system calls. This can cause
->> noticeable performance regresssion when compared with the case where
->> the audit subsystem is turned off especially on systems with a lot of
->> CPUs which is becoming more common these days.
->>
->> This patch series aim to avoid this type of performance regression caused
->> by audit by adding a new set of fs_struct helpers to reduce unncessary
->> path_get() and path_put() calls and the audit code is modified to use
->> these new helpers.
-> Tbh, the open-coding everywhere is really not very tasteful and makes me
-> not want to do this at all. Ideally we'd have a better mechanism that
-> avoids all this new spaghetti in various codepaths.
->
-> In it's current form I don't find it palatable. I added a few cleanups
-> on top that make it at least somewhat ok.
+On Thu, Mar 05, 2026 at 11:21:19PM +0000, Viacheslav Dubeyko wrote:
+> On Thu, 2026-03-05 at 10:52 +0900, Hyunchul Lee wrote:
+> > > > 
+> > > > Sorry it's generic/285, not generic/268.
+> > > > in generic/285, there is a test that creates a hole exceeding the block
+> > > > size and appends small data to the file. hfsplus fails because it fills
+> > > > the block device and returns ENOSPC. However if it returns EFBIG
+> > > > instead, the test is skipped.
+> > > > 
+> > > > For writes like xfs_io -c "pwrite 8t 512", should fops->write_iter
+> > > > returns ENOSPC, or would it be better to return EFBIG?
+> > > > > 
+> > > 
+> > > Current hfsplus_file_extend() implementation doesn't support holes. I assume you
+> > > mean this code [1]:
+> > > 
+> > >         len = hip->clump_blocks;
+> > >         start = hfsplus_block_allocate(sb, sbi->total_blocks, goal, &len);
+> > >         if (start >= sbi->total_blocks) {
+> > >                 start = hfsplus_block_allocate(sb, goal, 0, &len);
+> > >                 if (start >= goal) {
+> > >                         res = -ENOSPC;
+> > >                         goto out;
+> > >                 }
+> > >         }
+> > > 
+> > > Am I correct?
+> > > 
+> > Yes,
+> > 
+> > hfsplus_write_begin()
+> >   cont_write_begin()
+> >     cont_expand_zero()
+> > 
+> > 1) xfs_io -c "pwrite 8t 512"
+> > 2) hfsplus_begin_write() is called with offset 2^43 and length 512
+> > 3) cont_expand_zero() allocates and zeroes out one block repeatedly
+> > for the range
+> > 0 to 2^43 - 1. To achieve this, hfsplus_write_begin() is called repeatedly.
+> > 4) hfsplus_write_begin() allocates one block through hfsplus_get_block() =>
+> > hfsplus_file_extend()
+> 
+> I think we can consider these directions:
+> 
+> (1) Currently, HFS+ code doesn't support holes. So, it means that
+> hfsplus_write_begin() can check pos variable and i_size_read(inode). If pos is
+> bigger than i_size_read(inode), then hfsplus_file_extend() will reject such
+> request. So, we can return error code (probably, -EFBIG) for this case without
+> calling hfsplus_file_extend(). But, from another point of view, maybe,
+> hfsplus_file_extend() could be one place for this check. Does it make sense?
+> 
+> (2) I think that hfsplus_file_extend() could treat hole or absence of free
+> blocks like -ENOSPC. Probably, we can change the error code from -ENOSPC to -
+> EFBIG in hfsplus_write_begin(). What do you think?
+> 
+Even if holes are not supported, shouldn't the following writes be
+supported?
 
-Thanks for the cleanup patches. They all look good to me.
+xfs_io -f -c "pwrite 4k 512" <file-path>
 
-Reviewed-by: Waiman Long <longman@redhat.com>
+If so, since we need to support cases where pos > i_size_read(inode),
+wouldn't the condition "pos - i_size_read(inode) > free space" be better?
+Also instead of checking every time in hfsplus_write_begin() or
+hfsplus_file_extend(), how about implementing the check in the
+file_operations->write_iter callback function, and returing EFBIG?
 
+> > 
+> > > Do you mean that calling logic expects -EFBIG? Potentially, if we tries to
+> > > extend the file, then -EFBIG could be more appropriate. But it needs to check
+> > > the whole call trace.
+> > 
+> > generic/285 creates a hole by pwrite at offset 2^43 + @ and handle the
+> > error as follow:
+> > https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_kdave_xfstests_blob_master_src_seek-5Fsanity-5Ftest.c-23L271&d=DwIFaQ&c=BSDicqBQBDjDI9RkVyTcHQ&r=q5bIm4AXMzc8NJu1_RGmnQ2fMWKq4Y4RAkElvUgSs00&m=84S8DZyqlgcJA0uzXVPYD-cvdonhvyi5kMWaklKdNjD8otp-dvtHXuL2O2CridFV&s=6jI_AQCduo5Tim8ioI5V8Xy50jguCLUTx1CSFEF__D0&e= 
+> > 
+> > if (errno == EFBIG) {
+> >   fprintf(stdout, "Test skipped as fs doesn't support so large files.\n");
+> >   ret = 0
+> > 
+> 
+> I believe we need follow to system call documentation but not what some
+> particular script expects to see. :) But -EFBIG sounds like reasonable error
+> code.
+> 
+
+I agree.
+
+> Thanks,
+> Slava.
+> 
+> > 
+
+-- 
+Thanks,
+Hyunchul
 
