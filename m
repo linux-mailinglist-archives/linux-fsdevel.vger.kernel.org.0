@@ -1,162 +1,237 @@
-Return-Path: <linux-fsdevel+bounces-79578-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79579-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id qBRuFsOOqml0TQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79578-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 09:22:27 +0100
+	id kDnbN1WPqmm/TgEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79579-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 09:24:53 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2F8B21D027
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 09:22:26 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61CC621D07B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 09:24:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 2D61430EA2D1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 08:17:27 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A31B13079679
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 08:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06D4377ECD;
-	Fri,  6 Mar 2026 08:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA97372ED1;
+	Fri,  6 Mar 2026 08:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hHVNtRYW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp06-ext.udag.de (smtp06-ext.udag.de [62.146.106.76])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA16E315D40;
-	Fri,  6 Mar 2026 08:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.146.106.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C033B2A0;
+	Fri,  6 Mar 2026 08:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772785045; cv=none; b=gDDSe1u30GEgVdbgY+k1vAhbIhclI/vnNhDdn5nT6cUsgHbbcOAMoNNeTMTTrldi5a7CEf1RKbGLl3uHuXsbZsbEeu8L4rE4zxwEhaCJUmlb/YDsUGiJFziKLmF/9YOu576nWJu8Yo6aeZUTO7kVO60wPABbSbeUeBzU+vk6D8Y=
+	t=1772785168; cv=none; b=m76uQk9wJ/QRBOuojbDUURldOzTVKI3VmizOyWhLfliGTIPDcOdjJmz0p7/jBGsMz1m9wS2NH8scgtsJziRMZ/B2WqrkdIgXkXs4BqCe1RUbubGOWuMMI/hUGdjKVxg2YVZDybMCvn2axuP0h5EgjuGRUGz5ugLsvyBZd2Q418s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772785045; c=relaxed/simple;
-	bh=IKmuCai+kYoVonCzcAEr2NYIzjK+3Gqf5dNNhPwDpYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j/bQqwJ12jOmU1x/68zDawQ5zPOQfXA+Ouat6dWDvPil24btLrNk2xXOCdJxMk8YGAaeDWVeAqTLt1HSr100WXmzm+7etRskDNikgAYkBN6i0uiGP7pCyTRPtvVD0p3lXP2JfOAmBTC8d231yJa7SB8GFDlZHYjo4o1FSd+QBlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de; spf=pass smtp.mailfrom=birthelmer.de; arc=none smtp.client-ip=62.146.106.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=birthelmer.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birthelmer.de
-Received: from localhost (200-143-067-156.ip-addr.inexio.net [156.67.143.200])
-	by smtp06-ext.udag.de (Postfix) with ESMTPA id 8468AE01BB;
-	Fri,  6 Mar 2026 09:17:14 +0100 (CET)
-Authentication-Results: smtp06-ext.udag.de;
-	auth=pass smtp.auth=birthelmercom-0001 smtp.mailfrom=horst@birthelmer.de
-Date: Fri, 6 Mar 2026 09:17:13 +0100
-From: Horst Birthelmer <horst@birthelmer.de>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Bernd Schubert <bernd@bsbernd.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Horst Birthelmer <horst@birthelmer.com>, Bernd Schubert <bschubert@ddn.com>, 
-	Luis Henriques <luis@igalia.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Horst Birthelmer <hbirthelmer@ddn.com>
-Subject: Re: Re: Re: Re: [PATCH v5 1/3] fuse: add compound command to combine
- multiple requests
-Message-ID: <aaqLZ-LKOnH94iwz@fedora.fritz.box>
-References: <CAJfpegvt0HwHOmOTzkCoOqdmvU6pf-wM228QQSauDsbcL+mmUA@mail.gmail.com>
- <f38cf69e-57b9-494b-a90a-ede72aa12a54@bsbernd.com>
- <CAJfpegscqhGikqZsaAKiujWyAy6wusdVCCQ1jirnKiGX9bE5oQ@mail.gmail.com>
- <bb5bf6c8-22b2-4ca8-808b-4a3c00ec72fd@bsbernd.com>
- <CAJfpegv4OvANQ-ZemENASyy=m-eWedx=yz85TL+1EFwCx+C9CQ@mail.gmail.com>
- <d37cca3f-217d-4303-becd-c82a3300b199@bsbernd.com>
- <aY25uu56irqfFVxG@fedora-2.fritz.box>
- <CAJnrk1bg+GG8RkDtrunHW-P-7o=wtVUvjbiwQa_5Te4aPkbw1g@mail.gmail.com>
- <aZC0WdZKA7ohRuHN@fedora>
- <CAJnrk1YUf7xw9s8Bo1YZXVvfe8U-D4E+j-3iZNtOkog4QRZaMw@mail.gmail.com>
+	s=arc-20240116; t=1772785168; c=relaxed/simple;
+	bh=kMVOZgHqgskvS2CBGSkoHJyRYRfBjXLs2IdWaLMUf6Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fty9oN9kWn0wHYBYmPi25qoHKFnPsXv1Cg23bv1TXuvBrQX0ose3ao59tYEpNXXku6JBQs4r7Vc+Zgm4IX+inERqsPA+SDd3KFPv07MAvcv6Ll7ap7ymGlAY6WubDxxft0RNCxJC4q2mgseZDvv6e1PVF8tsvfhNDhgFETiR9UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hHVNtRYW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5247BC4CEF7;
+	Fri,  6 Mar 2026 08:19:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772785167;
+	bh=kMVOZgHqgskvS2CBGSkoHJyRYRfBjXLs2IdWaLMUf6Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hHVNtRYWV1oR9UnWiXdQaPaj+2AlH0+JXBxnCseutgpZQQw6APuxnIlJXVnLmkij8
+	 JdtHoRsDExTjVPf85DdHCvhAS81OtKDsWZHUJ2EFFxJBurMB7Oo1n/XkIRLijGXD9d
+	 ZlS28EmLCVwiW7xQo2DkeYNjsFBnxEuG/1qYMoJWZukSkAwtz1zZw7spDYym0fhYjd
+	 HvmscLDnnbYzXznX1tydTfBF+5G81l5k5dD+Dru5yO0MpR49lRRg9PqaeA7ajZ3/Sq
+	 7TuzaB6ySbOeum4ZQgSvh1Bqxz62xmI8jz5dOf/nrdmF+Fhnqx95hXMh8g8pXxHv7Y
+	 IoLZ7QL7yOQnQ==
+From: "David Hildenbrand (Arm)" <david@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-mm@kvack.org,
+	"David Hildenbrand (Arm)" <david@kernel.org>,
+	Zi Yan <ziy@nvidia.com>,
+	Lance Yang <lance.yang@linux.dev>,
+	Vlastimil Babka <vbabka@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Barry Song <baohua@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Usama Arif <usamaarif642@gmail.com>,
+	Andi Kleen <ak@linux.intel.com>
+Subject: [PATCH v2] docs: filesystems: clarify KernelPageSize vs. MMUPageSize in smaps
+Date: Fri,  6 Mar 2026 09:19:16 +0100
+Message-ID: <20260306081916.38872-1-david@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1YUf7xw9s8Bo1YZXVvfe8U-D4E+j-3iZNtOkog4QRZaMw@mail.gmail.com>
-X-Rspamd-Queue-Id: B2F8B21D027
+X-Rspamd-Queue-Id: 61CC621D07B
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.36 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	DMARC_POLICY_SOFTFAIL(0.10)[birthelmer.de : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79578-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,kernel.org,nvidia.com,linux.dev,linux-foundation.org,oracle.com,linux.alibaba.com,redhat.com,arm.com,lwn.net,linuxfoundation.org,gmail.com,linux.intel.com];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-79579-lists,linux-fsdevel=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[19];
 	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-0.851];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[horst@birthelmer.de,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	R_DKIM_NA(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[9];
+	FROM_NEQ_ENVFROM(0.00)[david@kernel.org,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	NEURAL_HAM(-0.00)[-1.000];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,fedora.fritz.box:mid]
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On Thu, Mar 05, 2026 at 04:52:01PM -0800, Joanne Koong wrote:
-> On Sat, Feb 14, 2026 at 9:51 AM Horst Birthelmer <horst@birthelmer.de> wrote:
-> >
-> > On Fri, Feb 13, 2026 at 05:35:30PM -0800, Joanne Koong wrote:
-> > > On Thu, Feb 12, 2026 at 3:44 AM Horst Birthelmer <horst@birthelmer.de> wrote:
-> > > > I have a feeling we have different use cases in mind and misunderstand each other.
-> > > >
-> > > > As I see it:
-> > > > From the discussion a while ago that actually started the whole thing I understand
-> > > > that we have combinations of requests that we want to bunch together for a
-> > > > specific semantic effect. (see OPEN+GETATTR that started it all)
-> > > >
-> > > > If that is true, then bunching together more commands to create 'compounds' that
-> > > > semantically linked should not be a problem and we don't need any algorithm for
-> > > > recosntructing the args. We know the semantics on both ends and craft the compounds
-> > > > according to what is to be accomplished (the fuse server just provides the 'how')
-> > > >
-> > > > From the newer discussion I have a feeling that there is the idea floating around
-> > > > that we should bunch together arbitrary requests to have some performance advantage.
-> > > > This was not my initial intention.
-> > > > We could do that however if we can fill the args and the requests are not
-> > > > interdependent.
-> > >
-> > > I have a series of (very unpolished) patches from last year that does
-> > > basically this. When libfuse does a read on /dev/fuse, the kernel
-> > > crams in as many requests off the fiq list as it can fit into the
-> > > buffer. On the libfuse side, when it iterates through that buffer it
-> > > offloads each request to a worker thread to process/execute that
-> > > request. It worked the same way on the dev uring side. I put those
-> > > changes aside to work on the zero copy stuff, but if there's interest
-> > > I can go back to those patches and clean them up and put them through
-> > > some testing. I don't think the work overlaps with your compound
-> > > requests stuff though. The compound requests would be a request inside
-> > > the larger batch.
-> >
-> > I would like to have your patch for the processing of multiple requests
-> > and the compound for handling semantically related requests.
-> >
-> 
-> the kernel-side changes for the /dev/fuse request batching are pretty
-> self-contained [1] but the libfuse changes are very ugly. The
-> benchmarks didn't look promising. I think it only really helps if the
-> server has metadata-heavy bursty behavior that saturates all the
-> libfuse threads, but I don't think that's typical. I dont think it's
-> worth pursuing further.
+There was recently some confusion around THPs and the interaction with
+KernelPageSize / MMUPageSize. Historically, these entries always
+correspond to the smallest size we could encounter, not any current
+usage of transparent huge pages or larger sizes used by the MMU.
 
-Thanks for the patch. I agree completely. However I wrote that in the context
-where I thought that people wanted to achieve something different with compound
-requests, like processing parts of a queue depending on some or no criteria.
-That's why I stressed the semantic relation of the requests in a compound.
+Ever since we added THP support many, many years ago, these entries
+would keep reporting the smallest (fallback) granularity in a VMA.
 
-I'm almost willing to bet that in the future we will see someone get
-the idea of LOOKUP+OPEN+READ+CLOSE, which would practically
-create exactly those bursts when not done as a compound.
-Just as a side note ...
+For this reason, they default to PAGE_SIZE for all VMAs except for
+VMAs where we have the guarantee that the system and the MMU will
+always use larger page sizes. hugetlb, for example, exposes a custom
+vm_ops->pagesize callback to handle that. Similarly, dax/device
+exposes a custom vm_ops->pagesize callback and provides similar
+guarantees.
 
-> 
-> Thanks,
-> Joanne
-> 
-> [1]  https://github.com/joannekoong/linux/commit/308ebbde134ac98d3b3d3e2f3abc2c52ef444759
+Let's clarify the historical meaning of KernelPageSize / MMUPageSize,
+and point at "AnonHugePages", "ShmemPmdMapped" and "FilePmdMapped"
+regarding PMD entries.
+
+While at it, document "FilePmdMapped", clarify what the "AnonHugePages"
+and "ShmemPmdMapped" entries really mean, and make it clear that there
+are no other entries for other THP/folio sizes or mappings.
+
+Also drop the duplicate "KernelPageSize" and "MMUPageSize" entries in
+the example.
+
+Link: https://lore.kernel.org/all/20260225232708.87833-1-ak@linux.intel.com/
+Reviewed-by: Zi Yan <ziy@nvidia.com>
+Reviewed-by: Lance Yang <lance.yang@linux.dev>
+Acked-by: Vlastimil Babka (SUSE) <vbabka@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Zi Yan <ziy@nvidia.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
+Cc: Nico Pache <npache@redhat.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com
+Cc: Dev Jain <dev.jain@arm.com>
+Cc: Barry Song <baohua@kernel.org>
+Cc: Lance Yang <lance.yang@linux.dev>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Usama Arif <usamaarif642@gmail.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: David Hildenbrand (Arm) <david@kernel.org>
+---
+
+v1 -> v2:
+* Some rewording and clarifications
+* Drop duplicate entries in the example
+
+---
+ Documentation/filesystems/proc.rst | 40 +++++++++++++++++++++---------
+ 1 file changed, 28 insertions(+), 12 deletions(-)
+
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+index b0c0d1b45b99..e2d22a424dcd 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -464,26 +464,37 @@ Memory Area, or VMA) there is a series of lines such as the following::
+     KSM:                   0 kB
+     LazyFree:              0 kB
+     AnonHugePages:         0 kB
++    FilePmdMapped:         0 kB
+     ShmemPmdMapped:        0 kB
+     Shared_Hugetlb:        0 kB
+     Private_Hugetlb:       0 kB
+     Swap:                  0 kB
+     SwapPss:               0 kB
+-    KernelPageSize:        4 kB
+-    MMUPageSize:           4 kB
+     Locked:                0 kB
+     THPeligible:           0
+     VmFlags: rd ex mr mw me dw
+ 
+ The first of these lines shows the same information as is displayed for
+ the mapping in /proc/PID/maps.  Following lines show the size of the
+-mapping (size); the size of each page allocated when backing a VMA
+-(KernelPageSize), which is usually the same as the size in the page table
+-entries; the page size used by the MMU when backing a VMA (in most cases,
+-the same as KernelPageSize); the amount of the mapping that is currently
+-resident in RAM (RSS); the process's proportional share of this mapping
+-(PSS); and the number of clean and dirty shared and private pages in the
+-mapping.
++mapping (size); the smallest possible page size allocated when backing a
++VMA (KernelPageSize), which is the granularity in which VMA modifications
++can be performed; the smallest possible page size that could be used by the
++MMU (MMUPageSize) when backing a VMA; the amount of the mapping that is
++currently resident in RAM (RSS); the process's proportional share of this
++mapping (PSS); and the number of clean and dirty shared and private pages
++in the mapping.
++
++"KernelPageSize" always corresponds to "MMUPageSize", except when a larger
++kernel page size is emulated on a system with a smaller page size used by the
++MMU, which is the case for some PPC64 setups with hugetlb.  Furthermore,
++"KernelPageSize" and "MMUPageSize" always correspond to the smallest
++possible granularity (fallback) that can be encountered in a VMA throughout
++its lifetime.  These values are not affected by Transparent Huge Pages
++being in effect, or any usage of larger MMU page sizes (either through
++architectural huge-page mappings or other explicit/implicit coalescing of
++virtual ranges performed by the MMU).  "AnonHugePages", "ShmemPmdMapped" and
++"FilePmdMapped" provide insight into the usage of PMD-level architectural
++huge-page mappings.
+ 
+ The "proportional set size" (PSS) of a process is the count of pages it has
+ in memory, where each page is divided by the number of processes sharing it.
+@@ -528,10 +539,15 @@ pressure if the memory is clean. Please note that the printed value might
+ be lower than the real value due to optimizations used in the current
+ implementation. If this is not desirable please file a bug report.
+ 
+-"AnonHugePages" shows the amount of memory backed by transparent hugepage.
++"AnonHugePages", "ShmemPmdMapped" and "FilePmdMapped" show the amount of
++memory backed by Transparent Huge Pages that are currently mapped by
++architectural huge-page mappings at the PMD level. "AnonHugePages"
++corresponds to memory that does not belong to a file, "ShmemPmdMapped" to
++shared memory (shmem/tmpfs) and "FilePmdMapped" to file-backed memory
++(excluding shmem/tmpfs).
+ 
+-"ShmemPmdMapped" shows the amount of shared (shmem/tmpfs) memory backed by
+-huge pages.
++There are no dedicated entries for Transparent Huge Pages (or similar concepts)
++that are not mapped by architectural huge-page mappings at the PMD level.
+ 
+ "Shared_Hugetlb" and "Private_Hugetlb" show the amounts of memory backed by
+ hugetlbfs page which is *not* counted in "RSS" or "PSS" field for historical
+-- 
+2.43.0
+
 
