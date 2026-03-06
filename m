@@ -1,79 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-79549-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GLywBwoeqmlLLgEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79549-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 01:21:30 +0100
+	id gAexJsQgqmn2LgEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 01:33:08 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9854219BF4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 01:21:29 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BCB8219D41
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 01:33:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9B81E3020D61
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 00:21:24 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 9FF4C300D4DF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 00:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D7329D287;
-	Fri,  6 Mar 2026 00:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48EA22D3A7B;
+	Fri,  6 Mar 2026 00:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="AXjAWSob"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHcH9ulP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay.virtuozzo.com (relay.virtuozzo.com [130.117.225.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E9F35975;
-	Fri,  6 Mar 2026 00:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.117.225.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6632A2BE7D1
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Mar 2026 00:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772756483; cv=none; b=gHJKfWLoZKlH2BD0CDfpXL9ZelNEfTFFeu8jPk3Oi8n7QRyFgbzaECYG7yMKgbHiA4WnmZ10RnJ7Bz2GGYA+JcfHbDQWu15vPgbSqh0AgA1l1daSrcWVUZMg5vrUc3pjaCQyYeWDFeeuwtEfqAuN/28u0moEK010kzzAzaDWTZM=
+	t=1772757186; cv=none; b=d/RHXxkRtGErKTBJ0llsrVbe+nuCfzphu0xFP109ssfhS7RFECJOWEVvSOsxKst8B7em5kKSThodr+xr+iTDi/7u13jehaNO4515U1DeapmpI69rjlCUWRre+R1qN+gxztv/pgrximWH6BnGSIDeceh5fhOTtWFo9fqvtUsHDN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772756483; c=relaxed/simple;
-	bh=f7KYVhw5pEHwSXD7nd7S6wB4i8qZrmY88A+KR+uCr2c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OHVW9RUHgYMwyUpXQezLyKUbTHhwBguKR5pOO97wpP+uRzRsOlW7gTgti23UNiHO6rxSE2ReM4/BJoeot1x9fgOHzHmFFQpJJR1vkJ2Bb4Wyb/dy2bdnzv5CTAGG8g+HbV8Es9IX+TnopwXOYGXcHXv+ZflwEqWnSVS5bCF2ePE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=virtuozzo.com; spf=pass smtp.mailfrom=virtuozzo.com; dkim=pass (2048-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b=AXjAWSob; arc=none smtp.client-ip=130.117.225.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=virtuozzo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=virtuozzo.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=virtuozzo.com; s=relay; h=MIME-Version:Message-ID:Date:Subject:From:
-	Content-Type; bh=j5sV4+wUvNOc3xS7CkrG8KEGHYOk7JpcEgiSOK3kguU=; b=AXjAWSobMRol
-	20h18D2GlepRE9enrygSuX0r1WN9naeYhUBjpfWPU5RO5akN8qpT3Y0p3+wKjRVrl1d/LISqtEy/O
-	7384bWx5AGh0MwexSpiRtM50XRNH8YIPWpT9fkjhgdoQOfN7dsIYhEQZDmve3pGtUZPAdElyr8jd9
-	VvtKsRvrSnv/BUZpCvygoIP+huEXXUu9p8eipR+SPHHzl9VrW4fhbLMbyZjcS/5sRiWGHLykE6AkH
-	DGPNFpqh2atETX9aFQAW99JVgREHT0nVJWdBM0SN1ABV7ALMqM9+g8yzSEIo5np4qYoDL+bc83ouH
-	ngm/AAd0YhrMFb6LXmRJRA==;
-Received: from [130.117.225.5] (helo=dev004.aci.vzint.dev)
-	by relay.virtuozzo.com with esmtps  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <aleksey.oladko@virtuozzo.com>)
-	id 1vyIuk-006nPE-06;
-	Fri, 06 Mar 2026 01:21:05 +0100
-Received: from dev004.aci.vzint.dev (localhost [127.0.0.1])
-	by dev004.aci.vzint.dev (8.16.1/8.16.1) with ESMTPS id 6260L6d0519684
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 6 Mar 2026 00:21:06 GMT
-Received: (from root@localhost)
-	by dev004.aci.vzint.dev (8.16.1/8.16.1/Submit) id 6260L1JW519683;
-	Fri, 6 Mar 2026 00:21:01 GMT
-From: Aleksei Oladko <aleksey.oladko@virtuozzo.com>
-To: Shuah Khan <shuah@kernel.org>, Kees Cook <kees@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Seth Forshee <sforshee@kernel.org>, Tony Luck <tony.luck@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
-        Babu Moger <babu.moger@amd.com>, Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@kernel.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-        Abhinav Saxena <xandfury@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Aleksei Oladko <aleksey.oladko@virtuozzo.com>
-Subject: [PATCH] selftests: do not override CFLAGS set by the build environment
-Date: Fri,  6 Mar 2026 00:21:00 +0000
-Message-ID: <20260306002100.519673-1-aleksey.oladko@virtuozzo.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1772757186; c=relaxed/simple;
+	bh=MT4DRoCGB/girfxR34MqAbQes4URJrHY/VHWRaSDw2o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qtE/IItO2IXLjh0K1oTDQKjjTJopnt0mje2h7QOne2/FSB9CB3fu0TOLEK75tBQRj55D5nZC8PVU6m7W/pqy5uEMWb6Y+80fJ7IZd2xo2S0FA6MnJv18W7fIzUX2iAhMPOXbx+szlNPH6Kkigeefaiy0ljkkSozFhCVMaksvgJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHcH9ulP; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2a8fba3f769so38179595ad.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Mar 2026 16:33:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772757184; x=1773361984; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1twlmSPwUnfXvGoR6t3HmIMwyyrF4rU9pLV0zVz/MSo=;
+        b=RHcH9ulPi3mRAlS9JvTNCIRwRTRn/fyAGtmkgR/R/czXS2oJ41KzdtjT0gJSgjTOUj
+         d9XYZ0ch7OhtF8tLCU20+ez+nKlokqe1GpJzVPwt9V81BVhN7iQM1Y9ZxOaFgMnwY2u2
+         py2gz54wx+01BWsyKJsLSLBzQxIRKhCj2ID8JgHznHTuZ7KSutJLRLSV58LeOTX0CTTU
+         Aj9eORTC+QIYHCdTKykYT8Z/BSY8qv4qmW/bLr/SNi9oQzJcVEtEi3DwExxpRLzOMwpP
+         Npm4XXqyG0GDzkLIQRoMivb6r77K7q96CjyLXSrASPq3UcvQj4eTTJIOno5gZPLunweq
+         wo6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772757184; x=1773361984;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1twlmSPwUnfXvGoR6t3HmIMwyyrF4rU9pLV0zVz/MSo=;
+        b=Nxyz9DHRSCK3GG58OFimL/xvGSCW0r3VatJOzidCXEmUOnGh0hbxjh1kYy3nY9slOo
+         TjQfG9H9uHK4SJ+7D4vydvfZOC8D0kL/757aPcu0qLV85G3YgpLMlGeXY3sRPWuoATTU
+         aosfzoJau6FV/xrCpvipIaskbdGg7o/i1MVB2ze26hmzXF529XbDJ7N8ZBRPJlsDvpin
+         52ITn1XClQhYbcxdL3P1UHLMocE7ep+eCUfSfnAsEszVMUPJc+TsL8jbGAocw1f0CWrg
+         yV63VRZU/oI2TdYKaixJduO3Qnxzrr7pyqn9TJoiXHwPnBgcP3dPJhmmIW+9yJurdp1I
+         JEEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXEs8BP4pAAAgkALU3KqGDzpPtgxY+o7IlkY1VKRiSNIt1lMfQsWz/5haVX5XJmByl7G0v8i4HRVcNHQCSn@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhiXzsbu56FYHowg7uVJ+dahmgHbiD7P507UekQ8lmebOlTdDw
+	/7FAJl995BRLc3cEu3TiOXBrELZwZSZa1PnwbplPSGN9BSiEkFwax043
+X-Gm-Gg: ATEYQzxuXleqHUTVniDCwpRQf/qxbz0Sm6XLQV11IFQFqo6CKi3DmkfSXUHKrOE8tV6
+	xUar36OUgRkIgdpRxFWeApFEMYBHmRsn3RfKw/HpDHUKtZbi93UyP25lP1eL7KjzG4hlTIVYrgU
+	HXP6vl/mnCM872ZVonVlkGMLiasQt80+w4ACmruDErcTZx+aehjc8vnCZb+xbXSGAmQNdrX7ZRW
+	lIRr9e/y6qQ8RcM0+TDvGPsDl8Na60CeXej1Br5Kspbzxvo+0qy5LBaV9lfYNGyowpX9RuNxbaR
+	+qjo5wp9FWwpyid8Dxtdy02S4G17eEDetk4ISZ9JSxbRWY5PWC9ftWwvzqtQgjKT7V8ZboZaBCx
+	FLEPJ8xXylxmEL6YILnlQSqYBaV4E7P7UqEwJFZKvy4oVlRA7wMg4YF5D3+4PGbQHBfs4Jt8xaY
+	GtJscLxLx2L16AC0cexBN/nM6pdrs=
+X-Received: by 2002:a17:903:2452:b0:2ae:5752:af82 with SMTP id d9443c01a7336-2ae82498328mr3893045ad.49.1772757183664;
+        Thu, 05 Mar 2026 16:33:03 -0800 (PST)
+Received: from localhost ([2a03:2880:ff:3::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ae3d1b2c5esm170699065ad.6.2026.03.05.16.33.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2026 16:33:03 -0800 (PST)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: axboe@kernel.dk
+Cc: hch@infradead.org,
+	asml.silence@gmail.com,
+	bernd@bsbernd.com,
+	csander@purestorage.com,
+	krisman@suse.de,
+	linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: [PATCH v3 0/8] io_uring: add kernel-managed buffer rings
+Date: Thu,  5 Mar 2026 16:32:16 -0800
+Message-ID: <20260306003224.3620942-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,243 +94,106 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: B9854219BF4
+X-Rspamd-Queue-Id: 3BCB8219D41
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
+X-Spamd-Result: default: False [0.84 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[virtuozzo.com,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[virtuozzo.com:s=relay];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[23];
-	TAGGED_FROM(0.00)[bounces-79549-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[kernel.org,intel.com,arm.com,amd.com,dabbelt.com,eecs.berkeley.edu,ghiti.fr,gmail.com,linuxfoundation.org];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[aleksey.oladko@virtuozzo.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[virtuozzo.com:+];
-	RCVD_COUNT_FIVE(0.00)[6];
+	TAGGED_FROM(0.00)[bounces-79550-lists,linux-fsdevel=lfdr.de];
+	TO_DN_NONE(0.00)[];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[infradead.org,gmail.com,bsbernd.com,purestorage.com,suse.de,vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	FROM_NEQ_ENVFROM(0.00)[joannelkoong@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	RCVD_COUNT_FIVE(0.00)[5];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	NEURAL_HAM(-0.00)[-1.000];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[fw_fallback.sh:url,virtuozzo.com:dkim,virtuozzo.com:email,virtuozzo.com:mid,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,run_unprivileged_remount.sh:url]
+	PRECEDENCE_BULK(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-Some kselftests Makefiles assign CFLAGS using 'CFLAGS=...'
-which overrides any CFLAGS provided by the build environment.
+Currently, io_uring buffer rings require the application to allocate and
+manage the backing buffers. This series introduces buffer rings where the
+kernel allocates and manages the buffers on behalf of the application. From
+the uapi side, this goes through the pbuf ring interface, through the
+IOU_PBUF_RING_KERNEL_MANAGED flag.
 
-If the environment set flags, overriding CFLAGS may result in
-inconsistent compiler and linker options and cause build failures,
-for example when building PIE binaries:
+There was a long discussion with Pavel on v1 [1] regarding the design. The
+alternatives were to have the buffers allocated and registered through a
+memory region or through the registered buffers interface and have fuse
+implement ring buffer logic internally outside of io-uring. However, because
+the buffers need to be contiguous for DMA and some high-performance fuse
+servers may need non-fuse io-uring requests to use the buffer ring directly,
+v3 keeps the design.
 
-  # export CFLAGS="-fPIE"
-  # export LDFLAGS="-pie"
-  # make -C tools/testing/selftests/ TARGETS=mount_setattr
-  make: Entering directory '/build/kernel/tools/testing/selftests'
-  make[1]: Entering directory '/build/kernel/tools/testing/selftests/mount_setattr'
-    CC       mount_setattr_test
-  /usr/bin/ld: warning: -z pack-relative-relocs ignored
-  /usr/bin/ld: /tmp/ccikConN.o: relocation R_X86_64_32 against `.rodata.str1.8' can not be used when making a PIE object; recompile with -fPIE
-  collect2: error: ld returned 1 exit status
-  make[1]: *** [../lib.mk:222: /build/kernel/tools/testing/selftests/mount_setattr/mount_setattr_test] Error 1
+This is split out from the fuse-over-io_uring series in [2], which needs the
+kernel to own and manage buffers shared between the fuse server and the
+kernel. The link to the fuse tree that uses the commits in this series is in
+[3].
 
-Fix this by appending to CFLAGS using 'CFLAGS+=' instead of
-overriding them.
+This series is on top of the for-7.1/io_uring branch in Jens' io-uring
+tree (commit ee1d7dc33990). The corresponding liburing changes are in [4] and
+will be submitted after the changes in this patchset have landed.
 
-The fix is not applied to the Makefiles in x86, riscv, mm, arm64
-and powerpc as they fully define their flags.
+Thanks,
+Joanne
 
-Signed-off-by: Aleksei Oladko <aleksey.oladko@virtuozzo.com>
----
- tools/testing/selftests/efivarfs/Makefile             | 2 +-
- tools/testing/selftests/exec/Makefile                 | 2 +-
- tools/testing/selftests/firmware/Makefile             | 4 ++--
- tools/testing/selftests/ipc/Makefile                  | 4 ++--
- tools/testing/selftests/mount/Makefile                | 4 ++--
- tools/testing/selftests/mount_setattr/Makefile        | 2 +-
- tools/testing/selftests/move_mount_set_group/Makefile | 2 +-
- tools/testing/selftests/resctrl/Makefile              | 2 +-
- tools/testing/selftests/safesetid/Makefile            | 2 +-
- tools/testing/selftests/signal/Makefile               | 2 +-
- tools/testing/selftests/timens/Makefile               | 2 +-
- tools/testing/selftests/tty/Makefile                  | 2 +-
- tools/testing/selftests/vDSO/Makefile                 | 2 +-
- 13 files changed, 16 insertions(+), 16 deletions(-)
+[1] https://lore.kernel.org/linux-fsdevel/20260210002852.1394504-1-joannelkoong@gmail.com/T/#t
+[2] https://lore.kernel.org/linux-fsdevel/20260116233044.1532965-1-joannelkoong@gmail.com/
+[3] https://github.com/joannekoong/linux/commits/fuse_zero_copy_for_v3/
+[4] https://github.com/joannekoong/liburing/commits/pbuf_kernel_managed/
 
-diff --git a/tools/testing/selftests/efivarfs/Makefile b/tools/testing/selftests/efivarfs/Makefile
-index e3181338ba5e..f6c412059af3 100644
---- a/tools/testing/selftests/efivarfs/Makefile
-+++ b/tools/testing/selftests/efivarfs/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0-only
--CFLAGS = -Wall
-+CFLAGS += -Wall
- 
- TEST_GEN_FILES := open-unlink create-read
- TEST_PROGS := efivarfs.sh
-diff --git a/tools/testing/selftests/exec/Makefile b/tools/testing/selftests/exec/Makefile
-index 45a3cfc435cf..54cdefb9ccb0 100644
---- a/tools/testing/selftests/exec/Makefile
-+++ b/tools/testing/selftests/exec/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--CFLAGS = -Wall
-+CFLAGS += -Wall
- CFLAGS += -Wno-nonnull
- CFLAGS += $(KHDR_INCLUDES)
- 
-diff --git a/tools/testing/selftests/firmware/Makefile b/tools/testing/selftests/firmware/Makefile
-index 7992969deaa2..dd9acf972cf5 100644
---- a/tools/testing/selftests/firmware/Makefile
-+++ b/tools/testing/selftests/firmware/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- # Makefile for firmware loading selftests
--CFLAGS = -Wall \
--         -O2
-+CFLAGS += -Wall \
-+          -O2
- 
- TEST_PROGS := fw_run_tests.sh
- TEST_FILES := fw_fallback.sh fw_filesystem.sh fw_upload.sh fw_lib.sh
-diff --git a/tools/testing/selftests/ipc/Makefile b/tools/testing/selftests/ipc/Makefile
-index 50e9c299fc4a..5a5577767a35 100644
---- a/tools/testing/selftests/ipc/Makefile
-+++ b/tools/testing/selftests/ipc/Makefile
-@@ -3,11 +3,11 @@ uname_M := $(shell uname -m 2>/dev/null || echo not)
- ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/i386/)
- ifeq ($(ARCH),i386)
-         ARCH := x86
--	CFLAGS := -DCONFIG_X86_32 -D__i386__
-+	CFLAGS += -DCONFIG_X86_32 -D__i386__
- endif
- ifeq ($(ARCH),x86_64)
- 	ARCH := x86
--	CFLAGS := -DCONFIG_X86_64 -D__x86_64__
-+	CFLAGS += -DCONFIG_X86_64 -D__x86_64__
- endif
- 
- CFLAGS += $(KHDR_INCLUDES)
-diff --git a/tools/testing/selftests/mount/Makefile b/tools/testing/selftests/mount/Makefile
-index 2d9454841644..38361a896363 100644
---- a/tools/testing/selftests/mount/Makefile
-+++ b/tools/testing/selftests/mount/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- # Makefile for mount selftests.
--CFLAGS = -Wall \
--         -O2
-+CFLAGS += -Wall \
-+          -O2
- 
- TEST_PROGS := run_unprivileged_remount.sh run_nosymfollow.sh
- TEST_GEN_FILES := unprivileged-remount-test nosymfollow-test
-diff --git a/tools/testing/selftests/mount_setattr/Makefile b/tools/testing/selftests/mount_setattr/Makefile
-index 4d4f810cdf2c..fbdb8f69b548 100644
---- a/tools/testing/selftests/mount_setattr/Makefile
-+++ b/tools/testing/selftests/mount_setattr/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- # Makefile for mount selftests.
--CFLAGS = -g $(KHDR_INCLUDES) -Wall -O2 -pthread
-+CFLAGS += -g $(KHDR_INCLUDES) -Wall -O2 -pthread
- 
- LOCAL_HDRS += ../filesystems/wrappers.h
- 
-diff --git a/tools/testing/selftests/move_mount_set_group/Makefile b/tools/testing/selftests/move_mount_set_group/Makefile
-index 94235846b6f9..8771a5491ea3 100644
---- a/tools/testing/selftests/move_mount_set_group/Makefile
-+++ b/tools/testing/selftests/move_mount_set_group/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- # Makefile for mount selftests.
--CFLAGS = -g $(KHDR_INCLUDES) -Wall -O2
-+CFLAGS += -g $(KHDR_INCLUDES) -Wall -O2
- 
- TEST_GEN_FILES += move_mount_set_group_test
- 
-diff --git a/tools/testing/selftests/resctrl/Makefile b/tools/testing/selftests/resctrl/Makefile
-index 984534cfbf1b..1d566a91faa7 100644
---- a/tools/testing/selftests/resctrl/Makefile
-+++ b/tools/testing/selftests/resctrl/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--CFLAGS = -g -Wall -O2 -D_FORTIFY_SOURCE=2
-+CFLAGS += -g -Wall -O2 -D_FORTIFY_SOURCE=2
- CFLAGS += $(KHDR_INCLUDES)
- 
- TEST_GEN_PROGS := resctrl_tests
-diff --git a/tools/testing/selftests/safesetid/Makefile b/tools/testing/selftests/safesetid/Makefile
-index e815bbf2d0f4..d3811515d8e3 100644
---- a/tools/testing/selftests/safesetid/Makefile
-+++ b/tools/testing/selftests/safesetid/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- # Makefile for SafeSetID selftest.
--CFLAGS = -Wall -O2
-+CFLAGS += -Wall -O2
- LDLIBS = -lcap
- 
- TEST_PROGS := safesetid-test.sh
-diff --git a/tools/testing/selftests/signal/Makefile b/tools/testing/selftests/signal/Makefile
-index e0bf7058d19c..6c437f95132d 100644
---- a/tools/testing/selftests/signal/Makefile
-+++ b/tools/testing/selftests/signal/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0-only
--CFLAGS = -Wall
-+CFLAGS += -Wall
- TEST_GEN_PROGS = mangle_uc_sigmask
- TEST_GEN_PROGS += sas
- 
-diff --git a/tools/testing/selftests/timens/Makefile b/tools/testing/selftests/timens/Makefile
-index f0d51d4d2c87..357077792395 100644
---- a/tools/testing/selftests/timens/Makefile
-+++ b/tools/testing/selftests/timens/Makefile
-@@ -1,7 +1,7 @@
- TEST_GEN_PROGS := timens timerfd timer clock_nanosleep procfs exec futex vfork_exec
- TEST_GEN_PROGS_EXTENDED := gettime_perf
- 
--CFLAGS := -Wall -Werror -pthread
-+CFLAGS += -Wall -Werror -pthread
- LDLIBS := -lrt -ldl
- 
- include ../lib.mk
-diff --git a/tools/testing/selftests/tty/Makefile b/tools/testing/selftests/tty/Makefile
-index 7f6fbe5a0cd5..e9c22dafe5e1 100644
---- a/tools/testing/selftests/tty/Makefile
-+++ b/tools/testing/selftests/tty/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--CFLAGS = -O2 -Wall
-+CFLAGS += -O2 -Wall
- TEST_GEN_PROGS := tty_tstamp_update tty_tiocsti_test
- LDLIBS += -lcap
- 
-diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
-index e361aca22a74..1f4628ceb975 100644
---- a/tools/testing/selftests/vDSO/Makefile
-+++ b/tools/testing/selftests/vDSO/Makefile
-@@ -11,7 +11,7 @@ TEST_GEN_PROGS += vdso_test_correctness
- TEST_GEN_PROGS += vdso_test_getrandom
- TEST_GEN_PROGS += vdso_test_chacha
- 
--CFLAGS := -std=gnu99 -O2 -Wall -Wstrict-prototypes
-+CFLAGS += -std=gnu99 -O2 -Wall -Wstrict-prototypes
- 
- ifeq ($(CONFIG_X86_32),y)
- LDLIBS += -lgcc_s
+Changelog
+---------
+Changes from v1 -> v3:
+* Incorporate Jens' feedback, including fixing wraparound int promotion bug
+* uapi: merge kmbuf into pbuf interface/apis as IOU_PBUF_RING_KERNEL_MANAGED
+  flag (Pavel)
+v1: https://lore.kernel.org/linux-fsdevel/20260210002852.1394504-1-joannelkoong@gmail.com/T/#t
+
+Changes since [1]:
+* add "if (bl)" check for recycling API (Bernd)
+* check mul overflow, use GFP_USER, use PTR as return type (Christoph)
+* fix bl->ring leak (me)
+
+Joanne Koong (8):
+  io_uring/kbuf: add support for kernel-managed buffer rings
+  io_uring/kbuf: support kernel-managed buffer rings in buffer selection
+  io_uring/kbuf: add buffer ring pinning/unpinning
+  io_uring/kbuf: return buffer id in buffer selection
+  io_uring/kbuf: add recycling for kernel managed buffer rings
+  io_uring/kbuf: add io_uring_is_kmbuf_ring()
+  io_uring/kbuf: export io_ring_buffer_select()
+  io_uring/cmd: set selected buffer index in __io_uring_cmd_done()
+
+ include/linux/io_uring/cmd.h   |  53 ++++++-
+ include/linux/io_uring_types.h |  10 +-
+ include/uapi/linux/io_uring.h  |  16 ++-
+ io_uring/kbuf.c                | 250 +++++++++++++++++++++++++++++----
+ io_uring/kbuf.h                |  11 +-
+ io_uring/memmap.c              | 111 +++++++++++++++
+ io_uring/memmap.h              |   4 +
+ io_uring/uring_cmd.c           |   6 +-
+ 8 files changed, 427 insertions(+), 34 deletions(-)
+
 -- 
-2.43.0
+2.47.3
 
 
