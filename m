@@ -1,145 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-79637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79633-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cBmaCUICq2msZQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 17:35:14 +0100
+	id cKIVCmsBq2msZQEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79633-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 17:31:39 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 690F622511D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 17:35:13 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E162224EE6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 17:31:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id CB3113014BDD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 16:29:38 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 4306D309A3EF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 16:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA8736A01B;
-	Fri,  6 Mar 2026 16:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB1136A023;
+	Fri,  6 Mar 2026 16:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BaBKQ7Cj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tR9/o42X"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BEB3B8BC8
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Mar 2026 16:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A9B407566
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Mar 2026 16:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772814531; cv=none; b=okUaKX+8iXDkEfTWKtsKGM9FQ4I6faftV29IdCoiXtENShZvLowNlqa+97OC4epwkH0gSdSrd3kuF+VfKz+V8O72tRxO9QVXq0TDcMYysgtTNQ7rBgpWhBZdcBf1jluQnOokyOzW5iE+pWGhsUWeFZc/mNXmu+OZJ6+lSgCjdpE=
+	t=1772814523; cv=none; b=md89esFfExl7aP30pb/yurbj5nce2cvUbOcrEwSBqo0fT++mH+lO1Tr3EUYDnly6UXxSk9isufKWxMWd5hsq0DcctOpBV0MYT9K2GcP7IZZcNj1XGAOb9x2ota2RAI9EqQ9UHJr8LYmrMOzfIfXRdh85mSYxiurzqhVcJ6jbW2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772814531; c=relaxed/simple;
-	bh=cX79kSZCH28VGIfUtFNJ+kXqzh0sITzmmuj1Jpvh9c8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AWfouS6wMxkPwr8kpqmWBLrdzQJewdCp3pjOKNDRJxR14sOQ88foZAku7HA3qcj00Rg9kjDaCsLVVaHreljp2NwuK1ceo48S0ZBiTb86KIPu5fXUyD0eTD3R7UeENQhRvjPq49Jt100af11xlR77KaCboPtNeSmD5akckmYUzF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BaBKQ7Cj; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b9431300833so122134566b.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Mar 2026 08:28:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1772814524; x=1773419324; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aXIl+Rx1DH3bfO0TDXGYaY5Er/AJrKyveW+IxjspZg4=;
-        b=BaBKQ7CjI5ZOEK38a84r07tE3CP2H1lY07crpdUW4fjgQXTJJOOZFJ07nzvaGmUlpY
-         BJ9Q0qAXIiX4fAC/iWiYlWCh1bZvag/1XJqiJRQZ69aEI6ZFkAE+INcu9LEteOy50rcY
-         1IymEwPnuwQxCA1VOv8FKSKl9aBaeOtanbXNM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772814524; x=1773419324;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aXIl+Rx1DH3bfO0TDXGYaY5Er/AJrKyveW+IxjspZg4=;
-        b=V8+QutwORtf1220eGkYc+fghC722o1ducAOUg61A+7Z6+Ye2LxFpYJbbNIj9+bR6no
-         HKOrLR0xsYuvhdZyEnJ+izQ91/IoFYzTta2S9WQpoc6m2R74CApZHVZbm+HRz0WYy5Un
-         gf3Hjj6gNVSbBvGCf1pwubNJqs2Vct2Azh5PSfHmCEl4RIAfPP54Cu+oPE6X5R9EB5sB
-         LrIKxnGjyWhYJPyR3RmyfnN8w8Rz7IcSkU7f6P+ZpYLJYTLKYa1o9PvvdkXuUcEAXqOs
-         /3ZuZFF+jP/PBFMg0yVjstjmFjbp4hEzUq+o74XQmnBJhYOOJe2evRjHJjUZYRkdzbl/
-         LTyg==
-X-Forwarded-Encrypted: i=1; AJvYcCXayx31Foap1jmDFz4m+XicHInG8tmCzkgYPNGiLyRGbcLyugzGAJoUOmM2u7u/58cncGIdSNjWD+trJSSM@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywrs/Dbk1eai4UEjOnGWw/jxc1ayxlbtGeKb/G/p6uLi9z3+RvL
-	LluG3GHn/O3cPz7RbeZfoM4cJ5D7mkYV9FcgYB5hRLGIGz285Sc+6EPrH+W/nWC6SCoTkWJy/2c
-	OzMSDdBc=
-X-Gm-Gg: ATEYQzxPVtg/PqwwCvwE9TNlx6FtDTiEFwl3PtvZI/4hdfpHAvDlaaq7eF7rfINT/F8
-	7j333hM49DcYlM5WbJjHScit3V79zjBukbVRtfnnylPLxWhccwbsjvD+GF/js581PCeC3jebk8W
-	ly1+GE88aUo9SyHiXhvl11LmSlC1dU3xwufLPWl4CyLwc5ufHzdZjCAqG3xS10v27m7HBOBrkeR
-	yBbKtO9csCbsYYKLKwVfDSQY9+e4UUUDusYUT9mTlu02PdMGBJhc1SQmumPcLjzbLHROn64+bMd
-	upPPUht+kX86iSvlBIMwWOokFNKuBXvKzNOfh/YS/R7E0B2lpDV5kCYZlBykQummXxpX5Ej8UXb
-	0VDA3Z/VUYEEc/7TUq2RLwtz1la+C3wdoTfgaWqkySV6bmCsOFffL82If36Z5IOXww1CxhdtkW9
-	zQ3YdZauBsoF/R5kZTTcdvSCXclxsVSNS8X3/j0ml4Z0uriVr1hAnSaLwjJJEGzOARw4XGT4IBX
-	SW6fvLbKYA=
-X-Received: by 2002:a17:907:94d3:b0:b87:4bdb:1061 with SMTP id a640c23a62f3a-b942db86962mr154618866b.1.1772814523688;
-        Fri, 06 Mar 2026 08:28:43 -0800 (PST)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b942f15c23fsm71804166b.49.2026.03.06.08.28.42
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Mar 2026 08:28:43 -0800 (PST)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b9431300833so122127066b.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Mar 2026 08:28:42 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUEqzdmXgCrrGB5qHHsgDwTrBrpzsmWkvUTKSbQ0QXV4T37RpMcobxm8PEjXQaLXAo0MAHlQVAfXtqTYtAY@vger.kernel.org
-X-Received: by 2002:a17:906:2092:b0:b94:82bc:ed13 with SMTP id
- a640c23a62f3a-b9482bcf242mr5892566b.7.1772814522554; Fri, 06 Mar 2026
- 08:28:42 -0800 (PST)
+	s=arc-20240116; t=1772814523; c=relaxed/simple;
+	bh=PzWWv0VsnAPgrex3gIvNGOtw6lTUsQZtwiNiTpnaF6w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To; b=BKkdCzyighIYSR9Lhw7gEwtvQcsGOhqqyr+c0Z/CYbKigPE13eZw/fkYhBAnlcssw2FXTKxazifjl6AcLhnwfQeSeT7U29bd7fXGIkdWdsulWA/TivjG5xV7YtQNMMi7NwOTodQkIQp2daa3kl342IkyT0GwUOX999ROLuiMP+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tR9/o42X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBAC9C4CEF7;
+	Fri,  6 Mar 2026 16:28:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772814522;
+	bh=PzWWv0VsnAPgrex3gIvNGOtw6lTUsQZtwiNiTpnaF6w=;
+	h=From:Subject:Date:To:From;
+	b=tR9/o42X8fTQaQuSP4C4CslDTSDzjm6azJ1HtjV7iXn2MH1TSsF4CoMBHtCeIVKkU
+	 DLZSiCh2SHtmJCnEFigWJSV1z/Pd6XCjniU0dC0Q775iHmQb97lgLPnG2bXQR70atE
+	 HQ1XFCRbzinghLieC02eSzgO1pk6jLfuXOyj303ehihKRBEQbD/Wjj+TZmbB81xWwh
+	 xvXTrFIZ0FnQTOj29xPQlOxSQNZgEEt+FMNKmPh7RHqxDu7rDnqVfK1il2zx7ZvpBE
+	 5e/W3qAF5aRzcVU+dN+oeY7or0R8aCISgZrIfZTNrnoXt8tcAlquCV+nUrwxvmp3zP
+	 RaszmBBrmJTWA==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 0/3] namespace: allow creating empty mount namespaces
+Date: Fri, 06 Mar 2026 17:28:36 +0100
+Message-Id: <20260306-work-empty-mntns-consolidated-v1-0-6eb30529bbb0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260120-work-pidfs-rhashtable-v2-1-d593c4d0f576@kernel.org>
- <0150e237-41d2-40ae-a857-4f97ca664468@gtucker.io> <20260224-kurzgeschichten-urteil-976e57a38c5c@brauner>
- <20260224-mittlerweile-besessen-2738831ae7f6@brauner> <CAHk-=whEtuxXcgYLZPk1_mWd2VsLP2WPPCOr5fjPb2SpDsYdew@mail.gmail.com>
- <20260226-ungeziefer-erzfeind-13425179c7b2@brauner> <1ff1bce2-8bb4-463c-a631-16e14f4ea7e2@arm.com>
-In-Reply-To: <1ff1bce2-8bb4-463c-a631-16e14f4ea7e2@arm.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 6 Mar 2026 08:28:26 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whEEBaMuM0iR6yY2CyfoLDJZxzWvi1yrCsEBoGTWDVUBQ@mail.gmail.com>
-X-Gm-Features: AaiRm50b8ukFOu0LH3eYoVAWaJ2bzveqWv_zfm2sIB1zmUoShkXh3RMYjMBbX0Y
-Message-ID: <CAHk-=whEEBaMuM0iR6yY2CyfoLDJZxzWvi1yrCsEBoGTWDVUBQ@mail.gmail.com>
-Subject: Re: make_task_dead() & kthread_exit()
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: Christian Brauner <brauner@kernel.org>, Guillaume Tucker <gtucker@gtucker.io>, Tejun Heo <tj@kernel.org>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
-	kunit-dev@googlegroups.com, David Gow <davidgow@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Rspamd-Queue-Id: 690F622511D
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALQAq2kC/yXMSw7CIBSF4a0YxmKA8tKtGAdwuVrUQgP4StO92
+ +rwPzn5JlKxRKzksJlIwWesMacl+HZDoHfpgjSGpYlgQrOOafrK5UZxGNuHDqmlSiGnmu8xuIa
+ BMmOlFKD2UgayGGPBc3z//OPp3/XhrwhtRdeHdxWpLy5Bv06Dqw3LDjgzxiowaIN3PnDgtmPcc
+ ei0UFJ6ZawWVpB5/gLzzvKywwAAAA==
+X-Change-ID: 20260306-work-empty-mntns-consolidated-078442c5944d
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
+ linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-e55a6
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2162; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=PzWWv0VsnAPgrex3gIvNGOtw6lTUsQZtwiNiTpnaF6w=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSuZthxcb2fevTZI1WRX8Ntm7UcdI/brYrVZNFuKfx7o
+ sOqL0qqo5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCL1Txn+e6e5pa4pipkRXF56
+ 58xN/lO/j578cZKz/wnz0Uf2mpsf9DEyPE6606q9lvXj6hczCzx61vsHXA2NuPZd/m/Pnxb7+lm
+ nOQE=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+X-Rspamd-Queue-Id: 9E162224EE6
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[linux-foundation.org:s=google];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DKIM_TRACE(0.00)[linux-foundation.org:+];
-	DMARC_NA(0.00)[linux-foundation.org];
-	FREEMAIL_CC(0.00)[kernel.org,gtucker.io,gmail.com,zeniv.linux.org.uk,suse.cz,vger.kernel.org,googlegroups.com,google.com];
-	MIME_TRACE(0.00)[0:+];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79637-lists,linux-fsdevel=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MISSING_XM_UA(0.00)[];
+	TAGGED_FROM(0.00)[bounces-79633-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	RCPT_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[torvalds@linux-foundation.org,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	NEURAL_HAM(-0.00)[-0.983];
+	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-0.944];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[11];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,linux-foundation.org:dkim,mail.gmail.com:mid,arm.com:email]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On Fri, 6 Mar 2026 at 03:06, Christian Loehle <christian.loehle@arm.com> wrote:
->
-> FWIW this leaves the stale BTF reference:
+Currently, creating a new mount namespace always copies the entire mount
+tree from the caller's namespace.  For containers and sandboxes that
+intend to build their mount table from scratch this is wasteful: they
+inherit a potentially large mount tree only to immediately tear it down.
 
-Thanks. Applied.
+This series adds support for creating a mount namespace that contains
+only a clone of the root mount, with none of the child mounts.  Two new
+flags are introduced:
 
-              Linus
+- CLONE_EMPTY_MNTNS (0x400000000) for clone3(), using the 64-bit flag
+  space.
+- UNSHARE_EMPTY_MNTNS (0x00100000) for unshare(), reusing the
+  CLONE_PARENT_SETTID bit which has no meaning for unshare.
+
+Both flags imply CLONE_NEWNS.  The resulting namespace contains a single
+nullfs root mount with an immutable empty directory.  The intended
+workflow is to then mount a real filesystem (e.g., tmpfs) over the root
+and build the mount table from there.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Christian Brauner (3):
+      namespace: allow creating empty mount namespaces
+      selftests/filesystems: add tests for empty mount namespaces
+      selftests/filesystems: add clone3 tests for empty mount namespaces
+
+ fs/namespace.c                                     |  85 +-
+ include/uapi/linux/sched.h                         |   7 +
+ kernel/fork.c                                      |  17 +-
+ kernel/nsproxy.c                                   |  21 +-
+ .../selftests/filesystems/empty_mntns/.gitignore   |   4 +
+ .../selftests/filesystems/empty_mntns/Makefile     |  12 +
+ .../empty_mntns/clone3_empty_mntns_test.c          | 938 +++++++++++++++++++++
+ .../filesystems/empty_mntns/empty_mntns.h          |  50 ++
+ .../filesystems/empty_mntns/empty_mntns_test.c     | 725 ++++++++++++++++
+ .../empty_mntns/overmount_chroot_test.c            | 225 +++++
+ tools/testing/selftests/filesystems/utils.c        |   4 +-
+ tools/testing/selftests/filesystems/utils.h        |   2 +
+ 12 files changed, 2052 insertions(+), 38 deletions(-)
+---
+base-commit: c107785c7e8dbabd1c18301a1c362544b5786282
+change-id: 20260306-work-empty-mntns-consolidated-078442c5944d
+
 
