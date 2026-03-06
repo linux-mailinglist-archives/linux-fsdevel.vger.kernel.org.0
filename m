@@ -1,256 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-79614-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 0KrIKizXqmnmXgEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79614-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 14:31:24 +0100
+	id uHRUOMDYqmnmXgEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 14:38:08 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4416A221AB1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 14:31:23 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EC05221D73
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 14:38:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 2556B307BA87
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 13:27:27 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 39C64318364D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 13:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1377339A06F;
-	Fri,  6 Mar 2026 13:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B678039C653;
+	Fri,  6 Mar 2026 13:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g3Z2fwAn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hc2G5bkz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953FF34D904;
-	Fri,  6 Mar 2026 13:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A574396D23;
+	Fri,  6 Mar 2026 13:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772803633; cv=none; b=Ve/tDfttTZKycXrjXRHm395b2H2gt+1a4ZrmITtmAcNblw6V8urscC79eoECPOotHEhINc63eJfSd36iLCXHENzIcqFT6nkowGAUQOZky+UTG2WYXsRWNItFBcbALj+JRzws0S65d0UZoQJwHYYrGke+vqr3yga9QwVODVJK1Rg=
+	t=1772803779; cv=none; b=bHVQ+V5PTK0pYwGFyQJlb5nMQ2j8qNrFiQZ3GpRzUauHXuVGalWyO0kyfKMvVRjw7xEMWviWzbioqD49yn25vH0cHikd11Q5Ge/TN/Y4K3dnXwV8LDcIp2iZo4xhQXeGuh8UWE88MDs3nvfFY5rDFtenD1y6w/EpEByDXK/bIH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772803633; c=relaxed/simple;
-	bh=ScNo3TEUI1lhEFlhGH5rcOeDy331UodFOc8V1NNREkQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ey2AXk7i+FTTxGQIoC+TXL/wUxNA1hlBqIu1lPGpLsF0qitvWi1WXPgjhI6TBEC8cYhVs/YmD/5T8EUSDR6URZyMpEoi0iu/lleUwx+DnGPDPd3gMEGdbF3LINNsR86dSQmyislWaUtFTC4O9kgizeH3F2OiiRd7OZ2QPImR9oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g3Z2fwAn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9508FC4CEF7;
-	Fri,  6 Mar 2026 13:27:12 +0000 (UTC)
+	s=arc-20240116; t=1772803779; c=relaxed/simple;
+	bh=1ukMkvLDsKaYNY9i0ldkaZ4BWaGkqbXWQ5bDJd35Ruo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O8ECYL/mlkEN5X6SL+0/TK3d66hXWVCkmg0O2HHuDVZn+bsj2/k8LR6uM9UTUpyZKawpZFqopyAsD2d09VY7cJJAUkSHdnQ8NTKxdRtNV0B9LFyQziJ6nxME3qCUh31Xxo0x27oJI1hZqmvM1cbr1lV8ORBBfb3q9146+tAVWMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hc2G5bkz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B1A5C4CEF7;
+	Fri,  6 Mar 2026 13:29:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772803633;
-	bh=ScNo3TEUI1lhEFlhGH5rcOeDy331UodFOc8V1NNREkQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=g3Z2fwAn2nIeD1zD3m1GQqK5/1SUTMnq2hAfT3O4CmlVRsj3uxp9Lyuc/VCYz8f3s
-	 fEo2VAshMZ6SnfppOub9S+E0Fx1oBzwlayhF30uSYMJI/IYYWvXEBHmz75V0y6LYct
-	 E1KBecFcNntj8AKc53bfQ9EoRyFTvplrCYE9TsMduaEDVSyTPXG+w2TuLdnSQtUh1v
-	 BybMx0Z4LREw8TtczP5fI2UrAaXwwYLNCVyCxTck94DM6TOLYbkDUJCdeC4tJaj+LO
-	 flfWNf07UPC0NspRpDNfJu0MMGMPRqrEA93ibmwhFZy7lK7Lxqp7HpZsfOX5E+nonU
-	 n3Tf6AfnvKrfA==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Fri, 06 Mar 2026 08:27:01 -0500
-Subject: [PATCH] vfs: remove externs from fs.h on functions modified by
- i_ino widening
+	s=k20201202; t=1772803778;
+	bh=1ukMkvLDsKaYNY9i0ldkaZ4BWaGkqbXWQ5bDJd35Ruo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Hc2G5bkzknQkHbaZAs4y3XyfPC7tq6CC483Y2FuPeJaJ/Ep5xih+Tc66Fpb+BwZ7W
+	 Bez8ORwfCmhbe6g0HU6oZVMi4gDWQhsfbyaFq+cVejhoWgnukuID/RZMSHViAcCVrw
+	 MjS/lDOASjuhPRZUMZ9AR3PHB2ay8/WfzKkLOdl1k1HLi42nbvUUTkPfv/+Yy3fjTm
+	 K+K4W0dOPAbSzctZ86TetwW6UIj7CcluN5pzHcCZKjAogO4Aasoss2NuBYwUN+09zw
+	 d8oApzr6/okXUUx7r5/Swj0z04/dBdcsRq0mcjW6ZaOab7H/RmnzywDdyIqKNlOri8
+	 PH0xKh9i2soEQ==
+Date: Fri, 6 Mar 2026 14:28:59 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Dan Williams <dan.j.williams@intel.com>, Eric Biggers <ebiggers@kernel.org>, 
+	"Theodore Y. Ts'o" <tytso@mit.edu>, Muchun Song <muchun.song@linux.dev>, 
+	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@kernel.org>, 
+	David Howells <dhowells@redhat.com>, Paulo Alcantara <pc@manguebit.org>, 
+	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>, Jaegeuk Kim <jaegeuk@kernel.org>, 
+	Chao Yu <chao@kernel.org>, Trond Myklebust <trondmy@kernel.org>, 
+	Anna Schumaker <anna@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
+	NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, 
+	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, Steve French <sfrench@samba.org>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
+	Bharath SM <bharathsm@microsoft.com>, Alexander Aring <alex.aring@gmail.com>, 
+	Ryusuke Konishi <konishi.ryusuke@gmail.com>, Viacheslav Dubeyko <slava@dubeyko.com>, 
+	Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>, 
+	Dominique Martinet <asmadeus@codewreck.org>, Christian Schoenebeck <linux_oss@crudebyte.com>, 
+	David Sterba <dsterba@suse.com>, Marc Dionne <marc.dionne@auristor.com>, 
+	Ian Kent <raven@themaw.net>, Luis de Bethencourt <luisbg@kernel.org>, 
+	Salah Triki <salah.triki@gmail.com>, "Tigran A. Aivazian" <aivazian.tigran@gmail.com>, 
+	Ilya Dryomov <idryomov@gmail.com>, Alex Markuze <amarkuze@redhat.com>, 
+	Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu, Nicolas Pitre <nico@fluxnic.net>, 
+	Tyler Hicks <code@tyhicks.com>, Amir Goldstein <amir73il@gmail.com>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Yangtao Li <frank.li@vivo.com>, 
+	Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, David Woodhouse <dwmw2@infradead.org>, 
+	Richard Weinberger <richard@nod.at>, Dave Kleikamp <shaggy@kernel.org>, 
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
+	Joseph Qi <joseph.qi@linux.alibaba.com>, Mike Marshall <hubcap@omnibond.com>, 
+	Martin Brandenburg <martin@omnibond.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Anders Larsen <al@alarsen.net>, Zhihao Cheng <chengzhihao1@huawei.com>, 
+	Damien Le Moal <dlemoal@kernel.org>, Naohiro Aota <naohiro.aota@wdc.com>, 
+	Johannes Thumshirn <jth@kernel.org>, John Johansen <john.johansen@canonical.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+	Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Simon Horman <horms@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Martin Schiller <ms@dev.tdt.de>, Eric Paris <eparis@redhat.com>, 
+	Joerg Reuter <jreuter@yaina.de>, Marcel Holtmann <marcel@holtmann.org>, 
+	Johan Hedberg <johan.hedberg@gmail.com>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+	Oliver Hartkopp <socketcan@hartkopp.net>, Marc Kleine-Budde <mkl@pengutronix.de>, 
+	David Ahern <dsahern@kernel.org>, Neal Cardwell <ncardwell@google.com>, 
+	Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Remi Denis-Courmont <courmisch@gmail.com>, Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>, 
+	Xin Long <lucien.xin@gmail.com>, Magnus Karlsson <magnus.karlsson@intel.com>, 
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, fsverity@lists.linux.dev, linux-mm@kvack.org, 
+	netfs@lists.linux.dev, linux-ext4@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org, linux-nilfs@vger.kernel.org, v9fs@lists.linux.dev, 
+	linux-afs@lists.infradead.org, autofs@vger.kernel.org, ceph-devel@vger.kernel.org, 
+	codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org, linux-mtd@lists.infradead.org, 
+	jfs-discussion@lists.sourceforge.net, ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev, 
+	devel@lists.orangefs.org, linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, selinux@vger.kernel.org, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
+	linaro-mm-sig@lists.linaro.org, netdev@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	linux-fscrypt@vger.kernel.org, linux-xfs@vger.kernel.org, linux-hams@vger.kernel.org, 
+	linux-x25@vger.kernel.org, audit@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
+	linux-can@vger.kernel.org, linux-sctp@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v3 01/12] vfs: widen inode hash/lookup functions to u64
+Message-ID: <20260306-klauen-aufruf-3f79ec9cd4cb@brauner>
+References: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
+ <20260304-iino-u64-v3-1-2257ad83d372@kernel.org>
+ <aamSFgXhrORAJLBC@infradead.org>
+ <c1845a4b8d35d367953ac6cbfcf91ac36958ba51.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260306-iino-u64-v1-1-116b53b5ca42@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDYwMz3czMvHzdUjMTXUOLpEQDEzMzY6NEAyWg8oKi1LTMCrBR0bG1tQA
- zog4gWgAAAA==
-X-Change-ID: 20260306-iino-u64-18ba046632a0
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6132; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=ScNo3TEUI1lhEFlhGH5rcOeDy331UodFOc8V1NNREkQ=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpqtYsz0V0av4nReK7IVz+m8NB0a+bBRDPi/Sjl
- vq2mleFaVeJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaarWLAAKCRAADmhBGVaC
- FVzVD/9tE8WddCNhH6nTS9ZkuFEL4cE+uHngtiI1qanMbMVKboM11GlaYEe7eFyfr39kzCmJtNg
- fPdcRzOrVsAQDXg7KXCqfh5mspWvSmD3zPS2ErSgaYIOzv89UaN2sAVKnXaRCIl+2V8cP+3VSHa
- M0oz1UniyBA+eHPAHpMGOxRlhNnfOkY1/lbUjBYWS6VzX4jpFe2XDguWBuzdy2zA9RaihhGxc8t
- J+kJZec1vQpYJ4ZATsiKYtdZwZD84Vk5I4lpv4cZXLof6MQGDzkJaMG9x1sPXlfoBXGhPsfqWgs
- zwQBBMXL0/AmT3xMFmJ1zPly+V88kNoHYgPhRiL2NOSozZH4HEImzFfzSVLMaUZsWLTSBQ6Wtya
- +iBxAYpSbgrNHry3RPBXpOcAxIavNCL79dEGh8K3yFztBM41Ac3wwsBV3fPiRXjP+zZApg4/XOQ
- LMMqC0RYyijqaeC124cuZhYFuOmN82Fr1Esy7InpoTnw5MXVrS1SNPPdzc7qt8bz2QuKyhKnre3
- ESEhNEUazebu9pYzZoZWyLTgpcSD2kN0tXx0vf5ASbljAKc4Gj3Ra0UGm96M5hbYmR4Ew2t0mry
- zTvTgfs/DvIW4UMzwjBGufnWWjnWkXj7gEiv9Lo1APfvXKp1+U3jIT0BDm0hUh/ZZiYIkn6YbqD
- kqb1LNtuvo28vQQ==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Rspamd-Queue-Id: 4416A221AB1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c1845a4b8d35d367953ac6cbfcf91ac36958ba51.camel@kernel.org>
+X-Rspamd-Queue-Id: 8EC05221D73
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [3.84 / 15.00];
+	MID_END_EQ_FROM_USER_PART(4.00)[];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79614-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
+	TAGGED_FROM(0.00)[bounces-79615-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_CC(0.00)[infradead.org,zeniv.linux.org.uk,suse.cz,goodmis.org,kernel.org,efficios.com,intel.com,mit.edu,linux.dev,suse.de,redhat.com,manguebit.org,dilger.ca,suse.com,oracle.com,brown.name,talpey.com,samba.org,gmail.com,microsoft.com,dubeyko.com,ionkov.net,codewreck.org,crudebyte.com,auristor.com,themaw.net,cs.cmu.edu,fluxnic.net,tyhicks.com,physik.fu-berlin.de,vivo.com,artax.karlin.mff.cuni.cz,nod.at,paragon-software.com,fasheh.com,evilplan.org,linux.alibaba.com,omnibond.com,szeredi.hu,alarsen.net,huawei.com,wdc.com,canonical.com,paul-moore.com,namei.org,hallyn.com,linux.ibm.com,schaufler-ca.com,amd.com,ffwll.ch,linaro.org,google.com,davemloft.net,arm.com,linux.intel.com,dev.tdt.de,yaina.de,holtmann.org,hartkopp.net,pengutronix.de,secunet.com,gondor.apana.org.au,fomichev.me,iogearbox.net,vger.kernel.org,lists.linux.dev,kvack.org,lists.sourceforge.net,lists.samba.org,lists.infradead.org,coda.cs.cmu.edu,lists.orangefs.org,lists.ubuntu.com,lists.freedesktop.org,lists.linaro.or
+ g];
+	RCVD_COUNT_THREE(0.00)[4];
 	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[170];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jlayton@kernel.org,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[7];
+	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	NEURAL_HAM(-0.00)[-1.000];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,lst.de:email]
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	TO_DN_SOME(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-Christoph says, in response to one of the patches in the i_ino widening
-series, which changes the prototype of several functions in fs.h:
+On Fri, Mar 06, 2026 at 07:03:15AM -0500, Jeff Layton wrote:
+> On Thu, 2026-03-05 at 06:24 -0800, Christoph Hellwig wrote:
+> > >  extern struct inode *ilookup5_nowait(struct super_block *sb,
+> > > -		unsigned long hashval, int (*test)(struct inode *, void *),
+> > > +		u64 hashval, int (*test)(struct inode *, void *),
+> > >  		void *data, bool *isnew);
+> > > -extern struct inode *ilookup5(struct super_block *sb, unsigned long hashval,
+> > > +extern struct inode *ilookup5(struct super_block *sb, u64 hashval,
+> > >  		int (*test)(struct inode *, void *), void *data);
+> > 
+> > ...
+> > 
+> > Can you please drop all these pointless externs while you're at it?
+> > 
+> 
+> I was planning to do that, but then Christian merged it!
+> 
+> I'll do a patch on top of this that does this in the range of fs.h that
+> the patch touches. Christian can throw it on top of the series, and
+> that shouldn't be too bad for backports.
 
-    "Can you please drop all these pointless externs while you're at it?"
-
-Remove extern keyword from functions touched by that patch (and a few
-that happened to be nearby).
-
-Suggested-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- include/linux/fs.h | 58 +++++++++++++++++++++++++++---------------------------
- 1 file changed, 29 insertions(+), 29 deletions(-)
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 097443bf12e289c347651e5f3da5b67eb6b53121..0c3ad6d7a20055b654b6d5087756f33d9e0fc4fc 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2912,36 +2912,36 @@ static inline bool name_contains_dotdot(const char *name)
- #include <linux/err.h>
- 
- /* needed for stackable file system support */
--extern loff_t default_llseek(struct file *file, loff_t offset, int whence);
-+loff_t default_llseek(struct file *file, loff_t offset, int whence);
- 
--extern loff_t vfs_llseek(struct file *file, loff_t offset, int whence);
-+loff_t vfs_llseek(struct file *file, loff_t offset, int whence);
- 
--extern int inode_init_always_gfp(struct super_block *, struct inode *, gfp_t);
-+int inode_init_always_gfp(struct super_block *, struct inode *, gfp_t);
- static inline int inode_init_always(struct super_block *sb, struct inode *inode)
- {
- 	return inode_init_always_gfp(sb, inode, GFP_NOFS);
- }
- 
--extern void inode_init_once(struct inode *);
--extern void address_space_init_once(struct address_space *mapping);
--extern struct inode * igrab(struct inode *);
--extern ino_t iunique(struct super_block *, ino_t);
--extern int inode_needs_sync(struct inode *inode);
--extern int inode_just_drop(struct inode *inode);
-+void inode_init_once(struct inode *);
-+void address_space_init_once(struct address_space *mapping);
-+struct inode *igrab(struct inode *);
-+ino_t iunique(struct super_block *, ino_t);
-+int inode_needs_sync(struct inode *inode);
-+int inode_just_drop(struct inode *inode);
- static inline int inode_generic_drop(struct inode *inode)
- {
- 	return !inode->i_nlink || inode_unhashed(inode);
- }
--extern void d_mark_dontcache(struct inode *inode);
-+void d_mark_dontcache(struct inode *inode);
- 
--extern struct inode *ilookup5_nowait(struct super_block *sb,
-+struct inode *ilookup5_nowait(struct super_block *sb,
- 		u64 hashval, int (*test)(struct inode *, void *),
- 		void *data, bool *isnew);
--extern struct inode *ilookup5(struct super_block *sb, u64 hashval,
-+struct inode *ilookup5(struct super_block *sb, u64 hashval,
- 		int (*test)(struct inode *, void *), void *data);
--extern struct inode *ilookup(struct super_block *sb, u64 ino);
-+struct inode *ilookup(struct super_block *sb, u64 ino);
- 
--extern struct inode *inode_insert5(struct inode *inode, u64 hashval,
-+struct inode *inode_insert5(struct inode *inode, u64 hashval,
- 		int (*test)(struct inode *, void *),
- 		int (*set)(struct inode *, void *),
- 		void *data);
-@@ -2951,26 +2951,26 @@ struct inode *iget5_locked(struct super_block *, u64,
- struct inode *iget5_locked_rcu(struct super_block *, u64,
- 			       int (*test)(struct inode *, void *),
- 			       int (*set)(struct inode *, void *), void *);
--extern struct inode *iget_locked(struct super_block *, u64);
--extern struct inode *find_inode_nowait(struct super_block *,
-+struct inode *iget_locked(struct super_block *, u64);
-+struct inode *find_inode_nowait(struct super_block *,
- 				       u64,
- 				       int (*match)(struct inode *,
- 						    u64, void *),
- 				       void *data);
--extern struct inode *find_inode_rcu(struct super_block *, u64,
-+struct inode *find_inode_rcu(struct super_block *, u64,
- 				    int (*)(struct inode *, void *), void *);
--extern struct inode *find_inode_by_ino_rcu(struct super_block *, u64);
--extern int insert_inode_locked4(struct inode *, u64, int (*test)(struct inode *, void *), void *);
--extern int insert_inode_locked(struct inode *);
-+struct inode *find_inode_by_ino_rcu(struct super_block *, u64);
-+int insert_inode_locked4(struct inode *, u64, int (*test)(struct inode *, void *), void *);
-+int insert_inode_locked(struct inode *);
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
--extern void lockdep_annotate_inode_mutex_key(struct inode *inode);
-+void lockdep_annotate_inode_mutex_key(struct inode *inode);
- #else
- static inline void lockdep_annotate_inode_mutex_key(struct inode *inode) { };
- #endif
--extern void unlock_new_inode(struct inode *);
--extern void discard_new_inode(struct inode *);
--extern unsigned int get_next_ino(void);
--extern void evict_inodes(struct super_block *sb);
-+void unlock_new_inode(struct inode *);
-+void discard_new_inode(struct inode *);
-+unsigned int get_next_ino(void);
-+void evict_inodes(struct super_block *sb);
- void dump_mapping(const struct address_space *);
- 
- /*
-@@ -3015,21 +3015,21 @@ int setattr_should_drop_sgid(struct mnt_idmap *idmap,
-  */
- #define alloc_inode_sb(_sb, _cache, _gfp) kmem_cache_alloc_lru(_cache, &_sb->s_inode_lru, _gfp)
- 
--extern void __insert_inode_hash(struct inode *, u64 hashval);
-+void __insert_inode_hash(struct inode *, u64 hashval);
- static inline void insert_inode_hash(struct inode *inode)
- {
- 	__insert_inode_hash(inode, inode->i_ino);
- }
- 
--extern void __remove_inode_hash(struct inode *);
-+void __remove_inode_hash(struct inode *);
- static inline void remove_inode_hash(struct inode *inode)
- {
- 	if (!inode_unhashed(inode) && !hlist_fake(&inode->i_hash))
- 		__remove_inode_hash(inode);
- }
- 
--extern void inode_sb_list_add(struct inode *inode);
--extern void inode_lru_list_add(struct inode *inode);
-+void inode_sb_list_add(struct inode *inode);
-+void inode_lru_list_add(struct inode *inode);
- 
- int generic_file_mmap(struct file *, struct vm_area_struct *);
- int generic_file_mmap_prepare(struct vm_area_desc *desc);
-
----
-base-commit: 1b626cfc5c2e16d02f0f7516b68b00aaa0a186cf
-change-id: 20260306-iino-u64-18ba046632a0
-
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
-
+I can easily drop those so no need to resend for stuff like this as per
+the usual protocol.
 
