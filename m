@@ -1,203 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-79663-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id nZPVI3k3q2mkbAEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79663-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 21:22:17 +0100
+	id mMLvBVY4q2mkbAEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 21:25:58 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4ABE227743
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 21:22:16 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E5F92277A7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 21:25:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A7E9C30495CF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 20:22:12 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 32E163033260
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 20:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00186449EC3;
-	Fri,  6 Mar 2026 20:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B80466B7C;
+	Fri,  6 Mar 2026 20:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="Zph/wY/I";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nmepC9T4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iETagLyT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D1C7081E;
-	Fri,  6 Mar 2026 20:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251454611D7
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Mar 2026 20:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772828530; cv=none; b=syaxeqvbDvllO6moLaIj5MpmX61VBAVIJ+SRk9zjFED51fCEht2QaiNR/bycSYdkImd9czOStGPusQ5dl4W6GyM5f+KBIgXK3wQX74Kh55Pv/AIPqHvDEUACvshK7RiP7odew3CGK36ETc7IjXUzzq/MZ2SUTgty4ZDGGW61uS0=
+	t=1772828745; cv=none; b=AQqBVolXYQOiC3F6WqCi468XLbOnJQUmjFZrwqOB0dgvpdVol3DCVlylPgDusS8x9ozGTySJOhVVQLh6ptaL+oGgv6yiNpQ1iCxyqX7mFT3jDPOt7DURDuSZFuaj2STr+IyoPheT1S7BtDQUr4h16L1OnkLolsyfBMW+Icjmgqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772828530; c=relaxed/simple;
-	bh=K0y817XrEcM6UP0c/zCyihz+HLAEaHeZKH+FSYuUoOo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FPrEnXIUimVTLKJLRVyvC4LFsbKojCfdRSFuSwMQA+jvZoovyO6jeYnrFaK/ir/JGTZTlDWr8NYaEoHCu2x+ExRugVX9Ep5l1UgalSPCojhj7jKnTAcQ789BrKuZ7pvpCb5xdN+R+sv4Dc39CPH/8UwG73J42Sd/ftff3wIjSAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=Zph/wY/I; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nmepC9T4; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 8C59EEC0647;
-	Fri,  6 Mar 2026 15:22:08 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Fri, 06 Mar 2026 15:22:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1772828528; x=
-	1772914928; bh=j7EtY5Lz6n2cvujZXVeWfFZYsYZf69ABvyin+RZQ0Q8=; b=Z
-	ph/wY/IEol1x6H1EYgH2MfUvAJKVETBUvihjPzrfUUItMoike+nJP6Gjj79USsjY
-	G7Nb/VnJRaIVJHiErMWaFPvnSnAzieGuMrr4Xnz3ZZpQ642Bx1b2hy+sm935SU8l
-	VM6PDuujyIYot89qIOxlT9vWV1an7kyJ5pVkXC2NpB/4YCkHPohTo2hSpWp8AFVy
-	X2mn8H5+v/gJAxDiZhwtyGikHJFETr+Mb5yhirLfjRHL66s97sPBQpd4+IVOkXXG
-	pPNqFWlRGl9q6WOEL/QZcx9ApmNR8nfcS4FhHGY/BKyXf7A04U9tdXKZ6LYP5rNC
-	rzLmgPXSaJXSzyZW9OKvA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1772828528; x=1772914928; bh=j7EtY5Lz6n2cvujZXVeWfFZYsYZf69ABvyi
-	n+RZQ0Q8=; b=nmepC9T4PQNYNzYu49wyYt1WVTI6wLnAja7EtozQ1LHUkeid0cB
-	2tgb+inndnKSBw7vz93cQMoPjEGlNTnTiNRxSuHZZ+7ZndbVs+YHgRcnbCjigZWO
-	YxN4QH6EoFFLBd0ggivx8jJIiHEsWJqUjZJ1lbLN/XZOQVVSvyJpx/X4dz5OzHLH
-	U+KW+6e8MUiKe5z/Ty8dTkldeyiG8oNSArU77r/ShgQowhaDK69PtVHPGzFtMzKG
-	yWj5iZJ9Y2qYgkRp3kYmFYHK4ovy40DBM2xhe4cWy4MfBAV0mqZ7MqJcZbTv/o2Q
-	0+KDCQ7MqzusyTVEdvs26iSIodocTIatMvg==
-X-ME-Sender: <xms:cDeraSZhD4Xwlu_I3Z1J0RQ-KeKpb8zuPO7xZo1L_rEqZboM-ub6pg>
-    <xme:cDeraT6_Ytt1kLE2krgGHFNRiFMM7_Ds8f9pzCsR40TH74pUjKA8w_TY37oxXOlgQ
-    XmZUt_1vtl4kHc5lyyZETXxJ4CsAjKUpnvkthOwtS4WF3Caq_Gt3leY>
-X-ME-Received: <xmr:cDeraTw9AagwnLWuCdOrY2z87huJaKQOxy0Ug5U30NEWbZfagYez9IRwpocZIQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvjedtvdegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhepfeetheejudeujeeikeetudelvdevkeefuddtkedvtdehtdetieeu
-    ieetjeeugedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopedu
-    iedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheptggrrhhgvghssegtlhhouhgufh
-    hlrghrvgdrtghomhdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhg
-    pdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprh
-    gtphhtthhopeifihhllhhirghmrdhkuhgthhgrrhhskhhisehorhgrtghlvgdrtghomhdp
-    rhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtohep
-    lhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    epkhgvrhhnvghlqdhtvggrmhestghlohhuughflhgrrhgvrdgtohhm
-X-ME-Proxy: <xmx:cDeraUpGQfIldLXk9682Y-7o3-0avsfdCeLPvweJ2txluqIzbPmTUQ>
-    <xmx:cDeraV2nKJNfik5xLjmnu0juch-DbW-UEyJXOagtDunSKkpj9faPIw>
-    <xmx:cDeradBOoVoIFMshR7OdjXpiRWvJYKzWnpnM2z4-cJfet_aYtTyPXQ>
-    <xmx:cDeraWN06mmr6a1wz-k43bwLuWXGhsRw5XMFtXdUKow1R8ga8zLvPA>
-    <xmx:cDeraZFrnNViXYE_CX8se2lR_I46rCB7Os4DqptuezI4km-YkMR99bzp>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 6 Mar 2026 15:22:06 -0500 (EST)
-Date: Fri, 6 Mar 2026 20:21:59 +0000
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Chris Arges <carges@cloudflare.com>
-Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org, 
-	william.kucharski@oracle.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
-Subject: Re: [PATCH RFC 1/1] mm/filemap: handle large folio split race in
- page cache lookups
-Message-ID: <aas3E9P0BP03O8ma@thinkstation>
-References: <20260305183438.1062312-1-carges@cloudflare.com>
- <20260305183438.1062312-2-carges@cloudflare.com>
- <aanYdvdJVG6f5WL2@casper.infradead.org>
- <aarVMrFptdXhHsX1@thinkstation>
- <aasAo8qRCV9XSuax@casper.infradead.org>
- <aas06mfCrJuzZd0-@20HS2G4>
+	s=arc-20240116; t=1772828745; c=relaxed/simple;
+	bh=fL2JgYqvFgG2jo1CEhVYJcdYaruh0cGQxMcZdwd8dvc=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=MxLEqUD6xZsomfRmvUChkfGNUESnzR1tU9sRgPK+g2TeCfwp/aLoZInjQlepMWfWqk2QTDtvKB8AODL+o0tNH5VUwAzavBniBU/TycPJ/EkH/3OSYz8PJjNwZhfZbjhmtX08f8LhEbQ0TlR7iAgam2hG9ZlO7r/INLb0TYImjuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iETagLyT; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4852c9b4158so1697585e9.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Mar 2026 12:25:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772828742; x=1773433542; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fL2JgYqvFgG2jo1CEhVYJcdYaruh0cGQxMcZdwd8dvc=;
+        b=iETagLyTDF/1O3A0fnQZDjAnZjHGM1ayDTBpmrMqnPpq+ArqkI7zvJcpXDM3hV0mY4
+         HqHJd3uiBoE4Ou2tdfPlaBKboprdsb1UMhGA5tJbpBKues+s6XvzQOKZhoxnOm9NLzj+
+         x8hDLgr6jg4oFIWirfk17JglIC5RvfddjFh3VhHDOPCKQO70gf9Xg4i/IkEkX0oEgDsZ
+         XcW0A7oxvhyCV9gGb52pyNfftUvMz/sjtUFT0goizkXeIKnje66iqiUZuzwmnleE5QLt
+         oISxtOI/8o0h8rpuCrwsWH7IPdRn9IvoW1Oh+OGs2/rSBzOSL6Dy4g5FMkmy+MviGr4w
+         jO8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772828742; x=1773433542;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fL2JgYqvFgG2jo1CEhVYJcdYaruh0cGQxMcZdwd8dvc=;
+        b=oHogCdLe8oBkX4eMW7PdasREYs1cAsYo4b0bSa93AvvF1WqB1ZGuO2+9mI6W0s04TJ
+         SyQRf/smMxdoCgJxcrmMLHKu4750a5BEIRFfJLh3w2hdS3kq5FpCfOfc31WjNIat8fpE
+         V8g9WZaPWkZita6jPY2TqdNTS7hhMFEuY8ZpaNCmhnuuwfyJa+JboRw/X4T6UxDB2Bf2
+         G0hUWQ6+FfkhiSPRZo3SuiLFNa62mt7Z3d9FEZ5n289x5ubo+6i09uWfliVZXEiXGGAe
+         6vZ8iOTKDpk8tWjpOwHuOqCasHux8nqMA1vxR40Lx7A8uvHj8BO0i9Wef7KTsjsepisF
+         73Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2QPdcQIflfBUCFhDX8EeX13AU+C00H9cwu0uyMT/Sfm0rsRkixOU+cbbjliCuLyjN4oMNOqJPsHfGHmB3@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG/2A22IyM/yG52JQ3/FQuifCLbt5MaIN0XiOTlfBvEL+dTpcA
+	EdmeNIjkzHkZ1E8+EeZE7iPb1M2HyBDEzFtMHLAZpL6ThQPl+sxDKSC+
+X-Gm-Gg: ATEYQzz1sznHPTSadCPsiOouOxLEYnG89MelPnRuRDhF72ej7UBBmfW4fgKLlO4RC75
+	xX2hpBwpuFCzwU9Xua/jKVAs3aJaTXdrVe+pTZahjyd5uLM7JyoACUtwqkDoQJ51l0wEmkzbGdP
+	RXrwmBglkf3qpE+wkc9SpJ0ObBd+gKaqWO0vn5chLCTwdUptlbSsKYm5SHNnNxLH4+BWTGeTy1j
+	lF+seUcdUQZWvyf+KoGYlvR26FSFdMjD1RsN0nhFg/7sjG33oDKXUXY1zlJS+ba8j4qcJIc961t
+	H/347ih99zDHqLLzSIBhGG/N3Z3ycAjia8PW4bcidFvadnuFW0D0b/PuMcDT68zjnuO25Ftk+w6
+	9cQMgFMJfoW0vipT9HkydVVV8dlESdOvrV3MVsuntY8AiQTLLgjeipT3xXDeotgpDmNXgeoJrG8
+	LKyZ2sT6YvYczqoVLZ
+X-Received: by 2002:a05:600c:3d90:b0:480:1d0b:2d32 with SMTP id 5b1f17b1804b1-48526930a4fmr58858405e9.12.1772828742211;
+        Fri, 06 Mar 2026 12:25:42 -0800 (PST)
+Received: from [127.0.0.1] ([86.1.69.5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439dae2bdf8sm6376995f8f.25.2026.03.06.12.25.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Mar 2026 12:25:41 -0800 (PST)
+Date: Fri, 6 Mar 2026 20:25:42 +0000
+From: Josh Law <hlcj1234567@gmail.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	Josh Law <objecting@objecting.org>, Yi Liu <yi.l.liu@intel.com>,
+	Jason Gunthorpe <jgg@nvidia.com>
+Message-ID: <64ea7b4d-1d55-4d9e-8fef-396613e8bc10@gmail.com>
+In-Reply-To: <aas14HsY7dj6jTDZ@casper.infradead.org>
+References: <20260306200319.2819286-1-objecting@objecting.org> <aas14HsY7dj6jTDZ@casper.infradead.org>
+Subject: Re: [PATCH] lib/idr: fix ida_find_first_range() missing IDs across
+ chunk boundaries
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aas06mfCrJuzZd0-@20HS2G4>
-X-Rspamd-Queue-Id: E4ABE227743
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Correlation-ID: <64ea7b4d-1d55-4d9e-8fef-396613e8bc10@gmail.com>
+X-Rspamd-Queue-Id: 1E5F92277A7
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[shutemov.name:s=fm2,messagingengine.com:s=fm1];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DKIM_TRACE(0.00)[shutemov.name:+,messagingengine.com:+];
-	TAGGED_FROM(0.00)[bounces-79663-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-79664-lists,linux-fsdevel=lfdr.de];
+	DKIM_TRACE(0.00)[gmail.com:+];
 	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DMARC_NA(0.00)[shutemov.name];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	MISSING_XM_UA(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[kirill@shutemov.name,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	NEURAL_HAM(-0.00)[-0.960];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
+	FROM_NEQ_ENVFROM(0.00)[hlcj1234567@gmail.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	NEURAL_HAM(-0.00)[-0.979];
 	RCPT_COUNT_SEVEN(0.00)[8];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[messagingengine.com:dkim,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,shutemov.name:dkim]
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On Fri, Mar 06, 2026 at 02:11:22PM -0600, Chris Arges wrote:
-> On 2026-03-06 16:28:19, Matthew Wilcox wrote:
-> > On Fri, Mar 06, 2026 at 02:13:26PM +0000, Kiryl Shutsemau wrote:
-> > > On Thu, Mar 05, 2026 at 07:24:38PM +0000, Matthew Wilcox wrote:
-> > > > folio_split() needs to be sure that it's the only one holding a reference
-> > > > to the folio.  To that end, it calculates the expected refcount of the
-> > > > folio, and freezes it (sets the refcount to 0 if the refcount is the
-> > > > expected value).  Once filemap_get_entry() has incremented the refcount,
-> > > > freezing will fail.
-> > > > 
-> > > > But of course, we can race.  filemap_get_entry() can load a folio first,
-> > > > the entire folio_split can happen, then it calls folio_try_get() and
-> > > > succeeds, but it no longer covers the index we were looking for.  That's
-> > > > what the xas_reload() is trying to prevent -- if the index is for a
-> > > > folio which has changed, then the xas_reload() should come back with a
-> > > > different folio and we goto repeat.
-> > > > 
-> > > > So how did we get through this with a reference to the wrong folio?
-> > > 
-> > > What would xas_reload() return if we raced with split and index pointed
-> > > to a tail page before the split?
-> > > 
-> > > Wouldn't it return the folio that was a head and check will pass?
-> > 
-> > It's not supposed to return the head in this case.  But, check the code:
-> > 
-> >         if (!node)
-> >                 return xa_head(xas->xa);
-> >         if (IS_ENABLED(CONFIG_XARRAY_MULTI)) {
-> >                 offset = (xas->xa_index >> node->shift) & XA_CHUNK_MASK;
-> >                 entry = xa_entry(xas->xa, node, offset);
-> >                 if (!xa_is_sibling(entry))
-> >                         return entry;
-> >                 offset = xa_to_sibling(entry);
-> >         }
-> >         return xa_entry(xas->xa, node, offset);
-> > 
-> > (obviously CONFIG_XARRAY_MULTI is enabled)
-> >
-> Yes we have this CONFIG enabled.
-> 
-> Also FWIW, happy to run some additional experiments or more debugging. We _can_
-> reproduce this, as a machine hits this about every day on a sample of ~128
-> machines. We also do get crashdumps so we can poke around there as needed.
-> 
-> I was going to deploy this patch onto a subset of machines, but reading through
-> this thread I'm a bit concerned if a retry doesn't actually fix the problem,
-> then we will just loop on this condition and hang.
+6 Mar 2026 20:15:29 Matthew Wilcox <willy@infradead.org>:
 
-I would be useful to know if the condition is persistent or if retry
-"fixes" the problem.
+> On Fri, Mar 06, 2026 at 08:03:19PM +0000, Josh Law wrote:
+>> ida_find_first_range() only examines the first XArray entry returned by
+>> xa_find(). If that entry does not contain a set bit at or above the
+>> requested offset, the function returns -ENOENT without searching
+>> subsequent entries, even though later chunks may contain allocated IDs
+>> within the requested range.
+>
+> Can I trouble you to add a test to lib/test_ida.c to demonstrate the
+> problem (and that it's fixed, and that it doesn't come back)?
+>
+> Also this needs a Fixes: line.=C2=A0 I suggest 7fe6b987166b is the commit
+> it's fixing.=C2=A0 Add Jason and Yi Liu as well as the author and committ=
+er
+> of that patch.
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Okay, you mind if I put the modifications to test_ida.c on the same commit?=
+ Or would you like it on another commit
+
+V/R
+
+
+Josh law
 
