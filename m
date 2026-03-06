@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-79581-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79582-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AOUqBJOhqmlLUgEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79581-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 10:42:43 +0100
+	id +AypOIamqmlTVAEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79582-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 11:03:50 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DD7B21E1E5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 10:42:42 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 850A321E639
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 11:03:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 1FC063020FD6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 09:42:15 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id EF5D9302A3A4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 10:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E29833A9F3;
-	Fri,  6 Mar 2026 09:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A571435B63A;
+	Fri,  6 Mar 2026 10:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HH0dSpc/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m5eJ64at"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D84346AE8;
-	Fri,  6 Mar 2026 09:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B89C35A927;
+	Fri,  6 Mar 2026 10:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772790131; cv=none; b=r6g2Aua1Hu4F1lyQvcxyszVjmmIunal5scxRTYLX1zXme1ZF+uSMQ2MI+sf/VTMfKeg7ukUtrcmK4zPly8qjFau+zrBZpwyX2ghj78d5ajoXC30MFij2eKX8LgaW/eSbgsEdquo+L1CpTOOOScOuPgK9NZLzIektXRu5io3pMjg=
+	t=1772791425; cv=none; b=ES5Ibl59tNAWVQqQK20jIvCem8AdL+1TrOVXBNWglOqalTKdGycg60gn0w0V56kqUK0fifWbjmIyNKWUMGMbwfCfK9I0DI0KUcgSlxofnYq+4vUozkOJ/HLOuxqcHyXEkHS+K+jv8GMEigcwQriXBGdvN2ihfjGi5KPBGJg6xAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772790131; c=relaxed/simple;
-	bh=fFg7aWjPxphbulTb79Nt+ZDPqV4b3jllfkrmJmykajI=;
+	s=arc-20240116; t=1772791425; c=relaxed/simple;
+	bh=2k86Dtm5s9d5fuxoJ9fHeDpBAjwOVfZAGlB/JmB3VzI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GE1Q2pAwymuqcA54dQSbWRgjeHGvmmSdnJbGHLBMijanWrvk60n7hlT/Vwj5SFUSfM7HFVIuBNWEcskVlBoDp7tOHWNbfNlMxP9CWEobVHUHN2yEY69h9Wf65K7tGSaQ186HUpSBVY/t3TuEfVcFK65+xtuccZ2EJWk4z2roPZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HH0dSpc/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42949C4CEF7;
-	Fri,  6 Mar 2026 09:42:05 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=nZeQQ13+AClFJNpzxOo2vIW/kU6+3Mtt2BIA7Ty0e0wUhuVV9e/sYiqbkcAOqkJqrchbuBrfuHjhdgG3xc+1ScWXGmG+FuLPO8s/9Ap1niLKIkaFZFH2Wz104bVWdPcRf6tAY/iagyqPRqQa/aqUQwML4z4RGXDuaEtXN7XvnNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m5eJ64at; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57A5FC4CEF7;
+	Fri,  6 Mar 2026 10:03:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772790130;
-	bh=fFg7aWjPxphbulTb79Nt+ZDPqV4b3jllfkrmJmykajI=;
+	s=k20201202; t=1772791424;
+	bh=2k86Dtm5s9d5fuxoJ9fHeDpBAjwOVfZAGlB/JmB3VzI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HH0dSpc/NY5W6vJribQ+0/VUib+ntzCMXwsF44TqYjP1DQJWwC4t2dC/dm+Mi9VCk
-	 o33dauJ6s4cCsTKppZWf2FouzNEPL7RkNJM2sQRR0OWzENbwBdn2ID0ImWSfUdYA3d
-	 G6Ycyw5KRr1tlQpXPgOg/TNKn/xLOUpRQJQZzub+CTcJdgW5iyjjUZtTDAAdL3bOoz
-	 15PnfIMPjE5DIc5W/D+cnLdq1HvN4kM0cGlnEspFGoym/UwjmuTFDwMIkZgkeyX7o3
-	 MH8iwSDfyPNa88MIts0uDSl97VM/yIsxUbTn60rD8OhRvxA6r4Zhu3gGkF95tj8S8t
-	 F7xNzkhP59KAA==
-Date: Fri, 6 Mar 2026 10:42:02 +0100
+	b=m5eJ64atM8CSqw/MFjNXRrxzHZxZT0IBlWe/NQZtx2XiegpWzk9QGLezy2pa/YbfU
+	 xtk86J7xCw5xi/XgfSdxYaLcnSBQI+NqT6UnzHy0w4Tf/ewxqIXGBWBnoDewzKWpqt
+	 gla/VKzwagTuoRDKQmlWYIGEo255wDo0Ruxpy+b4aKGeHwOu1OT4COczr0n1spvh6m
+	 YYxtdzNadC/MvG7p7bpMrLJvbXCGKo0xO+V58N36G45KnREJAziJK+kkCiOwMVW7+p
+	 5H/AG3mUibbev5gybwevloaYp72DLAyI2k59DOJNlxe8cWCA5bqTCMKlTB4QC7I+m9
+	 FpkwlN+s9sM0Q==
+Date: Fri, 6 Mar 2026 11:03:36 +0100
 From: Christian Brauner <brauner@kernel.org>
 To: NeilBrown <neil@brown.name>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -56,11 +56,11 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
 	"Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
 	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
 	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v3 05/15] Apparmor: Use simple_start_creating() /
- simple_done_creating()
-Message-ID: <20260306-fastnacht-kernig-3b350bd2fab0@brauner>
+Subject: Re: [PATCH v3 10/15] cachefiles: change cachefiles_bury_object to
+ use start_renaming_dentry()
+Message-ID: <20260306-stolz-verzichten-2ee626da4503@brauner>
 References: <20260224222542.3458677-1-neilb@ownmail.net>
- <20260224222542.3458677-6-neilb@ownmail.net>
+ <20260224222542.3458677-11-neilb@ownmail.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,8 +69,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260224222542.3458677-6-neilb@ownmail.net>
-X-Rspamd-Queue-Id: 0DD7B21E1E5
+In-Reply-To: <20260224222542.3458677-11-neilb@ownmail.net>
+X-Rspamd-Queue-Id: 850A321E639
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [3.84 / 15.00];
 	MID_END_EQ_FROM_USER_PART(4.00)[];
@@ -78,55 +78,136 @@ X-Spamd-Result: default: False [3.84 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79581-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-79582-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[22];
 	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,redhat.com,suse.cz,oracle.com,kernel.org,szeredi.hu,gmail.com,canonical.com,paul-moore.com,namei.org,hallyn.com,vger.kernel.org,lists.linux.dev,lists.ubuntu.com];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
 	DKIM_TRACE(0.00)[kernel.org:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo]
+	RCPT_COUNT_TWELVE(0.00)[22];
+	TO_DN_SOME(0.00)[]
 X-Rspamd-Action: no action
 
-On Wed, Feb 25, 2026 at 09:16:50AM +1100, NeilBrown wrote:
+On Wed, Feb 25, 2026 at 09:16:55AM +1100, NeilBrown wrote:
 > From: NeilBrown <neil@brown.name>
 > 
-> Instead of explicitly locking the parent and performing a look up in
-> apparmor, use simple_start_creating(), and then simple_done_creating()
-> to unlock and drop the dentry.
+> Rather then using lock_rename() and lookup_one() etc we can use
+> the new start_renaming_dentry().  This is part of centralising dir
+> locking and lookup so that locking rules can be changed.
 > 
-> This removes the need to check for an existing entry (as
-> simple_start_creating() acts like an exclusive create and can return
-> -EEXIST), simplifies error paths, and keeps dir locking code
-> centralised.
+> Some error check are removed as not necessary.  Checks for rep being a
+> non-dir or IS_DEADDIR and the check that ->graveyard is still a
+> directory only provide slightly more informative errors and have been
+> dropped.
 > 
 > Reviewed-by: Jeff Layton <jlayton@kernel.org>
 > Signed-off-by: NeilBrown <neil@brown.name>
 > ---
+>  fs/cachefiles/namei.c | 76 ++++++++-----------------------------------
+>  1 file changed, 14 insertions(+), 62 deletions(-)
+> 
+> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+> index e5ec90dccc27..3af42ec78411 100644
+> --- a/fs/cachefiles/namei.c
+> +++ b/fs/cachefiles/namei.c
+> @@ -270,7 +270,8 @@ int cachefiles_bury_object(struct cachefiles_cache *cache,
+>  			   struct dentry *rep,
+>  			   enum fscache_why_object_killed why)
+>  {
+> -	struct dentry *grave, *trap;
+> +	struct dentry *grave;
+> +	struct renamedata rd = {};
+>  	struct path path, path_to_graveyard;
+>  	char nbuffer[8 + 8 + 1];
+>  	int ret;
+> @@ -302,77 +303,36 @@ int cachefiles_bury_object(struct cachefiles_cache *cache,
+>  		(uint32_t) ktime_get_real_seconds(),
+>  		(uint32_t) atomic_inc_return(&cache->gravecounter));
+>  
+> -	/* do the multiway lock magic */
+> -	trap = lock_rename(cache->graveyard, dir);
+> -	if (IS_ERR(trap))
+> -		return PTR_ERR(trap);
+> -
+> -	/* do some checks before getting the grave dentry */
+> -	if (rep->d_parent != dir || IS_DEADDIR(d_inode(rep))) {
+> -		/* the entry was probably culled when we dropped the parent dir
+> -		 * lock */
+> -		unlock_rename(cache->graveyard, dir);
+> -		_leave(" = 0 [culled?]");
+> -		return 0;
 
-Fwiw, I think this fixes a reference count leak:
+I think this is a subtle change in behavior?
 
-The old aafs_create returned dentries with refcount=2 (one from
-lookup_noperm, one from dget in __aafs_setup_d_inode). The cleanup path
-aafs_remove puts one reference leaving one reference that didn't get
-cleaned up.
+If rep->d_parent != dir after lock_rename this returned 0 in the old
+code. With your changes the same condition in __start_renaming_dentry
+returns -EINVAL which means cachefiles_io_error() sets CACHEFILES_DEAD
+and permanently disables the cache.
 
-After your changes this is now correct as simple_done_creating() puts
-the lookup reference.
+> -	}
+> -
+> -	if (!d_can_lookup(cache->graveyard)) {
+> -		unlock_rename(cache->graveyard, dir);
+> -		cachefiles_io_error(cache, "Graveyard no longer a directory");
+> -		return -EIO;
+> -	}
+> -
+> -	if (trap == rep) {
+> -		unlock_rename(cache->graveyard, dir);
+> -		cachefiles_io_error(cache, "May not make directory loop");
+> +	rd.mnt_idmap = &nop_mnt_idmap;
+> +	rd.old_parent = dir;
+> +	rd.new_parent = cache->graveyard;
+> +	rd.flags = 0;
+> +	ret = start_renaming_dentry(&rd, 0, rep, &QSTR(nbuffer));
+> +	if (ret) {
+> +		cachefiles_io_error(cache, "Cannot lock/lookup in graveyard");
+>  		return -EIO;
+>  	}
+>  
+>  	if (d_mountpoint(rep)) {
+> -		unlock_rename(cache->graveyard, dir);
+> +		end_renaming(&rd);
+>  		cachefiles_io_error(cache, "Mountpoint in cache");
+>  		return -EIO;
+>  	}
+>  
+> -	grave = lookup_one(&nop_mnt_idmap, &QSTR(nbuffer), cache->graveyard);
+> -	if (IS_ERR(grave)) {
+> -		unlock_rename(cache->graveyard, dir);
+> -		trace_cachefiles_vfs_error(object, d_inode(cache->graveyard),
+> -					   PTR_ERR(grave),
+> -					   cachefiles_trace_lookup_error);
+> -
+> -		if (PTR_ERR(grave) == -ENOMEM) {
+> -			_leave(" = -ENOMEM");
+> -			return -ENOMEM;
+> -		}
+
+This too?
+
+In the old code a -ENOMEM return from lookup_one() let the cache stay
+alive and returned directly. The new code gets sent via
+cachefiles_io_error() causing again CACHEFILES_DEAD to be set and
+permanently disabling the cache.
+
+Maybe both changes are intentional. If so we should probably note this
+in the commit message or this should be fixed?
+
+If you give me a fixup! on top of vfs-7.1.directory I can fold it.
 
