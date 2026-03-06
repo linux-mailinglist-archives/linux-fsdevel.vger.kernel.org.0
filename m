@@ -1,209 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-79574-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GKWjMO11qmnRRwEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79574-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 07:36:29 +0100
+	id GBUaNgmCqmkHSwEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 08:28:09 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24B6D21C201
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 07:36:29 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E3521C74C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 08:28:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id AD66D3041395
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 06:36:22 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id A2BC9304EA5C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 07:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53377371CED;
-	Fri,  6 Mar 2026 06:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D98237419E;
+	Fri,  6 Mar 2026 07:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yecmu4Pm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com [209.85.161.70])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28E3331A7E
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Mar 2026 06:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B698372ED4
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Mar 2026 07:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772778981; cv=none; b=VbIhB+cDdDDcMJI/Z1v5ZY4BFuVwSYGbvP9nbsk2nI594mltPVXh0u4uM5W3ihz2cnYjys8SNbVjM3fJUyLufpZKAGU1+C4g4tw0MiRE9KM1QeT7rtaMhBqSiNNgecEZHDXlSATVOqUiyyIa2doyrmjo3L9EnWJgAbdHUQQ/A5M=
+	t=1772782011; cv=none; b=dORy58z2OyESZT9Qj5nwfp/IQQxd96+jorb4fpDZD9+d6STahizJfjkPckFpsc7Gf/Xk9hEQyKU4qpXtsv7LWRxGxvSf8SAePpw4wenISqlVODKur55uBCe+pONNyLfBCHAbAWxsDyn09YJGevH4QWqFmHYFET+Qa96QOWHg3hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772778981; c=relaxed/simple;
-	bh=vOFWcD9VgS+J2CrjRSLI6m6RzJjvI4JzAWbvcLw4kfw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=koNFrZEw6Mqo9bY4rC4jZrqym8OlAbUXdklI3qRA8MQP5S9IRZQTFTZAxjsYnpIBBK5zHRfVGOaZaGd3osz8JlveBrKmZgKIEtEA2Ss920LLKponYbXhZ8ikF5brvLWtorEorCM0lluoPhLp7YGLoOrenr/Qejf05xiAXQZe5mE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-67999892f00so155404646eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Mar 2026 22:36:19 -0800 (PST)
+	s=arc-20240116; t=1772782011; c=relaxed/simple;
+	bh=WytjbZ0qhYdE8DhbNmTyH4k86rIIYjGXvL2X04djZNE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TJiapdjdnc6r0T5+jZ1OxZLAlzsceFEY14UWxW2MU83gm0iNeg/bHSUZupCdaQXWMOejdK25MS9V7efQNA6oGrpJ23AGQw8ME/TRC2dRf8zPrKfBJlapFil+aCvdjHsAY3SmTLD9Z/FpuZpD5yp2N4h8bZGfywuVUPqYWZ21Mw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yecmu4Pm; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4806cc07ce7so102023535e9.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Mar 2026 23:26:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772782009; x=1773386809; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pnmjVX6JImP9WCGFTMSM7Kh0jevJDk+KG2z/pOD1Fhg=;
+        b=Yecmu4PmbZ+u3/6reZxqj1xJ+Szdvqg1Y0Nwo26dYbHw+38c32Kd81ZSTyFdVbyUCl
+         4K5Uw+kaxfkqjdU+EwWPJMZBtzPHha1kdNHnjLcZ4hVUgJB1VMo8UF/TF8rbNk0yOdcW
+         ziuCYkFaxsnAX2rFNuOcknq8lckzeZhrdbqwQn1fHuYk1PO+rkuKSQAz7ClAPSmjQ2U2
+         mMQHRTumB4IGlNrcWZrwVUhzwJCNpRZiW7pCvv1HLTDLo+6RutjRoYCnStltgc/1Q/Oj
+         jmCtcB52EycrSQxCmXxJCwOXWbBrhQUFD0g3A3Tn1gq/rh0GvI1QWkoe6SVjO5w4jmpk
+         5LpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772778979; x=1773383779;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xjCUsjN0/IVVP3mFuyWfmY85swmEI0tCp3uwii5R7sU=;
-        b=EqH7O9PdQh1RR7mSKc9m6MLR3vSUH8M6CzJkU0qAG31Vz9KF3cu8QiwvDeWBfV+ssM
-         9zAxKxO9Pu2grJkc6DRILFDG0Z41Z0SzSUVuAoM0J3XmVtdxgiChBeBtvyCKErOPRLkN
-         7CvEPfUjUkSVPkdzflerni5wa5hYu5hgeMKdhspY0dQ6RwpbXF1ByyPOULGd+JQMHKWB
-         VQ4UTFDtzrboQ6NCKOUscbBMfL9HyGCl+9VAVAR06wRQ0o4gt4fmQhdUxhQT5/gJm8gv
-         h9aR8GwbBhSBu+knKhYs/d4cm/7Jm2rZzhNcMsOEilZssPnMmD7IZPkTAapK/tf9ueDb
-         5fzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVu2h4eAe9DBvAZn3Az6JM0kKNRS2ndleNz32sxRSowqIuadOzFa1vu5ZvKbF/QB8MKFD18zYLnkAOG4a4z@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7cl+qGnzualEJzMGvqd5ngnkNaORCHWB2C7zVUt5RswctBT0y
-	g1QTvYD+emQJipuHN2z18OhfK53oJ9Yr7LvBUtLtngxEQ9cLZFhhsgNXrVHRB3QMFJAaqZKgwFE
-	STIquR2ABgCg4WbIgYDGWaWUQtuhgpbZ5nRqX0CZXpu+xgMlB9p5m7kNFFPA=
+        d=1e100.net; s=20230601; t=1772782009; x=1773386809;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=pnmjVX6JImP9WCGFTMSM7Kh0jevJDk+KG2z/pOD1Fhg=;
+        b=gU3WhjbwSlzEVHIoQfyelhf8Xt/IRsYzFMfuCHVqCxa9Tp28J7gdVqdXLy+d/WWu/C
+         qvDt2xSFfrULXXVlUXKViwzhS8astIgPdReVe1LwdNb62nJis5tF6DE92C0Rzh/ib5Pm
+         HuwZvWDkpZADPp/HkASgp44MFfKowMjalgqz05EIaQ2Ngj1cI3R7Xn74OmqltH3uOuCi
+         D+kUSeok9Rnze2EezlnUtRZQhEjtV8R3QY84/pEKDehcZQ3BLe/PBwbfyVdgcmDWPcfy
+         4btDUXI5XkzwYNnou5saB/nGQclwIE48bqSaHWHJOOncSnlvED4M67JYSubD/i5D7Om7
+         3Gtw==
+X-Forwarded-Encrypted: i=1; AJvYcCW6B0Ryx34umtrbnqCDiPLXIjObtRAufQiyJz4bah1NhjZgtSEcv+5KCzdU8DMCW58Xz1P35wxo+fwSMXHT@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJOjuWFxhTYb9gJyyQWX8FXg3hs5SoZ4v2UfPt/uDE6vzB9yS+
+	HLuht6vS2kyQufcCpIV1Mie0oamWc84Z89YpPAbyvHXtNxNrcl57IeVJ
+X-Gm-Gg: ATEYQzzmAkyNLKfsf+gwQE5SNL6xSBOdJt1VTGZIBBLwvEBryAZgCtYYMParxuNTdB1
+	+JH+pP3yzLGhb4d8uZRcedCQV867fGQr5TdSQFDdvScUmOrj23GSUgSLp/XLEklSEkkgPfRBgfg
+	TEwIOhCIRtznVNsgOj4+386r1KA7dTeMyyNlC9N6WU5ugHxf/xNEeQ9EQR3aCQXNTF8Zvkyap8C
+	0wr7cVklbLvYaceszdkYWLshI6SfsPMuz1UQxoMSwXoyPmGTl5EWK/mvyHVke47yVBmH7KCQ1MB
+	qvLBB8ndNiMpf4dU0LvMrYxIKoYnfzubrXsf6dz8vZXTc9xpRiAOkacnzdKGXafBRWMfC2z4zql
+	kcwW4ez/S4cNAMiVy7qvzJ8cTtlz9WHe53Ja5FYBFEw26+TfnBffxlLsFzxKTFNv7rskFH3nM/S
+	TX2wWVoNLd7lwBvSchFOQ=
+X-Received: by 2002:a05:600c:45d1:b0:480:4a90:1b06 with SMTP id 5b1f17b1804b1-48526978962mr15112605e9.34.1772782008828;
+        Thu, 05 Mar 2026 23:26:48 -0800 (PST)
+Received: from localhost ([212.73.77.104])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-485244b6e9esm18648865e9.5.2026.03.05.23.26.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Mar 2026 23:26:48 -0800 (PST)
+From: Askar Safin <safinaskar@gmail.com>
+To: brauner@kernel.org
+Cc: axboe@kernel.dk,
+	jack@suse.cz,
+	jannh@google.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tj@kernel.org,
+	torvalds@linux-foundation.org,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH RFC DRAFT POC 00/11] fs,kthread: isolate all kthreads in nullfs
+Date: Fri,  6 Mar 2026 10:26:39 +0300
+Message-ID: <20260306072639.1731059-1-safinaskar@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260303-work-kthread-nullfs-v1-0-87e559b94375@kernel.org>
+References: <20260303-work-kthread-nullfs-v1-0-87e559b94375@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:1607:b0:663:40d:4893 with SMTP id
- 006d021491bc7-67b9bc4f053mr834261eaf.3.1772778978736; Thu, 05 Mar 2026
- 22:36:18 -0800 (PST)
-Date: Thu, 05 Mar 2026 22:36:18 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69aa75e2.050a0220.13f275.000f.GAE@google.com>
-Subject: [syzbot] [netfs?] kernel BUG in netfs_limit_iter
-From: syzbot <syzbot+9c058f0d63475adc97fd@syzkaller.appspotmail.com>
-To: dhowells@redhat.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev, pc@manguebit.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Rspamd-Queue-Id: 24B6D21C201
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 64E3521C74C
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.36 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=976ba5a93c4add9e];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	MID_CONTAINS_FROM(1.00)[];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
-	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-79574-lists,linux-fsdevel=lfdr.de,9c058f0d63475adc97fd];
+	TAGGED_FROM(0.00)[bounces-79576-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	RCVD_COUNT_FIVE(0.00)[5];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	SUBJECT_HAS_QUESTION(0.00)[];
-	REDIRECTOR_URL(0.00)[goo.gl];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
+	MIME_TRACE(0.00)[0:+];
+	FROM_NEQ_ENVFROM(0.00)[safinaskar@gmail.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
 	TO_DN_NONE(0.00)[];
-	R_DKIM_NA(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,googlegroups.com:email,appspotmail.com:email,storage.googleapis.com:url,syzkaller.appspot.com:url,goo.gl:url]
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-Hello,
+Christian Brauner <brauner@kernel.org>:
+> Instead of sharing fs_struct between kernel threads and pid 1 we give
+> pid a separate userspace_init_fs struct.
 
-syzbot found the following issue on:
-
-HEAD commit:    c107785c7e8d Merge tag 'modules-7.0-rc3.fixes' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13d408ba580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=976ba5a93c4add9e
-dashboard link: https://syzkaller.appspot.com/bug?extid=9c058f0d63475adc97fd
-compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16421552580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=166a97e6580000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-c107785c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3a4a4abcd973/vmlinux-c107785c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f60667f16840/bzImage-c107785c.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9c058f0d63475adc97fd@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-kernel BUG at fs/netfs/iterator.c:248!
-Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-CPU: 3 UID: 0 PID: 6437 Comm: syz.9.39 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-RIP: 0010:netfs_limit_iter+0x100d/0x1100 fs/netfs/iterator.c:248
-Code: ff e9 a4 f4 ff ff 48 89 de 48 c7 c7 a0 db ab 8e e8 e8 3f 74 fe e9 59 f6 ff ff e8 9e e8 b1 ff e9 6f f6 ff ff e8 74 6b 45 ff 90 <0f> 0b e8 fc e7 b1 ff e9 cd f9 ff ff 4c 89 f6 48 c7 c7 20 dc ab 8e
-RSP: 0018:ffffc900040e6d18 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff82c3391b
-RDX: ffff8880298a0000 RSI: ffffffff82c3484c RDI: ffff8880298a0000
-RBP: 0000000000000003 R08: 0000000000000001 R09: 0000000000000005
-R10: 0000000000000003 R11: 0000000000000012 R12: 000000007fffffff
-R13: 1ffff9200081cda9 R14: ffff88801c7f3960 R15: ffff888022886580
-FS:  000055556085f500(0000) GS:ffff8880d6644000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c008fdc000 CR3: 000000002f279000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- netfs_unbuffered_write+0x25d/0x2080 fs/netfs/direct_write.c:128
- netfs_unbuffered_write_iter_locked+0x801/0xab0 fs/netfs/direct_write.c:287
- netfs_unbuffered_write_iter+0x40c/0x710 fs/netfs/direct_write.c:377
- v9fs_file_write_iter+0xbf/0x100 fs/9p/vfs_file.c:409
- __kernel_write_iter+0x2ac/0x920 fs/read_write.c:621
- __kernel_write+0xf6/0x140 fs/read_write.c:641
- __dump_emit fs/coredump.c:1221 [inline]
- dump_emit+0x21f/0x330 fs/coredump.c:1259
- elf_core_dump+0x2127/0x3d10 fs/binfmt_elf.c:2062
- coredump_write fs/coredump.c:1050 [inline]
- do_coredump fs/coredump.c:1127 [inline]
- vfs_coredump+0x27bc/0x5570 fs/coredump.c:1201
- get_signal+0x1f2a/0x21e0 kernel/signal.c:3019
- arch_do_signal_or_restart+0x91/0x7a0 arch/x86/kernel/signal.c:337
- __exit_to_user_mode_loop kernel/entry/common.c:64 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:98 [inline]
- __exit_to_user_mode_prepare include/linux/irq-entry-common.h:226 [inline]
- irqentry_exit_to_user_mode_prepare include/linux/irq-entry-common.h:270 [inline]
- irqentry_exit_to_user_mode include/linux/irq-entry-common.h:339 [inline]
- irqentry_exit+0x1f8/0x670 kernel/entry/common.c:219
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:618
-RIP: 0033:0x0
-Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-RSP: 002b:0000200000000088 EFLAGS: 00010217
-RAX: 0000000000000000 RBX: 00007f5120e15fa0 RCX: 00007f5120b9c799
-RDX: 0000000000000000 RSI: 0000200000000080 RDI: 0000000000008000
-RBP: 00007f5120c32bd9 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
-R13: 00007f5120e15fac R14: 00007f5120e15fa0 R15: 00007f5120e15fa0
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:netfs_limit_iter+0x100d/0x1100 fs/netfs/iterator.c:248
-Code: ff e9 a4 f4 ff ff 48 89 de 48 c7 c7 a0 db ab 8e e8 e8 3f 74 fe e9 59 f6 ff ff e8 9e e8 b1 ff e9 6f f6 ff ff e8 74 6b 45 ff 90 <0f> 0b e8 fc e7 b1 ff e9 cd f9 ff ff 4c 89 f6 48 c7 c7 20 dc ab 8e
-RSP: 0018:ffffc900040e6d18 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff82c3391b
-RDX: ffff8880298a0000 RSI: ffffffff82c3484c RDI: ffff8880298a0000
-RBP: 0000000000000003 R08: 0000000000000001 R09: 0000000000000005
-R10: 0000000000000003 R11: 0000000000000012 R12: 000000007fffffff
-R13: 1ffff9200081cda9 R14: ffff88801c7f3960 R15: ffff888022886580
-FS:  000055556085f500(0000) GS:ffff8880d6644000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c008fdc000 CR3: 000000002f279000 CR4: 0000000000352ef0
+You meant "we give pid 1 a separate"
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> The only remaining kernel tasks that actually share init's filesystem
+> state are usermodhelpers
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+This sounds like usermodhelpers actually *share* init's fs_struct.
+This is false, otherwise usermodhelpers could just do "chdir" and change
+cwd of pid 1. So, please, rephrase this sentence.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> Be aggressive about this: We simply reject operating on stale
+> fs_struct state by reverting userspace_init_fs to nullfs.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+I think in this case unshare should simply fail and return error to
+userspace.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+> PID 1 uses pid1_fs which points to the initramfs
 
-If you want to undo deduplication, reply with:
-#syz undup
+You meant userspace_init_fs, not pid1_fs. (pid1_fs is mentioned two times
+in cover letter. Also in comments in patch 06/11.)
+
+> `init_chroot_to_overmount()` at the start of `kernel_init()`)
+
+There is no function named "init_chroot_to_overmount".
+
+I hope you are not offended. I just did some proof-reading.
+
+-- 
+Askar Safin
 
