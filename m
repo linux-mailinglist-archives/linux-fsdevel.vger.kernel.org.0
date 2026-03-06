@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-79650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79651-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 6JrvD7gNq2k/ZgEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 18:24:08 +0100
+	id AII9DjIPq2n1ZgEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79651-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 18:30:26 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id E88B422601D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 18:24:07 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C952F226319
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 06 Mar 2026 18:30:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 352AE305831B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 17:21:32 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id A80EF30A144C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2026 17:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9654836AB5F;
-	Fri,  6 Mar 2026 17:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3BAE47D952;
+	Fri,  6 Mar 2026 17:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ngPuMDYO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hcaj1Lxw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3B83659F8;
-	Fri,  6 Mar 2026 17:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2CF3659F8;
+	Fri,  6 Mar 2026 17:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772817581; cv=none; b=rpf6xG9AwSd69XQH/TQcH8hN1ilu+k4MJkZuWNmPDdZ/5sLHnQrKYTZmaxZqI23HVWtS6Bf44Zu0Fxx/3bQ7JTFiwbVFIrhQ7VTourWA3wmv9ykXLUm2xxETPz0N0FRhvLRRGXMyDBU2ImHqS0h0jQScQXY+G6ijyOc5C1VeeDQ=
+	t=1772817587; cv=none; b=MJkyZhYcsnOAwi4eaXfDL+tB9MyQu0uYDTE82GXB+Rvdv0S7Rtnj9V99er5T95TVa5UfuOfE9stnWEipw/pvh9CGkqREwirLPbXcGI523dKP/O/cDmDr/igrgB8QTwXOzRf7azqMzmvbAw4ZOjyZDLB5xVZFPboZhedhPNaYU1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772817581; c=relaxed/simple;
-	bh=D2z107Crk/aKX5jAkrVRRaT1KD/wz+I3gmrbuJFA7+o=;
+	s=arc-20240116; t=1772817587; c=relaxed/simple;
+	bh=4hcRW7GlxXluQlc26C/qvdD+bZFAR7n0L5fkslie5bM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tNeDV+7l/OW3jZyyUFmJYjOsLhw/1Jqr4paUcV25dKNHUTdwV/F4qJl5wqKviSMbbgdCrDIjwlLPnDH8vAyAp8ebEVCacEEsdo8deLb6DBdABitb4YsMVz0ieRWyxOPvkI+VsNwFI5oFqRoa80awJ4Uge70ywi09kRA8ZZ0tY94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ngPuMDYO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BED3C4CEF7;
-	Fri,  6 Mar 2026 17:19:34 +0000 (UTC)
+	 MIME-Version; b=AzxYhp/oFyLfu5pXxQO33UGvLoXABLxBxVnnAeDhkuy0cqDE5ujFbv09rIkbiefemQyfJBwECPY4WbrX72yTkE+mP+mxFXuxvRH7BfsFr5fIFdTnCAcjDooEIMYAL0cuHtcsSTF2as0pZc8u4DmWF4loBzy2+c/J3Trw2ac+wtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hcaj1Lxw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CA70C4CEF7;
+	Fri,  6 Mar 2026 17:19:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772817580;
-	bh=D2z107Crk/aKX5jAkrVRRaT1KD/wz+I3gmrbuJFA7+o=;
+	s=k20201202; t=1772817587;
+	bh=4hcRW7GlxXluQlc26C/qvdD+bZFAR7n0L5fkslie5bM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ngPuMDYOlU0mS+ASFRSNx8uaRHF9kFKx0o8JB0Q8efPd7kbzUcnYwjsCOJjXJpfG9
-	 zVkLPIpevfPpHikwzQ8vofWtaw8pOystr4JUYmsveUeFSZ27lHyXPw5IwgE34H3niA
-	 6tViETw/ALirduugAdhngm9PvkddKiL8mR1puYQEBKKjXeFmqbS0PjRhhOyiIk2pLf
-	 2ICVUi2AUzCNuukDh9OwdRURRDUsnfH9IHXfawgc4eaZcUzrU/genjD9gL8O0xAF8N
-	 m5StoeImAE7EMg3Mih2E+7lLLKRY5i/yfXYNpa2RZDhsS13WvOMyEG+CX0bBmf/7Ax
-	 rPWnW2MdDsOww==
+	b=hcaj1LxwcAYPRChevInQFpSIb2L6pDg0SXrwiAE+sU2PCjvTh0wAkWwxQ869+qJMA
+	 K2AIVQWZB5co/YkXsN7BNFxZ7eDNEiXmWiW8pvh+quysUsbj8Ew0jj0rl5073qB4v4
+	 htHDVj+bdVKUbmiVuBR/iUb1fqIbQNiWg4UBi9Jf99RKFM7Oz7FqaV4F1kg6HjRw++
+	 ZVT9cwAT7sxnOfm1jOg7JJrjYZW2Ilng+T3NLQHZbnPTKiaqyxK+pC6KFROiRk8p5C
+	 kEsB9gASp2XlJCZfutHB5hqxaxiNcmdX6eHMsSJtmZnL2T3yfESGTPRHbNdxdm61Z6
+	 teCAKrn8yeJQQ==
 From: Mike Rapoport <rppt@kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Andrea Arcangeli <aarcange@redhat.com>,
@@ -71,9 +71,9 @@ Cc: Andrea Arcangeli <aarcange@redhat.com>,
 	linux-kernel@vger.kernel.org,
 	linux-kselftest@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [PATCH v2 12/15] mm: generalize handling of userfaults in __do_fault()
-Date: Fri,  6 Mar 2026 19:18:12 +0200
-Message-ID: <20260306171815.3160826-13-rppt@kernel.org>
+Subject: [PATCH v2 13/15] KVM: guest_memfd: implement userfaultfd operations
+Date: Fri,  6 Mar 2026 19:18:13 +0200
+Message-ID: <20260306171815.3160826-14-rppt@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260306171815.3160826-1-rppt@kernel.org>
 References: <20260306171815.3160826-1-rppt@kernel.org>
@@ -84,7 +84,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: E88B422601D
+X-Rspamd-Queue-Id: C952F226319
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
@@ -92,11 +92,11 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79650-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79651-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	RCVD_TLS_LAST(0.00)[];
@@ -107,153 +107,170 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[rppt@kernel.org,linux-fsdevel@vger.kernel.org];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	NEURAL_HAM(-0.00)[-0.977];
+	NEURAL_HAM(-0.00)[-0.976];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
 	FROM_HAS_DN(0.00)[]
 X-Rspamd-Action: no action
 
-From: Peter Xu <peterx@redhat.com>
+From: Nikita Kalyazin <kalyazin@amazon.com>
 
-When a VMA is registered with userfaulfd, its ->fault()
-method should check if a folio exists in the page cache and call
-handle_userfault() with appropriate mode:
+userfaultfd notifications about page faults used for live migration
+and snapshotting of VMs.
 
-- VM_UFFD_MINOR if VMA is registered in minor mode and the folio exists
-- VM_UFFD_MISSING if VMA is registered in missing mode and the folio
-  does not exist
+MISSING mode allows post-copy live migration and MINOR mode allows
+optimization for post-copy live migration for VMs backed with shared
+hugetlbfs or tmpfs mappings as described in detail in commit
+7677f7fd8be7 ("userfaultfd: add minor fault registration mode").
 
-Instead of calling handle_userfault() directly from a specific ->fault()
-handler, call __do_userfault() helper from the generic __do_fault().
+To use the same mechanisms for VMs that use guest_memfd to map their
+memory, guest_memfd should support userfaultfd operations.
 
-For VMAs registered with userfaultfd the new __do_userfault() helper
-will check if the folio is found in the page cache using
-vm_uffd_ops->get_folio_noalloc() and call handle_userfault() with the
-appropriate mode.
+Add implementation of vm_uffd_ops to guest_memfd.
 
-Make vm_uffd_ops->get_folio_noalloc() required method for non-anonymous
-VMAs mapped at PTE level.
-
-Signed-off-by: Peter Xu <peterx@redhat.com>
+Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
 Co-developed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 ---
- mm/memory.c      | 43 +++++++++++++++++++++++++++++++++++++++++++
- mm/shmem.c       | 12 ------------
- mm/userfaultfd.c |  8 ++++++++
- 3 files changed, 51 insertions(+), 12 deletions(-)
+ mm/filemap.c           |  1 +
+ virt/kvm/guest_memfd.c | 84 +++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 83 insertions(+), 2 deletions(-)
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 07778814b4a8..e2183c44d70b 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -5328,6 +5328,41 @@ static vm_fault_t do_anonymous_page(struct vm_fault *vmf)
- 	return VM_FAULT_OOM;
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 6cd7974d4ada..19dfcebcd23f 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -262,6 +262,7 @@ void filemap_remove_folio(struct folio *folio)
+ 
+ 	filemap_free_folio(mapping, folio);
+ }
++EXPORT_SYMBOL_FOR_MODULES(filemap_remove_folio, "kvm");
+ 
+ /*
+  * page_cache_delete_batch - delete several folios from page cache
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index 017d84a7adf3..46582feeed75 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -7,6 +7,7 @@
+ #include <linux/mempolicy.h>
+ #include <linux/pseudo_fs.h>
+ #include <linux/pagemap.h>
++#include <linux/userfaultfd_k.h>
+ 
+ #include "kvm_mm.h"
+ 
+@@ -107,6 +108,12 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
+ 	return __kvm_gmem_prepare_folio(kvm, slot, index, folio);
  }
  
-+#ifdef CONFIG_USERFAULTFD
-+static vm_fault_t __do_userfault(struct vm_fault *vmf)
++static struct folio *kvm_gmem_get_folio_noalloc(struct inode *inode, pgoff_t pgoff)
 +{
-+	struct vm_area_struct *vma = vmf->vma;
-+	struct inode *inode;
++	return __filemap_get_folio(inode->i_mapping, pgoff,
++				   FGP_LOCK | FGP_ACCESSED, 0);
++}
++
+ /*
+  * Returns a locked folio on success.  The caller is responsible for
+  * setting the up-to-date flag before the memory is mapped into the guest.
+@@ -126,8 +133,7 @@ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
+ 	 * Fast-path: See if folio is already present in mapping to avoid
+ 	 * policy_lookup.
+ 	 */
+-	folio = __filemap_get_folio(inode->i_mapping, index,
+-				    FGP_LOCK | FGP_ACCESSED, 0);
++	folio = kvm_gmem_get_folio_noalloc(inode, index);
+ 	if (!IS_ERR(folio))
+ 		return folio;
+ 
+@@ -457,12 +463,86 @@ static struct mempolicy *kvm_gmem_get_policy(struct vm_area_struct *vma,
+ }
+ #endif /* CONFIG_NUMA */
+ 
++#ifdef CONFIG_USERFAULTFD
++static bool kvm_gmem_can_userfault(struct vm_area_struct *vma, vm_flags_t vm_flags)
++{
++	struct inode *inode = file_inode(vma->vm_file);
++
++	/*
++	 * Only support userfaultfd for guest_memfd with INIT_SHARED flag.
++	 * This ensures the memory can be mapped to userspace.
++	 */
++	if (!(GMEM_I(inode)->flags & GUEST_MEMFD_FLAG_INIT_SHARED))
++		return false;
++
++	return true;
++}
++
++static struct folio *kvm_gmem_folio_alloc(struct vm_area_struct *vma,
++					  unsigned long addr)
++{
++	struct inode *inode = file_inode(vma->vm_file);
++	pgoff_t pgoff = linear_page_index(vma, addr);
++	struct mempolicy *mpol;
 +	struct folio *folio;
++	gfp_t gfp;
 +
-+	if (!(userfaultfd_missing(vma) || userfaultfd_minor(vma)))
-+		return 0;
++	if (unlikely(pgoff >= (i_size_read(inode) >> PAGE_SHIFT)))
++		return NULL;
 +
-+	inode = file_inode(vma->vm_file);
-+	folio = vma->vm_ops->uffd_ops->get_folio_noalloc(inode, vmf->pgoff);
-+	if (!IS_ERR_OR_NULL(folio)) {
-+		/*
-+		 * TODO: provide a flag for get_folio_noalloc() to avoid
-+		 * locking (or even the extra reference?)
-+		 */
++	gfp = mapping_gfp_mask(inode->i_mapping);
++	mpol = mpol_shared_policy_lookup(&GMEM_I(inode)->policy, pgoff);
++	mpol = mpol ?: get_task_policy(current);
++	folio = filemap_alloc_folio(gfp, 0, mpol);
++	mpol_cond_put(mpol);
++
++	return folio;
++}
++
++static int kvm_gmem_filemap_add(struct folio *folio,
++				struct vm_area_struct *vma,
++				unsigned long addr)
++{
++	struct inode *inode = file_inode(vma->vm_file);
++	struct address_space *mapping = inode->i_mapping;
++	pgoff_t pgoff = linear_page_index(vma, addr);
++	int err;
++
++	__folio_set_locked(folio);
++	err = filemap_add_folio(mapping, folio, pgoff, GFP_KERNEL);
++	if (err) {
 +		folio_unlock(folio);
-+		folio_put(folio);
-+		if (userfaultfd_minor(vma))
-+			return handle_userfault(vmf, VM_UFFD_MINOR);
-+	} else {
-+		if (userfaultfd_missing(vma))
-+			return handle_userfault(vmf, VM_UFFD_MISSING);
++		return err;
 +	}
 +
 +	return 0;
 +}
-+#else
-+static inline vm_fault_t __do_userfault(struct vm_fault *vmf)
++
++static void kvm_gmem_filemap_remove(struct folio *folio,
++				    struct vm_area_struct *vma)
 +{
-+	return 0;
++	filemap_remove_folio(folio);
++	folio_unlock(folio);
 +}
++
++static const struct vm_uffd_ops kvm_gmem_uffd_ops = {
++	.can_userfault     = kvm_gmem_can_userfault,
++	.get_folio_noalloc = kvm_gmem_get_folio_noalloc,
++	.alloc_folio       = kvm_gmem_folio_alloc,
++	.filemap_add       = kvm_gmem_filemap_add,
++	.filemap_remove    = kvm_gmem_filemap_remove,
++};
++#endif /* CONFIG_USERFAULTFD */
++
+ static const struct vm_operations_struct kvm_gmem_vm_ops = {
+ 	.fault		= kvm_gmem_fault_user_mapping,
+ #ifdef CONFIG_NUMA
+ 	.get_policy	= kvm_gmem_get_policy,
+ 	.set_policy	= kvm_gmem_set_policy,
+ #endif
++#ifdef CONFIG_USERFAULTFD
++	.uffd_ops	= &kvm_gmem_uffd_ops,
 +#endif
-+
- /*
-  * The mmap_lock must have been held on entry, and may have been
-  * released depending on flags and vma->vm_ops->fault() return value.
-@@ -5360,6 +5395,14 @@ static vm_fault_t __do_fault(struct vm_fault *vmf)
- 			return VM_FAULT_OOM;
- 	}
+ };
  
-+	/*
-+	 * If this is an userfaultfd trap, process it in advance before
-+	 * triggering the genuine fault handler.
-+	 */
-+	ret = __do_userfault(vmf);
-+	if (ret)
-+		return ret;
-+
- 	ret = vma->vm_ops->fault(vmf);
- 	if (unlikely(ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE | VM_FAULT_RETRY |
- 			    VM_FAULT_DONE_COW)))
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 68620caaf75f..239545352cd2 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2489,13 +2489,6 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
- 	fault_mm = vma ? vma->vm_mm : NULL;
- 
- 	folio = filemap_get_entry(inode->i_mapping, index);
--	if (folio && vma && userfaultfd_minor(vma)) {
--		if (!xa_is_value(folio))
--			folio_put(folio);
--		*fault_type = handle_userfault(vmf, VM_UFFD_MINOR);
--		return 0;
--	}
--
- 	if (xa_is_value(folio)) {
- 		error = shmem_swapin_folio(inode, index, &folio,
- 					   sgp, gfp, vma, fault_type);
-@@ -2540,11 +2533,6 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
- 	 * Fast cache lookup and swap lookup did not find it: allocate.
- 	 */
- 
--	if (vma && userfaultfd_missing(vma)) {
--		*fault_type = handle_userfault(vmf, VM_UFFD_MISSING);
--		return 0;
--	}
--
- 	/* Find hugepage orders that are allowed for anonymous shmem and tmpfs. */
- 	orders = shmem_allowable_huge_orders(inode, vma, index, write_end, false);
- 	if (orders > 0) {
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index 7cd7c5d1ce84..2ac5fad0ed6c 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -2045,6 +2045,14 @@ bool vma_can_userfault(struct vm_area_struct *vma, vm_flags_t vm_flags,
- 	    !vma_is_anonymous(vma))
- 		return false;
- 
-+	/*
-+	 * File backed memory with PTE level mappigns must implement
-+	 * ops->get_folio_noalloc()
-+	 */
-+	if (!vma_is_anonymous(vma) && !is_vm_hugetlb_page(vma) &&
-+	    !ops->get_folio_noalloc)
-+		return false;
-+
- 	return ops->can_userfault(vma, vm_flags);
- }
- 
+ static int kvm_gmem_mmap(struct file *file, struct vm_area_struct *vma)
 -- 
 2.51.0
 
