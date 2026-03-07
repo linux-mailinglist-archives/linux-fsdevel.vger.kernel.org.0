@@ -1,190 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-79682-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79683-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QE7zLVvTq2mshAEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79682-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 07 Mar 2026 08:27:23 +0100
+	id CIGgJmjWq2n6hAEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79683-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 07 Mar 2026 08:40:24 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3837022A9A2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 07 Mar 2026 08:27:19 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B36122AA18
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 07 Mar 2026 08:40:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9AF9C303D2F3
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Mar 2026 07:27:12 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id C8782301938B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Mar 2026 07:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D734D3783CB;
-	Sat,  7 Mar 2026 07:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YWHv/ZZJ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FE337C11C;
+	Sat,  7 Mar 2026 07:40:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com [209.85.161.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290DD1B4257
-	for <linux-fsdevel@vger.kernel.org>; Sat,  7 Mar 2026 07:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30B137AA8D
+	for <linux-fsdevel@vger.kernel.org>; Sat,  7 Mar 2026 07:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772868431; cv=none; b=OxY8rBrfmiFAggBtZzaWCbV6cGGEOVYwTA5cUkbyxCkVPgjGkKTYxt9+sb4JdhNXQy1yUrO4ytre+Hnqsyve4+8jQnyLL+rTn9wzh2F3dbWbMMlzC7iKbBVpxKZlz+va/0HcbdNQ3dq1Ho4jpFQeLmHVFgoUIVe+exixaJn1mZY=
+	t=1772869205; cv=none; b=ksD7h+cyyR8Yk5P65lCti8BjPZ3wU7c76eRwOGlxQCztPgQKrQ7W4VPlOSc5f9krzvO1nHfzE7LVLRIHAJZDoyDLPU7EQkjK1dZZbUpd9Z1Su9iP5BStrezlngqvxpEZRvfu15yl+ZUWHwHn9OkRD2YGhzL+k0P+5qVn9i9zcs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772868431; c=relaxed/simple;
-	bh=CZBo56vAiijt9ljba/FRXjd848V8Psje8zj7FhMYElQ=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=R/CI7rnuQkEAg7QEoSH7E+9r/Noyu1bzsb1TxRS7MGnKPfUbz/W3PBQc/Mcb5mGOCwTkg609rZVwDyH9VNMhz4GtNviRXGRxcYETDMAd6D+6tzM5nmDIZnFXyECbApld6pn3QRWefb2imjpA2yrpUtQo6alapoLHxzwGxU6gys0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YWHv/ZZJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1772868429;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DEsPSV+2TI7csiZYbt7+qSwIqSMdwZHkJYhnl4qV0Xk=;
-	b=YWHv/ZZJ0OvhkTZiwFCNqpReC1Wxw662KwznHSkh3ofpdGrhiCYglICZ5I2ImGgvMMixFG
-	jfk93IeFg4UvnVK2On0z0s/YTgD2No3A451dHAW1f9zzcR08yH9qbboygPHAR7puQif/ps
-	OBVeqGKkVTGr3OcwdTEe2UcxqjOAMPE=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-622-RyG6nwQ7MOGbrQvZ0iXstA-1; Sat,
- 07 Mar 2026 02:27:05 -0500
-X-MC-Unique: RyG6nwQ7MOGbrQvZ0iXstA-1
-X-Mimecast-MFC-AGG-ID: RyG6nwQ7MOGbrQvZ0iXstA_1772868424
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4DC1A180049D;
-	Sat,  7 Mar 2026 07:27:04 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.45.224.65])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B5B9418001FE;
-	Sat,  7 Mar 2026 07:27:01 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <69aa75e2.050a0220.13f275.0010.GAE@google.com>
-References: <69aa75e2.050a0220.13f275.0010.GAE@google.com>
-To: syzbot <syzbot+7227db0fbac9f348dba0@syzkaller.appspotmail.com>
-Cc: dhowells@redhat.com, Deepanshu Kartikey <kartikey406@gmail.com>,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-    netfs@lists.linux.dev, pc@manguebit.org,
-    syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [netfs?] BUG: unable to handle kernel NULL pointer dereference in netfs_unbuffered_write
+	s=arc-20240116; t=1772869205; c=relaxed/simple;
+	bh=7d8xXkRHbp7AGgyAKujJfBWcaTQ8Y2/aB4Dufx+bUrA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=eEOxPxu7inXhc7p48z/A0fvMinAw+8XxWFk0Nlio819oSnJABLoex5Wt2LHcTxX70BUZKrEYcYH6XJTc7FSBNZDB41+tWuVxh7Zuot8ueYLCf7w26tvomq7vJH9ecCPLLv49l1ennNVqWCkcyfIF6JuDGM58bpTNI4GRLXcLcgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-67ba8d8546cso85098eaf.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Mar 2026 23:40:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772869203; x=1773474003;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s54ZIRp1Zm/GdN2LwjSQDuvysuLG2BhkNXS3/XGuhRk=;
+        b=qPaWqvHMWeI9lhFxH8rKKpH4X4YYJ0r5WOoiL+VPJFHPLey2ruKSQr43Z8/ELsKPYf
+         lNggtCrz9s0jE/HREZCG7CRgdqBUSlweJxe5L5iBJb+PPmlW/uWxWPU8xiT1FqIOzDba
+         +WpUQHE7CUIBBC4VkaZSZTWv7iahpcTpifJaCpYzVVUF550f+2QVPW9i5CQRT8hDmmwU
+         3J8s49Kh272PUX1Z5anQT3l7d2DevfCoCAnQWy/ETDrX9zV8sQaQnz5Eexi7vjweFzUq
+         HQShrfLFVQCoYTp2mTKBpw/68VZdfwNWZb75BnC8uq10k3d+vF2HEi0byjOahgvxCVws
+         T88Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXlNvpCpRsAGNK5WgQGhxM4sZ0N94AN8ZJ59FdzSOWxRqCMsM/aoGO7crUdq/Iau8aueYimmBAoHltQn109@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIDb7R1SJtslIQFFq2uq3BAc8UNpI4nEUYKznJ7UF1H5Yu+rfn
+	XgQvADabaDdJtAolZarJGsr1gFglZhjU+emrVRE7uHGvivnA6oFXD0yZiVveBrk/WdFc3seyDRi
+	UlDE+ifVKzjVmoUbWEh+zhvFzJPJ9B3L3N1shI0DKymSOje+sqn1gPfM68m4=
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <675784.1772868420.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 07 Mar 2026 07:27:00 +0000
-Message-ID: <675785.1772868420@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Rspamd-Queue-Id: 3837022A9A2
+X-Received: by 2002:a05:6820:2297:b0:67a:555:f8b4 with SMTP id
+ 006d021491bc7-67b9bcc7005mr3068349eaf.34.1772869202834; Fri, 06 Mar 2026
+ 23:40:02 -0800 (PST)
+Date: Fri, 06 Mar 2026 23:40:02 -0800
+In-Reply-To: <675769.1772868400@warthog.procyon.org.uk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69abd652.050a0220.13f275.0041.GAE@google.com>
+Subject: Re: [syzbot] [netfs?] kernel BUG in netfs_limit_iter
+From: syzbot <syzbot+9c058f0d63475adc97fd@syzkaller.appspotmail.com>
+To: dhowells@redhat.com, kartikey406@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netfs@lists.linux.dev, pc@manguebit.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Rspamd-Queue-Id: 9B36122AA18
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-0.36 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=976ba5a93c4add9e];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
+	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[redhat.com,gmail.com,vger.kernel.org,lists.linux.dev,manguebit.org,googlegroups.com];
-	TAGGED_FROM(0.00)[bounces-79682-lists,linux-fsdevel=lfdr.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,warthog.procyon.org.uk:mid,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,appspotmail.com:email];
-	HAS_ORG_HEADER(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[redhat.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[dhowells@redhat.com,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	NEURAL_HAM(-0.00)[-1.000];
+	MISSING_XM_UA(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel,7227db0fbac9f348dba0];
-	SUBJECT_HAS_QUESTION(0.00)[]
+	TAGGED_FROM(0.00)[bounces-79683-lists,linux-fsdevel=lfdr.de,9c058f0d63475adc97fd];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_TO(0.00)[redhat.com,gmail.com,vger.kernel.org,lists.linux.dev,manguebit.org,googlegroups.com];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	SUBJECT_HAS_QUESTION(0.00)[];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_NONE(0.00)[];
+	R_DKIM_NA(0.00)[];
+	NEURAL_HAM(-0.00)[-0.871];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
-t c107785c7e8d
+Hello,
 
-commit eb8299de8f603a6d7acf50e534c87ac1adeb3060
-Author: Deepanshu Kartikey <kartikey406@gmail.com>
-Date:   Sat Mar 7 10:09:47 2026 +0530
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+kernel BUG in netfs_limit_iter
 
-    netfs: Fix NULL pointer dereference in netfs_unbuffered_write() on ret=
-ry
-    =
+------------[ cut here ]------------
+kernel BUG at fs/netfs/iterator.c:248!
+Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+CPU: 1 UID: 0 PID: 6595 Comm: syz.0.28 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+RIP: 0010:netfs_limit_iter+0x100d/0x1100 fs/netfs/iterator.c:248
+Code: ff e9 a4 f4 ff ff 48 89 de 48 c7 c7 a0 db ab 8e e8 d8 3d 74 fe e9 59 f6 ff ff e8 8e e6 b1 ff e9 6f f6 ff ff e8 64 69 45 ff 90 <0f> 0b e8 ec e5 b1 ff e9 cd f9 ff ff 4c 89 f6 48 c7 c7 20 dc ab 8e
+RSP: 0018:ffffc90003c16c70 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff82c33b2b
+RDX: ffff88802b2aa4c0 RSI: ffffffff82c34a5c RDI: ffff88802b2aa4c0
+RBP: 0000000000000003 R08: 0000000000000001 R09: 0000000000000005
+R10: 0000000000000003 R11: 0000000000000012 R12: 000000007fffffff
+R13: 1ffff92000782d94 R14: ffff88802222ef60 R15: ffff8880224b2580
+FS:  00007ffbb60b56c0(0000) GS:ffff8880d6444000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffea0531a80 CR3: 000000002ff66000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ netfs_unbuffered_write+0x2bb/0x2290 fs/netfs/direct_write.c:128
+ netfs_unbuffered_write_iter_locked+0x801/0xab0 fs/netfs/direct_write.c:295
+ netfs_unbuffered_write_iter+0x40c/0x710 fs/netfs/direct_write.c:385
+ v9fs_file_write_iter+0xbf/0x100 fs/9p/vfs_file.c:409
+ __kernel_write_iter+0x2ac/0x920 fs/read_write.c:621
+ __kernel_write+0xf6/0x140 fs/read_write.c:641
+ __dump_emit fs/coredump.c:1221 [inline]
+ dump_emit+0x21f/0x330 fs/coredump.c:1259
+ elf_core_dump+0x2127/0x3d10 fs/binfmt_elf.c:2062
+ coredump_write fs/coredump.c:1050 [inline]
+ do_coredump fs/coredump.c:1127 [inline]
+ vfs_coredump+0x27bc/0x5570 fs/coredump.c:1201
+ get_signal+0x1f2a/0x21e0 kernel/signal.c:3019
+ arch_do_signal_or_restart+0x91/0x7a0 arch/x86/kernel/signal.c:337
+ __exit_to_user_mode_loop kernel/entry/common.c:64 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:98 [inline]
+ __exit_to_user_mode_prepare include/linux/irq-entry-common.h:226 [inline]
+ irqentry_exit_to_user_mode_prepare include/linux/irq-entry-common.h:270 [inline]
+ irqentry_exit_to_user_mode include/linux/irq-entry-common.h:339 [inline]
+ irqentry_exit+0x1f8/0x670 kernel/entry/common.c:219
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:618
+RIP: 0033:0x0
+Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+RSP: 002b:0000200000000088 EFLAGS: 00010217
+RAX: 0000000000000000 RBX: 00007ffbb5415fa0 RCX: 00007ffbb519c799
+RDX: 0000000000000000 RSI: 0000200000000080 RDI: 0000000000008000
+RBP: 00007ffbb5232bd9 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
+R13: 00007ffbb5416038 R14: 00007ffbb5415fa0 R15: 00007ffea05320b8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:netfs_limit_iter+0x100d/0x1100 fs/netfs/iterator.c:248
+Code: ff e9 a4 f4 ff ff 48 89 de 48 c7 c7 a0 db ab 8e e8 d8 3d 74 fe e9 59 f6 ff ff e8 8e e6 b1 ff e9 6f f6 ff ff e8 64 69 45 ff 90 <0f> 0b e8 ec e5 b1 ff e9 cd f9 ff ff 4c 89 f6 48 c7 c7 20 dc ab 8e
+RSP: 0018:ffffc90003c16c70 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff82c33b2b
+RDX: ffff88802b2aa4c0 RSI: ffffffff82c34a5c RDI: ffff88802b2aa4c0
+RBP: 0000000000000003 R08: 0000000000000001 R09: 0000000000000005
+R10: 0000000000000003 R11: 0000000000000012 R12: 000000007fffffff
+R13: 1ffff92000782d94 R14: ffff88802222ef60 R15: ffff8880224b2580
+FS:  00007ffbb60b56c0(0000) GS:ffff8880d6644000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffea0530cd0 CR3: 000000002ff66000 CR4: 0000000000352ef0
 
-    When a write subrequest is marked NETFS_SREQ_NEED_RETRY, the retry pat=
-h
-    in netfs_unbuffered_write() unconditionally calls stream->prepare_writ=
-e()
-    without checking if it is NULL.
-    =
 
-    Filesystems such as 9P do not set the prepare_write operation, so
-    stream->prepare_write remains NULL. When get_user_pages() fails with
-    -EFAULT and the subrequest is flagged for retry, this results in a NUL=
-L
-    pointer dereference at fs/netfs/direct_write.c:189.
-    =
+Tested on:
 
-    Fix this by mirroring the pattern already used in write_retry.c: if
-    stream->prepare_write is NULL, skip renegotiation and directly reissue
-    the subrequest via netfs_reissue_write(), which handles iterator reset=
-,
-    IN_PROGRESS flag, stats update and reissue internally.
-    =
-
-    Fixes: a0b4c7a49137 ("netfs: Fix unbuffered/DIO writes to dispatch sub=
-requests in strict sequence")
-    Reported-by: syzbot+7227db0fbac9f348dba0@syzkaller.appspotmail.com
-    Closes: https://syzkaller.appspot.com/bug?extid=3D7227db0fbac9f348dba0
-    Signed-off-by: Deepanshu Kartikey <Kartikey406@gmail.com>
-
-diff --git a/fs/netfs/direct_write.c b/fs/netfs/direct_write.c
-index dd1451bf7543..4d9760e36c11 100644
---- a/fs/netfs/direct_write.c
-+++ b/fs/netfs/direct_write.c
-@@ -186,10 +186,18 @@ static int netfs_unbuffered_write(struct netfs_io_re=
-quest *wreq)
- 		stream->sreq_max_segs	=3D INT_MAX;
- =
-
- 		netfs_get_subrequest(subreq, netfs_sreq_trace_get_resubmit);
--		stream->prepare_write(subreq);
- =
-
--		__set_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags);
--		netfs_stat(&netfs_n_wh_retry_write_subreq);
-+		if (stream->prepare_write) {
-+			stream->prepare_write(subreq);
-+			__set_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags);
-+			netfs_stat(&netfs_n_wh_retry_write_subreq);
-+		} else {
-+			struct iov_iter source;
-+
-+			netfs_reset_iter(subreq);
-+			source =3D subreq->io_iter;
-+			netfs_reissue_write(stream, subreq, &source);
-+		}
- 	}
- =
-
- 	netfs_unbuffered_write_done(wreq);
+commit:         c107785c Merge tag 'modules-7.0-rc3.fixes' of git://gi..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=103ad8d6580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=976ba5a93c4add9e
+dashboard link: https://syzkaller.appspot.com/bug?extid=9c058f0d63475adc97fd
+compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=131ad8d6580000
 
 
