@@ -1,61 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-79701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CD5OOQpnrGmOpQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 07 Mar 2026 18:57:30 +0100
+	id mES1J7hnrGmdpQEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 07 Mar 2026 19:00:24 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D2CD22D174
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 07 Mar 2026 18:57:30 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2751F22D195
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 07 Mar 2026 19:00:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 30E24300C32C
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Mar 2026 17:57:29 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 4032A301C3CB
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Mar 2026 18:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CBEB35E951;
-	Sat,  7 Mar 2026 17:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECDD364937;
+	Sat,  7 Mar 2026 18:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bcV8jrpl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hq555y2T"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA3D329361;
-	Sat,  7 Mar 2026 17:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D02B363C6B;
+	Sat,  7 Mar 2026 18:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772906245; cv=none; b=NEuYfLkV5u8bxDsyk7+lQGgetwg87olQbMDPC+cwf8YxomqpS+O3Z/b5SgOLu/b43E2z/0AOocCzrZL5XHpgJWFfUKF/noNwQ0eToou7Vbv1/ZQ/WBCT9DRcTAKX3Elt0aV5oTDYq1NJvAYlDqo3mw4q+U6gpqARDr/DQ9usL3o=
+	t=1772906419; cv=none; b=fkwCe+RlabOgBXoHu/LwK4TL+LYwpJFcAGzpi+F1Dq+aEDGPDpzLyWAsWdZhAYbiAx/aTtYNd0M83ARdyqp5Ur2bZxE7xzUuAEuK3CZeTPjM3w+tfhenEHK2hDYq7iR/hvFC+uaHh/pppn2epX2wPhawgo+3YMO04oZOu3hr8Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772906245; c=relaxed/simple;
-	bh=jDf8hoX/a5EaTdYKWMiufro+86ZkRlFSf/OHaGjowMg=;
+	s=arc-20240116; t=1772906419; c=relaxed/simple;
+	bh=U4FQRFM5ktae4DdHbOC1yYMst6Xkvr6eFg6+5YLMV2o=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sKF6kFHKRndNvOMY4rXphjuF4tL2xXxr/rvKLojsFEjgWcBUxiUpp5j1CHgYjTt3mGx01YV4PkCBHW+LyqVya6QXTtW2Q3Ps8BP4en7PaSHTMB584nQ5bouW+HYdDCFTL5uVBV2o/Cw7IxWubxlNLJosS/LrbPNah3XCeFLC2Zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bcV8jrpl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E95CBC19422;
-	Sat,  7 Mar 2026 17:57:23 +0000 (UTC)
+	 Content-Type:MIME-Version; b=FkxJnuBB/qqfQpdefwqmO1GhQrD6ZJ8JPzwZEwmdIXEDBmhOtL2GPJLdVTtRf2knC7jx5rmTl/LWqqL3tlrdJCp1Wuw4xPJ04YCBdPMLBQi+Ct3axoq7b9voMIgC5UYet8/zgshk1PD46b7jmSPD/tkA7afjRR1rF2qszdBdv04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hq555y2T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8C20C19422;
+	Sat,  7 Mar 2026 18:00:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772906244;
-	bh=jDf8hoX/a5EaTdYKWMiufro+86ZkRlFSf/OHaGjowMg=;
+	s=k20201202; t=1772906418;
+	bh=U4FQRFM5ktae4DdHbOC1yYMst6Xkvr6eFg6+5YLMV2o=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=bcV8jrplTo43GoRPDv+YlLiBUQjXQ/zk8lkJzjBMKNeNa7fOL7QNtltecGaoQGjXv
-	 fdb+Uvvu6Dvb2XKRcvgthjuFB49/UvYkxVuXshmhYua43MRNUoORAV7+ks/2zaaFV6
-	 7WMUSbUyI72NKz8BubBGJ/HTw9HtV1AhGilObnziX24rWYnFmbxE3RhqFnFLUKWeIZ
-	 H1DCDuF5vjel85gRv146cl16TuxJ1leKyzCQSDHd1foi6X5Gse9W/F3Ev7a5a/wnbU
-	 2hXNFX22PHuRHyQCVp7eWgeF3C7ScbzWiisIHk+o+pN0pgIL+dUlj6pIO8gDdrOEYm
-	 DzMjOr7PF4G1A==
-Message-ID: <0248adbf38f9aea2ddb8b2d2006a5ec044457e4b.camel@kernel.org>
+	b=Hq555y2TZyTteRfNtjTBwtLRp5R4FYG23P+HOxL+JUpSFAzD8qEHKQ5fh2Zh+TAT6
+	 +OnbfMWFQoL8MVVsxhj3q34aczT1yghf025KVzngGpCH9cGP5JaDKcdn95A3VkBkG+
+	 2CWy3sL4Dn5cXIrVo/LQEGXq9PId+PRs7bZMTMqaIGrIxh1oaJ3BpFbH6RpePNjJyn
+	 V3TE5E3LmMZyFbvmRfeHku+Zyb28WDq9u1JysUep9pft1D4SyfuiCNeTcIleOD6rR8
+	 aXrZABS6s9Dqp/5Z9KRQ7TIrvu2+9VT/fwKpOadLUSiA+J3JGbJcpStxiaD0jmMboj
+	 J8T/LmE+Gmfqw==
+Message-ID: <3d940ceb8026cff3ce8fc14ed7aa7be8ae677190.camel@kernel.org>
 Subject: Re: [PATCH] vfs: remove externs from fs.h on functions modified by
  i_ino widening
 From: Jeff Layton <jlayton@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
+To: "Darrick J. Wong" <djwong@kernel.org>, Matthew Wilcox
+ <willy@infradead.org>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner	
  <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Christoph Hellwig
  <hch@lst.de>, 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Sat, 07 Mar 2026 12:57:21 -0500
-In-Reply-To: <aau4LBhdBfnDJAsl@casper.infradead.org>
+Date: Sat, 07 Mar 2026 13:00:15 -0500
+In-Reply-To: <20260307061053.GU13829@frogsfrogsfrogs>
 References: <20260306-iino-u64-v1-1-116b53b5ca42@kernel.org>
 	 <aau4LBhdBfnDJAsl@casper.infradead.org>
+	 <20260307061053.GU13829@frogsfrogsfrogs>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -139,17 +141,17 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: 8D2CD22D174
+X-Rspamd-Queue-Id: 2751F22D195
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79701-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79702-lists,linux-fsdevel=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -158,48 +160,66 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-0.940];
+	NEURAL_HAM(-0.00)[-0.941];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[jlayton@kernel.org,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[7];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On Sat, 2026-03-07 at 05:31 +0000, Matthew Wilcox wrote:
-> On Fri, Mar 06, 2026 at 08:27:01AM -0500, Jeff Layton wrote:
-> > @@ -2951,26 +2951,26 @@ struct inode *iget5_locked(struct super_block *=
-, u64,
-> >  struct inode *iget5_locked_rcu(struct super_block *, u64,
-> >  			       int (*test)(struct inode *, void *),
-> >  			       int (*set)(struct inode *, void *), void *);
-> > -extern struct inode *iget_locked(struct super_block *, u64);
-> > +struct inode *iget_locked(struct super_block *, u64);
+On Fri, 2026-03-06 at 22:10 -0800, Darrick J. Wong wrote:
+> On Sat, Mar 07, 2026 at 05:31:24AM +0000, Matthew Wilcox wrote:
+> > On Fri, Mar 06, 2026 at 08:27:01AM -0500, Jeff Layton wrote:
+> > > @@ -2951,26 +2951,26 @@ struct inode *iget5_locked(struct super_block=
+ *, u64,
+> > >  struct inode *iget5_locked_rcu(struct super_block *, u64,
+> > >  			       int (*test)(struct inode *, void *),
+> > >  			       int (*set)(struct inode *, void *), void *);
+> > > -extern struct inode *iget_locked(struct super_block *, u64);
+> > > +struct inode *iget_locked(struct super_block *, u64);
+> >=20
+> > I think plain 'u64' deserves a name.  I know some people get very
+> > upset when they see any unnamed parameter, but I don't think that you
+> > need to put "sb" in the first parameter.  A u64 is non-obvious though;
+> > is it i_ino?  Or hashval?
+> >=20
+> > > -extern struct inode *find_inode_nowait(struct super_block *,
+> > > +struct inode *find_inode_nowait(struct super_block *,
+> > >  				       u64,
+> > >  				       int (*match)(struct inode *,
+> > >  						    u64, void *),
+> > >  				       void *data);
+> >=20
+> > I think these need to be reflowed.  Before they were aligned with the
+> > open bracket, and this demonstrates why that's a stupid convention.
+> > And the u64 needs a name.
 >=20
-> I think plain 'u64' deserves a name.  I know some people get very
-> upset when they see any unnamed parameter, but I don't think that you
-> need to put "sb" in the first parameter.  A u64 is non-obvious though;
-> is it i_ino?  Or hashval?
+> I think inode numbers ought to be their own typedef to make it *really
+> obvious* when you're dealing with one, and was pretty sad to see "vfs:
+> remove kino_t typedef and PRIino format macro" so soon after one was
+> added.  But our really excellent checkpatch tool says "do not add new
+> typedefs" so instead everyone else has to be really smart about what
+> "u64" represents when they see one, particularly because arithmetic is
+> meaningless for this particular "u64".
 >=20
-> > -extern struct inode *find_inode_nowait(struct super_block *,
-> > +struct inode *find_inode_nowait(struct super_block *,
-> >  				       u64,
-> >  				       int (*match)(struct inode *,
-> >  						    u64, void *),
-> >  				       void *data);
+> Yay.
 >=20
-> I think these need to be reflowed.  Before they were aligned with the
-> open bracket, and this demonstrates why that's a stupid convention.
-> And the u64 needs a name.
->=20
-> (other occurrences snipped)
 
-I toyed with changing those too, but there were quite a few. I'll plan
-to send an updated patch that names all of the parameters in anything
-that has them unnamed. That'll make checkpatch happy too.
+My take on typedefs is that they are mostly useful when you have a
+variable type that needs to be accessed in a particular way. For
+instance, I added a typedef for errseq_t since it's not just a plain
+integer (there are fields within it), and you need to use the correct
+functions to work with it.
+
+In this case though, it really is just a write-once read-many times
+bog-standard u64. I sort of wonder if we ought to label it const since
+inode numbers really shouldn't ever change after being established, but
+I didn't go that far.
+
 --=20
 Jeff Layton <jlayton@kernel.org>
 
