@@ -1,224 +1,223 @@
-Return-Path: <linux-fsdevel+bounces-79721-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79722-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iGamJMiWrWn84gEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79721-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 16:33:28 +0100
+	id cPl6FpitrWkW6AEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79722-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 18:10:48 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31CF0230F59
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 16:33:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B04952315DD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 18:10:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9FE02301411D
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Mar 2026 15:33:19 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 2A6E63006780
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Mar 2026 17:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31B72874FE;
-	Sun,  8 Mar 2026 15:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B914362151;
+	Sun,  8 Mar 2026 17:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=anarazel.de header.i=@anarazel.de header.b="M8oMLKHe";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rNdLk/p3"
+	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="V5oii2AP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FF523EAB7;
-	Sun,  8 Mar 2026 15:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772983997; cv=none; b=jv0jI0DcOhqz40YOoX7IDDmR598cMNgy6BWRWGSl4IKWj6WmofUO+Rz7rCcf7//9Qjm1DHjWZIjPIJGxI7i8lVrDVmpIoNEduTeVw012mJ+P9Tqh3O9iE6cuDA9BgT0d7dCtqjZFzf7+g8QL9GuAhJxekhWF9p2Y8XmUR1s9SN8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772983997; c=relaxed/simple;
-	bh=+TuBzpmKnTWYsMNcFOOQUsN6k4xfkhutUhWMIzW2MtU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MgpUou+wXjfDMjax5ORvDb2JCMfj/Ul/jn188SZkj03youYZrMlj1aIau5wxJTEvCPGwpWwC9Q4KEigfti7LiMlLkAdHnhYjpyviOcqA7zk/ZNITQ4wbpN2s014g2EMquhxhlQI3LISd+AOlYv296Cl132ykq6lQ8ravK8tyOYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=anarazel.de; spf=pass smtp.mailfrom=anarazel.de; dkim=pass (2048-bit key) header.d=anarazel.de header.i=@anarazel.de header.b=M8oMLKHe; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=rNdLk/p3; arc=none smtp.client-ip=202.12.124.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=anarazel.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=anarazel.de
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailfout.stl.internal (Postfix) with ESMTP id 93A821D0000E;
-	Sun,  8 Mar 2026 11:33:13 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Sun, 08 Mar 2026 11:33:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1772983993;
-	 x=1773070393; bh=j67XtJ9OGsdlKsg8v+Rh/M0QEDVD7WMs+occTWtaidE=; b=
-	M8oMLKHeJC1qqUKI5wl4oHJh7TlqciEYhO6kYd7RzJ2jC4XoEhFuubaAPWAGuit+
-	3JE3EKayzXDkDwXkVn3Fcmfb7D7Gd2fd+ztdjiYLLvTFscp4rAOmHZWaCo8T/hfr
-	VJ06mIg0Y1VsBea+wPPBr9aj7Qv2+J2ybCeeT/ssvq7J9iPRtHP+a7TScPE4WUzu
-	/HyffTZTwKpCuFxA3cOnWZQJOrYdr2nnAFcuI75M8pb1Pccn1voqqxaCi/et3QK7
-	f8N4bbfjThQn7VPdu/JPn5XWY49A6iYaV25sb66F807jxUOegh2qWk/9Ho9yEjvw
-	8aG+NibXye1ZKyYbfZV1uw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1772983993; x=
-	1773070393; bh=j67XtJ9OGsdlKsg8v+Rh/M0QEDVD7WMs+occTWtaidE=; b=r
-	NdLk/p32TQDKOBkrSnPA2MnysyMVa1WS+6lXiU81IfyWLSXZ4m9MXaKyWwxOnZsh
-	X6GSMd6Xw53CYtt5hUKoNi23Ldd/c7y9VEJ8SE7KVWRe/IL/cr0b25pZYndIlZIB
-	gwi5DouetHBxepC9B+1HcM482KeTOXJWVxcWR+SveGzv7c8X3ZjsKn40LUihfA43
-	T4tJ8FU4zmnQhAinCgLgUzZdQVLNo+fBieTrnZjcXgEY9sSTpwJvKHi8BPgnSzY5
-	Kg9L+AxNIOqYxoA5sjOdVeOy3hBy7NfUg7Y9Iybw4UXRx42sfAaDyRVBrHJVVO3+
-	DnT48ti0Pvq1lrRM/3s4w==
-X-ME-Sender: <xms:t5ataVwCm1DrshxsYPYAjikWwiata3XhjybKXJVu9wRn8VF4pWedGw>
-    <xme:t5ataRL48WYmaazofgmpoG9726ua1f2FnGRLyRl3X2r44PM6sT0Ve8CP0SRCI8PrH
-    rGsE4wH2SluW0f_2AU8zhTgOeKKFW2Er6UQL2VfBzffOSDdyWtBag>
-X-ME-Received: <xmr:t5ataa2yko-EbDXivTKMVyzLWK43LK26FoGPv6CJraasA3aXJR4fBsPMXTCiAL68ncoEVw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvjeehheehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggugfgjsehtkefstddttdejnecuhfhrohhmpeetnhgurhgv
-    shcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucggtffrrg
-    htthgvrhhnpedtleelvdfgjedvffeiueekfeeuleffhfegfffhgfffkeevueehieehhfei
-    gffhvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grnhgurhgvshesrghnrghrrgiivghlrdguvgdpnhgspghrtghpthhtohepvddtpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
-    dprhgtphhtthhopehrihhtvghshhdrlhhishhtsehgmhgrihhlrdgtohhmpdhrtghpthht
-    ohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegujhifohhngh
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgtghhrohhfsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhope
-    hprghnkhgrjhdrrhgrghhhrghvsehlihhnuhigrdguvghvpdhrtghpthhtohepohhjrghs
-    fihinheslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopehlshhfqdhptgeslhhish
-    htshdrlhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
-X-ME-Proxy: <xmx:t5atabdr7P5wMdbGIgFdb3ItIOC2ChWHV7AMfKIRxqK1W48aO0FLSQ>
-    <xmx:t5atae7_j236xrkK0fKiAb7qogWk8a7ApPSSz1SSbBwZmBaL5IoZAQ>
-    <xmx:t5atae9iAxo7ei6UuV1V5whjymcmGSwjfJspj-VputDXUjfJik0psA>
-    <xmx:t5ataVL7cZ6ttfoZ9QCbSAFcajRLT-wbNEyIjafmvuPb5m9qassYdA>
-    <xmx:uZataaeyBP_MPNczw099JYvNBOlN3bTUpmojFbk_LjJMiR9yZYqA1_33>
-Feedback-ID: id4a34324:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 8 Mar 2026 11:33:11 -0400 (EDT)
-Date: Sun, 8 Mar 2026 11:33:10 -0400
-From: Andres Freund <andres@anarazel.de>
-To: Ritesh Harjani <ritesh.list@gmail.com>
-Cc: Amir Goldstein <amir73il@gmail.com>, Christoph Hellwig <hch@lst.de>, 
-	Pankaj Raghav <pankaj.raghav@linux.dev>, linux-xfs@vger.kernel.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org, djwong@kernel.org, 
-	john.g.garry@oracle.com, willy@infradead.org, jack@suse.cz, ojaswin@linux.ibm.com, 
-	Luis Chamberlain <mcgrof@kernel.org>, dchinner@redhat.com, Javier Gonzalez <javier.gonz@samsung.com>, 
-	gost.dev@samsung.com, tytso@mit.edu, p.raghav@samsung.com, vi.shah@samsung.com
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Buffered atomic writes
-Message-ID: <pyyeaqzjdpgkpjfyxkrlzawwwj6elzvidubtq73toufr7wgoec@prv4u3o5ixjy>
-References: <v7f6u19i.ritesh.list@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C103921C3
+	for <linux-fsdevel@vger.kernel.org>; Sun,  8 Mar 2026 17:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772989826; cv=pass; b=RAgT00tkNjfeveTL16U4kscrRFumPemsLe2VfJnLft7Zc95KhSjo6ud9z35OkSaYueJqIGPLAp59WYvKN/d1bgyLzxce64qOJ3ou5sxXRQCv7jrBnkmXCN5arCqxSP0k6vTZ2S1M14YiR2cc0h6tUsRmbVcWLHxEOwuv7dSec2w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772989826; c=relaxed/simple;
+	bh=mPpVNiloCu6uzQI1WxZPytR2t4HpF2nlFZDXYS8kVTE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t1SmQK8j4xxUpFHEXSvp5xk1wzsGKeF/x7x95J0NA3Ke3gC9wNIJVToaYo95SyFYY+9vICsBkmyLwTNFqx5XzXzW14xmDjN1+Sg6nAmaZ+FsW1sJGZvgjURj6hynw26McmVmNZQHr/YD0+9wEYwu0GcjOuMmp7TWjnWMZZccHHk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=V5oii2AP; arc=pass smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5a140efd2d5so1512762e87.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Mar 2026 10:10:22 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1772989821; cv=none;
+        d=google.com; s=arc-20240605;
+        b=K7SU96PwxoyXNSMCDUchdigKGyH5NpYAFfgCxNK6mEW+WKO+M6W5B4jk36973XedVH
+         TwH2czMhsSAElMlpBRmWnYeg+1HW4Ud0uOAosNfUWpHuTG3ZTWgRVfpNJcp8xRJ3WU6D
+         REQR3AeMn83juZEkxAaxEhXJ8I6YFR0Jd3OJzFUaPGKHq+xKclUyPIQXMG1m+Nivm9xb
+         Q6XNk6PapN2nx2YzGBRkctsTf6B4jKSOL8llFFpROnCJADEgNKH7bZiWMz+FrFOTTLB9
+         qH5jL3bkBVESCCdFP93eZOAokKuEosV+f/yPbvFl2J1TZUdgjJg0tyoRM7qH1lviqKeG
+         y/Hw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=gg9ZdLv2ki48mUNl69QeK9y3vC32V/8zR5xNICHMQ28=;
+        fh=LqdrWMSC15PYzlrxUwZAPF//l7m+3YswUlYQzO/VMi8=;
+        b=R6poAIycfirxPm+G5/yM7qymY3cic2G9xPP7fxeLV4KrDinPCpyQYOczkjK/626LIo
+         V9UkMNsPWjtLUh10gk1piueQEnSj8i5XnAF6OsN43O80xlTLeXsvFdg+2NvoXjjF4CcO
+         deWrddqwDFF3688VNVi2fciAFaEDXnA0picCuP42v7hnkkB2LOzfcn8lElA3F/aPa0ni
+         NbEO2iHEnpYyd1QXZBu4UJIKiCcbOrhksYePoXtwgdSOmzio6K1M+83Xk1S4XDdB3xfU
+         IBeaaEtxDa9aGEw2SFvEh3TBpZm+vLWz2wQBvCAfAfW0JIWHRNUT3CbEWHSzfHzVyHPe
+         gZcg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1772989821; x=1773594621; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gg9ZdLv2ki48mUNl69QeK9y3vC32V/8zR5xNICHMQ28=;
+        b=V5oii2AP7iK/gHbMNDsSVEdYvHWzBqwPyeiCJaSxH80cBJ0weDfC5z5Jac3vnz4xBd
+         Tn2ClWoMdMt+leExQaUPFXVNn1yHQ669Vg1RrqJYPh/2X3l9jSvgtmZZiIj1bUZ2IzMa
+         dB3alhLex5Auo3ljWEQXqzrJbKBAnpaXzkW8R3j7dH57EQCqLyyRRuNOPBvBnxDwabY1
+         PCB7f6Teh/1ED3+YhCaqbNuWa+/ytjyR+MjlDNbb0urQBJvJj9Tgkb8oCphjnt8HYU5m
+         JKo9lxiVLkjF2Ntl0hmSDMics51tH/PApK2OBsOlL42naroddrbbIARbX0CgiVbmpphc
+         lFDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772989821; x=1773594621;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=gg9ZdLv2ki48mUNl69QeK9y3vC32V/8zR5xNICHMQ28=;
+        b=s0OuVlSv0hyawtFRUv8cAqTv0fYHNCX1GyYbSyEhVwMQobrS62zeK75wIyFg1z89G0
+         BGx69tC/ECZBSqlOaWVXRD8mTMKYjkOxKG+PpEfxJmk22GE5DeAGvE+IW5lqPrDpTI3q
+         KxQgQwdHGUyw2b9nW//tranDXq2HolkLJpL9bCRs7z6p4CFPrEMBt71r2gvv0rU55w/K
+         qIXTLvFtUkOVUMBvGN2E5JjODBU38uI95xp7n0NTf1KENL+MzCNnO95KCPFRm1SsXbQf
+         bDDWDlJzZa7VhLCvhtNUIa6ryoKrVsa9Ak1Qx1q6PCz8VkMM+8z/evi/4YdCaJbf99iG
+         oJjw==
+X-Forwarded-Encrypted: i=1; AJvYcCWnqi7kydEAIhIjdK71a4JLZLa6tQirbA68n4j5O2fRlz0TGAwA8L54E5/Zmf7z6+tyyDUTuct/550QmYeC@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH/hgLRoeSd4ixpVHPK9dV91cIpOsqwq+85uZac0QQDyWKUXrc
+	IuXu2rrAXrnFhEcwzqjK5PWOHRFTBiDPGbfQNtTvjb96WCFR3LK3CqOtRl0i8g9RMvUevapHbbC
+	ht3ilIvSxeJTtr5T7/fFDAtRCXIzkcwX2zLkIW4kd
+X-Gm-Gg: ATEYQzzDEvRmdgvclPs5kkf5h1fr3STaUB78IWrKHoVlJMhXMg4ncxsH3R9bAFWcahU
+	+7MGwHSqyoAhXDPjEbLgy0GyNdouS6xFgAba9JsO5uV5vUlpX//UUKsiyjUaaelSzOy0TzYUN2I
+	mFje0VmQa/lr9u/q7XtV7Vgy92dB4ECGChO8aGllgrzuGgk0Dizjs5atxPC/rq5/TTmSG1crEO6
+	8iBzVrx1d1hEXSerFmDcEnWv/HFPjtJkYjSKjVdlnchZooXcv2M4udQVJt5I7DOmdwjvaPKGctK
+	1nbA8qD1zFbOBPM=
+X-Received: by 2002:a05:6512:10c1:b0:5a1:3539:1181 with SMTP id
+ 2adb3069b0e04-5a13ccc6854mr2584241e87.20.1772989820622; Sun, 08 Mar 2026
+ 10:10:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <v7f6u19i.ritesh.list@gmail.com>
-X-Rspamd-Queue-Id: 31CF0230F59
+References: <20260307140726.70219-1-dorjoychy111@gmail.com>
+ <20260307140726.70219-2-dorjoychy111@gmail.com> <CALCETrXVBA9uGEUdQPEZ2MVdxjLwwcWi5kzhOr1NdOWSSRaROw@mail.gmail.com>
+ <801cf2c42b80d486726ea0a3774e52abcb158100.camel@kernel.org>
+In-Reply-To: <801cf2c42b80d486726ea0a3774e52abcb158100.camel@kernel.org>
+From: Andy Lutomirski <luto@amacapital.net>
+Date: Sun, 8 Mar 2026 10:10:05 -0700
+X-Gm-Features: AaiRm53NE6RSEVl9G8ylA7uki0xCjhtuxwfA8HvbEL_OVbVZXAi0saXeclsKpvo
+Message-ID: <CALCETrVt7o+7JCMfTX3Vu9PANJJgR8hB5Z2THcXzam61kG9Gig@mail.gmail.com>
+Subject: Re: [PATCH v5 1/4] openat2: new OPENAT2_REGULAR flag support
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Dorjoy Chowdhury <dorjoychy111@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
+	ceph-devel@vger.kernel.org, gfs2@lists.linux.dev, linux-nfs@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, v9fs@lists.linux.dev, 
+	linux-kselftest@vger.kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	jack@suse.cz, chuck.lever@oracle.com, alex.aring@gmail.com, arnd@arndb.de, 
+	adilger@dilger.ca, mjguzik@gmail.com, smfrench@gmail.com, 
+	richard.henderson@linaro.org, mattst88@gmail.com, linmag7@gmail.com, 
+	tsbogend@alpha.franken.de, James.Bottomley@hansenpartnership.com, 
+	deller@gmx.de, davem@davemloft.net, andreas@gaisler.com, idryomov@gmail.com, 
+	amarkuze@redhat.com, slava@dubeyko.com, agruenba@redhat.com, 
+	trondmy@kernel.org, anna@kernel.org, sfrench@samba.org, pc@manguebit.org, 
+	ronniesahlberg@gmail.com, sprasad@microsoft.com, tom@talpey.com, 
+	bharathsm@microsoft.com, shuah@kernel.org, miklos@szeredi.hu, 
+	hansg@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Queue-Id: B04952315DD
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.16 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[anarazel.de,none];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	R_DKIM_ALLOW(-0.20)[amacapital-net.20230601.gappssmtp.com:s=20230601];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[anarazel.de:s=fm1,messagingengine.com:s=fm1];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
+	RCVD_COUNT_THREE(0.00)[4];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79721-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[gmail.com,lst.de,linux.dev,vger.kernel.org,kvack.org,lists.linux-foundation.org,kernel.org,oracle.com,infradead.org,suse.cz,linux.ibm.com,redhat.com,samsung.com,mit.edu];
+	DMARC_NA(0.00)[amacapital.net];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
+	TAGGED_FROM(0.00)[bounces-79722-lists,linux-fsdevel=lfdr.de];
+	RCPT_COUNT_TWELVE(0.00)[43];
+	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[andres@anarazel.de,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[anarazel.de:+,messagingengine.com:+];
+	DKIM_TRACE(0.00)[amacapital-net.20230601.gappssmtp.com:+];
 	NEURAL_HAM(-0.00)[-0.989];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[luto@amacapital.net,linux-fsdevel@vger.kernel.org];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,lists.linux.dev,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,arndb.de,dilger.ca,linaro.org,alpha.franken.de,hansenpartnership.com,gmx.de,davemloft.net,gaisler.com,redhat.com,dubeyko.com,samba.org,manguebit.org,microsoft.com,talpey.com,szeredi.hu];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MISSING_XM_UA(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[anarazel.de:dkim,anarazel.de:email,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,lst.de:email]
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[amacapital-net.20230601.gappssmtp.com:dkim,mail.gmail.com:mid,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-Hi,
-
-On 2026-03-08 14:49:21 +0530, Ritesh Harjani wrote:
-> Andres Freund <andres@anarazel.de> writes:
-> > On 2026-02-17 10:23:36 +0100, Amir Goldstein wrote:
-> >> On Tue, Feb 17, 2026 at 8:00 AM Christoph Hellwig <hch@lst.de> wrote:
-> >> >
-> >> > I think a better session would be how we can help postgres to move
-> >> > off buffered I/O instead of adding more special cases for them.
+On Sun, Mar 8, 2026 at 4:40=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wro=
+te:
+>
+> On Sat, 2026-03-07 at 10:56 -0800, Andy Lutomirski wrote:
+> > On Sat, Mar 7, 2026 at 6:09=E2=80=AFAM Dorjoy Chowdhury <dorjoychy111@g=
+mail.com> wrote:
+> > >
+> > > This flag indicates the path should be opened if it's a regular file.
+> > > This is useful to write secure programs that want to avoid being
+> > > tricked into opening device nodes with special semantics while thinki=
+ng
+> > > they operate on regular files. This is a requested feature from the
+> > > uapi-group[1].
+> > >
 > >
-> > FWIW, we are adding support for DIO (it's been added, but performance isn't
-> > competitive for most workloads in the released versions yet, work to address
-> > those issues is in progress).
+> > I think this needs a lot more clarification as to what "regular"
+> > means.  If it's literally
+> >
+> > > A corresponding error code EFTYPE has been introduced. For example, i=
+f
+> > > openat2 is called on path /dev/null with OPENAT2_REGULAR in the flag
+> > > param, it will return -EFTYPE. EFTYPE is already used in BSD systems
+> > > like FreeBSD, macOS.
+> >
+> > I think this needs more clarification as to what "regular" means,
+> > since S_IFREG may not be sufficient.  The UAPI group page says:
+> >
+> > Use-Case: this would be very useful to write secure programs that want
+> > to avoid being tricked into opening device nodes with special
+> > semantics while thinking they operate on regular files. This is
+> > particularly relevant as many device nodes (or even FIFOs) come with
+> > blocking I/O (or even blocking open()!) by default, which is not
+> > expected from regular files backed by =E2=80=9Cfast=E2=80=9D disk I/O. =
+Consider
+> > implementation of a naive web browser which is pointed to
+> > file://dev/zero, not expecting an endless amount of data to read.
+> >
+> > What about procfs?  What about sysfs?  What about /proc/self/fd/17
+> > where that fd is a memfd?  What about files backed by non-"fast" disk
+> > I/O like something on a flaky USB stick or a network mount or FUSE?
+> >
+> > Are we concerned about blocking open?  (open blocks as a matter of
+> > course.)  Are we concerned about open having strange side effects?
+> > Are we concerned about write having strange side effects?  Are we
+> > concerned about cases where opening the file as root results in
+> > elevated privilege beyond merely gaining the ability to write to that
+> > specific path on an ordinary filesystem?
 > >
 >
-> Is postgres also planning to evaluate the performance gains by using DIO
-> atomic writes available in upstream linux kernel? What would be
-> interesting to see is the relative %delta with DIO atomic-writes v/s
-> DIO non atomic writes.
+> Above the use-case, it also says:
+>
+> "O_REGULAR (inspired by the existing O_DIRECTORY flag for open()),
+> which opens a file only if it is of type S_IFREG."
+>
+> Since we allow programs to open a directory under /proc or /sys using
+> O_DIRECTORY, I don't think we should do anything different here. To the
+> VFS, all of the examples you gave above are S_IFREG "regular files",
+> even if they are backed by something quite irregular.
 
-For some limited workloads that comparison is possible today with minimal work
-(albeit with some safety compromises, due to postgres not yet verifying that
-the atomic boundaries are correct, but it's good enough for experiments), as
-you can just disable the torn-page avoidance with a configuration parameter.
+That's certainly a valid and consistent way to define this, but is it usefu=
+l?
 
-
-The gains from not needing full page writes (postgres' mechanism to protect
-against torn pages) can be rather significant, as full page writes have
-substantial overhead due to the higher journalling volume. The worst part of
-the cost is that the cost decreases between checkpoints (because we don't need
-to repeatedly log a full page images for the same page), just to then increase
-again when the next checkpoint starts.  It's not uncommon that in the phase
-just after the start of a checkpoint, WAL is over 90% of full page writes
-(when not having full page write compression enabled), while later the same
-workload only has a very small percentage of the overhead.  The biggest gain
-from atomic writes will be the more even performance (important for real world
-users), rather than the absolute increase in throughput.
-
-
-Normal gains during the full page intensive phase are probably on the order of
-20-35% for workload with many small transactions, bigger for workloads with
-larger transactions. But if the increase in WAL volume pushes you above the
-disk write throughput, the gains can be almost arbitrarily larger. E.g. on a
-cloud disk with 100MB/s of write bandwidth, the difference between WAL
-throughput of 50MB/s without full page writes and the same workload with full
-page images generating ~300MB/s of WAL will obviously mean that you'll get
-about < 1/3 of the transaction throughput while also not having any spare IO
-capacity for anything other than WAL writes.
-
-
-The reason I say limited workloads above is that upstream postgres does not
-yet do smart enough write combining with DIO for data writes, I'd expect that
-to be addressed later this year (but it's community open source, as you
-presumably know from experience, that's not always easy to predict /
-control). If the workload has a large fraction of data writes, the overhead of
-that makes the DIO numbers too unrealistic.
-
-
-Unfortunately all this means that the gains from atomic writes, be it for
-buffered or direct IO, will very very heavily depend on the chosen workload
-and by tweaking the workload / hardware you can inflate the gains to an almost
-arbitrarily large degree.
-
-
-This is also about more than throughput / latency, as the volume of WAL also
-impacts the cost of retaining the WAL - often that's done for a while to allow
-point-in-time-recovery (i.e. recovering an older base backup up to a precise
-point in time, to recover from application bugs or operator errors).
-
-
-Greetings,
-
-Andres Freund
+--Andy
 
