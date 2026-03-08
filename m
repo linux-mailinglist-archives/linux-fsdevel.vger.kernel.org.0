@@ -1,173 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-79715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79716-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id PebEJxxIrWmH0wEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 10:57:48 +0100
+	id 8EozHnBXrWmd1gEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79716-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 12:03:12 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F7E022F41A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 10:57:47 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3FBB22F608
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 12:03:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 96555301474D
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Mar 2026 09:57:44 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 30BBA3014C29
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Mar 2026 11:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E2736C0DF;
-	Sun,  8 Mar 2026 09:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hev-cc.20230601.gappssmtp.com header.i=@hev-cc.20230601.gappssmtp.com header.b="D+o9D8fn"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0B5368940;
+	Sun,  8 Mar 2026 11:03:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579BA36C0AF
-	for <linux-fsdevel@vger.kernel.org>; Sun,  8 Mar 2026 09:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.170
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772963860; cv=pass; b=Zc+Gqz0+X3Qkt0XGv7DuG+Q/xHJNBv2QxP6gVxhJNLcouTYf7gdDskl/6LZZzAcXocfUY7IcU4FUGDHf4eKojSYxjeMaYZrpp1LLcD572s4RRWGuUUe7i+C1QpOQxmItQt3+4ii0XGASP0Dhw0IX3yHG11MiMJzf1XHugTYly+I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772963860; c=relaxed/simple;
-	bh=pveo1jbABvf9O21ut4Px0fwZjIMaPEs533v+HloVQKU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I6UcgSk0jzmm8D/H8SBUGcyVm1oCT3y1HGCOwnRjP6KxXcZ24fvtCA3NUhT5gylAhpIh702U62uCe88a6LURsWD2MOgz3m7p42sfdVqIoLtzsTIZ0XdpaUvPRA8M199HsV/DVhZnL/CdZomiFWJSnFbYRZ9dNG0ppmc3LCJlJ1s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hev.cc; spf=pass smtp.mailfrom=hev.cc; dkim=pass (2048-bit key) header.d=hev-cc.20230601.gappssmtp.com header.i=@hev-cc.20230601.gappssmtp.com header.b=D+o9D8fn; arc=pass smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hev.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hev.cc
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-7986e0553b0so89716007b3.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Mar 2026 01:57:39 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772963858; cv=none;
-        d=google.com; s=arc-20240605;
-        b=XIWnutgVk2DvHnoBKDpQ/B84uScAcpkjk/KnpAzG4sxtjzwklzNJl8QcMUkbmElEpR
-         j4oVG/KJkr7deremrgP3qBe1WqcR6rNGJ4CBBT/GVuNNhRefh4hba8EbxSXdvc25DF58
-         HAx3jriaHhr7BIvN1ojQ7U0hvXmj1Vrd18s+rGfAf6KiIvI+ZaphTlI1M9lzf8AwTHb4
-         F0ACXZKyJ0klXQxYkn+mLKA/1UocKQYarcFNyT3tIG0S4uEz0YDckTGl+tsSJJiyzKdk
-         IoiKJdpZ5OGu5JNUf1Rsjp7twoIzhZtD0JLlMdGCRDH4b8IhdfAn6onmH+2j4IeMQmhc
-         Bcnw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=vXCC9wd6WJbv4Rkek0lOfebWInM67Hmdt26u86+GnkA=;
-        fh=HNxowrGCudk9Pa2ZO0TRjut6IloU4JtSJPwwL1CWpfw=;
-        b=dTHf7nMNsrbLFkM66a9b4tBCbVG0J+DXDTrQwxMOsgWYe8zjhxD2A6Q1/6u9+8R3W6
-         bzBUY/wVZckKbxNShvi9lk+/qIHuIVH0eEJ1gqkww9yQoz5qLHYqnE0Qz+YIWGe/OfIF
-         NOYKPnrNjpvcMF7ADFaUJJnDx15kedgpdVtWK3KIg5BMMbaYVkonjv1uOEpScYxSlKi3
-         ADl1yd8L/gC5K3riHhFc6GW6DGD/Rb9WyfvZU5qrWk1yT62ljmluYfgqOwpPApEgyiNj
-         SVQnkvpGy4e1nt7r85aaDVJby1Rd6pLLcw4U5idM3cw84ONjHmU5jFbOYk/eDoPv3GgS
-         QRsg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hev-cc.20230601.gappssmtp.com; s=20230601; t=1772963858; x=1773568658; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vXCC9wd6WJbv4Rkek0lOfebWInM67Hmdt26u86+GnkA=;
-        b=D+o9D8fncxtFtN7EidB4eNuGgzgtTwjuAXILMSsPfPgzul5ysoKL/2ImmAIG6aWm2z
-         6OJfNiYwnfgBA1Fxb6VhieWIWL5tELIRUsXxfrZXqzYAV6N0xgtg2t9NUDZD1g7gVINh
-         LBmh9plxBUm77z1c48OxpAZNH7tV6QwixRTRXPwiVEwUhmk+Ktx5loHoehPJmw4Ka1mc
-         xybB8a7S07H801K6MgmLVZIzB4tBP3Hu3lyH07O58QQ2J7yZmavwZyGULkSWKdTx5216
-         PpJpDGQDhFDFbOEKvjZ/gBVpWnbYnEA1bobkrHXQfbTuy/sTrtis27vaYNjordXskrF3
-         GATQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772963858; x=1773568658;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vXCC9wd6WJbv4Rkek0lOfebWInM67Hmdt26u86+GnkA=;
-        b=o1HQEyb+WinUojD9fYIIN1BiOTtfueutfp5zEBNtm3vsAeVuvCWaberFByssdjJbx6
-         a2L2hOsrGHcYzYJKmAK2fjfCwwK2a7mOd6RaVGGsigw2SRgxvVyFBmisqTyTkkfi5H9/
-         G64Y1se8VHhpU1NI8z7OyYRKxflfJZbejTstTiw14458xyO10BRxnhlb88p3Vh7NdAM5
-         Ed9SbnBRmXx/uAnOXh4LpvWFk4VXHoj4XJpToz4XfgOG4xiXV6DFvAPdsoIB0mMHIu5Y
-         M+TAL63SnjZn1x8bTH1PnMKkxoGQErLOAkqQW1R9gJ6WV+EUYMTMVDmqXY0mJyNU1s2z
-         2gKg==
-X-Gm-Message-State: AOJu0YzHSAk5L50U16nhAWbXxhVkE/aSI5pp6kNnrHFBSDEyFtaoHmhH
-	/8x0XfJkvR95bLC9WxwJehu4aQltSJ+toQz3XCCaBR6g52tFBANJqsE+dr9daccW2wGWd3CYSZt
-	1cBQO/Yn6MuPzU7+D2VeyT3Op6u6zn6fWAgV1CBabpw==
-X-Gm-Gg: ATEYQzz0vrn4mhtCieJxlADOVQ6eY6PUuaBMhXeHXtJHW4J0EKRWpVE5WbocqmjWXCX
-	XQwzbeoesw78+uOAH1Q0027wo5zm4Ec3S0h9RRnzE70Ie1IsqlMTNliGrT4n6Bkl4D7GXEnYXFP
-	R3J8rIko7639xnu/aY4XCEkpdVLaRPykRVAz67sYRler5TsD5Xrv/vwEKjynsGYnT+dFW2AZ0Zp
-	YsYF18+wi6QZYu8XXlVg50RqIDvWLVAPNate6LtvltCpmLuZBq+Nd6gkSlPWe5xkV1GKgUPdsaW
-	CvM+P0KXzqpi4UO75YlDYNAqLYPC6du5vCisjRXRXA==
-X-Received: by 2002:a05:690c:4b87:b0:798:6ee0:2a68 with SMTP id
- 00721157ae682-798dd79a7f8mr70252727b3.64.1772963858401; Sun, 08 Mar 2026
- 01:57:38 -0800 (PST)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4C31A23AC;
+	Sun,  8 Mar 2026 11:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772967785; cv=none; b=iqDtMAsTyGfq/z/1NU5BMqsDqrisggLRVv11nNfA/Uh4KotOiX/0b6IhPadQAy4Rg4n2vtkHzyBsVBczQsWlXlAGSFsFJPgaWStWNUalNHXhExPWCasvCTIDi4F83Ywzn314RckYkvWi4NrcLw5/o35/dDNFBjkxcQDYPGtNyiA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772967785; c=relaxed/simple;
+	bh=PR+zWqG+a1EW/bd+uHkcf0ZN34ZcbHEDRJO3nAc952M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rfEOWTO0YviOoS5QJPuMDv3jcqBbYmSKC0dahmFQ0leKx+xbRG2r8IgVCPrRmqcfzrWGyLuyt2kerWQYKaJ4ZNSM1RaMEz6GhTcRhIE+omy13e07IbR3breChTKpleuzKwttnttO51m5LajmeUkJ4xcaYOELF8O12nRfGglJ2Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 71CE61570;
+	Sun,  8 Mar 2026 04:02:55 -0700 (PDT)
+Received: from arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0FE963F836;
+	Sun,  8 Mar 2026 04:02:57 -0700 (PDT)
+Date: Sun, 8 Mar 2026 11:02:55 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: syzbot+cae7809e9dc1459e4e63@syzkaller.appspotmail.com
+Cc: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Qing Wang <wangqing7171@gmail.com>, Liam.Howlett@oracle.com,
+	akpm@linux-foundation.org, chao@kernel.org, jaegeuk@kernel.org,
+	jannh@google.com, linkinjeon@kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, lorenzo.stoakes@oracle.com, pfalcato@suse.de,
+	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com,
+	vbabka@suse.cz, Hao Li <hao.li@linux.dev>
+Subject: Re: [syzbot] [mm?] [f2fs?] [exfat?] memory leak in __kfree_rcu_sheaf
+Message-ID: <aa1XX2ZXo-hc6LHG@arm.com>
+References: <698a26d3.050a0220.3b3015.007e.GAE@google.com>
+ <20260302034102.3145719-1-wangqing7171@gmail.com>
+ <20df8dd1-a32c-489d-8345-085d424a2f12@kernel.org>
+ <aaeLT8mnMMj_kPJc@hyeyoo>
+ <925a916a-6dfb-48c0-985c-0bdfb96ebd26@kernel.org>
+ <aassZV5PjgFx8dSI@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260304114727.384416-1-r@hev.cc>
-In-Reply-To: <20260304114727.384416-1-r@hev.cc>
-From: hev <r@hev.cc>
-Date: Sun, 8 Mar 2026 17:57:27 +0800
-X-Gm-Features: AaiRm52SpIZfNiOfmNNlgLYK3x_bGxvzWJa5vwCMHz9YODE09mjAuuMinHe2KyA
-Message-ID: <CAHirt9hA=yw1NDS5zz0qkLEtczu1STZFBeq+soEF0GYhN8HTBw@mail.gmail.com>
-Subject: Re: [PATCH v2] binfmt_elf: Align eligible read-only PT_LOAD segments
- to PMD_SIZE for THP
-To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Kees Cook <kees@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	"David Hildenbrand (Arm)" <david@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Rspamd-Queue-Id: 0F7E022F41A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aassZV5PjgFx8dSI@arm.com>
+X-Rspamd-Queue-Id: F3FBB22F608
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[hev-cc.20230601.gappssmtp.com:s=20230601];
+X-Spamd-Result: default: False [0.14 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
+	DMARC_POLICY_SOFTFAIL(0.10)[arm.com : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DMARC_NA(0.00)[hev.cc];
-	TAGGED_FROM(0.00)[bounces-79715-lists,linux-fsdevel=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[hev-cc.20230601.gappssmtp.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[r@hev.cc,linux-fsdevel@vger.kernel.org];
+	FREEMAIL_CC(0.00)[kernel.org,oracle.com,gmail.com,linux-foundation.org,google.com,lists.sourceforge.net,vger.kernel.org,kvack.org,suse.de,samsung.com,googlegroups.com,suse.cz,linux.dev];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.952];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[9];
+	TAGGED_FROM(0.00)[bounces-79716-lists,linux-fsdevel=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[catalin.marinas@arm.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCVD_COUNT_FIVE(0.00)[5];
+	R_DKIM_NA(0.00)[];
+	NEURAL_HAM(-0.00)[-0.910];
+	TAGGED_RCPT(0.00)[linux-fsdevel,cae7809e9dc1459e4e63];
+	MID_RHS_MATCH_FROM(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[]
 X-Rspamd-Action: no action
 
-Hi,
+#syz test
 
-I ran a quick benchmark on x86_64 as well.
-
-Machine: AMD Ryzen 9 7950X
-Binutils: 2.46
-GCC: 15.2.1 (built with -z,noseparate-code + --enable-host-pie)
-
-Workload: building Linux v7.0-rc1 with x86_64_defconfig.
-
-Without patch:
-
- * instructions:     8,246,133,611,932
- * cpu-cycles:       8,001,028,142,928
- * itlb-misses:      3,672,158,331
- * time elapsed:     64.66 s
-
-With patch:
-
- * instructions:     8,246,025,137,750
- * cpu-cycles:       7,565,925,107,502
- * itlb-misses:      26,821,242
- * time elapsed:     61.97 s
-
-Instructions are basically unchanged. iTLB misses drop from ~3.67B to
-~26M (~99.27% reduction), which results in about a ~5.44% reduction in
-cycles and ~4.18% shorter wall time for this workload.
-
-Thanks,
-Rui
+diff --git a/mm/slub.c b/mm/slub.c
+index 0c906fefc31b..401557ff5487 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -7513,6 +7513,7 @@ static void early_kmem_cache_node_alloc(int node)
+ 	slab->freelist = get_freepointer(kmem_cache_node, n);
+ 	slab->inuse = 1;
+ 	kmem_cache_node->node[node] = n;
++	kmemleak_alloc(n, sizeof(*n), 1, GFP_NOWAIT);
+ 	init_kmem_cache_node(n, NULL);
+ 	inc_slabs_node(kmem_cache_node, node, slab->objects);
+ 
 
