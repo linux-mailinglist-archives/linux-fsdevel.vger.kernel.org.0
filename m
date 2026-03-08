@@ -1,303 +1,224 @@
-Return-Path: <linux-fsdevel+bounces-79720-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79721-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id oN7aCnJvrWme2wEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79720-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 13:45:38 +0100
+	id iGamJMiWrWn84gEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79721-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 16:33:28 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DB2923048C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 13:45:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31CF0230F59
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 16:33:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0D634300EF88
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Mar 2026 12:42:07 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9FE02301411D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Mar 2026 15:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460AE371052;
-	Sun,  8 Mar 2026 12:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31B72874FE;
+	Sun,  8 Mar 2026 15:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=anarazel.de header.i=@anarazel.de header.b="M8oMLKHe";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rNdLk/p3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com [209.85.161.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A10F36EAB4
-	for <linux-fsdevel@vger.kernel.org>; Sun,  8 Mar 2026 12:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FF523EAB7;
+	Sun,  8 Mar 2026 15:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772973725; cv=none; b=RdvsmS+ph84/sZYX9b2O1H+dAcjg1qJGozEt+ZungbknX0k5lM9jeO10c7sXN2jSaCxMDsLYYcOUm5gLR5R6ll9mxLycGT2ih9ii23JHKTeJazXadFBZJGfmQQZHB6u0/LneYInv0Z0RhDAva2PNdgpJEHf3j0xFqijxUXEEIYw=
+	t=1772983997; cv=none; b=jv0jI0DcOhqz40YOoX7IDDmR598cMNgy6BWRWGSl4IKWj6WmofUO+Rz7rCcf7//9Qjm1DHjWZIjPIJGxI7i8lVrDVmpIoNEduTeVw012mJ+P9Tqh3O9iE6cuDA9BgT0d7dCtqjZFzf7+g8QL9GuAhJxekhWF9p2Y8XmUR1s9SN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772973725; c=relaxed/simple;
-	bh=Sqs7NHy+sDrFJgz9QBwbg2J3Wwb6vs/7KRWJDimDz68=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mjRzdoJlQ0LrdBCuL/2KvGXZj8Q5LMMBiBpaJpJP37l1v4VxH8RLUPSbLINfw0/yTGteeCXz3lZwLpRF4KEVRNGchQRsEEo9aIP0LCKKp7P59kzvomKxrpHSu/fOz/4LveLwC6qRE9r7Ary6yzRX8BMK8dGXWtTT7mrgOqawiI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-672c40f3873so181334211eaf.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Mar 2026 05:42:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772973722; x=1773578522;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wXpCrHnBOzbrjuCa4snuHa6G2PuKQUzS5Cx3HuD89MU=;
-        b=nGWVXl2CrU42fvhNQwc+kKg+F5L/W7Z7o0gDf4l8NNmAHoCLPVDr8qRj+Y/fFy0eSt
-         GrLNO9Dp3J/KO5uJTQUOgl512KUrY9sN2VarotVklYs0v/Akem4SKls1cyZCKbpwhzGH
-         uMdOgwwZwcsU1BQyWYhp/HmVHRbNh5nZtadd/XPD1UAWcSLkxiO/z/i4eqCZ2iM3rQgZ
-         ZiwpW7HICE9lV7ccgh4q7dTC2VFnR9EBc1EL59YxKx2qy5SoavhLAnFliPFYLBRDARtU
-         4TcFui2gXn1cgIpThFI1/AhGRAvt0B9O4FlaVfiXWaVwnp3tnK/3ID76T3bXdMhuV792
-         0Cmw==
-X-Forwarded-Encrypted: i=1; AJvYcCVi130kQTN0CPNxVTSDaEX8tAQm9PJ4X/mL9/4Jjvqs93t6JcM0d6yjVw+sSAxDaZFqjukhC5i2MBTRZkWn@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd8X8NWOBSgwGBiS0iT4HGDsTBqoEguQYMic8TvDZYtZWxi8Jt
-	7FMr8y6cP7hDOW5qbMRa6T4qFpJ9uKDA7KRE/F01+OKJoaem99xzWf9vU7YN709EXANAeM6v2FL
-	REXu3JFUeLOeGaoRrEO2USp3d1GJ4+7gOdkE3jCegkW4CWeH3UA4I1YP8qyk=
+	s=arc-20240116; t=1772983997; c=relaxed/simple;
+	bh=+TuBzpmKnTWYsMNcFOOQUsN6k4xfkhutUhWMIzW2MtU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MgpUou+wXjfDMjax5ORvDb2JCMfj/Ul/jn188SZkj03youYZrMlj1aIau5wxJTEvCPGwpWwC9Q4KEigfti7LiMlLkAdHnhYjpyviOcqA7zk/ZNITQ4wbpN2s014g2EMquhxhlQI3LISd+AOlYv296Cl132ykq6lQ8ravK8tyOYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=anarazel.de; spf=pass smtp.mailfrom=anarazel.de; dkim=pass (2048-bit key) header.d=anarazel.de header.i=@anarazel.de header.b=M8oMLKHe; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=rNdLk/p3; arc=none smtp.client-ip=202.12.124.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=anarazel.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=anarazel.de
+Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
+	by mailfout.stl.internal (Postfix) with ESMTP id 93A821D0000E;
+	Sun,  8 Mar 2026 11:33:13 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Sun, 08 Mar 2026 11:33:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1772983993;
+	 x=1773070393; bh=j67XtJ9OGsdlKsg8v+Rh/M0QEDVD7WMs+occTWtaidE=; b=
+	M8oMLKHeJC1qqUKI5wl4oHJh7TlqciEYhO6kYd7RzJ2jC4XoEhFuubaAPWAGuit+
+	3JE3EKayzXDkDwXkVn3Fcmfb7D7Gd2fd+ztdjiYLLvTFscp4rAOmHZWaCo8T/hfr
+	VJ06mIg0Y1VsBea+wPPBr9aj7Qv2+J2ybCeeT/ssvq7J9iPRtHP+a7TScPE4WUzu
+	/HyffTZTwKpCuFxA3cOnWZQJOrYdr2nnAFcuI75M8pb1Pccn1voqqxaCi/et3QK7
+	f8N4bbfjThQn7VPdu/JPn5XWY49A6iYaV25sb66F807jxUOegh2qWk/9Ho9yEjvw
+	8aG+NibXye1ZKyYbfZV1uw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1772983993; x=
+	1773070393; bh=j67XtJ9OGsdlKsg8v+Rh/M0QEDVD7WMs+occTWtaidE=; b=r
+	NdLk/p32TQDKOBkrSnPA2MnysyMVa1WS+6lXiU81IfyWLSXZ4m9MXaKyWwxOnZsh
+	X6GSMd6Xw53CYtt5hUKoNi23Ldd/c7y9VEJ8SE7KVWRe/IL/cr0b25pZYndIlZIB
+	gwi5DouetHBxepC9B+1HcM482KeTOXJWVxcWR+SveGzv7c8X3ZjsKn40LUihfA43
+	T4tJ8FU4zmnQhAinCgLgUzZdQVLNo+fBieTrnZjcXgEY9sSTpwJvKHi8BPgnSzY5
+	Kg9L+AxNIOqYxoA5sjOdVeOy3hBy7NfUg7Y9Iybw4UXRx42sfAaDyRVBrHJVVO3+
+	DnT48ti0Pvq1lrRM/3s4w==
+X-ME-Sender: <xms:t5ataVwCm1DrshxsYPYAjikWwiata3XhjybKXJVu9wRn8VF4pWedGw>
+    <xme:t5ataRL48WYmaazofgmpoG9726ua1f2FnGRLyRl3X2r44PM6sT0Ve8CP0SRCI8PrH
+    rGsE4wH2SluW0f_2AU8zhTgOeKKFW2Er6UQL2VfBzffOSDdyWtBag>
+X-ME-Received: <xmr:t5ataa2yko-EbDXivTKMVyzLWK43LK26FoGPv6CJraasA3aXJR4fBsPMXTCiAL68ncoEVw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvjeehheehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggugfgjsehtkefstddttdejnecuhfhrohhmpeetnhgurhgv
+    shcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucggtffrrg
+    htthgvrhhnpedtleelvdfgjedvffeiueekfeeuleffhfegfffhgfffkeevueehieehhfei
+    gffhvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grnhgurhgvshesrghnrghrrgiivghlrdguvgdpnhgspghrtghpthhtohepvddtpdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
+    dprhgtphhtthhopehrihhtvghshhdrlhhishhtsehgmhgrihhlrdgtohhmpdhrtghpthht
+    ohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegujhifohhngh
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgtghhrohhfsehkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhope
+    hprghnkhgrjhdrrhgrghhhrghvsehlihhnuhigrdguvghvpdhrtghpthhtohepohhjrghs
+    fihinheslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopehlshhfqdhptgeslhhish
+    htshdrlhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
+X-ME-Proxy: <xmx:t5atabdr7P5wMdbGIgFdb3ItIOC2ChWHV7AMfKIRxqK1W48aO0FLSQ>
+    <xmx:t5atae7_j236xrkK0fKiAb7qogWk8a7ApPSSz1SSbBwZmBaL5IoZAQ>
+    <xmx:t5atae9iAxo7ei6UuV1V5whjymcmGSwjfJspj-VputDXUjfJik0psA>
+    <xmx:t5ataVL7cZ6ttfoZ9QCbSAFcajRLT-wbNEyIjafmvuPb5m9qassYdA>
+    <xmx:uZataaeyBP_MPNczw099JYvNBOlN3bTUpmojFbk_LjJMiR9yZYqA1_33>
+Feedback-ID: id4a34324:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 8 Mar 2026 11:33:11 -0400 (EDT)
+Date: Sun, 8 Mar 2026 11:33:10 -0400
+From: Andres Freund <andres@anarazel.de>
+To: Ritesh Harjani <ritesh.list@gmail.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, Christoph Hellwig <hch@lst.de>, 
+	Pankaj Raghav <pankaj.raghav@linux.dev>, linux-xfs@vger.kernel.org, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org, djwong@kernel.org, 
+	john.g.garry@oracle.com, willy@infradead.org, jack@suse.cz, ojaswin@linux.ibm.com, 
+	Luis Chamberlain <mcgrof@kernel.org>, dchinner@redhat.com, Javier Gonzalez <javier.gonz@samsung.com>, 
+	gost.dev@samsung.com, tytso@mit.edu, p.raghav@samsung.com, vi.shah@samsung.com
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Buffered atomic writes
+Message-ID: <pyyeaqzjdpgkpjfyxkrlzawwwj6elzvidubtq73toufr7wgoec@prv4u3o5ixjy>
+References: <v7f6u19i.ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:2188:b0:679:ea08:8fd6 with SMTP id
- 006d021491bc7-67b9bd22c94mr5375108eaf.46.1772973722411; Sun, 08 Mar 2026
- 05:42:02 -0700 (PDT)
-Date: Sun, 08 Mar 2026 05:42:02 -0700
-In-Reply-To: <aa1XpnY0TRvDGf4i@arm.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69ad6e9a.050a0220.310d8.000b.GAE@google.com>
-Subject: Re: [syzbot] [mm?] [f2fs?] [exfat?] memory leak in __kfree_rcu_sheaf
-From: syzbot <syzbot+cae7809e9dc1459e4e63@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, catalin.marinas@arm.com, chao@kernel.org, 
-	hao.li@linux.dev, harry.yoo@oracle.com, jaegeuk@kernel.org, jannh@google.com, 
-	liam.howlett@oracle.com, linkinjeon@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	pfalcato@suse.de, sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, 
-	vbabka@kernel.org, vbabka@suse.cz, wangqing7171@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-X-Rspamd-Queue-Id: 3DB2923048C
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <v7f6u19i.ritesh.list@gmail.com>
+X-Rspamd-Queue-Id: 31CF0230F59
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.36 / 15.00];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=2c6ad6fefffa76b1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[anarazel.de,none];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[anarazel.de:s=fm1,messagingengine.com:s=fm1];
 	MAILLIST(-0.15)[generic];
-	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79720-lists,linux-fsdevel=lfdr.de,cae7809e9dc1459e4e63];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[linux-foundation.org,arm.com,kernel.org,linux.dev,oracle.com,google.com,lists.sourceforge.net,vger.kernel.org,kvack.org,suse.de,samsung.com,googlegroups.com,suse.cz,gmail.com];
-	MISSING_XM_UA(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[];
 	RCPT_COUNT_TWELVE(0.00)[20];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-79721-lists,linux-fsdevel=lfdr.de];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[gmail.com,lst.de,linux.dev,vger.kernel.org,kvack.org,lists.linux-foundation.org,kernel.org,oracle.com,infradead.org,suse.cz,linux.ibm.com,redhat.com,samsung.com,mit.edu];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	TO_DN_NONE(0.00)[];
-	R_DKIM_NA(0.00)[];
-	NEURAL_HAM(-0.00)[-0.856];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[andres@anarazel.de,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[anarazel.de:+,messagingengine.com:+];
+	NEURAL_HAM(-0.00)[-0.989];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[anarazel.de:dkim,anarazel.de:email,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,lst.de:email]
 X-Rspamd-Action: no action
 
-Hello,
+Hi,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-memory leak in __pcs_replace_empty_main
+On 2026-03-08 14:49:21 +0530, Ritesh Harjani wrote:
+> Andres Freund <andres@anarazel.de> writes:
+> > On 2026-02-17 10:23:36 +0100, Amir Goldstein wrote:
+> >> On Tue, Feb 17, 2026 at 8:00 AM Christoph Hellwig <hch@lst.de> wrote:
+> >> >
+> >> > I think a better session would be how we can help postgres to move
+> >> > off buffered I/O instead of adding more special cases for them.
+> >
+> > FWIW, we are adding support for DIO (it's been added, but performance isn't
+> > competitive for most workloads in the released versions yet, work to address
+> > those issues is in progress).
+> >
+>
+> Is postgres also planning to evaluate the performance gains by using DIO
+> atomic writes available in upstream linux kernel? What would be
+> interesting to see is the relative %delta with DIO atomic-writes v/s
+> DIO non atomic writes.
 
-BUG: memory leak
-unreferenced object 0xffff88810005f800 (size 512):
-  comm "swapper/0", pid 0, jiffies 4294937296
-  hex dump (first 32 bytes):
-    00 2a 90 00 81 88 ff ff 00 94 30 29 81 88 ff ff  .*........0)....
-    00 12 04 00 81 88 ff ff 00 00 00 00 00 00 00 00  ................
-  backtrace (crc a3e5799):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4547 [inline]
-    slab_alloc_node mm/slub.c:4869 [inline]
-    __do_kmalloc_node mm/slub.c:5262 [inline]
-    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5275
-    kmalloc_noprof include/linux/slab.h:954 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
-    alloc_empty_sheaf mm/slub.c:2786 [inline]
-    alloc_full_sheaf mm/slub.c:2834 [inline]
-    __pcs_replace_empty_main+0x1d2/0x260 mm/slub.c:4629
-    alloc_from_pcs mm/slub.c:4720 [inline]
-    slab_alloc_node mm/slub.c:4854 [inline]
-    __kmalloc_cache_noprof+0x3ac/0x480 mm/slub.c:5378
-    kmalloc_noprof include/linux/slab.h:950 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __irq_domain_alloc_fwnode+0x37/0x140 kernel/irq/irqdomain.c:95
-    irq_domain_alloc_named_fwnode include/linux/irqdomain.h:271 [inline]
-    arch_early_irq_init+0x1c/0x70 arch/x86/kernel/apic/vector.c:803
-    start_kernel+0x931/0xb80 init/main.c:1114
-    x86_64_start_reservations+0x24/0x30 arch/x86/kernel/head64.c:310
-    x86_64_start_kernel+0xce/0xd0 arch/x86/kernel/head64.c:291
-    common_startup_64+0x13e/0x148
-
-BUG: memory leak
-unreferenced object 0xffff8881008f6c00 (size 512):
-  comm "kthreadd", pid 2, jiffies 4294937344
-  hex dump (first 32 bytes):
-    00 94 30 29 81 88 ff ff 00 d6 de 0b 81 88 ff ff  ..0)............
-    00 12 04 00 81 88 ff ff 00 00 00 00 00 00 00 00  ................
-  backtrace (crc 9181eca5):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4547 [inline]
-    slab_alloc_node mm/slub.c:4869 [inline]
-    __do_kmalloc_node mm/slub.c:5262 [inline]
-    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5275
-    kmalloc_noprof include/linux/slab.h:954 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
-    alloc_empty_sheaf mm/slub.c:2786 [inline]
-    alloc_full_sheaf mm/slub.c:2834 [inline]
-    __pcs_replace_empty_main+0x1d2/0x260 mm/slub.c:4629
-    alloc_from_pcs mm/slub.c:4720 [inline]
-    slab_alloc_node mm/slub.c:4854 [inline]
-    __kmalloc_cache_node_noprof+0x3ef/0x4e0 mm/slub.c:5391
-    kmalloc_node_noprof include/linux/slab.h:1077 [inline]
-    __get_vm_area_node+0xc6/0x1d0 mm/vmalloc.c:3221
-    __vmalloc_node_range_noprof+0x1d3/0xe50 mm/vmalloc.c:4024
-    __vmalloc_node_noprof+0x71/0x90 mm/vmalloc.c:4124
-    alloc_thread_stack_node kernel/fork.c:355 [inline]
-    dup_task_struct kernel/fork.c:924 [inline]
-    copy_process+0x3e5/0x28c0 kernel/fork.c:2050
-    kernel_clone+0xac/0x6e0 kernel/fork.c:2654
-    kernel_thread+0x80/0xb0 kernel/fork.c:2715
-    create_kthread kernel/kthread.c:459 [inline]
-    kthreadd+0x186/0x250 kernel/kthread.c:817
-    ret_from_fork+0x23c/0x4b0 arch/x86/kernel/process.c:158
-    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-BUG: memory leak
-unreferenced object 0xffff8881008fd600 (size 512):
-  comm "kworker/u8:6", pid 223, jiffies 4294937434
-  hex dump (first 32 bytes):
-    00 c6 8f 00 81 88 ff ff d8 2c 04 00 81 88 ff ff  .........,......
-    00 12 04 00 81 88 ff ff 00 00 00 00 00 00 00 00  ................
-  backtrace (crc 33698a2f):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4547 [inline]
-    slab_alloc_node mm/slub.c:4869 [inline]
-    __do_kmalloc_node mm/slub.c:5262 [inline]
-    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5275
-    kmalloc_noprof include/linux/slab.h:954 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
-    alloc_empty_sheaf mm/slub.c:2786 [inline]
-    __pcs_replace_full_main+0xe8/0x300 mm/slub.c:5725
-    free_to_pcs mm/slub.c:5778 [inline]
-    slab_free mm/slub.c:6173 [inline]
-    kfree+0x352/0x390 mm/slub.c:6486
-    call_usermodehelper_freeinfo kernel/umh.c:43 [inline]
-    umh_complete kernel/umh.c:57 [inline]
-    call_usermodehelper_exec_async+0x1c7/0x1f0 kernel/umh.c:119
-    ret_from_fork+0x23c/0x4b0 arch/x86/kernel/process.c:158
-    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-BUG: memory leak
-unreferenced object 0xffff8881008fc600 (size 512):
-  comm "kworker/0:1", pid 10, jiffies 4294937441
-  hex dump (first 32 bytes):
-    00 1a 39 10 81 88 ff ff 00 d6 8f 00 81 88 ff ff  ..9.............
-    00 12 04 00 81 88 ff ff 00 00 00 00 00 00 00 00  ................
-  backtrace (crc fca1c70a):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4547 [inline]
-    slab_alloc_node mm/slub.c:4869 [inline]
-    __do_kmalloc_node mm/slub.c:5262 [inline]
-    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5275
-    kmalloc_noprof include/linux/slab.h:954 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
-    alloc_empty_sheaf mm/slub.c:2786 [inline]
-    __pcs_replace_full_main+0xe8/0x300 mm/slub.c:5725
-    free_to_pcs mm/slub.c:5778 [inline]
-    slab_free mm/slub.c:6173 [inline]
-    kfree+0x352/0x390 mm/slub.c:6486
-    vfree.part.0+0x1d5/0x4d0 mm/vmalloc.c:3485
-    vfree mm/vmalloc.c:3456 [inline]
-    delayed_vfree_work+0x5b/0x90 mm/vmalloc.c:3398
-    process_one_work+0x26c/0x5d0 kernel/workqueue.c:3275
-    process_scheduled_works kernel/workqueue.c:3358 [inline]
-    worker_thread+0x243/0x490 kernel/workqueue.c:3439
-    kthread+0x14e/0x1a0 kernel/kthread.c:436
-    ret_from_fork+0x23c/0x4b0 arch/x86/kernel/process.c:158
-    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-BUG: memory leak
-unreferenced object 0xffff888100902a00 (size 512):
-  comm "kworker/0:1", pid 10, jiffies 4294937448
-  hex dump (first 32 bytes):
-    00 c4 58 09 81 88 ff ff 00 f8 05 00 81 88 ff ff  ..X.............
-    00 12 04 00 81 88 ff ff 00 00 00 00 00 00 00 00  ................
-  backtrace (crc 8a5f0c0d):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4547 [inline]
-    slab_alloc_node mm/slub.c:4869 [inline]
-    __do_kmalloc_node mm/slub.c:5262 [inline]
-    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5275
-    kmalloc_noprof include/linux/slab.h:954 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
-    alloc_empty_sheaf mm/slub.c:2786 [inline]
-    __pcs_replace_full_main+0xe8/0x300 mm/slub.c:5725
-    free_to_pcs mm/slub.c:5778 [inline]
-    slab_free mm/slub.c:6173 [inline]
-    kfree+0x352/0x390 mm/slub.c:6486
-    vfree.part.0+0x1d5/0x4d0 mm/vmalloc.c:3485
-    vfree mm/vmalloc.c:3456 [inline]
-    delayed_vfree_work+0x5b/0x90 mm/vmalloc.c:3398
-    process_one_work+0x26c/0x5d0 kernel/workqueue.c:3275
-    process_scheduled_works kernel/workqueue.c:3358 [inline]
-    worker_thread+0x243/0x490 kernel/workqueue.c:3439
-    kthread+0x14e/0x1a0 kernel/kthread.c:436
-    ret_from_fork+0x23c/0x4b0 arch/x86/kernel/process.c:158
-    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-BUG: memory leak
-unreferenced object 0xffff88810958c400 (size 512):
-  comm "kworker/u8:5", pid 4599, jiffies 4294937964
-  hex dump (first 32 bytes):
-    00 4c 6a 12 81 88 ff ff 00 2a 90 00 81 88 ff ff  .Lj......*......
-    00 12 04 00 81 88 ff ff 00 00 00 00 00 00 00 00  ................
-  backtrace (crc 45e572cd):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4547 [inline]
-    slab_alloc_node mm/slub.c:4869 [inline]
-    __do_kmalloc_node mm/slub.c:5262 [inline]
-    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5275
-    kmalloc_noprof include/linux/slab.h:954 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
-    alloc_empty_sheaf mm/slub.c:2786 [inline]
-    __pcs_replace_full_main+0xe8/0x300 mm/slub.c:5725
-    free_to_pcs mm/slub.c:5778 [inline]
-    slab_free mm/slub.c:6173 [inline]
-    kfree+0x352/0x390 mm/slub.c:6486
-    call_usermodehelper_freeinfo kernel/umh.c:43 [inline]
-    umh_complete kernel/umh.c:57 [inline]
-    call_usermodehelper_exec_async+0x1c7/0x1f0 kernel/umh.c:119
-    ret_from_fork+0x23c/0x4b0 arch/x86/kernel/process.c:158
-    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-connection error: failed to recv *flatrpc.ExecutorMessageRawT: EOF
+For some limited workloads that comparison is possible today with minimal work
+(albeit with some safety compromises, due to postgres not yet verifying that
+the atomic boundaries are correct, but it's good enough for experiments), as
+you can just disable the torn-page avoidance with a configuration parameter.
 
 
-Tested on:
+The gains from not needing full page writes (postgres' mechanism to protect
+against torn pages) can be rather significant, as full page writes have
+substantial overhead due to the higher journalling volume. The worst part of
+the cost is that the cost decreases between checkpoints (because we don't need
+to repeatedly log a full page images for the same page), just to then increase
+again when the next checkpoint starts.  It's not uncommon that in the phase
+just after the start of a checkpoint, WAL is over 90% of full page writes
+(when not having full page write compression enabled), while later the same
+workload only has a very small percentage of the overhead.  The biggest gain
+from atomic writes will be the more even performance (important for real world
+users), rather than the absolute increase in throughput.
 
-commit:         c23719ab Merge tag 'x86-urgent-2026-03-08' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10027054580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2c6ad6fefffa76b1
-dashboard link: https://syzkaller.appspot.com/bug?extid=cae7809e9dc1459e4e63
-compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17682a02580000
 
+Normal gains during the full page intensive phase are probably on the order of
+20-35% for workload with many small transactions, bigger for workloads with
+larger transactions. But if the increase in WAL volume pushes you above the
+disk write throughput, the gains can be almost arbitrarily larger. E.g. on a
+cloud disk with 100MB/s of write bandwidth, the difference between WAL
+throughput of 50MB/s without full page writes and the same workload with full
+page images generating ~300MB/s of WAL will obviously mean that you'll get
+about < 1/3 of the transaction throughput while also not having any spare IO
+capacity for anything other than WAL writes.
+
+
+The reason I say limited workloads above is that upstream postgres does not
+yet do smart enough write combining with DIO for data writes, I'd expect that
+to be addressed later this year (but it's community open source, as you
+presumably know from experience, that's not always easy to predict /
+control). If the workload has a large fraction of data writes, the overhead of
+that makes the DIO numbers too unrealistic.
+
+
+Unfortunately all this means that the gains from atomic writes, be it for
+buffered or direct IO, will very very heavily depend on the chosen workload
+and by tweaking the workload / hardware you can inflate the gains to an almost
+arbitrarily large degree.
+
+
+This is also about more than throughput / latency, as the volume of WAL also
+impacts the cost of retaining the WAL - often that's done for a while to allow
+point-in-time-recovery (i.e. recovering an older base backup up to a precise
+point in time, to recover from application bugs or operator errors).
+
+
+Greetings,
+
+Andres Freund
 
