@@ -1,93 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-79710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uAYZN/42rWkdzgEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 09:44:46 +0100
+	id KDQLFp83rWlfzgEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 09:47:27 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B2F22F0FE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 09:44:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B189222F12D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 09:47:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 28E903018D7C
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Mar 2026 08:44:42 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 424443017796
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Mar 2026 08:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D6833556E;
-	Sun,  8 Mar 2026 08:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A369835F165;
+	Sun,  8 Mar 2026 08:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gecIMrCJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vt6Otth0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD0A28150F
-	for <linux-fsdevel@vger.kernel.org>; Sun,  8 Mar 2026 08:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9BCA299A8A
+	for <linux-fsdevel@vger.kernel.org>; Sun,  8 Mar 2026 08:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.50
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772959480; cv=pass; b=uVNu88GnwhSG8VVEPAV5GyDTJoBOv84kaU0x7Jlt5qmq2xLLx1e5uH7y3660UIGeASV9vg54OwyBD7hgH4Pxeaf5xr8/XcQmlT95GIoKcnuy73lv2gC45Z2gcPkMUpbA+PHHaGapjP0f1SPOpAAUD+3Hy9tXa7fLgTmpNX9QAR8=
+	t=1772959610; cv=pass; b=ZAHJZrDKjj0HeZwmjinG0TOEfTAi3m+jZO6PCJDPi+qUytcjpVP8udmfrStLIHg8ims7iU5cH6f0kYue8N9+KUHcgVV8FpnvLhOrOAflq2cRpIaRmKkri75/02yR7ccfRaTUicqcbFMfQscNB1HE1GDhiHMmtf4cJKf0oUQIhMk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772959480; c=relaxed/simple;
-	bh=RF7nDUfFXIWL1Dm7bgHpB00o/Pna7WuJIyZYtjxuVSM=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=hjNB17nEihJA1WrvIzII4vr6Ga2IDfqGmqPmW5yc57ZBbr8+kJL8RpSfWVjk71GwwLzhBRCuypzjZLg4Y+bgEaSaD89uWaVUgg2iifI+glT435Q9MYX13r9Wr5ipSfHDfOc6bZ9hlnF1ExI0s91v1yzBlncPCAReNBA/y9TCetc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gecIMrCJ; arc=pass smtp.client-ip=209.85.216.43
+	s=arc-20240116; t=1772959610; c=relaxed/simple;
+	bh=tf3r2elshvBw4G+Al7uwJdaiIQZQ357c/MjcC3Dy+xA=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=qClHBVVWuZuO0sVgxdtEGoKT5IKYup5I7ojqUzdkpfZ+ZzGzdOH6z5AsS3wkQf2dcK6AEvoxinm8lDjltOAYTkSYa/OW5y3TIxXIlmn4ntl8JC1sSAKg2AWb7m0dt2xHrRpj9TYKPqXBEFSFs45kdGsINoEsKKqmy9lBGEgzHD8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vt6Otth0; arc=pass smtp.client-ip=209.85.216.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3598b95ad7dso5277017a91.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Mar 2026 00:44:39 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772959479; cv=none;
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3598b2318c2so4145623a91.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Mar 2026 00:46:48 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772959608; cv=none;
         d=google.com; s=arc-20240605;
-        b=Nnu4sdmpFNIzpT5gqWPuWc2qT/LdnntsKbEeTwgwps46pY/ZY7s5f+4DeXS0fGIAXQ
-         e1yDQGxGiUPw/EeVozehDSFOisyCXTrzjq5udMZYGlnj8RTZtPr/gQfF1NlacriuS9Sw
-         bwy3VgeTyxjN3MFtDI3PjAa97u0TGSUnU5KpQpD5TlyvMnTG7ZOi98Nl9BYBP4H71g47
-         /9594ZcNmirkK17258bbt2PzM6jbVYtwj0QXYHPSMTmJ93HTZAW9IE3m6UpEjYNjOpAQ
-         S1aAugXZkzezcYrxrTezlut5frig70Uz5BoJeLvneca7+OxoaaTCiPE6SPrO/Z+GcFoZ
-         v3wQ==
+        b=B0oPl4/scXxkF/upsgzLtplPQAv8s/NkjgNLfAftKYqLmVHTdLcdUh+SHBJhong8EP
+         l0/Zxm+UAX5yaImB3+K5fBhY40lbBqWUnHNdvUYJmb/pE1jPmCN2vR05lTcG3jMIJOcD
+         O3A1zUEq8bJkChphwlTowc0U8tuycPKWin0EEzCNndVbie6YPSNc9AaHbucn7Re7zMTS
+         bkHFe4NxTfj8xqiJF8UC8dSHKRzf1DU2XiRY6//HPG10uzfYqx5LBOC9VIMEKscLp0Vq
+         9tbWejQ9zGwXatPz8xDpiH2hrhxgECEnzpo8bCLT5NS2vmU5XV3nuy/FHd4WXkWRlbJo
+         tQYw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=cc:to:subject:message-id:date:from:mime-version:dkim-signature;
-        bh=Kt8FzZjzubAcdQdJP/yMmlI1a0NcKoWvCND518FqFxs=;
+        bh=rboZjTz549OhTV3wJrJuZovxI7ft6n2D/8l5VD3+xzc=;
         fh=GoJ+C71T95I9gU2lx4wlLenudvcgBc/o5zwDzFEUPlE=;
-        b=SfjR73xqwqotudSORqZDqTo9/AmWKTsFwfMg5GcX6YR7/tJywaMCQ2ZVmUB9PVNFlQ
-         iI9+JRxaleFtvL1muLsZrhAbwwf6peG1NYQ6X7pGM0XkkiXXuPX4LaauUqUbjOMnxxDF
-         K+iLqL7B2BbkiG/X1rXlZds/UkaE0sCpxyaF7z3qA1Za7hxKTpbDATNdWIn02m8aNJaP
-         984m2puT0wX022iJGzjvKCaM2gAaWhAFoAaOx3WgFF/rPBIPxWJGNJHd3bZLDrPAjlKX
-         xN122GtLb3pp93CumIcDrjU+jQSBOIj+Y+lNqHDySwExig/bLBpRxXoya9dlpVQwbp0+
-         N6dg==;
+        b=GIVzNKKq3Zh8v+bkvDgv+jB43U8UljdMPOhxGTXkhS7lU5RRuhXI0IvoefnIJB1KBi
+         tTI8W8RDBxhVrfS8byA4efeEDXRvn1SkSWfuTUZkqUwanEwZO7K0Y8s5oSaqQg9bk+f5
+         CScaT/CYGherx3BJa/bBnEIGBZ1ujjrdtlumA43Pbrcv3iBYK9iommOc3q9JCOeK7VFn
+         liVl5o5D1SUxHbegrjszxLBxvz7KDKwS+gaFmxdRhPBMzTlu5ID1ajoZ1mCyVCNXNQT4
+         iFPJqu0iMsxQURLHa07I7BwEMeLmfnjlSq/FavPMTYJ8zFvnUTFtNdRTZXwTH3tgAh/N
+         uq4g==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772959479; x=1773564279; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1772959608; x=1773564408; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=Kt8FzZjzubAcdQdJP/yMmlI1a0NcKoWvCND518FqFxs=;
-        b=gecIMrCJoTLybyIuBuM/Nsx8IUYMkLFxsJpCd2XKTzoQoKZgnYn6Ats/WBxinHTyCh
-         crrp4viuaYMYcuCETRRO5BrY9YL2thdLiGyUQ4h9CqYGwigx99sTu63MUCT33zMcmY3Z
-         7ViZtL8HWEO2fQBAErKp7PhwK2GU7ughgqhGYmvwnwbcDjVV5Prj46NScDKCno/zwGIY
-         HaIIQsMyqaZEpA//iTjOoNAzQ0OaxmWhI21mfg7JFyhBhMMw7K7bGHE8Zw90n1cddiQY
-         D1smNL1HI5s+S0VocubKwcX58pul/sYcfjSgdP8kduEkAlQnTdyLP5uHaT/ctZsWv9lX
-         BdqQ==
+        bh=rboZjTz549OhTV3wJrJuZovxI7ft6n2D/8l5VD3+xzc=;
+        b=Vt6Otth0H7X+l2K2S2u0gQMppj+AoaPXwdHto44xQuaW6+iy8JSAKGVtirTGG7PmQE
+         Dq5kItnuWisIX1qIp/l21jeiCAbvy7L9U4kSM84xs5tPlsv77bx49M700sCiCBDeqXXZ
+         E/W7lQbUDSVaycA5eNg9Lrk83keSuyHOZDmW7W/TCbMrjEyPBckl0qS3kyyssRw1SWVw
+         PewtLoXFR696Fq4ez+R5ivvX/e0Q2piDopPjZWAgbg3KALkpLKYJTrxjD4gCz08/72Pc
+         IAlwQJV/04lQobAB9yRZeYjD+u2qLkilMA0+K3YYkdL6hgJB0C63ZzMVQ3c4Mx4+UTNv
+         PVgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772959479; x=1773564279;
+        d=1e100.net; s=20230601; t=1772959608; x=1773564408;
         h=cc:to:subject:message-id:date:from:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kt8FzZjzubAcdQdJP/yMmlI1a0NcKoWvCND518FqFxs=;
-        b=V14rGjKWRIdtugGkJzjZtZCsRMGW7qUSESitlOeTrMT/KO5nOfhg3nR19y3BKMKsfb
-         Jxoef00m3wJfw4tng7apT8XD8bY6kTtzmMoMmU8ITwmkuueTOqvQwumYAk2+Q6DlEEaT
-         x2j2rlYWr5yWD5bOLavppFBUUx7OlMA1ZGHhuFCfGtp7Qf5NRg+KPmlxKGoXvSfSRliF
-         wY81Fb2j++Hy+uRKlytS/e5MJJxm+VHFU0UTTY5qLSFxNtpmIPRnyRTVogoYdZKD+Ssx
-         uKCNEPPJkndHnwDf7mLXjJBeLXq5m+aAFPCYd6cKlEjAou5h7kdSqjjOK6O0GiQKcFqR
-         Xefg==
-X-Gm-Message-State: AOJu0YyUwoT8GDj6JhAquuN60442z/QDpXSsOCcdx3iJRCIb8BxjuYjY
-	SqpZdfGjq2p8EykRSON8MyHBTNEtG8XcoeF91OS542sfkmr3GG2OsjficxnHm1ad26siMlOpddX
-	8YAmgLXi2WOQ9+FXUPqrL7UbCizGd4Woup6qM2GnLhA==
-X-Gm-Gg: ATEYQzwk0jgS0HzxbXYyFAo4MoF/anNo2uEReLyJpE2+46AjRF7Xr0ghjCRxZOXhFf1
-	gaAB18tD/TH6mL5OjDNYf5hPlx9ReKRmIYcazKqBsI1uj6IYLsQEc0bkQYiXEvCZ9uEtLqxPd81
-	U28z8b7sd8xI7n1Mf2Oqk39ZbbxXYzd+n3uoplmEZVz1TPvZEF/oBmaSaw7NY8TZozVj5dyLPZ6
-	XONYeqqNoWB29R7RXZxgFaVs4KLeYWZQ1sYwxj0dQPqnIjR+RfRrA1m69TEZByf5clCl/ceWuir
-	skWmnU/0ku65q1x5
-X-Received: by 2002:a17:90b:5587:b0:33b:be31:8194 with SMTP id
- 98e67ed59e1d1-359be3adbb0mr7026766a91.34.1772959478528; Sun, 08 Mar 2026
- 00:44:38 -0800 (PST)
+        bh=rboZjTz549OhTV3wJrJuZovxI7ft6n2D/8l5VD3+xzc=;
+        b=hX/Uxh3fDyNcfD/xsU3khD5z3nbFAVZcXywrK3qGmWHBF+GJLUnETdyThLsb3Uw0tD
+         t8+7Wh+RyUNEh0kHqOjhsjef7jaAHk5I1IQdxj7EPjTztatbI/rRy4Ubp+M6N9qPLA9x
+         HletnZnkdgbfN+qxfC/Ha2MkOoZ6//8jjnNe3j45RQYyXoV/gMOZzwPWikdsfk7zvS60
+         ZQ0R/1XBPhEVPZgRk5X5ivhbvHJ2qKkrjW1TfMr7h+zPeoBQQxtijIr7KWh5Yl4CcSIq
+         1czMqEXz5ciXs6xxmNF9mPZlPxOgdqoK+atYZ0t+kzBKOhmEjIz4ea2/ZMFiwWXvmTGF
+         nd+g==
+X-Gm-Message-State: AOJu0YzKDzDEqGyM9H946SrCMzibBp0Khn8jsht+6lyd2LRe6DodLTq+
+	bWEZ5uxaHjQOQgPuOukKzymdTF1PWF8HaHwRN8N+VjaDXh45fxM8maTQwLx07XNbClQkzcp19d6
+	8Vu3FKIbwTpjOuov9YcmN+07F85qCkCgCeB+qZJ4kZA==
+X-Gm-Gg: ATEYQzzHiNnc2BZtSja27AOyYnYH/o5KdATDn9MyWGlulgNJtBwO7LSS6zSy6rYvg+G
+	PBuRO4aMabqMG291q1b4w29K+esR5fzrL1yGxZtHNbbXpkQXwGryLt6xYkD3klzC+s+7mSxGaEY
+	LhV0GmigNS5FzhkYvqxWYviatInFy572kXvjZg9Zz/ezdyhp7D1/3itYJG/DfQDz5gxtxtcuV70
+	8HoOA5aEHoKkAkl0aTwVElG1rAfCbtHkNaZXemE400slZ7NpMuh8BYIHQQWOZrXrYbp4U11OP4+
+	+k4lZ1kYdWphHB2u
+X-Received: by 2002:a17:90b:5544:b0:359:8d70:c4ed with SMTP id
+ 98e67ed59e1d1-359be28e0d6mr6998119a91.7.1772959607976; Sun, 08 Mar 2026
+ 00:46:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -95,14 +95,14 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: =?UTF-8?B?7KO87ZiV7KCV?= <jhj140711@gmail.com>
-Date: Sun, 8 Mar 2026 17:44:27 +0900
-X-Gm-Features: AaiRm50sblLA-OXHYDBfisWHHyeRokZHe-dzh79vM5465dyytf3tGlOC8sA5VhE
-Message-ID: <CAP_j_b8JGqP2_=5bZ2Jepv1tBBb08wcjY5tJ5f=QAtDj+QdZoQ@mail.gmail.com>
-Subject: [BUG] adfs: mount-time null-ptr-deref in range [0x10-0x17] in adfs_read_map()
+Date: Sun, 8 Mar 2026 17:46:36 +0900
+X-Gm-Features: AaiRm508yl2DeuTh2jlLtpaZ9DCXY4efN1fS5xLhGU2p8mJQezas-gIlTsI-Mak
+Message-ID: <CAP_j_b-z_LowEExS-yAKsCPdzjRjr-md=57ETosyUHopMV=_jg@mail.gmail.com>
+Subject: [BUG] adfs: use-after-free in _find_next_bit+0xe2/0x140 during getdents64()
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
-X-Rspamd-Queue-Id: 43B2F22F0FE
+X-Rspamd-Queue-Id: B189222F12D
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
@@ -113,7 +113,7 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79710-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79711-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
 	RCVD_TLS_LAST(0.00)[];
@@ -126,7 +126,7 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[jhj140711@gmail.com,linux-fsdevel@vger.kernel.org];
 	RCPT_COUNT_THREE(0.00)[3];
-	NEURAL_HAM(-0.00)[-0.927];
+	NEURAL_HAM(-0.00)[-0.914];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	MID_RHS_MATCH_FROMTLD(0.00)[];
 	FREEMAIL_FROM(0.00)[gmail.com];
@@ -142,165 +142,169 @@ Target file: fs/adfs/map.c
 Subsystem: fs/adfs
 Git head: 5ee8dbf54602dc340d6235b1d6aa17c0f283f48c
 Kernel release: 7.0.0-rc2+
-Case ID: case-20260306T142346Z-30e0
+Case ID: case-20260306T142346Z-211f
 
 Root cause:
-The boot-block mount path accepts a disc record with `nzones==0`
-because `adfs_validate_bblk()` only gates on `adfs_checkbblk()` and
-`adfs_checkdiscrecord()`, and `adfs_checkdiscrecord()` never enforces
-a nonzero zone count. `adfs_read_map()` then computes `nzones =
-dr->nzones | dr->nzones_high << 8`, calls `kmalloc_objs(*dm, nzones)`
-with zero, gets a `ZERO_SIZE_PTR` rather than `NULL`, and immediately
-passes it to `adfs_map_layout()`, which writes `dm[0]` and later
-`dm[nzones - 1]`, causing a mount-time kernel null/low-address
-dereference.
+`fs/adfs/super.c:324-335` accepts a DR0 image whenever the disc record
+passes the shallow `adfs_checkdiscrecord()` checks and `nzones==1`.
+`fs/adfs/map.c:356-385` then reads exactly one map sector from block
+0, but `adfs_map_layout()` overwrites `dm[0].dm_endbit` with `512 +
+(adfs_disc_size(dr) >> dr->log2bpmb)` for the one-zone case
+(`fs/adfs/map.c:329-331`) and never checks that this fits inside the
+single loaded buffer (`sb->s_blocksize * 8` bits). Later map walkers
+trust that oversized bound while reading `dm->dm_bh->b_data`,
+producing a live-buffer out-of-bounds read during post-mount map
+traversal. For this one-zone path, `disc_size/log2bpmb` is the
+decisive inflator; `zone_spare` is not required for the final
+`dm_endbit` overwrite.
 
-Observed crash: mount-time null-ptr-deref in range
-[0x0000000000000010-0x0000000000000017] in adfs_read_map()
+Observed crash: use-after-free in _find_next_bit+0xe2/0x140 during getdents64()
 
 KASAN excerpt:
-[  144.659016][    T1] CPA  protect  Rodata RO: 0xff1100007364e000 -
-0xff1100007364efff PFN 7364e req 8000000000000123 prevent
-0000000000000002
-[  144.659565][    T1] CPA  protect  Rodata RO: 0xffffffffab64f000 -
-0xffffffffab64ffff PFN 7364f req 8000000000000123 prevent
-0000000000000002
-[  144.660563][    T1] CPA  protect  Rodata RO: 0xff1100007364f000 -
-0xff1100007364ffff PFN 7364f req 8000000000000123 prevent
-0000000000000002
-[  144.668921][    T1] Testing CPA: again
-[  145.133922][    T1] debug: unmapping init [mem
-0xffffffffa9396000-0xffffffffa93fffff]
-[  145.136886][    T1] debug: unmapping init [mem
-0xffffffffab650000-0xffffffffab7fffff]
-[  157.130123][    T1] x86/mm: Checked W+X mappings: passed, no W+X pages found.
-[  157.132907][    T1] rodata_test: all tests were successful
-[  157.134666][    T1] Run /init as init process
-[kaudit] guest init start
-[kaudit] guest init start
-+ '[' -x /poc/serial-mark ]
-+ /poc/serial-mark '[kaudit] run.sh start\n'
-[kaudit] run.sh start\n[  158.284872][  T145] serial-mark (145) used
-greatest stack depth: 8 bytes left
-+ echo '[kaudit] trigger command: /poc/poc-bin'
-[kaudit] trigger command: /poc/poc-bin
-+ /poc/poc-bin
-[  158.729491][  T146] loop0: detected capacity change from 0 to 8
-mounting /tmp/adfs-nzones0.img via /dev/loop0; expect crash in adfs_map_layout()
-[  158.823801][  T146] Oops: general protection fault, probably for
-non-canonical address 0xdffffc0000000002: 0000 [#1] SMP
-DEBUG_PAGEALLOC KASAN NOPTI
-[  158.824306][  T146] KASAN: null-ptr-deref in range
-[0x0000000000000010-0x0000000000000017]
-[  158.824306][  T146] CPU: 0 UID: 0 PID: 146 Comm: poc-bin Tainted: G
-       W       T   7.0.0-rc2+ #4 PREEMPT(lazy)
-f57869d565a4551be95743026afd79a1bf2712c7
-[  158.824306][  T146] Tainted: [W]=WARN, [T]=RANDSTRUCT
-[  158.824306][  T146] Hardware name: QEMU Standard PC (i440FX + PIIX,
+[   83.536813][  T158] ADFS-fs error (device loop0):
+adfs_dir_read_buffers: dir 000200 failed read at offset 0, mapped
+block 0x00013d02
+getdents64: Input/output error
+[   83.202718][  T142] sh (142): drop_caches: 3
+[   83.497412][  T158] kobject: 'loop0' (ff11000001433798): kobject_uevent_env
+[   83.497586][  T158] kobject: 'loop0' (ff11000001433798):
+kobject_uevent_env: uevent_suppress caused the event to drop!
+[   83.499843][  T158] loop0: detected capacity change from 0 to 8
+[   83.500351][  T158] kobject: 'loop0' (ff11000001433798): kobject_uevent_env
+[   83.500422][  T158] kobject: 'loop0' (ff11000001433798):
+kobject_uevent_env: uevent_suppress caused the event to drop!
+[   83.500473][  T158] kobject: 'loop0' (ff11000001433798): kobject_uevent_env
+[   83.501083][  T158] kobject: 'loop0' (ff11000001433798):
+fill_kobj_path: path = '/devices/virtual/block/loop0'
+[   83.536813][  T158] ADFS-fs error (device loop0):
+adfs_dir_read_buffers: dir 000200 failed read at offset 0, mapped
+block 0x00013d02
+[   83.589296][  T158] kobject: 'loop0' (ff11000001433798): kobject_uevent_env
+[   83.591287][  T158] kobject: 'loop0' (ff11000001433798):
+fill_kobj_path: path = '/devices/virtual/block/loop0'
+[   83.591744][  T158] kobject: 'loop0' (ff11000001433798): kobject_uevent_env
+[   83.592497][  T158] kobject: 'loop0' (ff11000001433798):
+fill_kobj_path: path = '/devices/virtual/block/loop0'
+[*] attempt 3/128
+[   84.603537][  T142] sh (142): drop_caches: 3
+image=/tmp/adfs-dmendbit.img disc_size=1073741824 dm_endbit=2097664
+bits (262208 bytes max)
+[   84.901503][  T167] loop0: detected capacity change from 0 to 8
+[   84.943773][  T167]
+==================================================================
+[   84.944056][  T167] BUG: KASAN: use-after-free in _find_next_bit+0xe2/0x140
+[   84.944056][  T167] Read of size 8 at addr ff1100005b909000 by task
+poc-bin/167
+[   84.944056][  T167]
+[   84.944056][  T167] CPU: 0 UID: 0 PID: 167 Comm: poc-bin Tainted: G
+       W       T   7.0.0-rc2+ #5 PREEMPT(lazy)
+ccfb407f8ed1d19667324f70fc2e5f4a9b6173f6
+[   84.944056][  T167] Tainted: [W]=WARN, [T]=RANDSTRUCT
+[   84.944056][  T167] Hardware name: QEMU Standard PC (i440FX + PIIX,
 1996), BIOS 1.15.0-1 04/01/2014
-[  158.824306][  T146] RIP: 0010:adfs_read_map+0x420/0xbc0
-[  158.824306][  T146] Code: 07 83 c0 01 38 d0 7c 08 84 d2 0f 85 7f 05
-00 00 0f b7 45 0a 48 8b 54 24 10 41 29 c7 48 c1 ea 03 48 b8 00 00 00
-00 00 fc ff df <80> 3c 02 00 44 89 7c 24 08 0f 85 12 07 00 00 48 8b 44
-24 10 48 8d
-[  158.824306][  T146] RSP: 0018:ffa00000014a7658 EFLAGS: 00000202
-[  158.824306][  T146] RAX: dffffc0000000000 RBX: 0000000000000000
-RCX: 0000000000000000
-[  158.824306][  T146] RDX: 0000000000000002 RSI: 0000000000000000
-RDI: 0000000000000000
-[  158.824306][  T146] RBP: ff11000006345dc0 R08: 0000000000000000
-R09: 0000000000000000
-[  158.824306][  T146] R10: 0000000000000000 R11: 0000000000000000
-R12: ff11000004f04000
-[  158.824306][  T146] R13: ff11000006345dca R14: 0000000000000000
-R15: 0000000000002000
-[  158.824306][  T146] FS:  00000000004ce3c0(0000)
-GS:ff110000ab608000(0000) knlGS:0000000000000000
-[  158.824306][  T146] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  158.824306][  T146] CR2: 00000000004c91a0 CR3: 000000000b0af000
-CR4: 00000000007516f0
-[  158.824306][  T146] PKRU: 55555554
-[  158.824306][  T146] Call Trace:
-[  158.824306][  T146]  <TASK>
-[  158.824306][  T146]  adfs_probe+0x3b7/0x540
-[  158.824306][  T146]  ? __pfx_adfs_validate_bblk+0x40/0x40
-[  158.824306][  T146]  ? __pfx_adfs_probe+0x40/0x40
-[  158.824306][  T146]  ? shrinker_debugfs_rename+0x1bb/0x2c0
-[  158.824306][  T146]  adfs_fill_super+0x179/0x640
-[  158.824306][  T146]  ? __pfx_adfs_fill_super+0x40/0x40
-[  158.824306][  T146]  ? kfree_const+0x5a/0x80
-[  158.824306][  T146]  ? shrinker_debugfs_rename+0x1c0/0x2c0
-[  158.824306][  T146]  ? __pfx_shrinker_debugfs_rename+0x40/0x40
-[  158.824306][  T146]  ? __pfx_snprintf+0x40/0x40
-[  158.824306][  T146]  ? tracer_preempt_on+0x44/0x5c0
-[  158.824306][  T146]  ? _raw_spin_unlock+0x2d/0x80
-[  158.824306][  T146]  ? set_blocksize+0x384/0x480
-[  158.824306][  T146]  ? sb_set_blocksize+0x1b1/0x340
-[  158.824306][  T146]  ? setup_bdev_super+0x431/0x900
-[  158.824306][  T146]  ? __pfx_super_s_dev_set+0x40/0x40
-[  158.824306][  T146]  get_tree_bdev_flags+0x3aa/0x680
-[  158.824306][  T146]  ? __pfx_adfs_fill_super+0x40/0x40
-[  158.824306][  T146]  ? __pfx_get_tree_bdev_flags+0x40/0x40
-[  158.824306][  T146]  ? rcu_is_watching+0x12/0x100
-[  158.824306][  T146]  ? cap_capable+0x142/0x380
-[  158.824306][  T146]  vfs_get_tree+0x98/0x380
-[  158.824306][  T146]  fc_mount+0x1f/0x240
-[  158.824306][  T146]  do_new_mount+0x3d6/0x700
-[  158.824306][  T146]  ? __pfx_do_new_mount+0x40/0x40
-[  158.824306][  T146]  ? cap_capable+0x142/0x380
-[  158.824306][  T146]  ? bpf_lsm_capable+0xe/0x40
-[  158.824306][  T146]  ? security_capable+0x307/0x380
-[  158.824306][  T146]  path_mount+0x4bb/0x1500
-[  158.824306][  T146]  ? kmem_cache_free+0x169/0x7c0
-[  158.824306][  T146]  ? putname+0xb9/0x140
-[  158.824306][  T146]  ? __pfx_path_mount+0x40/0x40
-[  158.824306][  T146]  ? putname+0xb9/0x140
-[  158.824306][  T146]  __x64_sys_mount+0x2a8/0x340
-[  158.824306][  T146]  ? __pfx___x64_sys_mount+0x40/0x40
-[  158.824306][  T146]  ? tracer_hardirqs_on+0x3c9/0x5c0
-[  158.824306][  T146]  ? do_syscall_64+0xa7/0x940
-[  158.824306][  T146]  do_syscall_64+0x141/0x940
-[  158.824306][  T146]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[  158.824306][  T146] RIP: 0033:0x44a10e
-[  158.824306][  T146] Code: 48 c7 c0 ff ff ff ff eb aa e8 0e 06 00 00
-66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 f3 0f 1e fa 49 89 ca b8 a5
-00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8
+[   84.944056][  T167] Call Trace:
+[   84.944056][  T167]  <TASK>
+[   84.944056][  T167]  dump_stack_lvl+0x95/0x100
+[   84.944056][  T167]  print_address_description.constprop.0+0x2c/0x3c0
+[   84.944056][  T167]  ? _find_next_bit+0xe2/0x140
+[   84.944056][  T167]  print_report+0xb4/0x280
+[   84.944056][  T167]  ? kasan_addr_to_slab+0x27/0x80
+[   84.944056][  T167]  ? kasan_complete_mode_report_info+0xa3/0xc0
+[   84.944056][  T167]  kasan_report+0x9b/0x100
+[   84.944056][  T167]  ? _find_next_bit+0xe2/0x140
+[   84.944056][  T167]  _find_next_bit+0xe2/0x140
+[   84.944056][  T167]  ? find_held_lock+0x32/0xc0
+[   84.944056][  T167]  scan_map+0x2ac/0x4c0
+[   84.944056][  T167]  ? adfs_map_lookup+0x11d/0x340
+[   84.944056][  T167]  adfs_map_lookup+0x12e/0x340
+[   84.944056][  T167]  adfs_dir_read_buffers+0x282/0x5c0
+[   84.944056][  T167]  adfs_f_read+0x76/0x3c0
+[   84.944056][  T167]  ? __down_read_trylock+0x1de/0x480
+[   84.944056][  T167]  adfs_dir_read_inode+0x15f/0x2c0
+[   84.944056][  T167]  adfs_iterate+0x127/0x480
+[   84.944056][  T167]  ? __pfx_adfs_iterate+0x40/0x40
+[   84.944056][  T167]  ? iterate_dir+0x152/0xa80
+[   84.944056][  T167]  ? down_read_killable+0x116/0x380
+[   84.944056][  T167]  ? __pfx_down_read_killable+0x40/0x40
+[   84.944056][  T167]  ? selinux_file_permission+0x3c2/0x500
+[   84.944056][  T167]  iterate_dir+0x238/0xa80
+[   84.944056][  T167]  ? fdget_pos+0x24e/0x340
+[   84.944056][  T167]  __x64_sys_getdents64+0x132/0x240
+[   84.944056][  T167]  ? __pfx___x64_sys_getdents64+0x40/0x40
+[   84.944056][  T167]  ? __pfx_filldir64+0x40/0x40
+[   84.944056][  T167]  do_syscall_64+0x141/0xf40
+[   84.944056][  T167]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   84.944056][  T167] RIP: 0033:0x448dcd
+[   84.944056][  T167] Code: 02 b8 ff ff ff ff eb b8 0f 1f 44 00 00 f3
+0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b
+4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8
 64 89 01 48
-[  158.824306][  T146] RSP: 002b:00007fffa4a988c8 EFLAGS: 00000202
-ORIG_RAX: 00000000000000a5
-[  158.824306][  T146] RAX: ffffffffffffffda RBX: 0000000000000000
-RCX: 000000000044a10e
-[  158.824306][  T146] RDX: 00000000004980f6 RSI: 000000000049802d
-RDI: 00007fffa4a98970
-[  158.824306][  T146] RBP: 0000000000000003 R08: 00000000004af4bd
-R09: 746365707865203b
-[  158.824306][  T146] R10: 0000000000000001 R11: 0000000000000202
-R12: 00007fffa4a98970
-[  158.824306][  T146] R13: 000000000049806e R14: 00007fffa4a988e0
-R15: 0000000000000004
-[  158.824306][  T146]  </TASK>
-[  158.824306][  T146] Modules linked in:
-[  158.854456][  T146] ---[ end trace 0000000000000000 ]---
-[  158.855680][  T146] RIP: 0010:adfs_read_map+0x420/0xbc0
-[  158.856500][  T146] Code: 07 83 c0 01 38 d0 7c 08 84 d2 0f 85 7f 05
-00 00 0f b7 45 0a 48 8b 54 24 10 41 29 c7 48 c1 ea 03 48 b8 00 00 00
-00 00 fc ff df <80> 3c 02 00 44 89 7c 24 08 0f 85 12 07 00 00 48 8b 44
-24 10 48 8d
-[  158.857115][  T146] RSP: 0018:ffa00000014a7658 EFLAGS: 00000202
-[  158.857587][  T146] RAX: dffffc0000000000 RBX: 0000000000000000
-RCX: 0000000000000000
-[  158.857962][  T146] RDX: 0000000000000002 RSI: 0000000000000000
-RDI: 0000000000000000
-[  158.858320][  T146] RBP: ff11000006345dc0 R08: 0000000000000000
+[   84.944056][  T167] RSP: 002b:00007fff97d52248 EFLAGS: 00000246
+ORIG_RAX: 00000000000000d9
+[   84.944056][  T167] RAX: ffffffffffffffda RBX: 0000000000000005
+RCX: 0000000000448dcd
+[   84.944056][  T167] RDX: 0000000000002000 RSI: 00007fff97d52390
+RDI: 0000000000000003
+[   84.944056][  T167] RBP: 0000000000000003 R08: 00007fff97d520e0
 R09: 0000000000000000
-[  158.858701][  T146] R10: 0000000000000000 R11: 0000000000000000
-R12: ff11000004f04000
-[  158.859091][  T146] R13: ff11000006345dca R14: 0000000000000000
-R15: 0000000000002000
-[  158.859473][  T146] FS:  00000000004ce3c0(0000)
-GS:ff110000ab608000(0000) knlGS:0000000000000000
-[  158.859883][  T146] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  158.860567][  T146] CR2: 00000000004c91a0 CR3: 000000000b0af000
-CR4: 00000000007516f0
-[  158.860946][  T146] PKRU: 55555554
+[   84.944056][  T167] R10: 00000000004b04dd R11: 0000000000000246
+R12: 000000000049900f
+[   84.944056][  T167] R13: 00007fff97d52390 R14: 000000000049907f
+R15: 00007fff97d52350
+[   84.944056][  T167]  </TASK>
+[   84.944056][  T167]
+[   84.944056][  T167] The buggy address belongs to the physical page:
+[   84.944056][  T167] page: refcount:0 mapcount:0
+mapping:0000000000000000 index:0x215 pfn:0x5b909
+[   84.944056][  T167] flags: 0xfffffc0000000(node=0|zone=1|lastcpupid=0x1fffff)
+[   84.944056][  T167] raw: 000fffffc0000000 ffd40000016e5148
+ffd40000016e3e88 0000000000000000
+[   84.944056][  T167] raw: 0000000000000215 0000000000000000
+00000000ffffffff 0000000000000000
+[   84.944056][  T167] page dumped because: kasan: bad access detected
+[   84.944056][  T167]
+[   84.944056][  T167] Memory state around the buggy address:
+[   84.944056][  T167]  ff1100005b908f00: 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00
+[   84.944056][  T167]  ff1100005b908f80: 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00
+[   84.944056][  T167] >ff1100005b909000: ff ff ff ff ff ff ff ff ff
+ff ff ff ff ff ff ff
+[   84.944056][  T167]                    ^
+[   84.944056][  T167]  ff1100005b909080: ff ff ff ff ff ff ff ff ff
+ff ff ff ff ff ff ff
+[   84.944056][  T167]  ff1100005b909100: ff ff ff ff ff ff ff ff ff
+ff ff ff ff ff ff ff
+[   84.944056][  T167]
+==================================================================
+[   84.957085][  T167] Disabling lock debugging due to kernel taint
+[   84.957940][  T167] BUG: unable to handle page fault for address:
+ff1100005b909000
+[   84.958241][  T167] #PF: supervisor read access in kernel mode
+[   84.958369][  T167] #PF: error_code(0x0000) - not-present page
+[   84.958604][  T167] PGD 6b201067 P4D 6b202067 PUD 6b205067 PMD
+7f831067 PTE 800fffffa46f6020
+[   84.959193][  T167] Oops: Oops: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN NOPTI
+[   84.959358][  T167] CPU: 0 UID: 0 PID: 167 Comm: poc-bin Tainted: G
+   B   W       T   7.0.0-rc2+ #5 PREEMPT(lazy)
+ccfb407f8ed1d19667324f70fc2e5f4a9b6173f6
+[   84.959559][  T167] Tainted: [B]=BAD_PAGE, [W]=WARN, [T]=RANDSTRUCT
+[   84.959692][  T167] Hardware name: QEMU Standard PC (i440FX + PIIX,
+1996), BIOS 1.15.0-1 04/01/2014
+[   84.959835][  T167] RIP: 0010:_find_next_bit+0xa3/0x140
+[   84.959990][  T167] Code: df 4a 8d 6c 2d 08 eb 14 48 83 c3 01 48 83
+c5 08 48 89 da 48 c1 e2 06 48 39 d0 76 2a 48 89 ea 48 c1 ea 03 42 80
+3c 22 00 75 33 <48> 8b 55 00 48 85 d2 74 d5 48 c1 e3 06 f3 48 0f bc d2
+48 01 d3 48
+[   84.960216][  T167] RSP: 0018:ffa00000014e78c8 EFLAGS: 00000246
+[   84.960354][  T167] RAX: 0000000000200200 RBX: 0000000000000200
+RCX: 0000000000000000
+[   84.960499][  T167] RDX: 0000000000000000 RSI: 0000000000000000
+RDI: 0000000000000000
+[   84.960645][  T167] RBP: ff1100005b909000 R08: 0000000000000000
+R09: 0000000000000000
+[   84.960781][  T167] R10: 0000000000000000 R11: 0000000000000000
+R12: dffffc0000000000
+[   84.960914][  T167] R13: 0000000000000040 R14: dffffc0000000000
+R15: ff1100005b908000
 
