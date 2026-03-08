@@ -1,243 +1,326 @@
-Return-Path: <linux-fsdevel+bounces-79718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QAttH4xhrWme2AEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 12:46:20 +0100
+	id cxyDNRJsrWl82wEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 13:31:14 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC2B22F9D5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 12:46:19 +0100 (CET)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F314230329
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 13:31:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 98CA63048EDA
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Mar 2026 11:40:58 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 5721C30087D4
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Mar 2026 12:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC25936E47D;
-	Sun,  8 Mar 2026 11:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uIMF6WzI"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D901454654;
+	Sun,  8 Mar 2026 12:31:08 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com [209.85.161.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2514933506C;
-	Sun,  8 Mar 2026 11:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8DA28FC
+	for <linux-fsdevel@vger.kernel.org>; Sun,  8 Mar 2026 12:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772970051; cv=none; b=uYLKWUJxeMPnsBkctF0BP2b1TGSzwU3pT+doqpexsdwpDQl6s1rkq3EFTlKv2eXY7vik597e1LtVe9nKH4Gd9Acvw7yW4jG7OEZBQl54tIiQrkzXe8inp0tFGW94+VAKGlgXctY107o51gJy5yPwrluKv8hQy9TUUzQWGudz4Cc=
+	t=1772973068; cv=none; b=aoGVpgxlEnwIqW1gqi6RjPKm31k/weSwDVJrFYuZKBNqkWX1gX6WSbf5wJTFV4TqNQawwi1eRmJKlToz0U/0KGlV0FIE7SIp/Wd364C53EeifgetbujBvQgeSHfq1vd3pjJ1BYyoENp3+n9Q2AERZCFR4yhiePBh7pkiPP8rYeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772970051; c=relaxed/simple;
-	bh=hNkCPBdMLTNKKjXGzULoG+o3fE4PvA6TTFu23L99sfk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HuAaThQl31fyIrtWqeOB1vGW2MusTxXmM7vI9mH9W2dp1JztcWPB/cnZlfQKIamOl6rjcgoWKkX5TNVLqPiPTLAeCoAA9i0Aqa9AdaIi3xwbHsiM0rp8gfb3i3E93cYiMd8VK1orf1jpD3XcnJBsSS/KK6+BekMWYT4lJd/fpzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uIMF6WzI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 297B4C116C6;
-	Sun,  8 Mar 2026 11:40:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772970050;
-	bh=hNkCPBdMLTNKKjXGzULoG+o3fE4PvA6TTFu23L99sfk=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=uIMF6WzIe99v2Ev4LpngHntz/6BIGAsJgnZFAU87gDRErVCiMoMBqHrCKvKsYlYjK
-	 JEPisBL0OeC4EQTOXJl+DTPQc2xlzI1AROyuCHEwHSqYhDsuru/l4rAXJLY8tozPTl
-	 MaQBrQOb3GNael1hUEehXRH5M9glyevRGnbfjKBld2YXQ23Xws4TYNTsNd6gRT4wRH
-	 OpaZEGy6CjoALuStLIhwIXy8s7eYW2w2+Ch/bt53Je4FNNy2kBrOh4H0fEjWxR72+J
-	 jbVJ+li3nmC/ZpINNDbIdepiba0XSfVWQkRtf9h5dlLHr5sGLehRsLx3wQIBhjFk8t
-	 vzN1l4YzTUIPA==
-Message-ID: <801cf2c42b80d486726ea0a3774e52abcb158100.camel@kernel.org>
-Subject: Re: [PATCH v5 1/4] openat2: new OPENAT2_REGULAR flag support
-From: Jeff Layton <jlayton@kernel.org>
-To: Andy Lutomirski <luto@amacapital.net>, Dorjoy Chowdhury
-	 <dorjoychy111@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-api@vger.kernel.org, ceph-devel@vger.kernel.org,
- gfs2@lists.linux.dev, 	linux-nfs@vger.kernel.org,
- linux-cifs@vger.kernel.org, v9fs@lists.linux.dev, 
-	linux-kselftest@vger.kernel.org, viro@zeniv.linux.org.uk,
- brauner@kernel.org, 	jack@suse.cz, chuck.lever@oracle.com,
- alex.aring@gmail.com, arnd@arndb.de, 	adilger@dilger.ca, mjguzik@gmail.com,
- smfrench@gmail.com, 	richard.henderson@linaro.org, mattst88@gmail.com,
- linmag7@gmail.com, 	tsbogend@alpha.franken.de,
- James.Bottomley@hansenpartnership.com, deller@gmx.de, 	davem@davemloft.net,
- andreas@gaisler.com, idryomov@gmail.com, amarkuze@redhat.com, 
-	slava@dubeyko.com, agruenba@redhat.com, trondmy@kernel.org,
- anna@kernel.org, 	sfrench@samba.org, pc@manguebit.org,
- ronniesahlberg@gmail.com, 	sprasad@microsoft.com, tom@talpey.com,
- bharathsm@microsoft.com, shuah@kernel.org, 	miklos@szeredi.hu,
- hansg@kernel.org
-Date: Sun, 08 Mar 2026 07:40:44 -0400
-In-Reply-To: <CALCETrXVBA9uGEUdQPEZ2MVdxjLwwcWi5kzhOr1NdOWSSRaROw@mail.gmail.com>
-References: <20260307140726.70219-1-dorjoychy111@gmail.com>
-	 <20260307140726.70219-2-dorjoychy111@gmail.com>
-	 <CALCETrXVBA9uGEUdQPEZ2MVdxjLwwcWi5kzhOr1NdOWSSRaROw@mail.gmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
- MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
- gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
- 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
- R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
- rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
- ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
- Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
- lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
- iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
- QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
- YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
- wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
- LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
- 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
- c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
- LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
- TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
- 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
- xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
- +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
- Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
- BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
- N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
- naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
- RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
- FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
- 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
- P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
- aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
- T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
- dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
- 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
- kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
- uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
- AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
- FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
- 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
- sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
- qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
- sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
- IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
- UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
- dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
- EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
- apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
- M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
- dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
- 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
- jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
- flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
- BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
- AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
- 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
- HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
- 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
- uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
- DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
- CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
- Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
- AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
- aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
- f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+	s=arc-20240116; t=1772973068; c=relaxed/simple;
+	bh=PNENyXzmoOuSqWD9nuOR+Gyb//rlOybeaA14aE+hzTg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ixtoUoslnYp6bAUYLqw1CLDFaK+Uow2EpvYZcgMjpUzfjxfH+2MGG1Z9BkeETJtinKZmi4KAMusUY0v0b7rtElUTO+r1mMUAKMKTWPzDi0E6tDUh+oQ48SSMymD22v1OZLVZnavK+oe4VLocjMZiIXspBxlkFJP2yr/prPakcQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-67bb368c757so1039764eaf.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Mar 2026 05:31:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772973066; x=1773577866;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eExMXBnXM4peFMhhjLeKZOOSaw7IwpgqnEj+UrfzQhQ=;
+        b=oWCAbCuL+rUVhY9zDOLAglxpXFNFFtuzhGF3QFaEskaoURbblhzwOnc6/HHfP6fqhS
+         cGce49dkyokuy0/Aw+Vp2iPUuPIxIFRSVgmQjPdCt6GwS3EqSYzdh10z/t4StXIxhWmk
+         nT6if2kW/A0pYNbZX1f0XRrKwEERryvRXMpICZV0zOHYqLtQJiCBOEEO7WMdrZ3a9sQ6
+         goyuMc6ez5GVqJaslqwMypyMkb/bUsQ6qLKGsmWZI7ecLoUWpOJz7dgpW2gQdVef8LnD
+         yADJJR1ZExypZ0J84XRITvS3lmZ6emd47yuj7/um12nYPRfnNE1eZqTgx+6jvIa0dqJN
+         GEAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUXwVz1c+Obp64f1ybATa3ZbR49+S892e6gtciBr/vLrsNUrPtlaUv5sb+pRzgEvPWM1Ois4HRuQnxB3Z+j@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT4Jp8weoKOK+zf8HGCsaXrk3hh+gekY72cf9O0wnWw0+Mc/1b
+	mksfTb95hjm/rWPmZ771grRIgqsJbPGf55zjx27m1EQLxYAEBqXIlE1lUqpYnEzlIfzikXf3iu1
+	Zqt+tBkxYO4LuZDC4gteIdgl6CPVjer5OSqdlFoFfWZW8pGMxLANNvtD1AOU=
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: CBC2B22F9D5
+X-Received: by 2002:a05:6820:4b05:b0:67a:4fe9:a4ba with SMTP id
+ 006d021491bc7-67b9bd49644mr4828247eaf.63.1772973066145; Sun, 08 Mar 2026
+ 05:31:06 -0700 (PDT)
+Date: Sun, 08 Mar 2026 05:31:06 -0700
+In-Reply-To: <aa1XX2ZXo-hc6LHG@arm.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69ad6c0a.a00a0220.b130.0000.GAE@google.com>
+Subject: Re: [syzbot] [mm?] [f2fs?] [exfat?] memory leak in __kfree_rcu_sheaf
+From: syzbot <syzbot+cae7809e9dc1459e4e63@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, catalin.marinas@arm.com, chao@kernel.org, 
+	hao.li@linux.dev, harry.yoo@oracle.com, jaegeuk@kernel.org, jannh@google.com, 
+	liam.howlett@oracle.com, linkinjeon@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
+	pfalcato@suse.de, sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, 
+	vbabka@kernel.org, vbabka@suse.cz, wangqing7171@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+X-Rspamd-Queue-Id: 5F314230329
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-0.36 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=2c6ad6fefffa76b1];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74];
 	MAILLIST(-0.15)[generic];
+	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79718-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_TO(0.00)[amacapital.net,gmail.com];
-	FREEMAIL_CC(0.00)[vger.kernel.org,lists.linux.dev,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,arndb.de,dilger.ca,linaro.org,alpha.franken.de,hansenpartnership.com,gmx.de,davemloft.net,gaisler.com,redhat.com,dubeyko.com,samba.org,manguebit.org,microsoft.com,talpey.com,szeredi.hu];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-79719-lists,linux-fsdevel=lfdr.de,cae7809e9dc1459e4e63];
+	RCVD_TLS_LAST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[43];
-	NEURAL_HAM(-0.00)[-0.985];
+	FREEMAIL_TO(0.00)[linux-foundation.org,arm.com,kernel.org,linux.dev,oracle.com,google.com,lists.sourceforge.net,vger.kernel.org,kvack.org,suse.de,samsung.com,googlegroups.com,suse.cz,gmail.com];
+	MISSING_XM_UA(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jlayton@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	TO_DN_NONE(0.00)[];
+	R_DKIM_NA(0.00)[];
+	NEURAL_HAM(-0.00)[-0.852];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	TO_DN_SOME(0.00)[]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo,syzkaller.appspot.com:url]
 X-Rspamd-Action: no action
 
-On Sat, 2026-03-07 at 10:56 -0800, Andy Lutomirski wrote:
-> On Sat, Mar 7, 2026 at 6:09=E2=80=AFAM Dorjoy Chowdhury <dorjoychy111@gma=
-il.com> wrote:
-> >=20
-> > This flag indicates the path should be opened if it's a regular file.
-> > This is useful to write secure programs that want to avoid being
-> > tricked into opening device nodes with special semantics while thinking
-> > they operate on regular files. This is a requested feature from the
-> > uapi-group[1].
-> >=20
->=20
-> I think this needs a lot more clarification as to what "regular"
-> means.  If it's literally
->=20
-> > A corresponding error code EFTYPE has been introduced. For example, if
-> > openat2 is called on path /dev/null with OPENAT2_REGULAR in the flag
-> > param, it will return -EFTYPE. EFTYPE is already used in BSD systems
-> > like FreeBSD, macOS.
->=20
-> I think this needs more clarification as to what "regular" means,
-> since S_IFREG may not be sufficient.  The UAPI group page says:
->=20
-> Use-Case: this would be very useful to write secure programs that want
-> to avoid being tricked into opening device nodes with special
-> semantics while thinking they operate on regular files. This is
-> particularly relevant as many device nodes (or even FIFOs) come with
-> blocking I/O (or even blocking open()!) by default, which is not
-> expected from regular files backed by =E2=80=9Cfast=E2=80=9D disk I/O. Co=
-nsider
-> implementation of a naive web browser which is pointed to
-> file://dev/zero, not expecting an endless amount of data to read.
->
-> What about procfs?  What about sysfs?  What about /proc/self/fd/17
-> where that fd is a memfd?  What about files backed by non-"fast" disk
-> I/O like something on a flaky USB stick or a network mount or FUSE?
->=20
-> Are we concerned about blocking open?  (open blocks as a matter of
-> course.)  Are we concerned about open having strange side effects?
-> Are we concerned about write having strange side effects?  Are we
-> concerned about cases where opening the file as root results in
-> elevated privilege beyond merely gaining the ability to write to that
-> specific path on an ordinary filesystem?
->
+Hello,
 
-Above the use-case, it also says:
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+memory leak in __pcs_replace_full_main
 
-"O_REGULAR (inspired by the existing O_DIRECTORY flag for open()),
-which opens a file only if it is of type S_IFREG."
+BUG: memory leak
+unreferenced object 0xffff888101d79200 (size 512):
+  comm "kworker/u8:5", pid 182, jiffies 4294937433
+  hex dump (first 32 bytes):
+    e0 22 eb 30 81 88 ff ff b0 b7 ad 81 ff ff ff ff  .".0............
+    00 12 04 00 81 88 ff ff 3c 00 00 00 00 00 00 00  ........<.......
+  backtrace (crc 3ee28017):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4547 [inline]
+    slab_alloc_node mm/slub.c:4869 [inline]
+    __do_kmalloc_node mm/slub.c:5262 [inline]
+    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5275
+    kmalloc_noprof include/linux/slab.h:954 [inline]
+    kzalloc_noprof include/linux/slab.h:1188 [inline]
+    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
+    alloc_empty_sheaf mm/slub.c:2786 [inline]
+    __pcs_replace_full_main+0xe8/0x300 mm/slub.c:5725
+    free_to_pcs mm/slub.c:5778 [inline]
+    slab_free mm/slub.c:6173 [inline]
+    kfree+0x352/0x390 mm/slub.c:6486
+    call_usermodehelper_freeinfo kernel/umh.c:43 [inline]
+    umh_complete kernel/umh.c:57 [inline]
+    call_usermodehelper_exec_async+0x1c7/0x1f0 kernel/umh.c:119
+    ret_from_fork+0x23c/0x4b0 arch/x86/kernel/process.c:158
+    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
 
-Since we allow programs to open a directory under /proc or /sys using
-O_DIRECTORY, I don't think we should do anything different here. To the
-VFS, all of the examples you gave above are S_IFREG "regular files",
-even if they are backed by something quite irregular.
---=20
-Jeff Layton <jlayton@kernel.org>
+BUG: memory leak
+unreferenced object 0xffff888101fa6c00 (size 512):
+  comm "kworker/1:1", pid 41, jiffies 4294937441
+  hex dump (first 32 bytes):
+    b0 1e fc 11 81 88 ff ff b0 b7 ad 81 ff ff ff ff  ................
+    00 12 04 00 81 88 ff ff 3c 00 00 00 00 00 00 00  ........<.......
+  backtrace (crc a295f059):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4547 [inline]
+    slab_alloc_node mm/slub.c:4869 [inline]
+    __do_kmalloc_node mm/slub.c:5262 [inline]
+    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5275
+    kmalloc_noprof include/linux/slab.h:954 [inline]
+    kzalloc_noprof include/linux/slab.h:1188 [inline]
+    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
+    alloc_empty_sheaf mm/slub.c:2786 [inline]
+    __pcs_replace_full_main+0xe8/0x300 mm/slub.c:5725
+    free_to_pcs mm/slub.c:5778 [inline]
+    slab_free mm/slub.c:6173 [inline]
+    kfree+0x352/0x390 mm/slub.c:6486
+    vfree.part.0+0x1d5/0x4d0 mm/vmalloc.c:3485
+    vfree mm/vmalloc.c:3456 [inline]
+    delayed_vfree_work+0x5b/0x90 mm/vmalloc.c:3398
+    process_one_work+0x26c/0x5d0 kernel/workqueue.c:3275
+    process_scheduled_works kernel/workqueue.c:3358 [inline]
+    worker_thread+0x243/0x490 kernel/workqueue.c:3439
+    kthread+0x14e/0x1a0 kernel/kthread.c:436
+    ret_from_fork+0x23c/0x4b0 arch/x86/kernel/process.c:158
+    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+BUG: memory leak
+unreferenced object 0xffff888109d31a00 (size 512):
+  comm "kworker/0:1", pid 10, jiffies 4294937949
+  hex dump (first 32 bytes):
+    c0 fa 74 29 81 88 ff ff b0 b7 ad 81 ff ff ff ff  ..t)............
+    00 12 04 00 81 88 ff ff 3c 00 00 00 00 00 00 00  ........<.......
+  backtrace (crc e073aa0b):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4547 [inline]
+    slab_alloc_node mm/slub.c:4869 [inline]
+    __do_kmalloc_node mm/slub.c:5262 [inline]
+    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5275
+    kmalloc_noprof include/linux/slab.h:954 [inline]
+    kzalloc_noprof include/linux/slab.h:1188 [inline]
+    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
+    alloc_empty_sheaf mm/slub.c:2786 [inline]
+    __pcs_replace_full_main+0xe8/0x300 mm/slub.c:5725
+    free_to_pcs mm/slub.c:5778 [inline]
+    slab_free mm/slub.c:6173 [inline]
+    kfree+0x352/0x390 mm/slub.c:6486
+    vfree.part.0+0x1d5/0x4d0 mm/vmalloc.c:3485
+    vfree mm/vmalloc.c:3456 [inline]
+    delayed_vfree_work+0x5b/0x90 mm/vmalloc.c:3398
+    process_one_work+0x26c/0x5d0 kernel/workqueue.c:3275
+    process_scheduled_works kernel/workqueue.c:3358 [inline]
+    worker_thread+0x243/0x490 kernel/workqueue.c:3439
+    kthread+0x14e/0x1a0 kernel/kthread.c:436
+    ret_from_fork+0x23c/0x4b0 arch/x86/kernel/process.c:158
+    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+BUG: memory leak
+unreferenced object 0xffff888109d3d800 (size 512):
+  comm "udevadm", pid 5179, jiffies 4294938390
+  hex dump (first 32 bytes):
+    88 43 58 27 81 88 ff ff b0 b7 ad 81 ff ff ff ff  .CX'............
+    00 12 04 00 81 88 ff ff 3c 00 00 00 00 00 00 00  ........<.......
+  backtrace (crc 37e3920):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4547 [inline]
+    slab_alloc_node mm/slub.c:4869 [inline]
+    __do_kmalloc_node mm/slub.c:5262 [inline]
+    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5275
+    kmalloc_noprof include/linux/slab.h:954 [inline]
+    kzalloc_noprof include/linux/slab.h:1188 [inline]
+    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
+    alloc_empty_sheaf mm/slub.c:2786 [inline]
+    alloc_full_sheaf mm/slub.c:2834 [inline]
+    __pcs_replace_empty_main+0x1d2/0x260 mm/slub.c:4629
+    alloc_from_pcs mm/slub.c:4720 [inline]
+    slab_alloc_node mm/slub.c:4854 [inline]
+    __kmalloc_cache_noprof+0x3ac/0x480 mm/slub.c:5378
+    kmalloc_noprof include/linux/slab.h:950 [inline]
+    kzalloc_noprof include/linux/slab.h:1188 [inline]
+    kernfs_get_open_node fs/kernfs/file.c:543 [inline]
+    kernfs_fop_open+0x4f3/0x580 fs/kernfs/file.c:718
+    do_dentry_open+0x202/0x8d0 fs/open.c:949
+    vfs_open+0x3d/0x1b0 fs/open.c:1081
+    do_open fs/namei.c:4671 [inline]
+    path_openat+0x154d/0x1e20 fs/namei.c:4830
+    do_file_open+0x121/0x200 fs/namei.c:4859
+    do_sys_openat2+0xa5/0x140 fs/open.c:1366
+    do_sys_open fs/open.c:1372 [inline]
+    __do_sys_openat fs/open.c:1388 [inline]
+    __se_sys_openat fs/open.c:1383 [inline]
+    __x64_sys_openat+0x82/0xf0 fs/open.c:1383
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xe2/0xf80 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+BUG: memory leak
+unreferenced object 0xffff88810b5a5000 (size 512):
+  comm "udevd", pid 5178, jiffies 4294938454
+  hex dump (first 32 bytes):
+    80 c5 8e 2b 81 88 ff ff b0 b7 ad 81 ff ff ff ff  ...+............
+    00 12 04 00 81 88 ff ff 3c 00 00 00 00 00 00 00  ........<.......
+  backtrace (crc bce89c59):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4547 [inline]
+    slab_alloc_node mm/slub.c:4869 [inline]
+    __do_kmalloc_node mm/slub.c:5262 [inline]
+    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5275
+    kmalloc_noprof include/linux/slab.h:954 [inline]
+    kzalloc_noprof include/linux/slab.h:1188 [inline]
+    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
+    alloc_empty_sheaf mm/slub.c:2786 [inline]
+    alloc_full_sheaf mm/slub.c:2834 [inline]
+    __pcs_replace_empty_main+0x1d2/0x260 mm/slub.c:4629
+    alloc_from_pcs mm/slub.c:4720 [inline]
+    slab_alloc_node mm/slub.c:4854 [inline]
+    __kmalloc_cache_noprof+0x3ac/0x480 mm/slub.c:5378
+    kmalloc_noprof include/linux/slab.h:950 [inline]
+    kzalloc_noprof include/linux/slab.h:1188 [inline]
+    kernfs_get_open_node fs/kernfs/file.c:543 [inline]
+    kernfs_fop_open+0x4f3/0x580 fs/kernfs/file.c:718
+    do_dentry_open+0x202/0x8d0 fs/open.c:949
+    vfs_open+0x3d/0x1b0 fs/open.c:1081
+    do_open fs/namei.c:4671 [inline]
+    path_openat+0x154d/0x1e20 fs/namei.c:4830
+    do_file_open+0x121/0x200 fs/namei.c:4859
+    do_sys_openat2+0xa5/0x140 fs/open.c:1366
+    do_sys_open fs/open.c:1372 [inline]
+    __do_sys_openat fs/open.c:1388 [inline]
+    __se_sys_openat fs/open.c:1383 [inline]
+    __x64_sys_openat+0x82/0xf0 fs/open.c:1383
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xe2/0xf80 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+BUG: memory leak
+unreferenced object 0xffff888109d3ce00 (size 512):
+  comm "udevd", pid 5189, jiffies 4294938454
+  hex dump (first 32 bytes):
+    b0 4e 89 2b 81 88 ff ff b0 b7 ad 81 ff ff ff ff  .N.+............
+    00 12 04 00 81 88 ff ff 3c 00 00 00 00 00 00 00  ........<.......
+  backtrace (crc e7e352bb):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4547 [inline]
+    slab_alloc_node mm/slub.c:4869 [inline]
+    __do_kmalloc_node mm/slub.c:5262 [inline]
+    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5275
+    kmalloc_noprof include/linux/slab.h:954 [inline]
+    kzalloc_noprof include/linux/slab.h:1188 [inline]
+    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
+    alloc_empty_sheaf mm/slub.c:2786 [inline]
+    alloc_full_sheaf mm/slub.c:2834 [inline]
+    __pcs_replace_empty_main+0x1d2/0x260 mm/slub.c:4629
+    alloc_from_pcs mm/slub.c:4720 [inline]
+    slab_alloc_node mm/slub.c:4854 [inline]
+    __do_kmalloc_node mm/slub.c:5262 [inline]
+    __kmalloc_noprof+0x4c5/0x560 mm/slub.c:5275
+    kmalloc_noprof include/linux/slab.h:954 [inline]
+    kzalloc_noprof include/linux/slab.h:1188 [inline]
+    tomoyo_encode2+0xd0/0x1e0 security/tomoyo/realpath.c:45
+    tomoyo_encode+0x29/0x50 security/tomoyo/realpath.c:80
+    tomoyo_realpath_from_path+0xc4/0x2c0 security/tomoyo/realpath.c:283
+    tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+    tomoyo_path_perm+0x12c/0x290 security/tomoyo/file.c:827
+    security_inode_getattr+0xaa/0x200 security/security.c:1869
+    vfs_getattr fs/stat.c:259 [inline]
+    vfs_fstat+0x48/0xe0 fs/stat.c:281
+    __do_sys_newfstat+0x42/0xa0 fs/stat.c:551
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xe2/0xf80 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+connection error: failed to recv *flatrpc.ExecutorMessageRawT: EOF
+
+
+Tested on:
+
+commit:         c23719ab Merge tag 'x86-urgent-2026-03-08' of git://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1228e75a580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2c6ad6fefffa76b1
+dashboard link: https://syzkaller.appspot.com/bug?extid=cae7809e9dc1459e4e63
+compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1310e75a580000
+
 
