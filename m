@@ -1,197 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-79708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 26AvDRzxrGk/wQEAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 04:46:36 +0100
+	id 2MTYG8QXrWmyyAEAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 07:31:32 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D445822E70C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 04:46:35 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DD0A22EBC6
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 08 Mar 2026 07:31:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 2C6DE301C939
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Mar 2026 03:46:33 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 97522301589E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Mar 2026 06:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F3015B971;
-	Sun,  8 Mar 2026 03:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC5D3164AA;
+	Sun,  8 Mar 2026 06:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UoBC7Wij"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com [209.85.161.70])
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16062C86D
-	for <linux-fsdevel@vger.kernel.org>; Sun,  8 Mar 2026 03:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.70
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772941588; cv=none; b=J0br3tgmgaiYRg9rLptxZlFxUr7OPiF4IPZVR3qkLZNDkS5rruGoOaiveFSaWeykcQCJJA4UFowSNSPDERbBnGLfVVwp2g8GImaeC5MDVyQN6pVhxNSjSo3jVwP66L5su1tum4/7lic61Q4UGxgeOD2fHIPoztnVoA+Ft87APi8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772941588; c=relaxed/simple;
-	bh=kpVVg4A0p360lD2PEuuW/TzE2gArTFNJacIClykQFKs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=JnWReAeiOG3Emr0SdS+5QT51j2Xk1s89Jg6o07I96RXbTyBouVlb7AA8r/Wb65pT9Uz6QA2h2Cmod7iP3cGdgAhgy6GPV7TBf8d5JaxjRIqYhu/hBGWy2rLCk4SIu4RS9yooWQXBgeoAyiwhURIt2iVuZ0OS08uFZvmqdg6fpGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-679a409a175so164321201eaf.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 07 Mar 2026 19:46:26 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCA52F4A16
+	for <linux-fsdevel@vger.kernel.org>; Sun,  8 Mar 2026 06:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.217.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772951479; cv=pass; b=o7eV2GxrmPWTwLVCXLbuI0udMUyJDFcYq9jHjJF1qeKRF5B0wHvGileRZk+JrFk7ec9Mtqfv9mZZHahHtGSw26iOecXabEFtTB8BXJJ0kIeR4rCp8PvzQ6ZIJbu9wUqfyv0FzRtNUibb5KOmn0XrqnUAwUGCTY77pQ0wKe9CPaY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772951479; c=relaxed/simple;
+	bh=bqMEOQ0Ckcrgyric5QOWebyRcZKyiXhkKZw3Ukws05o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BI5YrYedZbb9qHOHWrFdXixqlYXV8vb//1Xnbe8J2jL0CSHTNQbr6nce+dLJrx974acEWqH1Ayti0l9MWESnoAQ64VTgygw7TPmqdnstxKmgWqTnOF8uoRwuYFXrAcZJXE+JO5EL1xwZfIrgLXVMmKYQVNqKZWFsa0XuTL6mmuU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UoBC7Wij; arc=pass smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-5ffc6a96665so997901137.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 07 Mar 2026 22:31:18 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772951477; cv=none;
+        d=google.com; s=arc-20240605;
+        b=IImAZEdJXUBx6f4WE0bpqRkwgKQh97bz6LuzvU5AQeH0OY80F56aPTeEkjleuX8nPv
+         Gkf2D/xUAjnapOojz5QnQ3XlP7cmtp0X0rkA75uy7dBTMoBKK7KdRvqolMD2u+4tU3Od
+         Zk27qsqtg8kYtwiIWMKaeFw5XxOeZQn7YwCM1rUKboA/EA7ASnnQy0XcAhyCNBFb2fwZ
+         fxiCQSCa9CjWq5BR0yX7gCX57MBH39MTXAqF5P69awRXTDmN0cyCrasE5lNI2WolGhgu
+         eTGe6LDYCOBKyYq8D98hbBJ6/DMY47bQxQWjXd/YcM+kDldahTbDusXFTMGFlfNbIwHZ
+         AdFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=wmFGvCnSNVovQCGgt6RuGUFVOm9BbgW1X0Xq7Fd9owU=;
+        fh=OB3XgszuGL76h6jWl5095BPzcqpIqRirsjF/Cdl5FMQ=;
+        b=NG7Kh8+D8OdxtSnonRB4kN8Knya1QCP6IdDhABErYJxA/QbLjjVxnaxHiInliiF3Wt
+         OwYTGObSrrQ9qQBHcSdzDqi3nSNSAqeZUzdmzP3VteNhxlACSp2COP3NNd+ylChjjGFV
+         4SxzSyuzRhG5snhqLLw9uVqc9LufrYlUBMsxgD95hgbxlSdP+/x/6x3J7uRXNDT8Dy7E
+         9SiR8hLtCxrRRTdCAuCmRlcL8Z6E9vHjgpzTQUW6jmhuLpqXXP5c6ReKovUaEw85eqpJ
+         Cbg/IBlYIWwHTi8jxb/LW/BCRsFab8LEHvdduceYdhby0brYLFL40dVeCNc5aNVIN9BJ
+         7buQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772951477; x=1773556277; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wmFGvCnSNVovQCGgt6RuGUFVOm9BbgW1X0Xq7Fd9owU=;
+        b=UoBC7WijfmQjVlLHxpWqT3DlTCrRD4bQJHimo+Ve0AMx+0bxsR3bN/1HscBrJM5qp4
+         hAoHmEH3IXVxPHPjHP72bQjLwytOTAT5lJd6vLsKUfcx09gi0FJHs8GAtUs2Zp97KKRS
+         FEk475ub7vx4XQABNB53DotIZxjsKUBLPuPd0GzyFt/3v07yHqf9qXCPxfHICyaytCF/
+         wULC1pF4Xso5tHqPjvY31TUJdWMLPO7UZMC4SdrzuK11/bdvaGVzvdmvJy12Y+tEql+T
+         EYn1klj2Rf4ROnNVpKQExB+BChYuTiyYbqJmdmRYKShyl6hiOYBewDd9lUoEbhAHN1Ij
+         57aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772941586; x=1773546386;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r8wk8zid47gA2M0j21Iv8olCGdRRUe6HZ57CArxCQlg=;
-        b=vmZNJJU/AEyGj6urMQudLuwD0RxlU2x7HlLZb2bN7SrkY0no5p6fJ6gm6KTo7ZeP2z
-         SutIDTocJM9emVGJ4eeYEbLlds5TMND4FERd1SAlgcYCOl2hbxugvIIfh5IWnMTruADF
-         b20sQRANrc7NzV8KphGesGDTHfTcfeaezWsNtseAg+7nH0+dr/wkY5WpLfnOoBwEE0GQ
-         haF30OEcOvP4uTiuOZ7iniy5lxJ+Rz0MAdOmkbF/bb/7ZDt8uvijdgLi3q/RehO7Qnfd
-         9o/w8cmLTHdYX5nZe4qU5q6K5Uu5ppk48wuNNZaGfUdRHUx9fI1Q2OmC0fQ7YfmeSAfc
-         BEeg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6rmp7UQuiTx+T2eDKOrMZVeP5Dqhd2RccYQ2V3p1eR4Aju5OPXUmrC3yC5uic00xYtsS2h2eiHpVpsgOs@vger.kernel.org
-X-Gm-Message-State: AOJu0YybyEf1ydayO/Egx75GjF/+9oIGuv1lhsfqByRQKlDCbyxC3Ojr
-	7c/ZanM4+CASTmK2pYvsOuBThrZgm/k+9YVbqMStv7Dr1EiuLvXAExxK/jvWGeCvRKEMyCAWEWD
-	WMTeVD6tIRi4cyk8hW7hsKqnhynz5TF6qNcr7JqnJE9gKoLGCXs2bDcllx1Y=
+        d=1e100.net; s=20230601; t=1772951477; x=1773556277;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=wmFGvCnSNVovQCGgt6RuGUFVOm9BbgW1X0Xq7Fd9owU=;
+        b=grikEWNJpaTKwaPDJ4nZWMAtoiL1dOD/jTcozXDFTdk3M/aKXlo1axUNb5AZrcfGrW
+         bTABy/GwpSnQouQuo00MGkO+azzx8JDBmKKP2j9lxJ6zvBGwDhwICFGRnV4dnNgPoyse
+         Eb/UCejM8U+2pf88/S0u5hOIZKz7br6eB22dPljTYRLeg2dR+spR8Jsnr9J6arEekPM8
+         wh5RedoeKzN2yXIyB0QADvrhuJAKE/iTKfl8z7Rm6BqkvEGzAogm5Sw9d+8dvHSSPG1e
+         OTbwIAeZ9/qRu5c7s7tfIR8s5JRCCmWQR/WcHzjjjt9HoI46sD/1n0gzgYsWrl8fjiO9
+         A7CA==
+X-Gm-Message-State: AOJu0Yy/J5dK/Ey9oe5pKvP1W9r4rugYyw6kE91iaAOQFjj47idAz/Rb
+	VAv5CJf8Z+FHEnxtZNiC/79uNMflMjiPHdb78Mj9vyEwYWodL7+D6H7x5U/tqxG+5Q4Xe2eYTHT
+	ZhR2unrt2h5DGAXZSaE6ZyKujfHbR8Uo=
+X-Gm-Gg: ATEYQzykOXVk+cehN6It03LRJJ0LLxrYRorpAUKyp3PRkGjQMeSJLr4dx3mLhXOlQJ6
+	zMXEo9+TeVyqSZExwrSgCfjAE9tX2P4uzyBdI0Hs071Vj3wgQOdoQjXo3h847aDnJr0ua+ZusRg
+	nmfo3ML/T9qiNJuo7Av4+/4e5xapz2h7ztWC+JtmKg0wtg87VEbdIfQlPkx/e6HnHMAEmLLpB+B
+	1SeZ8iuXRCnADuE1PMSFk+ROzi3OAajspAsiBebF3fXSYRfuW47fzhxsXglORWzHR60mJKXyr8r
+	fulp5ALsMP8LFuoPo2po89FP0qlcVhbCQ0/LeO51mA==
+X-Received: by 2002:a05:6102:41a6:b0:600:11e1:2a4b with SMTP id
+ ada2fe7eead31-60011e12bf3mr732622137.34.1772951477120; Sat, 07 Mar 2026
+ 22:31:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:f034:b0:679:e68b:f956 with SMTP id
- 006d021491bc7-67b9bca1364mr4573230eaf.17.1772941585900; Sat, 07 Mar 2026
- 19:46:25 -0800 (PST)
-Date: Sat, 07 Mar 2026 19:46:25 -0800
-In-Reply-To: <69abb4e3.050a0220.13f275.003d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69acf111.050a0220.310d8.0003.GAE@google.com>
-Subject: Re: [syzbot] [fuse?] general protection fault in task_work_cancel
-From: syzbot <syzbot+741e2278ef71fef03a10@syzkaller.appspotmail.com>
-To: gnoack@google.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	mic@digikod.net, miklos@szeredi.hu, penguin-kernel@i-love.sakura.ne.jp, 
-	syzkaller-bugs@googlegroups.com
+References: <20260307140726.70219-1-dorjoychy111@gmail.com>
+ <20260307140726.70219-2-dorjoychy111@gmail.com> <CALCETrXVBA9uGEUdQPEZ2MVdxjLwwcWi5kzhOr1NdOWSSRaROw@mail.gmail.com>
+In-Reply-To: <CALCETrXVBA9uGEUdQPEZ2MVdxjLwwcWi5kzhOr1NdOWSSRaROw@mail.gmail.com>
+From: Dorjoy Chowdhury <dorjoychy111@gmail.com>
+Date: Sun, 8 Mar 2026 12:31:06 +0600
+X-Gm-Features: AaiRm51WCqo6sYLOpIV6hZ1XNIYME3jM_VRhuXhqPcz8hjUnJuRMBp96SANcO1M
+Message-ID: <CAFfO_h4g-QtE1gsp3nw7+BUYnRj29au=pYs1goEnppbdU-8DbA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/4] openat2: new OPENAT2_REGULAR flag support
+To: Andy Lutomirski <luto@amacapital.net>, brauner@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-api@vger.kernel.org, ceph-devel@vger.kernel.org, gfs2@lists.linux.dev, 
+	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, v9fs@lists.linux.dev, 
+	linux-kselftest@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	jlayton@kernel.org, chuck.lever@oracle.com, alex.aring@gmail.com, 
+	arnd@arndb.de, adilger@dilger.ca, mjguzik@gmail.com, smfrench@gmail.com, 
+	richard.henderson@linaro.org, mattst88@gmail.com, linmag7@gmail.com, 
+	tsbogend@alpha.franken.de, James.Bottomley@hansenpartnership.com, 
+	deller@gmx.de, davem@davemloft.net, andreas@gaisler.com, idryomov@gmail.com, 
+	amarkuze@redhat.com, slava@dubeyko.com, agruenba@redhat.com, 
+	trondmy@kernel.org, anna@kernel.org, sfrench@samba.org, pc@manguebit.org, 
+	ronniesahlberg@gmail.com, sprasad@microsoft.com, tom@talpey.com, 
+	bharathsm@microsoft.com, shuah@kernel.org, miklos@szeredi.hu, 
+	hansg@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Rspamd-Queue-Id: D445822E70C
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Queue-Id: 2DD0A22EBC6
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.64 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=779072223d02a312];
-	MID_RHS_MATCH_TO(1.00)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
-	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MISSING_XM_UA(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	TAGGED_FROM(0.00)[bounces-79708-lists,linux-fsdevel=lfdr.de,741e2278ef71fef03a10];
 	RCVD_TLS_LAST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	SUBJECT_HAS_QUESTION(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-79709-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
-	TO_DN_NONE(0.00)[];
-	R_DKIM_NA(0.00)[];
-	NEURAL_HAM(-0.00)[-0.896];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,storage.googleapis.com:url]
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[43];
+	FREEMAIL_CC(0.00)[vger.kernel.org,lists.linux.dev,zeniv.linux.org.uk,suse.cz,kernel.org,oracle.com,gmail.com,arndb.de,dilger.ca,linaro.org,alpha.franken.de,hansenpartnership.com,gmx.de,davemloft.net,gaisler.com,redhat.com,dubeyko.com,samba.org,manguebit.org,microsoft.com,talpey.com,szeredi.hu];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	NEURAL_HAM(-0.00)[-0.972];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[dorjoychy111@gmail.com,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-syzbot has found a reproducer for the following issue on:
+On Sun, Mar 8, 2026 at 12:56=E2=80=AFAM Andy Lutomirski <luto@amacapital.ne=
+t> wrote:
+>
+> On Sat, Mar 7, 2026 at 6:09=E2=80=AFAM Dorjoy Chowdhury <dorjoychy111@gma=
+il.com> wrote:
+> >
+> > This flag indicates the path should be opened if it's a regular file.
+> > This is useful to write secure programs that want to avoid being
+> > tricked into opening device nodes with special semantics while thinking
+> > they operate on regular files. This is a requested feature from the
+> > uapi-group[1].
+> >
+>
+> I think this needs a lot more clarification as to what "regular"
+> means.  If it's literally
+>
+> > A corresponding error code EFTYPE has been introduced. For example, if
+> > openat2 is called on path /dev/null with OPENAT2_REGULAR in the flag
+> > param, it will return -EFTYPE. EFTYPE is already used in BSD systems
+> > like FreeBSD, macOS.
+>
+> I think this needs more clarification as to what "regular" means,
+> since S_IFREG may not be sufficient.  The UAPI group page says:
+>
+> Use-Case: this would be very useful to write secure programs that want
+> to avoid being tricked into opening device nodes with special
+> semantics while thinking they operate on regular files. This is
+> particularly relevant as many device nodes (or even FIFOs) come with
+> blocking I/O (or even blocking open()!) by default, which is not
+> expected from regular files backed by =E2=80=9Cfast=E2=80=9D disk I/O. Co=
+nsider
+> implementation of a naive web browser which is pointed to
+> file://dev/zero, not expecting an endless amount of data to read.
+>
+> What about procfs?  What about sysfs?  What about /proc/self/fd/17
+> where that fd is a memfd?  What about files backed by non-"fast" disk
+> I/O like something on a flaky USB stick or a network mount or FUSE?
+>
+> Are we concerned about blocking open?  (open blocks as a matter of
+> course.)  Are we concerned about open having strange side effects?
+> Are we concerned about write having strange side effects?  Are we
+> concerned about cases where opening the file as root results in
+> elevated privilege beyond merely gaining the ability to write to that
+> specific path on an ordinary filesystem?
+>
 
-HEAD commit:    4ae12d8bd9a8 Merge tag 'kbuild-fixes-7.0-2' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17dc475a580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=779072223d02a312
-dashboard link: https://syzkaller.appspot.com/bug?extid=741e2278ef71fef03a10
-compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=130b075a580000
+Good questions. I had assumed regular file means S_IFREG when
+implementing this as mentioned in the UAPI page:
+"O_REGULAR (inspired by the existing O_DIRECTORY flag for open()),
+which opens a file only if it is of type S_IFREG"
+I think Christian Brauner (cc-d) can better answer your above questions.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/010ac4052aed/disk-4ae12d8b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2aad8bef9031/vmlinux-4ae12d8b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/fd350ec4896a/bzImage-4ae12d8b.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+741e2278ef71fef03a10@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc000000013c: 0000 [#1] SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x00000000000009e0-0x00000000000009e7]
-CPU: 1 UID: 0 PID: 13249 Comm: syz.1.1775 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2026
-RIP: 0010:task_work_pending include/linux/task_work.h:26 [inline]
-RIP: 0010:task_work_cancel_match kernel/task_work.c:124 [inline]
-RIP: 0010:task_work_cancel+0x8a/0x220 kernel/task_work.c:187
-Code: b8 f1 f1 f1 f1 f8 f3 f3 f3 4b 89 44 25 00 e8 ad b9 35 00 43 c6 44 25 04 00 49 89 de 48 81 c3 e0 09 00 00 49 89 df 49 c1 ef 03 <43> 80 3c 27 00 74 08 48 89 df e8 17 fe 9f 00 48 83 3b 00 75 51 e8
-RSP: 0018:ffffc9000ddffb20 EFLAGS: 00010216
-RAX: ffffffff818fdfc3 RBX: 00000000000009e0 RCX: ffff88805d5c3d00
-RDX: 0000000000000000 RSI: ffff888032f5c540 RDI: 0000000000000000
-RBP: ffffc9000ddffbd0 R08: ffffc9000ddffc97 R09: 1ffff92001bbff92
-R10: dffffc0000000000 R11: fffff52001bbff93 R12: dffffc0000000000
-R13: 1ffff92001bbff68 R14: 0000000000000000 R15: 000000000000013c
-FS:  00007f9c8a1cb6c0(0000) GS:ffff888125561000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000010000 CR3: 0000000059bf0000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- cancel_tsync_works security/landlock/tsync.c:415 [inline]
- landlock_restrict_sibling_threads+0xdc4/0x11f0 security/landlock/tsync.c:533
- __do_sys_landlock_restrict_self security/landlock/syscalls.c:574 [inline]
- __se_sys_landlock_restrict_self+0x540/0x810 security/landlock/syscalls.c:482
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f9c8939c799
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f9c8a1cb028 EFLAGS: 00000246 ORIG_RAX: 00000000000001be
-RAX: ffffffffffffffda RBX: 00007f9c89616180 RCX: 00007f9c8939c799
-RDX: 0000000000000000 RSI: 0000000000000008 RDI: 0000000000000003
-RBP: 00007f9c89432bd9 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f9c89616218 R14: 00007f9c89616180 R15: 00007ffee5d65d48
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:task_work_pending include/linux/task_work.h:26 [inline]
-RIP: 0010:task_work_cancel_match kernel/task_work.c:124 [inline]
-RIP: 0010:task_work_cancel+0x8a/0x220 kernel/task_work.c:187
-Code: b8 f1 f1 f1 f1 f8 f3 f3 f3 4b 89 44 25 00 e8 ad b9 35 00 43 c6 44 25 04 00 49 89 de 48 81 c3 e0 09 00 00 49 89 df 49 c1 ef 03 <43> 80 3c 27 00 74 08 48 89 df e8 17 fe 9f 00 48 83 3b 00 75 51 e8
-RSP: 0018:ffffc9000ddffb20 EFLAGS: 00010216
-RAX: ffffffff818fdfc3 RBX: 00000000000009e0 RCX: ffff88805d5c3d00
-RDX: 0000000000000000 RSI: ffff888032f5c540 RDI: 0000000000000000
-RBP: ffffc9000ddffbd0 R08: ffffc9000ddffc97 R09: 1ffff92001bbff92
-R10: dffffc0000000000 R11: fffff52001bbff93 R12: dffffc0000000000
-R13: 1ffff92001bbff68 R14: 0000000000000000 R15: 000000000000013c
-FS:  00007f9c8a1cb6c0(0000) GS:ffff888125561000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f810d34da08 CR3: 0000000059bf0000 CR4: 0000000000350ef0
-----------------
-Code disassembly (best guess):
-   0:	b8 f1 f1 f1 f1       	mov    $0xf1f1f1f1,%eax
-   5:	f8                   	clc
-   6:	f3 f3 f3 4b 89 44 25 	repz repz xrelease mov %rax,0x0(%r13,%r12,1)
-   d:	00
-   e:	e8 ad b9 35 00       	call   0x35b9c0
-  13:	43 c6 44 25 04 00    	movb   $0x0,0x4(%r13,%r12,1)
-  19:	49 89 de             	mov    %rbx,%r14
-  1c:	48 81 c3 e0 09 00 00 	add    $0x9e0,%rbx
-  23:	49 89 df             	mov    %rbx,%r15
-  26:	49 c1 ef 03          	shr    $0x3,%r15
-* 2a:	43 80 3c 27 00       	cmpb   $0x0,(%r15,%r12,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	48 89 df             	mov    %rbx,%rdi
-  34:	e8 17 fe 9f 00       	call   0x9ffe50
-  39:	48 83 3b 00          	cmpq   $0x0,(%rbx)
-  3d:	75 51                	jne    0x90
-  3f:	e8                   	.byte 0xe8
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Regards,
+Dorjoy
 
