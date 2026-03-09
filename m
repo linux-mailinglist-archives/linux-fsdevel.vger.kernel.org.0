@@ -1,153 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-79826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cAgiGhMGr2knLwIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 18:40:35 +0100
+	id uMLRIWEGr2knLwIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 18:41:53 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 781BB23DC00
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 18:40:34 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB4E823DC34
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 18:41:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 68BF9300FEFF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 17:40:24 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3092730580A7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 17:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3282C3ED120;
-	Mon,  9 Mar 2026 17:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D363D6460;
+	Mon,  9 Mar 2026 17:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JWMCrCRI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pE0YFeqk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20BB2367B5
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Mar 2026 17:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D412D2F260C;
+	Mon,  9 Mar 2026 17:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773078021; cv=none; b=nIBlxYSNRvk2ryosT0+3anGS+8GW5Vxm5/GlhL8ddV3QsTnsciRxBT49F2JFPoJFG1VwWwcygRsuxzmS1FIN/23GzMIjVHJr8QpjBFt+AipKRS+i4WpshbI7j7mLnANNtcRik+yv8CWsCAiV4ZQ4L4ZPtvySFGHm65k0qr8kI9o=
+	t=1773078009; cv=none; b=K/MqP8STEAIrdv5b8kh6SVikpIj4eoaUQj7ooJoxR4FYZkzoBY9I7Hx917x4+2pu6Muo4AfR+vLqiKC+9y/BOCcejh4K4UT0l+Q58qXLZ5JYnnnjFBBQL3+oMS9ZMG7hj4EFj1KApW9haSafDcjKKZhGbTqfLTy8xFBCUp0Obn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773078021; c=relaxed/simple;
-	bh=FZ7Lq8ACISHxdW+hw4p+51ywraEmx5kXn6b2dCqb0pA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kD7zOFSgT05Wbnma9+UkO/1ivSu2aPc8Hx/41mol2pt4UBUQq0K9bHdPX5SWZrfPTM4kRIFHkQlREiHEKCamP2cxGTaoIEQ1eLwxA9PKTLy8x49KSdJoVqHPYaPYJ1cOb1lXbC/5owTmsKkRfLstmSwUvuRWcALbh51vdctkM/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JWMCrCRI; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1773078019;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OGA6374tPmO2blxe8CmQQ/3g/hvizaM5owV5IRa8o78=;
-	b=JWMCrCRIYF5mVeNTYroVNvb0BJuM9x4mOFkpU0R66sFUwNlKxM47pZ4UGLLPYpsIuTGUvM
-	r1JvIcawzlOcFHxvVXnyOGOaoKOyoT3wveIm7ro/+Ucq5OLRHLynhkPblHFhBzi3pFit1z
-	1iXQPWQ6j7swmITaKE1eX+IIxXLT3GE=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-642-SeSodcbfN0qfZMZbKtY2IA-1; Mon,
- 09 Mar 2026 13:40:14 -0400
-X-MC-Unique: SeSodcbfN0qfZMZbKtY2IA-1
-X-Mimecast-MFC-AGG-ID: SeSodcbfN0qfZMZbKtY2IA_1773078008
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C0E351956095;
-	Mon,  9 Mar 2026 17:40:06 +0000 (UTC)
-Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.2.16.175])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6997918001FE;
-	Mon,  9 Mar 2026 17:39:55 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: Christian Brauner <brauner@kernel.org>,  Jeff Layton
- <jlayton@kernel.org>,  Dorjoy Chowdhury <dorjoychy111@gmail.com>,
-  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-api@vger.kernel.org,  ceph-devel@vger.kernel.org,
-  gfs2@lists.linux.dev,  linux-nfs@vger.kernel.org,
-  linux-cifs@vger.kernel.org,  v9fs@lists.linux.dev,
-  linux-kselftest@vger.kernel.org,  viro@zeniv.linux.org.uk,  jack@suse.cz,
-  chuck.lever@oracle.com,  alex.aring@gmail.com,  arnd@arndb.de,
-  adilger@dilger.ca,  mjguzik@gmail.com,  smfrench@gmail.com,
-  richard.henderson@linaro.org,  mattst88@gmail.com,  linmag7@gmail.com,
-  tsbogend@alpha.franken.de,  James.Bottomley@hansenpartnership.com,
-  deller@gmx.de,  davem@davemloft.net,  andreas@gaisler.com,
-  idryomov@gmail.com,  amarkuze@redhat.com,  slava@dubeyko.com,
-  agruenba@redhat.com,  trondmy@kernel.org,  anna@kernel.org,
-  sfrench@samba.org,  pc@manguebit.org,  ronniesahlberg@gmail.com,
-  sprasad@microsoft.com,  tom@talpey.com,  bharathsm@microsoft.com,
-  shuah@kernel.org,  miklos@szeredi.hu,  hansg@kernel.org
-Subject: Re: [PATCH v5 1/4] openat2: new OPENAT2_REGULAR flag support
-In-Reply-To: <CALCETrWjb+V-zrMT412MtmgDCx9y8simJBQ7+45C9MtdiSMnuw@mail.gmail.com>
-	(Andy Lutomirski's message of "Mon, 9 Mar 2026 09:50:18 -0700")
-References: <20260307140726.70219-1-dorjoychy111@gmail.com>
-	<20260307140726.70219-2-dorjoychy111@gmail.com>
-	<CALCETrXVBA9uGEUdQPEZ2MVdxjLwwcWi5kzhOr1NdOWSSRaROw@mail.gmail.com>
-	<801cf2c42b80d486726ea0a3774e52abcb158100.camel@kernel.org>
-	<CALCETrVt7o+7JCMfTX3Vu9PANJJgR8hB5Z2THcXzam61kG9Gig@mail.gmail.com>
-	<20260309-umsturz-herfallen-067eb2df7ec2@brauner>
-	<CALCETrWjb+V-zrMT412MtmgDCx9y8simJBQ7+45C9MtdiSMnuw@mail.gmail.com>
-Date: Mon, 09 Mar 2026 18:39:53 +0100
-Message-ID: <lhusea8hpg6.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1773078009; c=relaxed/simple;
+	bh=xCB1rLERH4O4/XL0uHe/faGStCm8QjO0kIi2lwkxDkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RBjukYBWh9XrX90RBxPQPjhosi9d5gWaqi5dpJ1IWRNuw1Z8UTH3jiwMC8F8nN3h7zf9KTrdfDzPpS4h5MciQOW4jqezwU43rlT15I4CiJPnhSFl+//aVYJlRINxUUvtHe28h/F4UjlMYHuX12fKaPJowrmh1Y4Ux3E1UqGmPDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pE0YFeqk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 718D6C4CEF7;
+	Mon,  9 Mar 2026 17:40:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773078009;
+	bh=xCB1rLERH4O4/XL0uHe/faGStCm8QjO0kIi2lwkxDkY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pE0YFeqkP1myKJB9xLPp8PNR5Dhyvp6zEOUY0Jy2sbjCKpD+paZE8VG4dnfABQkoZ
+	 4vPj5k2KnRlLeTiNW40oSE7pAN2o8N19l8wgSLUG301GctaZz85WgdiCGHENDKUA5U
+	 tb5EDki4z08OoL38F4ScMOkPMfCR7esLahuJGwUgW74OENsOdEgiwj0zTHg5YaHzpL
+	 /k95Q+lYNBmFLsh0jLgJK9kSfrqABb5/eP4pIzX9Jl8hfFqbr4gepuMtJSTgJJS6qA
+	 9e4ysswZ0MpSyV9Pw1MIl2MTO9Vl+ge04th61ic9TY4yq5Sy7dhKPw7VdZnChShjlc
+	 +eGsVKXVZRvLQ==
+Date: Mon, 9 Mar 2026 10:40:08 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Brian Foster <bfoster@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v3 3/8] iomap, xfs: lift zero range hole mapping flush
+ into xfs
+Message-ID: <20260309174008.GO6033@frogsfrogsfrogs>
+References: <20260309134506.167663-1-bfoster@redhat.com>
+ <20260309134506.167663-4-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Rspamd-Queue-Id: 781BB23DC00
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260309134506.167663-4-bfoster@redhat.com>
+X-Rspamd-Queue-Id: CB4E823DC34
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	MID_RHS_NOT_FQDN(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[44];
-	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org,lists.linux.dev,zeniv.linux.org.uk,suse.cz,oracle.com,arndb.de,dilger.ca,linaro.org,alpha.franken.de,hansenpartnership.com,gmx.de,davemloft.net,gaisler.com,redhat.com,dubeyko.com,samba.org,manguebit.org,microsoft.com,talpey.com,szeredi.hu];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-79826-lists,linux-fsdevel=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[redhat.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[fweimer@redhat.com,linux-fsdevel@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-79825-lists,linux-fsdevel=lfdr.de];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
 	NEURAL_HAM(-0.00)[-1.000];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo]
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-* Andy Lutomirski:
+On Mon, Mar 09, 2026 at 09:45:01AM -0400, Brian Foster wrote:
+> iomap zero range has a wart in that it also flushes dirty pagecache
+> over hole mappings (rather than only unwritten mappings). This was
+> included to accommodate a quirk in XFS where COW fork preallocation
+> can exist over a hole in the data fork, and the associated range is
+> reported as a hole. This is because the range actually is a hole,
+> but XFS also has an optimization where if COW fork blocks exist for
+> a range being written to, those blocks are used regardless of
+> whether the data fork blocks are shared or not. For zeroing, COW
+> fork blocks over a data fork hole are only relevant if the range is
+> dirty in pagecache, otherwise the range is already considered
+> zeroed.
+> 
+> The easiest way to deal with this corner case is to flush the
+> pagecache to trigger COW remapping into the data fork, and then
+> operate on the updated on-disk state. The problem is that ext4
+> cannot accommodate a flush from this context due to being a
+> transaction deadlock vector.
+> 
+> Outside of the hole quirk, ext4 can avoid the flush for zero range
+> by using the recently introduced folio batch lookup mechanism for
+> unwritten mappings. Therefore, take the next logical step and lift
+> the hole handling logic into the XFS iomap_begin handler. iomap will
+> still flush on unwritten mappings without a folio batch, and XFS
+> will flush and retry mapping lookups in the case where it would
+> otherwise report a hole with dirty pagecache during a zero range.
+> 
+> Note that this is intended to be a fairly straightforward lift and
+> otherwise not change behavior. Now that the flush exists within XFS,
+> follow on patches can further optimize it.
+> 
+> Signed-off-by: Brian Foster <bfoster@redhat.com>
+> ---
+>  fs/iomap/buffered-io.c |  2 +-
+>  fs/xfs/xfs_iomap.c     | 25 ++++++++++++++++++++++---
+>  2 files changed, 23 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index bc82083e420a..0999aca6e5cc 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1642,7 +1642,7 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
+>  		     srcmap->type == IOMAP_UNWRITTEN)) {
+>  			s64 status;
+>  
+> -			if (range_dirty) {
+> +			if (range_dirty && srcmap->type == IOMAP_UNWRITTEN) {
+>  				range_dirty = false;
+>  				status = iomap_zero_iter_flush_and_stale(&iter);
+>  			} else {
+> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> index 0e323e4e304b..966fb9d8b9df 100644
+> --- a/fs/xfs/xfs_iomap.c
+> +++ b/fs/xfs/xfs_iomap.c
+> @@ -1811,6 +1811,7 @@ xfs_buffered_write_iomap_begin(
+>  	if (error)
+>  		return error;
+>  
+> +restart:
+>  	error = xfs_ilock_for_iomap(ip, flags, &lockmode);
+>  	if (error)
+>  		return error;
+> @@ -1838,9 +1839,27 @@ xfs_buffered_write_iomap_begin(
+>  	if (eof)
+>  		imap.br_startoff = end_fsb; /* fake hole until the end */
+>  
+> -	/* We never need to allocate blocks for zeroing or unsharing a hole. */
+> -	if ((flags & (IOMAP_UNSHARE | IOMAP_ZERO)) &&
+> -	    imap.br_startoff > offset_fsb) {
+> +	/* We never need to allocate blocks for unsharing a hole. */
+> +	if ((flags & IOMAP_UNSHARE) && imap.br_startoff > offset_fsb) {
+> +		xfs_hole_to_iomap(ip, iomap, offset_fsb, imap.br_startoff);
+> +		goto out_unlock;
+> +	}
+> +
+> +	/*
+> +	 * We may need to zero over a hole in the data fork if it's fronted by
+> +	 * COW blocks and dirty pagecache. To make sure zeroing occurs, force
+> +	 * writeback to remap pending blocks and restart the lookup.
+> +	 */
+> +	if ((flags & IOMAP_ZERO) && imap.br_startoff > offset_fsb) {
+> +		if (filemap_range_needs_writeback(inode->i_mapping, offset,
+> +						  offset + count - 1)) {
+> +			xfs_iunlock(ip, lockmode);
+> +			error = filemap_write_and_wait_range(inode->i_mapping,
+> +						offset, offset + count - 1);
 
-> On the flip side, /proc itself can certainly be opened.  Should
-> O_REGULAR be able to open the more magical /proc and /sys files?  Are
-> there any that are problematic?
+Two tab indent here, but other than that nit this makes sense to me.
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
-It seems reading from /proc/kmsg is destructive.  The file doesn't have
-an end, either.  It's more like a character device.  Apparently,
-/sys/kernel/tracing/trace_pipe is similar in that regard.  Maybe that's
-sufficient reason for blocking access?  Although the side effect does
-not happen on open.
+--D
 
-The other issue is the incorrect size reporting in stat, which affects
-most (all?) files under /proc and /sys.  Userspace has already to around
-that, though.
-
-Thanks,
-Florian
-
+> +			if (error)
+> +				return error;
+> +			goto restart;
+> +		}
+>  		xfs_hole_to_iomap(ip, iomap, offset_fsb, imap.br_startoff);
+>  		goto out_unlock;
+>  	}
+> -- 
+> 2.52.0
+> 
+> 
 
