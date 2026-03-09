@@ -1,410 +1,263 @@
-Return-Path: <linux-fsdevel+bounces-79737-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79738-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id BplqGYVmrmlODgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79737-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 07:19:49 +0100
+	id 0BAFM0xormmADwIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79738-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 07:27:24 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B130F23423C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 07:19:48 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76BC82342C5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 07:27:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E264E3010160
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 06:19:44 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 0FA1A300B744
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 06:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695EF355F46;
-	Mon,  9 Mar 2026 06:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39795359A62;
+	Mon,  9 Mar 2026 06:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="J9h3yq4W"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d8Jcy+Yd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail78-36.sinamail.sina.com.cn (mail78-36.sinamail.sina.com.cn [219.142.78.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E0E355050
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Mar 2026 06:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.36
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773037182; cv=none; b=RUvehyDNTqUZS6tZQ3XVi+5wR/7pHLvG8y+v6+Qcyyykg87IPFBrG3Gy3nd3H21IQ8r6ztbFVVT13JjMvtDVDtRRwulHjoXaftx6TDHHg4WrUlHmbodyJMCvlzLnjdxD0mn9xsC+kPqTKSdDN6Q65VOaP2NY4FmjGdk5UCMMCAo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773037182; c=relaxed/simple;
-	bh=JBNJVKw9Fqs4sAMM1/oX6j6JP5CAP3DI39e2DQmE+ac=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ggMumPDFNhTL1oAx1NmFdktfnpDmkDT0pj7NlZD9QCyTeRb4tXDjOVZNLRvVtaoYJq5fdVoV4AMwwZMwdhvt7IrZYokkRQ0lBf+q4QhlTdl6pIGP9mmv8DUhj8QR6MyUsAji7sZYE/roe+uewITK0ErDX/s/IP9sfAiO1w8L9OE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=J9h3yq4W; arc=none smtp.client-ip=219.142.78.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1773037177;
-	bh=kAnQR3kzYOE/NeVOULepAAE03tQiseTOD8OM21kI3AU=;
-	h=From:Subject:Date:Message-Id;
-	b=J9h3yq4W2mS3RSNzYmU+qvU33NyWyiwPDgV4+sguQeYbZkNsEin8OpAu8X5ebO5wO
-	 K9er5I65hwgyTJCbpp0RUXqpvHlQc4hHNfxF44VOB57h/89+nySb0wrxTEptgJdkE0
-	 GUIEtiN/sAZdh+urQzYaJgNNmdlt0TmpFJKd7rk0=
-X-SMAIL-HELO: pek-lpg-core6.wrs.com
-Received: from unknown (HELO pek-lpg-core6.wrs.com)([60.247.85.88])
-	by sina.com (10.185.250.24) with ESMTP
-	id 69AE65D600002BF9; Mon, 9 Mar 2026 14:17:04 +0800 (CST)
-X-Sender: johnny_haocn@sina.com
-X-Auth-ID: johnny_haocn@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=johnny_haocn@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=johnny_haocn@sina.com
-X-SMAIL-MID: 14173910747957
-X-SMAIL-UIID: 3851A38A9B3C4BBBB4D47F4123F744DE-20260309-141704-1
-From: Johnny Hao <johnny_haocn@sina.com>
-To: gregkh@linuxfoundation.org,
-	stable@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
-	Wenzhi Wang <wenzhi.wang@uwaterloo.ca>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Yangtao Li <frank.li@vivo.com>,
-	linux-fsdevel@vger.kernel.org,
-	Johnny Hao <johnny_haocn@sina.com>
-Subject: [PATCH 6.1.y 3/3] hfs: fix general protection fault in hfs_find_init()
-Date: Mon,  9 Mar 2026 14:16:49 +0800
-Message-Id: <20260309061649.1621436-1-johnny_haocn@sina.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95FA526CE32
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Mar 2026 06:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.181
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773037641; cv=pass; b=dMHINPZScZ18yXmslhCee2HwgRsz0kaAiYISKMk+pofhKgT8HEhemAVW+rYdlsryhrPDt/YP7PIECu9trZ7aR28iNBeGRJBOtzZDk0+2n23J6w28et8Jlyjp4O5p7bjYUWM4riVY6XfpeIkIb+x645IuQ75qNZcuvoiBn4TA3w8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773037641; c=relaxed/simple;
+	bh=tWJ/fX3Ckxq4WEzhukQr0K7T+NWwaaBTCqm8O0qx06M=;
+	h=From:In-Reply-To:References:MIME-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ko9Vw8Q93fRkwULIqITi52f5xGSZmWy2BagCJuUC+RftKoUJWieuaT3DNGB6Z4Uyr+EY3QlNOtrr5VEyobHpx2EnR0J2TCuyU0WCMhoEI/29+F54Npz8/hANRatl/IfR8XZgBd388zvtYZcKaAib7VRgjhu9CmkRAKhCz6NYgMs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=d8Jcy+Yd; arc=pass smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-5673804da95so4579105e0c.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Mar 2026 23:27:20 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773037640; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Um23RvnetK5jmCai0ijhmfePBm1m0Z9FVnunRNwQDi6iue/MM1z1cnXSvADhI0LBX3
+         zB0m/KSdAiSbAP+65ZvD1q/jRjXvq+BzzeeJbRfm1V1E/o3jXhLYOs9Y3o9RwQBO8rYp
+         +29MKrpwNEEpha9zH4YV/stnbXX6I1a5OeRyD/wBLvy2lS/540yIXqHUVDkzCQsXQIRg
+         QH95BURGAItHKiWZV2yXkFDvta32dkLLA9HGlnYjSpzzt2XqQJnViDpyrth9FAEuUEmy
+         9ae3EOLcYDrMt8NmikIiRXNmiK2vG1trdJKhg/xRVkbLwJ0Is8CXFuiaLq0Ret5KNW1c
+         /M/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:dkim-signature;
+        bh=uthJSqpDGuue4aeWUw9ODMGHbGatL8hg/W+VDtshmKs=;
+        fh=b2J9376jroSIsvaiKTvMLdn+9QVtORNlbyfbcQaKdTg=;
+        b=O38IB301AHlFhcRhKc4BwdiCWi9eh4Em1RLRS/5r6G4tcHW7Uraxx3pMoRCVkkwUOd
+         jBMWgNQIPqU5ZqKbqSpMj8y9pn+Mv06mOnT5My7JG8OnaGuwcQwpRUeUL9402fUW02uD
+         NpPwoGrMl9Q+tOnHs2yp+kPiD2uuHkadla4txqgynqPsCNQQe3MF5lN13sgNMdvmEWBo
+         PNv9DuxtNRtpiLQpmc0ijNfLEhyjem/Fb6lvJ4pPysEIBEhzX4hsGVfBeBD4oTDLWZtf
+         CVlEHgU3QwHRCCQPCe7xBTHxgk090C8ewPdukLMKloT/3zaV+y6wWbNeW6IZKgo0CSbT
+         7xJg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1773037640; x=1773642440; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uthJSqpDGuue4aeWUw9ODMGHbGatL8hg/W+VDtshmKs=;
+        b=d8Jcy+YdwSn+4Bbzc949cTnKTJFNiTdBMrU9a4ksr2mMY/dSAVrFWujH2eREgE7HHI
+         uVlN4RjK77glzLTTrzMknFKwxjviGQo08iAbkuLjUuJ07ULvIfXIHORKAFtF+OQIvrY+
+         u9JUXSrZuReCndfTA6dKntBG+VknhlLggx7xKo2fzURXUlAxy0f/PDrrmSWYiMqmZG8E
+         aarh7r/xJFTfe9ZbRqJR6K5RghwtOmcgSN56byucRgNIx/Rtr/Yyf30B3Cd77ghJFjpk
+         fT+tBrQeo05qqg8iGbMdokPo27v9XKif4T0H72tQpZvDzMSANKe8b/DbQer+sNAC8oZg
+         zxxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773037640; x=1773642440;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uthJSqpDGuue4aeWUw9ODMGHbGatL8hg/W+VDtshmKs=;
+        b=bj+Kpf7lBd1I2wwsdHN8cv4TlKCSQxMFqKvnXB3BKbqUHSqd1qLvC664brVogEJo7A
+         +dzgklhQPJjgQTVBGOekMrCRg1R8eAguM8Sjwsb8TF9ExIgddKtisitX/TWYcUBFt2Mo
+         h1XH6mCtRx3MRuLaxZkhd+aJrdcHX3sf+MU1qiRHAMOAchxwPtv9z5SOXgaVa4a4nlBb
+         vH5yAyuCrqg53drr1+yDjSjCeB1PrMHh8Rta3o7fZx9/mbYDzSL9wlWBGDgP6QgRvcYJ
+         1A+uAm/Ms5Z4s0ghryVlEXjWozerjq6uo2nH54842KnLWNUxK6LqI8z4Z0fzCGLbmUMB
+         sV4w==
+X-Forwarded-Encrypted: i=1; AJvYcCULT18bb4ht9aElxkmRWdM+gngtTO45zmt96ZFuMh3HK1gHtpzBtp1MQwIyq65gk6S+IOaVKlx7oclbZGQP@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbHJmmPlMFoWRw0ABVhrq8GqSR8yRY0xpfKS8u9Nx+lNWG4s90
+	RluXWi5bsMbbjsBHXjetS+rEWKjvJmUYu/3u5QrGdzn1+K+cjBuWTzJhIMn66yg08aapKCrqFDQ
+	1M6U8/YK9pPTiTGbyds6P56lEn5hO9xfm1RsXNBuu
+X-Gm-Gg: ATEYQzxLOanBVAun98muiC90V9IWauc8P9Rznx7HbP3oy/+atOl75jWro9ATYrBg6Ky
+	XFKeCpgiHbKEl+2jxEOOjK2UykroKYxidjV6X3ziJeySYDXWEaLDExRXcmJ8S4RaMTbCIXqlOqv
+	kxl35X4a2yoUU0K97KbNTSKIhcDIgfeq/ppGyJZkujxOmN1hUuZiu9EYVFYdy5iPlLn1K8SCMH4
+	mJIdNYia4mrNiHrF9GwdjdR3LgkKz+elYlQcyOUUEh7xHcchevjZLoGQagrbE0f+5b/2EECDTx/
+	iwoH4feBxFvNZDUmgotDHgx31uosehOW40bwcypi/II9gmTYAsSoHvAvpaJee7OYcfy/gw==
+X-Received: by 2002:a05:6102:c01:b0:5db:f920:fa9a with SMTP id
+ ada2fe7eead31-5ffe63cdb3fmr2925679137.41.1773037638925; Sun, 08 Mar 2026
+ 23:27:18 -0700 (PDT)
+Received: from 176938342045 named unknown by gmailapi.google.com with
+ HTTPREST; Sun, 8 Mar 2026 23:27:18 -0700
+Received: from 176938342045 named unknown by gmailapi.google.com with
+ HTTPREST; Sun, 8 Mar 2026 23:27:18 -0700
+From: Ackerley Tng <ackerleytng@google.com>
+In-Reply-To: <aaWlxFh-bqUYXgUo@groves.net>
+References: <0100019bd33b1f66-b835e86a-e8ae-443f-a474-02db88f7e6db-000000@email.amazonses.com>
+ <20260118223110.92320-1-john@jagalactic.com> <0100019bd33bf5cc-3ab17b9e-cd67-4f0b-885e-55658a1207f0-000000@email.amazonses.com>
+ <CAEvNRgHmfpx0BXPzt81DenKbyvQ1QwM5rZeJWMnKUO8fB8MeqA@mail.gmail.com> <aaWlxFh-bqUYXgUo@groves.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: B130F23423C
+Date: Sun, 8 Mar 2026 23:27:18 -0700
+X-Gm-Features: AaiRm52XcCdEx1v_REqqEWCzJAbxKWYQSWfQ7emIhDTUFVwrkCx8Utez8oZPcxo
+Message-ID: <CAEvNRgEzb6Ux+iVFT=F6jc_R8V=LTYCigHp+yaHFkdrX82-yvQ@mail.gmail.com>
+Subject: Re: [PATCH V7 02/19] dax: Factor out dax_folio_reset_order() helper
+To: John Groves <John@groves.net>
+Cc: John Groves <john@jagalactic.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Dan Williams <dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, 
+	Alison Schofield <alison.schofield@intel.com>, John Groves <jgroves@micron.com>, 
+	John Groves <jgroves@fastmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, David Hildenbrand <david@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, "Darrick J . Wong" <djwong@kernel.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Bagas Sanjaya <bagasdotme@gmail.com>, 
+	James Morse <james.morse@arm.com>, Fuad Tabba <tabba@google.com>, 
+	Sean Christopherson <seanjc@google.com>, Shivank Garg <shivankg@amd.com>, Gregory Price <gourry@gourry.net>, 
+	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>, 
+	"venkataravis@micron.com" <venkataravis@micron.com>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>, 
+	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Rspamd-Queue-Id: 76BC82342C5
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[sina.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[sina.com:s=201208];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
+	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79737-lists,linux-fsdevel=lfdr.de];
-	FREEMAIL_CC(0.00)[vger.kernel.org,dubeyko.com,uwaterloo.ca,physik.fu-berlin.de,vivo.com,sina.com];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[jagalactic.com,szeredi.hu,intel.com,ddn.com,micron.com,fastmail.com,lwn.net,infradead.org,suse.cz,zeniv.linux.org.uk,kernel.org,gmail.com,huawei.com,redhat.com,toxicpanda.com,arm.com,google.com,amd.com,gourry.net,vger.kernel.org,lists.linux.dev];
+	TAGGED_FROM(0.00)[bounces-79738-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FREEMAIL_FROM(0.00)[sina.com];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[38];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[google.com:+];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	MISSING_XM_UA(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[johnny_haocn@sina.com,linux-fsdevel@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[ackerleytng@google.com,linux-fsdevel@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[sina.com:+];
-	NEURAL_HAM(-0.00)[-0.987];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,uwaterloo.ca:email,vivo.com:email,sina.com:dkim,sina.com:email,sina.com:mid,fu-berlin.de:email,dubeyko.com:email]
+	NEURAL_HAM(-0.00)[-0.979];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,mail.gmail.com:mid]
 X-Rspamd-Action: no action
 
-From: Viacheslav Dubeyko <slava@dubeyko.com>
+John Groves <John@groves.net> writes:
 
-[ Upstream commit 736a0516a16268995f4898eded49bfef077af709 ]
+>
+> [...snip...]
+>
+>>
+>> I'm implementing something similar for guest_memfd and was going to
+>> reuse __split_folio_to_order(). Would you consider using the
+>> __split_folio_to_order() function?
+>>
+>> I see that dax_folio_reset_order() needs to set f->share to 0 though,
+>> which is a union with index, and __split_folio_to_order() sets non-0
+>> indices.
+>>
+>> Also, __split_folio_to_order() doesn't handle f->pgmap (or f->lru).
+>>
+>> Could these two steps be added to a separate loop after
+>> __split_folio_to_order()?
+>>
+>> Does dax_folio_reset_order() need to handle any of the folio flags that
+>> __split_folio_to_order() handles?
+>
+> Sorry to reply slowly; this took some thought.
+>
 
-The hfs_find_init() method can trigger the crash
-if tree pointer is NULL:
+No worries, thanks for your consideration!
 
-[   45.746290][ T9787] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000008: 0000 [#1] SMP KAI
-[   45.747287][ T9787] KASAN: null-ptr-deref in range [0x0000000000000040-0x0000000000000047]
-[   45.748716][ T9787] CPU: 2 UID: 0 PID: 9787 Comm: repro Not tainted 6.16.0-rc3 #10 PREEMPT(full)
-[   45.750250][ T9787] Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[   45.751983][ T9787] RIP: 0010:hfs_find_init+0x86/0x230
-[   45.752834][ T9787] Code: c1 ea 03 80 3c 02 00 0f 85 9a 01 00 00 4c 8d 6b 40 48 c7 45 18 00 00 00 00 48 b8 00 00 00 00 00 fc
-[   45.755574][ T9787] RSP: 0018:ffffc90015157668 EFLAGS: 00010202
-[   45.756432][ T9787] RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff819a4d09
-[   45.757457][ T9787] RDX: 0000000000000008 RSI: ffffffff819acd3a RDI: ffffc900151576e8
-[   45.758282][ T9787] RBP: ffffc900151576d0 R08: 0000000000000005 R09: 0000000000000000
-[   45.758943][ T9787] R10: 0000000080000000 R11: 0000000000000001 R12: 0000000000000004
-[   45.759619][ T9787] R13: 0000000000000040 R14: ffff88802c50814a R15: 0000000000000000
-[   45.760293][ T9787] FS:  00007ffb72734540(0000) GS:ffff8880cec64000(0000) knlGS:0000000000000000
-[   45.761050][ T9787] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   45.761606][ T9787] CR2: 00007f9bd8225000 CR3: 000000010979a000 CR4: 00000000000006f0
-[   45.762286][ T9787] Call Trace:
-[   45.762570][ T9787]  <TASK>
-[   45.762824][ T9787]  hfs_ext_read_extent+0x190/0x9d0
-[   45.763269][ T9787]  ? submit_bio_noacct_nocheck+0x2dd/0xce0
-[   45.763766][ T9787]  ? __pfx_hfs_ext_read_extent+0x10/0x10
-[   45.764250][ T9787]  hfs_get_block+0x55f/0x830
-[   45.764646][ T9787]  block_read_full_folio+0x36d/0x850
-[   45.765105][ T9787]  ? __pfx_hfs_get_block+0x10/0x10
-[   45.765541][ T9787]  ? const_folio_flags+0x5b/0x100
-[   45.765972][ T9787]  ? __pfx_hfs_read_folio+0x10/0x10
-[   45.766415][ T9787]  filemap_read_folio+0xbe/0x290
-[   45.766840][ T9787]  ? __pfx_filemap_read_folio+0x10/0x10
-[   45.767325][ T9787]  ? __filemap_get_folio+0x32b/0xbf0
-[   45.767780][ T9787]  do_read_cache_folio+0x263/0x5c0
-[   45.768223][ T9787]  ? __pfx_hfs_read_folio+0x10/0x10
-[   45.768666][ T9787]  read_cache_page+0x5b/0x160
-[   45.769070][ T9787]  hfs_btree_open+0x491/0x1740
-[   45.769481][ T9787]  hfs_mdb_get+0x15e2/0x1fb0
-[   45.769877][ T9787]  ? __pfx_hfs_mdb_get+0x10/0x10
-[   45.770316][ T9787]  ? find_held_lock+0x2b/0x80
-[   45.770731][ T9787]  ? lockdep_init_map_type+0x5c/0x280
-[   45.771200][ T9787]  ? lockdep_init_map_type+0x5c/0x280
-[   45.771674][ T9787]  hfs_fill_super+0x38e/0x720
-[   45.772092][ T9787]  ? __pfx_hfs_fill_super+0x10/0x10
-[   45.772549][ T9787]  ? snprintf+0xbe/0x100
-[   45.772931][ T9787]  ? __pfx_snprintf+0x10/0x10
-[   45.773350][ T9787]  ? do_raw_spin_lock+0x129/0x2b0
-[   45.773796][ T9787]  ? find_held_lock+0x2b/0x80
-[   45.774215][ T9787]  ? set_blocksize+0x40a/0x510
-[   45.774636][ T9787]  ? sb_set_blocksize+0x176/0x1d0
-[   45.775087][ T9787]  ? setup_bdev_super+0x369/0x730
-[   45.775533][ T9787]  get_tree_bdev_flags+0x384/0x620
-[   45.775985][ T9787]  ? __pfx_hfs_fill_super+0x10/0x10
-[   45.776453][ T9787]  ? __pfx_get_tree_bdev_flags+0x10/0x10
-[   45.776950][ T9787]  ? bpf_lsm_capable+0x9/0x10
-[   45.777365][ T9787]  ? security_capable+0x80/0x260
-[   45.777803][ T9787]  vfs_get_tree+0x8e/0x340
-[   45.778203][ T9787]  path_mount+0x13de/0x2010
-[   45.778604][ T9787]  ? kmem_cache_free+0x2b0/0x4c0
-[   45.779052][ T9787]  ? __pfx_path_mount+0x10/0x10
-[   45.779480][ T9787]  ? getname_flags.part.0+0x1c5/0x550
-[   45.779954][ T9787]  ? putname+0x154/0x1a0
-[   45.780335][ T9787]  __x64_sys_mount+0x27b/0x300
-[   45.780758][ T9787]  ? __pfx___x64_sys_mount+0x10/0x10
-[   45.781232][ T9787]  do_syscall_64+0xc9/0x480
-[   45.781631][ T9787]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   45.782149][ T9787] RIP: 0033:0x7ffb7265b6ca
-[   45.782539][ T9787] Code: 48 8b 0d c9 17 0d 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48
-[   45.784212][ T9787] RSP: 002b:00007ffc0c10cfb8 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-[   45.784935][ T9787] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007ffb7265b6ca
-[   45.785626][ T9787] RDX: 0000200000000240 RSI: 0000200000000280 RDI: 00007ffc0c10d100
-[   45.786316][ T9787] RBP: 00007ffc0c10d190 R08: 00007ffc0c10d000 R09: 0000000000000000
-[   45.787011][ T9787] R10: 0000000000000048 R11: 0000000000000206 R12: 0000560246733250
-[   45.787697][ T9787] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-[   45.788393][ T9787]  </TASK>
-[   45.788665][ T9787] Modules linked in:
-[   45.789058][ T9787] ---[ end trace 0000000000000000 ]---
-[   45.789554][ T9787] RIP: 0010:hfs_find_init+0x86/0x230
-[   45.790028][ T9787] Code: c1 ea 03 80 3c 02 00 0f 85 9a 01 00 00 4c 8d 6b 40 48 c7 45 18 00 00 00 00 48 b8 00 00 00 00 00 fc
-[   45.792364][ T9787] RSP: 0018:ffffc90015157668 EFLAGS: 00010202
-[   45.793155][ T9787] RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff819a4d09
-[   45.794123][ T9787] RDX: 0000000000000008 RSI: ffffffff819acd3a RDI: ffffc900151576e8
-[   45.795105][ T9787] RBP: ffffc900151576d0 R08: 0000000000000005 R09: 0000000000000000
-[   45.796135][ T9787] R10: 0000000080000000 R11: 0000000000000001 R12: 0000000000000004
-[   45.797114][ T9787] R13: 0000000000000040 R14: ffff88802c50814a R15: 0000000000000000
-[   45.798024][ T9787] FS:  00007ffb72734540(0000) GS:ffff8880cec64000(0000) knlGS:0000000000000000
-[   45.799019][ T9787] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   45.799822][ T9787] CR2: 00007f9bd8225000 CR3: 000000010979a000 CR4: 00000000000006f0
-[   45.800747][ T9787] Kernel panic - not syncing: Fatal exception
+> I'm nervous about sharing folio initialization code between the page cache
+> and dax. Might this be something we could unify after the fact - if it
+> passes muster?
+>
+> Unifying paths like this could be regression-prone (page cache changes
+> breaking dax or vice versa) unless it's really well conceived...
+>
 
-The hfs_fill_super() calls hfs_mdb_get() method that tries
-to construct Extents Tree and Catalog Tree:
+guest_memfd's (future) usage of __split_folio_to_order() is probably
+closer in spirit to the original usage of __split_folio_to_order() that
+dax's, feel free go ahead :)
 
-HFS_SB(sb)->ext_tree = hfs_btree_open(sb, HFS_EXT_CNID, hfs_ext_keycmp);
-if (!HFS_SB(sb)->ext_tree) {
-	pr_err("unable to open extent tree\n");
-	goto out;
-}
-HFS_SB(sb)->cat_tree = hfs_btree_open(sb, HFS_CAT_CNID, hfs_cat_keycmp);
-if (!HFS_SB(sb)->cat_tree) {
-	pr_err("unable to open catalog tree\n");
-	goto out;
-}
+For guest_memfd, I do want to use __split_folio_to_order() since I do
+want to make sure that any updates to page flags are taken into account
+for guest_memfd as well.
 
-However, hfs_btree_open() calls read_mapping_page() that
-calls hfs_get_block(). And this method calls hfs_ext_read_extent():
+>>
+>> >  static inline unsigned long dax_folio_put(struct folio *folio)
+>> >  {
+>> >  	unsigned long ref;
+>> > @@ -391,28 +430,13 @@ static inline unsigned long dax_folio_put(struct folio *folio)
+>> >  	if (ref)
+>> >  		return ref;
+>> >
+>> > -	folio->mapping = NULL;
+>> > -	order = folio_order(folio);
+>> > -	if (!order)
+>> > -		return 0;
+>> > -	folio_reset_order(folio);
+>> > +	order = dax_folio_reset_order(folio);
+>> >
+>> > +	/* Debug check: verify refcounts are zero for all sub-folios */
+>> >  	for (i = 0; i < (1UL << order); i++) {
+>> > -		struct dev_pagemap *pgmap = page_pgmap(&folio->page);
+>> >  		struct page *page = folio_page(folio, i);
+>> > -		struct folio *new_folio = (struct folio *)page;
+>> >
+>> > -		ClearPageHead(page);
+>> > -		clear_compound_head(page);
+>> > -
+>> > -		new_folio->mapping = NULL;
+>> > -		/*
+>> > -		 * Reset pgmap which was over-written by
+>> > -		 * prep_compound_page().
+>> > -		 */
+>>
+>> Actually, where's the call to prep_compound_page()? Was that in
+>> dax_folio_init()? Is this comment still valid and does pgmap have to be
+>> reset?
+>
+> Yep, in dax_folio_init()...
+>
 
-static int hfs_ext_read_extent(struct inode *inode, u16 block)
-{
-	struct hfs_find_data fd;
-	int res;
+On another look, prep_compound_tail() in prep_compound_page() is the
+one that overwrites folio->pgmap, by writing to page->compound_head,
+which aliases with pgmap.
 
-	if (block >= HFS_I(inode)->cached_start &&
-	    block < HFS_I(inode)->cached_start + HFS_I(inode)->cached_blocks)
-		return 0;
+No issues here. I was just comparing the before/after of this
+refactoring and saw that the comment was dropped, which led me to look
+more at this part.
 
-	res = hfs_find_init(HFS_SB(inode->i_sb)->ext_tree, &fd);
-	if (!res) {
-		res = __hfs_ext_cache_extent(&fd, inode, block);
-		hfs_find_exit(&fd);
-	}
-	return res;
-}
+Reviewed-by: Ackerley Tng <ackerleytng@google.com>
 
-The problem here that hfs_find_init() is trying to use
-HFS_SB(inode->i_sb)->ext_tree that is not initialized yet.
-It will be initailized when hfs_btree_open() finishes
-the execution.
-
-The patch adds checking of tree pointer in hfs_find_init()
-and it reworks the logic of hfs_btree_open() by reading
-the b-tree's header directly from the volume. The read_mapping_page()
-is exchanged on filemap_grab_folio() that grab the folio from
-mapping. Then, sb_bread() extracts the b-tree's header
-content and copy it into the folio.
-
-Reported-by: Wenzhi Wang <wenzhi.wang@uwaterloo.ca>
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-cc: Yangtao Li <frank.li@vivo.com>
-cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/r/20250710213657.108285-1-slava@dubeyko.com
-Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Johnny Hao <johnny_haocn@sina.com>
----
- fs/hfs/bfind.c  |  3 +++
- fs/hfs/btree.c  | 57 +++++++++++++++++++++++++++++++++++++++----------
- fs/hfs/extent.c |  2 +-
- fs/hfs/hfs_fs.h |  1 +
- 4 files changed, 51 insertions(+), 12 deletions(-)
-
-diff --git a/fs/hfs/bfind.c b/fs/hfs/bfind.c
-index 6d37b4c75903..e46f650b5e9c 100644
---- a/fs/hfs/bfind.c
-+++ b/fs/hfs/bfind.c
-@@ -16,6 +16,9 @@ int hfs_find_init(struct hfs_btree *tree, struct hfs_find_data *fd)
- {
- 	void *ptr;
- 
-+	if (!tree || !fd)
-+		return -EINVAL;
-+
- 	fd->tree = tree;
- 	fd->bnode = NULL;
- 	ptr = kzalloc(tree->max_key_len * 2 + 4, GFP_KERNEL);
-diff --git a/fs/hfs/btree.c b/fs/hfs/btree.c
-index 2fa4b1f8cc7f..e86e1e235658 100644
---- a/fs/hfs/btree.c
-+++ b/fs/hfs/btree.c
-@@ -21,8 +21,12 @@ struct hfs_btree *hfs_btree_open(struct super_block *sb, u32 id, btree_keycmp ke
- 	struct hfs_btree *tree;
- 	struct hfs_btree_header_rec *head;
- 	struct address_space *mapping;
--	struct page *page;
-+	struct folio *folio;
-+	struct buffer_head *bh;
- 	unsigned int size;
-+	u16 dblock;
-+	sector_t start_block;
-+	loff_t offset;
- 
- 	tree = kzalloc(sizeof(*tree), GFP_KERNEL);
- 	if (!tree)
-@@ -75,12 +79,40 @@ struct hfs_btree *hfs_btree_open(struct super_block *sb, u32 id, btree_keycmp ke
- 	unlock_new_inode(tree->inode);
- 
- 	mapping = tree->inode->i_mapping;
--	page = read_mapping_page(mapping, 0, NULL);
--	if (IS_ERR(page))
-+	folio = filemap_grab_folio(mapping, 0);
-+	if (IS_ERR(folio))
- 		goto free_inode;
- 
-+	folio_zero_range(folio, 0, folio_size(folio));
-+
-+	dblock = hfs_ext_find_block(HFS_I(tree->inode)->first_extents, 0);
-+	start_block = HFS_SB(sb)->fs_start + (dblock * HFS_SB(sb)->fs_div);
-+
-+	size = folio_size(folio);
-+	offset = 0;
-+	while (size > 0) {
-+		size_t len;
-+
-+		bh = sb_bread(sb, start_block);
-+		if (!bh) {
-+			pr_err("unable to read tree header\n");
-+			goto put_folio;
-+		}
-+
-+		len = min_t(size_t, folio_size(folio), sb->s_blocksize);
-+		memcpy_to_folio(folio, offset, bh->b_data, sb->s_blocksize);
-+
-+		brelse(bh);
-+
-+		start_block++;
-+		offset += len;
-+		size -= len;
-+	}
-+
-+	folio_mark_uptodate(folio);
-+
- 	/* Load the header */
--	head = (struct hfs_btree_header_rec *)(kmap_local_page(page) +
-+	head = (struct hfs_btree_header_rec *)(kmap_local_folio(folio, 0) +
- 					       sizeof(struct hfs_bnode_desc));
- 	tree->root = be32_to_cpu(head->root);
- 	tree->leaf_count = be32_to_cpu(head->leaf_count);
-@@ -95,22 +127,22 @@ struct hfs_btree *hfs_btree_open(struct super_block *sb, u32 id, btree_keycmp ke
- 
- 	size = tree->node_size;
- 	if (!is_power_of_2(size))
--		goto fail_page;
-+		goto fail_folio;
- 	if (!tree->node_count)
--		goto fail_page;
-+		goto fail_folio;
- 	switch (id) {
- 	case HFS_EXT_CNID:
- 		if (tree->max_key_len != HFS_MAX_EXT_KEYLEN) {
- 			pr_err("invalid extent max_key_len %d\n",
- 			       tree->max_key_len);
--			goto fail_page;
-+			goto fail_folio;
- 		}
- 		break;
- 	case HFS_CAT_CNID:
- 		if (tree->max_key_len != HFS_MAX_CAT_KEYLEN) {
- 			pr_err("invalid catalog max_key_len %d\n",
- 			       tree->max_key_len);
--			goto fail_page;
-+			goto fail_folio;
- 		}
- 		break;
- 	default:
-@@ -121,12 +153,15 @@ struct hfs_btree *hfs_btree_open(struct super_block *sb, u32 id, btree_keycmp ke
- 	tree->pages_per_bnode = (tree->node_size + PAGE_SIZE - 1) >> PAGE_SHIFT;
- 
- 	kunmap_local(head);
--	put_page(page);
-+	folio_unlock(folio);
-+	folio_put(folio);
- 	return tree;
- 
--fail_page:
-+fail_folio:
- 	kunmap_local(head);
--	put_page(page);
-+put_folio:
-+	folio_unlock(folio);
-+	folio_put(folio);
- free_inode:
- 	tree->inode->i_mapping->a_ops = &hfs_aops;
- 	iput(tree->inode);
-diff --git a/fs/hfs/extent.c b/fs/hfs/extent.c
-index 3f7e9bef9874..070245f8c215 100644
---- a/fs/hfs/extent.c
-+++ b/fs/hfs/extent.c
-@@ -71,7 +71,7 @@ int hfs_ext_keycmp(const btree_key *key1, const btree_key *key2)
-  *
-  * Find a block within an extent record
-  */
--static u16 hfs_ext_find_block(struct hfs_extent *ext, u16 off)
-+u16 hfs_ext_find_block(struct hfs_extent *ext, u16 off)
- {
- 	int i;
- 	u16 count;
-diff --git a/fs/hfs/hfs_fs.h b/fs/hfs/hfs_fs.h
-index 68d0305880f7..1353af3169d5 100644
---- a/fs/hfs/hfs_fs.h
-+++ b/fs/hfs/hfs_fs.h
-@@ -190,6 +190,7 @@ extern const struct inode_operations hfs_dir_inode_operations;
- 
- /* extent.c */
- extern int hfs_ext_keycmp(const btree_key *, const btree_key *);
-+extern u16 hfs_ext_find_block(struct hfs_extent *ext, u16 off);
- extern int hfs_free_fork(struct super_block *, struct hfs_cat_file *, int);
- extern int hfs_ext_write_extent(struct inode *);
- extern int hfs_extend_file(struct inode *);
--- 
-2.34.1
-
+>
+> Thanks,
+> John
+>
+> [snip]
 
