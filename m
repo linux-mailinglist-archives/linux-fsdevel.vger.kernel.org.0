@@ -1,243 +1,233 @@
-Return-Path: <linux-fsdevel+bounces-79791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cO3hGozermm/JQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 15:51:56 +0100
+	id wGKJK3nermm/JQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 15:51:37 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0615623AEC3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 15:51:55 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D8123AEAD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 15:51:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 95DB130634C3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 14:46:37 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9275A309A619
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 14:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758AF3D349D;
-	Mon,  9 Mar 2026 14:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LdlaWqYP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IE/omseZ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BkWjcn1Q";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+W6jIuNc"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929793D5674;
+	Mon,  9 Mar 2026 14:49:55 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E14389E16
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Mar 2026 14:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783E33B8D7B;
+	Mon,  9 Mar 2026 14:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773067593; cv=none; b=sfrteFZZ6AQf21zyVKmgBQoyFLkcboV3L4RvcOpUeuvw0nIO2aWon4AtiX95csUFVaO2J47pX1gstEutHdGbSsub0Jowq7ayCdrO2QgcN9BKMQzxk7cP+61FampKcf67jVd2b2Icfx+GKasm6RRTQT9ExUai3w7IA6jCBiL4L0g=
+	t=1773067795; cv=none; b=kGCFLkx5dl3TKo8JyvgumgUqcfgM7rHa0jsOFx94TuIiNFTALx8GFC5vqa2uObGMfyvxK4Ns0aK2b2G6NzGqLfIKZFEce7Zssj5mLGfgaJG7U1UHu8wPkUFh8sDuBE/BmQ/QG/MZ/6l/eKsWJ220rpDSPxvr2xt5MNdUlHnoisM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773067593; c=relaxed/simple;
-	bh=P43d7cRAiqeOH+ZlCkpK1DAFw3SJGnd6g+OmDbih+DU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aQnUiD6lt5J2bAxD5ZvEd2bVzgWMmfevPBQsGZAkSC58H3Pk9hSTG+4bVQpm7AJyXPSCkNo2HKokpa2jhMEZOzGPHuJ291xasQfGQ64dbgPJeQ1yRLbAOv0ALzsOE6rf8yV1FgOIA246vCC0q8wXFBDQr18S40QQA1MqFIHYH7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LdlaWqYP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IE/omseZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BkWjcn1Q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+W6jIuNc; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8FB3E5BE29;
-	Mon,  9 Mar 2026 14:46:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1773067588; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kZ9IDB4ziHA3T0JifdVk3185gR+WO87Rc4mv0vS5fyc=;
-	b=LdlaWqYP9KDHtj/06QouX2wI/Up91ofgxuQxHf8B8o0Y9r6pg/f4RuCaqJE+0k/Pt1HCdg
-	fkBPJbykwjf+vRmpRbAoyi7reUMCSnWCNcAhrvgerMjWKjBAutfgiX1MlFsCIe1zOvUcdJ
-	8cLciHM8XzXRHUtlU5seLlxrV1//f6k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1773067588;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kZ9IDB4ziHA3T0JifdVk3185gR+WO87Rc4mv0vS5fyc=;
-	b=IE/omseZFdhcSF5UB3c/uEcSoxYbrqmXoLWHFP0t0z18/PQo7dO5RndPDyjOWi3Dciu8qs
-	8kS2eRx+FYpjtcBA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=BkWjcn1Q;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=+W6jIuNc
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1773067587; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kZ9IDB4ziHA3T0JifdVk3185gR+WO87Rc4mv0vS5fyc=;
-	b=BkWjcn1QQJbqadJ4tda56Kx2oWgM59VqKJQ9oLyk334h2lSwHkjMqDRf13veXOuAjoUmjr
-	kWQb4Y0oLaA+lIx+rHcn3di6697ATjfNauwM4UbU4QnKYi4ucI74nu1VeqaF1b8sfYewlg
-	pahiHFaBMiu6D/0Ay18dFsAluWPSHno=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1773067587;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kZ9IDB4ziHA3T0JifdVk3185gR+WO87Rc4mv0vS5fyc=;
-	b=+W6jIuNcBb+UkfYCXxrLGOVcYnGR2xqsOby8JOmfjdsse2f9zsy1mzxC0f9CI3YovuSwd8
-	+uJZBkStNQYGnLCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8625A3EF56;
-	Mon,  9 Mar 2026 14:46:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id C5+6IEPdrmmKWwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 09 Mar 2026 14:46:27 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3E3D4A09C2; Mon,  9 Mar 2026 15:46:27 +0100 (CET)
-Date: Mon, 9 Mar 2026 15:46:27 +0100
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] vfs: remove externs from fs.h on functions modified
- by i_ino widening
-Message-ID: <mkgjambnzw35slfb3vens5tlsugxpjg7q7cckrmwj426ot4x4b@acvye7cjmzde>
-References: <20260307-iino-u64-v2-1-a1a1696e0653@kernel.org>
- <urwtj2zfmxfhksormxkzb2z26a7nt5vesbkuwtow47fflf4u2l@x7cbae5dv7tr>
- <c73452245cd85a75bbfc12b31b940641352fb979.camel@kernel.org>
- <wlwvnfrhpw4yyzdnxte73nv6rs5lh2jilvnfd2mtocyct4jyel@4l4km3lehq2c>
- <214341c4753f7ce61d9b01155e9c493e880b7bbd.camel@kernel.org>
+	s=arc-20240116; t=1773067795; c=relaxed/simple;
+	bh=aY/nndyQ2qNi5ZjInb2yW37UH6h8yddkng1a0uSlcrE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VSREEgjdHmHUy9DfPxBxCs3qz+YW9YWaaZHrTTNbxSNAkxB4OXVncZkqQKVPIBhuDt843RtQNZymhWYLL9Ue2a3zxT8C0hklltpQuxPUg8P6xnWSIpxkXKW/OY6XEi/+9Nw+p0Z0vQYVRhck5/7Eyk8n6YQEeGBdNge8ZJYz6HI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fV0KN4LXqzHnGfH;
+	Mon,  9 Mar 2026 22:49:44 +0800 (CST)
+Received: from dubpeml500005.china.huawei.com (unknown [7.214.145.207])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7C38140572;
+	Mon,  9 Mar 2026 22:49:48 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml500005.china.huawei.com
+ (7.214.145.207) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 9 Mar
+ 2026 14:49:46 +0000
+Date: Mon, 9 Mar 2026 14:49:45 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, Ard Biesheuvel <ardb@kernel.org>, "Alison
+ Schofield" <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Yazen Ghannam <yazen.ghannam@amd.com>, "Dave
+ Jiang" <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>, "Matthew
+ Wilcox" <willy@infradead.org>, Jan Kara <jack@suse.cz>, "Rafael J . Wysocki"
+	<rafael@kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek
+	<pavel@kernel.org>, Li Ming <ming.li@zohomail.com>, Jeff Johnson
+	<jeff.johnson@oss.qualcomm.com>, Ying Huang <huang.ying.caritas@gmail.com>,
+	Yao Xingtao <yaoxt.fnst@fujitsu.com>, "Peter Zijlstra"
+	<peterz@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nathan Fontenot <nathan.fontenot@amd.com>, Terry Bowman
+	<terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>, Benjamin Cheatham
+	<benjamin.cheatham@amd.com>, Zhijian Li <lizhijian@fujitsu.com>, Borislav
+ Petkov <bp@alien8.de>, Tomasz Wolski <tomasz.wolski@fujitsu.com>
+Subject: Re: [PATCH v6 7/9] dax: Add deferred-work helpers for dax_hmem and
+ dax_cxl coordination
+Message-ID: <20260309144945.00006d98@huawei.com>
+In-Reply-To: <20260210064501.157591-8-Smita.KoralahalliChannabasappa@amd.com>
+References: <20260210064501.157591-1-Smita.KoralahalliChannabasappa@amd.com>
+	<20260210064501.157591-8-Smita.KoralahalliChannabasappa@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <214341c4753f7ce61d9b01155e9c493e880b7bbd.camel@kernel.org>
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 0615623AEC3
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+ dubpeml500005.china.huawei.com (7.214.145.207)
+X-Rspamd-Queue-Id: 10D8123AEAD
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
+X-Spamd-Result: default: False [1.54 / 15.00];
+	DMARC_POLICY_QUARANTINE(1.50)[huawei.com : SPF not aligned (relaxed), No valid DKIM,quarantine];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	TAGGED_FROM(0.00)[bounces-79791-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,lists.linux.dev,kernel.org,intel.com,amd.com,stgolabs.net,infradead.org,suse.cz,zohomail.com,oss.qualcomm.com,gmail.com,fujitsu.com,linuxfoundation.org,alien8.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DMARC_NA(0.00)[suse.cz];
+	RCPT_COUNT_TWELVE(0.00)[32];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-79792-lists,linux-fsdevel=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,lst.de:email];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	NEURAL_HAM(-0.00)[-0.940];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[jonathan.cameron@huawei.com,linux-fsdevel@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	NEURAL_HAM(-0.00)[-0.894];
+	MID_RHS_MATCH_FROM(0.00)[];
+	R_DKIM_NA(0.00)[];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[7]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:mid,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,amd.com:email]
 X-Rspamd-Action: no action
 
-On Mon 09-03-26 09:27:47, Jeff Layton wrote:
-> On Mon, 2026-03-09 at 13:27 +0100, Jan Kara wrote:
-> > On Mon 09-03-26 07:53:51, Jeff Layton wrote:
-> > > On Mon, 2026-03-09 at 11:02 +0100, Jan Kara wrote:
-> > > > On Sat 07-03-26 14:54:31, Jeff Layton wrote:
-> > > > > Christoph says, in response to one of the patches in the i_ino widening
-> > > > > series, which changes the prototype of several functions in fs.h:
-> > > > > 
-> > > > >     "Can you please drop all these pointless externs while you're at it?"
-> > > > > 
-> > > > > Remove extern keyword from functions touched by that patch (and a few
-> > > > > that happened to be nearby). Also add missing argument names to
-> > > > > declarations that lacked them.
-> > > > > 
-> > > > > Suggested-by: Christoph Hellwig <hch@lst.de>
-> > > > > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > ...
-> > > > > -extern void inode_init_once(struct inode *);
-> > > > > -extern void address_space_init_once(struct address_space *mapping);
-> > > > > -extern struct inode * igrab(struct inode *);
-> > > > > -extern ino_t iunique(struct super_block *, ino_t);
-> > > > > -extern int inode_needs_sync(struct inode *inode);
-> > > > > -extern int inode_just_drop(struct inode *inode);
-> > > > > +void inode_init_once(struct inode *inode);
-> > > > > +void address_space_init_once(struct address_space *mapping);
-> > > > > +struct inode *igrab(struct inode *inode);
-> > > > > +ino_t iunique(struct super_block *sb, ino_t max_reserved);
-> > > > 
-> > > > I've just noticed that we probably forgot to convert iunique() to use u64
-> > > > for inode numbers... Although the iunique() number allocator might prefer
-> > > > to stay within 32 bits, the interfaces should IMO still use u64 for
-> > > > consistency.
-> > > > 
-> > > 
-> > > I went back and forth on that one, but I left iunique() changes off
-> > > since they weren't strictly required. Most filesystems that use it
-> > > won't have more than 2^32 inodes anyway.
-> > > 
-> > > If they worked before with iunique() limited to 32-bit values, they
-> > > should still after this. After the i_ino widening we could certainly
-> > > change it to return a u64 though.
-> > 
-> > Yes, it won't change anything wrt functionality. I just think that if we go
-> > for "ino_t is the userspace API type and kernel-internal inode numbers
-> > (i.e.  what gets stored in inode->i_ino) are passed as u64", then this
-> > place should logically have u64...
-> > 
+On Tue, 10 Feb 2026 06:44:59 +0000
+Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com> wrote:
+
+> Add helpers to register, queue and flush the deferred work.
 > 
-> I think we'll need a real plan for this.
-
-<snip claude analysis>
- 
-> It certainly wouldn't hurt to make these functions return a u64 type,
-> but I worry a little about letting them return values bigger than
-> UINT_MAX:
+> These helpers allow dax_hmem to execute ownership resolution outside the
+> probe context before dax_cxl binds.
 > 
-> One of my very first patches was 866b04fccbf1 ("inode numbering: make
-> static counters in new_inode and iunique be 32 bits"), and it made
-> get_next_ino() and iunique() always return 32 bit values. 
+> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+
+The sanity checks on valid inputs to me seem excessive for something
+that is intended to have a very narrow usecase. I'm also not sure it's
+harmful to just not bother with the parameter checking.
+
+Otherwise seems fine to me.
+
+> ---
+>  drivers/dax/bus.c | 58 +++++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/dax/bus.h |  7 ++++++
+>  2 files changed, 65 insertions(+)
 > 
-> At the time, 32-bit machines and legacy binaries were a lot more
-> prevalent than they are today and this was real problem. I'm guessing
-> it's not so much today, so we could probably make them return real 64-
-> bit values. That might also obviate the need for locking in these
-> functions too.
+> diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
+> index 5f387feb95f0..92b88952ede1 100644
+> --- a/drivers/dax/bus.c
+> +++ b/drivers/dax/bus.c
+> @@ -25,6 +25,64 @@ DECLARE_RWSEM(dax_region_rwsem);
+>   */
+>  DECLARE_RWSEM(dax_dev_rwsem);
+>  
+> +static DEFINE_MUTEX(dax_hmem_lock);
+> +static dax_hmem_deferred_fn hmem_deferred_fn;
+> +static void *dax_hmem_data;
+> +
+> +static void hmem_deferred_work(struct work_struct *work)
+> +{
+> +	dax_hmem_deferred_fn fn;
+> +	void *data;
+> +
+> +	scoped_guard(mutex, &dax_hmem_lock) {
+> +		fn = hmem_deferred_fn;
+> +		data = dax_hmem_data;
+> +	}
+> +
+> +	if (fn)
+> +		fn(data);
+> +}
+> +
+> +static DECLARE_WORK(dax_hmem_work, hmem_deferred_work);
+> +
+> +int dax_hmem_register_work(dax_hmem_deferred_fn fn, void *data)
+> +{
+> +	guard(mutex)(&dax_hmem_lock);
+> +
+> +	if (hmem_deferred_fn)
+> +		return -EINVAL;
+What happens if we drop the check and therefore need to return int
+from these + handle errors?
 
-Hum, I think I still didn't express myself clearly enough. I *don't* want
-to change values returned from get_next_ino() or iunique(). I would leave
-that for the moment when someone comes with a need for more than 4 billions
-of inodes in a filesystem using these (which I think is still quite a few
-years away). All I want is that in-kernel inode number is consistently
-passed as u64 and not as ino_t. So all I ask for is this diff:
+The worst that happens is hmem_deferred_fn == NULL and we set the
+data (might also be NULL, we don't care).
+To me that looks harmless.
 
-- ino_t iunique(struct super_block *sb, ino_t max_reserved)
-+ u64 iunique(struct super_block *sb u64 max_reserved)
-...
- 	static unsigned int counter;
--	ino_t res;
-+	u64 res;
+> +
+> +	hmem_deferred_fn = fn;
+> +	dax_hmem_data = data;
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(dax_hmem_register_work);
+> +
+> +int dax_hmem_unregister_work(dax_hmem_deferred_fn fn, void *data)
+> +{
+> +	guard(mutex)(&dax_hmem_lock);
+> +
+> +	if (hmem_deferred_fn != fn || dax_hmem_data != data)
+> +		return -EINVAL;
 
-and that's it. I.e., the 'counter' variable that determines max value of
-returned number stays as unsigned int.
+Do we need the sanity check?  I'd just unconditionally clear them
+both.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> +
+> +	hmem_deferred_fn = NULL;
+> +	dax_hmem_data = NULL;
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(dax_hmem_unregister_work);
+> +
+> +void dax_hmem_queue_work(void)
+> +{
+> +	queue_work(system_long_wq, &dax_hmem_work);
+> +}
+> +EXPORT_SYMBOL_GPL(dax_hmem_queue_work);
+> +
+> +void dax_hmem_flush_work(void)
+> +{
+> +	flush_work(&dax_hmem_work);
+> +}
+> +EXPORT_SYMBOL_GPL(dax_hmem_flush_work);
+> +
+>  #define DAX_NAME_LEN 30
+>  struct dax_id {
+>  	struct list_head list;
+> diff --git a/drivers/dax/bus.h b/drivers/dax/bus.h
+> index cbbf64443098..b58a88e8089c 100644
+> --- a/drivers/dax/bus.h
+> +++ b/drivers/dax/bus.h
+> @@ -41,6 +41,13 @@ struct dax_device_driver {
+>  	void (*remove)(struct dev_dax *dev);
+>  };
+>  
+> +typedef void (*dax_hmem_deferred_fn)(void *data);
+> +
+> +int dax_hmem_register_work(dax_hmem_deferred_fn fn, void *data);
+> +int dax_hmem_unregister_work(dax_hmem_deferred_fn fn, void *data);
+> +void dax_hmem_queue_work(void);
+> +void dax_hmem_flush_work(void);
+> +
+>  int __dax_driver_register(struct dax_device_driver *dax_drv,
+>  		struct module *module, const char *mod_name);
+>  #define dax_driver_register(driver) \
+
 
