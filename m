@@ -1,245 +1,282 @@
-Return-Path: <linux-fsdevel+bounces-79839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id EDIwEJgTr2nJNQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 19:38:16 +0100
+	id GGAAGSwZr2nHNgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 20:02:04 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C3723EB23
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 19:38:15 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id B17EB23F1AD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 20:02:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 78DED301F4BB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 18:38:13 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id DE568300D775
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 19:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B11E37AA7B;
-	Mon,  9 Mar 2026 18:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49F43603EF;
+	Mon,  9 Mar 2026 19:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VehPeTwg"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="d2IgH4d2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0694435F5F1;
-	Mon,  9 Mar 2026 18:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E006114A4CC;
+	Mon,  9 Mar 2026 19:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773081489; cv=none; b=Ov12Cc+R+p/7Mr5jsMHQp5s6ATd1mWpJjQxgn/WwZiELHA+UfDxu9fiCIRJIdW9LJYiLrAZDFvUKmF80o9e6xp2aXIRvX3Dv2wZxvIHArmOw/sQJF3OLgjF8B9Fnq8E1rI61Vm3h0CHpwVJqFI42IQvSPQu6ixIEgdyH6jP7Z5I=
+	t=1773082873; cv=none; b=aZqu906/3H8AZ1W0bOaFhhO3F1b1/f3wkfFQswIL/BTwx2Q9H3xqD2j+QlLBPm1OHEyz66wrqF5yXGEkoRhW06tJWAZ1UZM9tg2IRIDCKu/AoIrpduOw8rxyEGmgZ+aspxn+D5zoNMsthOks5PwDsdNlnFMXxxCKrJRUoAwXHrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773081489; c=relaxed/simple;
-	bh=i+xt71aHCPOgKUuRNulfHzWARkqVhXEZq8CwSrmLxH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oXCrLsHmmJrM4QfwGwhm/l4Kv5clXG9wDden16zcuG1jHMqfUDRIvhtGOvkyyMqU55o5WBSZc/vY1UKGwyVTpZnhptv4uLdSWc6EzfXrbolPtYyZZFclJh/gff4EFClPwo467BENg/1APyXq1xo6Fw3bXwcw12JUesJCs+hWNt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VehPeTwg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80A3AC4CEF7;
-	Mon,  9 Mar 2026 18:38:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773081488;
-	bh=i+xt71aHCPOgKUuRNulfHzWARkqVhXEZq8CwSrmLxH8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VehPeTwgxXuwTsGV8f3jkcKQMk3hh6HObfWxxYl3vML2RyqHQcRFlX3HoPhevchaX
-	 McUUwMHuCpnBI6/OKqje2FqBrVJCogHY74oT5eVF0fXmlp9moj0n/STeE9/y7w7GE0
-	 4+AIUimk6hIbBQhfQnGi06uXFHHFkHsiXQnBEDghzRPfU9kpOcWnhT45nmOSqfED4/
-	 Jr2PDpVuqlnlEQuDvnNFhllOl/6na7HP7MhDHrK9PpTjHxG465QbedBpjGVRYWUyQk
-	 6d6E01cIon1jH/WN932Jf0HoagCVcKNzx/DdH12O3Qfqe9qRadOpFY8Zih/DBxeMu1
-	 om97cmvOwtmIQ==
-Date: Mon, 9 Mar 2026 11:38:08 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Brian Foster <bfoster@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v3 8/8] xfs: report cow mappings with dirty pagecache for
- iomap zero range
-Message-ID: <20260309183808.GS6033@frogsfrogsfrogs>
-References: <20260309134506.167663-1-bfoster@redhat.com>
- <20260309134506.167663-9-bfoster@redhat.com>
- <20260309175602.GR6033@frogsfrogsfrogs>
- <aa8SAIBCokWCjTWJ@bfoster>
+	s=arc-20240116; t=1773082873; c=relaxed/simple;
+	bh=zuZybXxG4NWtCCamlMtgm4GPhCUwWs75GokKHhfMbyA=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=QCmBAwOLqWrnXR8eva6gXElo4OqrkXzQuB5QYgU3FvYWtoDJC7B85wjJTWwGoLp5rzxGkemZmw0E57Jvh2Atm6KSaM5c86CDvWQ/ujg1lSONgiypvYEUN/lpO0DGycqC65/yg5OSCt0zXJJXHxjsbOWwPU75UcJZPDJlQBPVqhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=d2IgH4d2; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 629BiYp9402979;
+	Mon, 9 Mar 2026 19:00:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=5swsN0
+	rUxxavDq9zMYnPJS2Jv47BUk07HnZRz0pbh40=; b=d2IgH4d2cI76xjXosS08+5
+	z7p4cmRM3+vsUQToHiG2nB8DP/joMF596z7727f61cqMRXeNJJpaPHxOajT8sUoA
+	4hdB+fd4u1HsuNVMFr3OsadtAG1CKvM35tVtsMpgaqqCM2ZBMMXJkpG++BlAdorh
+	a25OzV7jJWb6oFmtakhiLNn+qzaAmqYeRhvuloIidiB6X0BgKDL71O4yfuzN3RUh
+	AoqpvZ653XjMWMMwrSPrZbVK8uRNsl6RplSUCc6nWvYsnXyDf2A2VF2Up7qZowSZ
+	aJlNA2A77/MP8caSRZkmC6D9PsUx9bOXT5BvUfyuxzfxj3qWmymQF0ir3jH77L1w
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4crcun7rdb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Mar 2026 19:00:09 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 629FvaW1015771;
+	Mon, 9 Mar 2026 19:00:08 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4cs121ww0t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Mar 2026 19:00:08 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 629J079s4915810
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 9 Mar 2026 19:00:08 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B444C58064;
+	Mon,  9 Mar 2026 19:00:07 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E09F35805A;
+	Mon,  9 Mar 2026 19:00:04 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.72.80])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  9 Mar 2026 19:00:04 +0000 (GMT)
+Message-ID: <c9500adc562665d44feaca9206f23a5ba07432c1.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 00/12] vfs: change inode->i_ino from unsigned long
+ to u64
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+        fsverity@lists.linux.dev, linux-mm@kvack.org, netfs@lists.linux.dev,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-nilfs@vger.kernel.org,
+        v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+        autofs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+        linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+        devel@lists.orangefs.org, linux-unionfs@vger.kernel.org,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        netdev@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-hams@vger.kernel.org, linux-x25@vger.kernel.org,
+        audit@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-can@vger.kernel.org, linux-sctp@vger.kernel.org,
+        bpf@vger.kernel.org
+In-Reply-To: <f22758116dabd3c135a833bcb5cfcd2ea4f6ecf4.camel@kernel.org>
+References: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
+		 <05b5d55c49b5a1bbc43a5315e3c84872e7e634b3.camel@linux.ibm.com>
+	 <f22758116dabd3c135a833bcb5cfcd2ea4f6ecf4.camel@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 09 Mar 2026 15:00:04 -0400
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aa8SAIBCokWCjTWJ@bfoster>
-X-Rspamd-Queue-Id: F2C3723EB23
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: IXXixi4WEaMt5ZLipHNyYmLY2v6HWLsd
+X-Authority-Analysis: v=2.4 cv=Hp172kTS c=1 sm=1 tr=0 ts=69af18ba cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=VwQbUJbxAAAA:8
+ a=o9bg_TheAfZNAX0b3qsA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA5MDE2NSBTYWx0ZWRfX6z/xa1oiKPHE
+ y5EqU++9e+D9gbPsThEA40KAIQaMNONuQFv6rphXC4UXK9hbuizpabscJIBcCstT+gR2HtuKysP
+ juuUkxGaMl7wxMTZHQleqdpaj1BApzfJEmhJlxbY5TY+zaAhKCE7FmRzIMEIOEQTi0cM+UreNNn
+ frwDdmfnFwh4sJREHHlQDdGWVECyjZbYar7Sfrv1WmeMPxeeCh8/LcWzrRHQxRnw2tvA2a4D8NR
+ c7ma8KolSpfVjNgJ0OleioMQBwEZGtoJr7jBKqVpvCDiflI9IHYr2EnI/OMDVmsDQcjOAtzHE2E
+ Cqs2ZZL0dk00OuX7g/sw5bXFEAXaWjWvfls2vJrY4HNOaz6u97184uDaehJuW5B2dmjBv87lTJU
+ mdY20MyhE/Ql/CExB+A/Xcl6KkN3u1kmsdTu44KKD0LP1RVDdsR5dGWPIvWKEchoHvJnuy6WqMG
+ FGu2ZyF+vBxNE+HNtfg==
+X-Proofpoint-ORIG-GUID: IXXixi4WEaMt5ZLipHNyYmLY2v6HWLsd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-09_05,2026-03-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 malwarescore=0 impostorscore=0 suspectscore=0
+ spamscore=0 phishscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603090165
+X-Rspamd-Queue-Id: B17EB23F1AD
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	DMARC_POLICY_ALLOW(-0.50)[ibm.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_DKIM_ALLOW(-0.20)[ibm.com:s=pp1];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79839-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[45];
+	TAGGED_FROM(0.00)[bounces-79840-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[ibm.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	NEURAL_HAM(-0.00)[-1.000];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo,linux.ibm.com:mid];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
+	FROM_NEQ_ENVFROM(0.00)[zohar@linux.ibm.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	PRECEDENCE_BULK(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCVD_COUNT_SEVEN(0.00)[11]
 X-Rspamd-Action: no action
 
-On Mon, Mar 09, 2026 at 02:31:28PM -0400, Brian Foster wrote:
-> On Mon, Mar 09, 2026 at 10:56:02AM -0700, Darrick J. Wong wrote:
-> > On Mon, Mar 09, 2026 at 09:45:06AM -0400, Brian Foster wrote:
-> > > XFS has long supported the case where it is possible to have dirty
-> > > data in pagecache backed by COW fork blocks and a hole in the data
-> > > fork. This occurs for two reasons. On reflink enabled files, COW
-> > > fork blocks are allocated with preallocation to help avoid
-> > > fragmention. Second, if a mapping lookup for a write finds blocks in
-> > > the COW fork, it consumes those blocks unconditionally. This might
-> > > mean that COW fork blocks are backed by non-shared blocks or even a
-> > > hole in the data fork, both of which are perfectly fine.
-> > > 
-> > > This leaves an odd corner case for zero range, however, because it
-> > > needs to distinguish between ranges that are sparse and thus do not
-> > > require zeroing and those that are not. A range backed by COW fork
-> > > blocks and a data fork hole might either be a legitimate hole in the
-> > > file or a range with pending buffered writes that will be written
-> > > back (which will remap COW fork blocks into the data fork).
-> > > 
-> > > This "COW fork blocks over data fork hole" situation has
-> > > historically been reported as a hole to iomap, which then has grown
-> > > a flush hack as a workaround to ensure zeroing occurs correctly. Now
-> > > that this has been lifted into the filesystem and replaced by the
-> > > dirty folio lookup mechanism, we can do better and use the pagecache
-> > > state to decide how to report the mapping. If a COW fork range
-> > > exists with dirty folios in cache, then report a typical shared
-> > > mapping. If the range is clean in cache, then we can consider the
-> > > COW blocks preallocation and call it a hole.
-> > > 
-> > > This doesn't fundamentally change behavior, but makes mapping
-> > > reporting more accurate. Note that this does require splitting
-> > > across the EOF boundary (similar to normal zero range) to ensure we
-> > > don't spuriously perform post-eof zeroing. iomap will warn about
-> > > zeroing beyond EOF because folios beyond i_size may not be written
-> > > back.
-> > 
-> > Hrmm.  I wonder if IOMAP_REPORT should grow this new "expose dirty
-> > unwritten cow fork mappings over a data fork hole" behavior too?  I
-> > guess the only user of IOMAP_REPORT that might care is swapfile
-> > activation, but that fsyncs the whole file to disk before starting the
-> > iteration so I think it won't matter?
-> > 
-> 
-> I'd have to take a closer look at that and some of the other iomap ops.
-> I had similar thoughts in the past about whether this might help clean
-> up seek hole/data and whatnot as well. For here it's primarily just a
-> cleanup, but IMO it's better for iomap if it doesn't have to carry the
-> caveat of "is this hole really a hole?"
+On Mon, 2026-03-09 at 13:59 -0400, Jeff Layton wrote:
+> On Mon, 2026-03-09 at 13:47 -0400, Mimi Zohar wrote:
+> > [ I/O socket time out.  Trimming the To list.]
+> >=20
+> > On Wed, 2026-03-04 at 10:32 -0500, Jeff Layton wrote:
+> > > This version squashes all of the format-string changes and the i_ino
+> > > type change into the same patch. This results in a giant 600+ line pa=
+tch
+> > > at the end of the series, but it does remain bisectable.  Because the
+> > > patchset was reorganized (again) some of the R-b's and A-b's have bee=
+n
+> > > dropped.
+> > >=20
+> > > The entire pile is in the "iino-u64" branch of my tree, if anyone is
+> > > interested in testing this.
+> > >=20
+> > >     https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git=
+/
+> > >=20
+> > > Original cover letter follows:
+> > >=20
+> > > ----------------------8<-----------------------
+> > >=20
+> > > Christian said [1] to "just do it" when I proposed this, so here we a=
+re!
+> > >=20
+> > > For historical reasons, the inode->i_ino field is an unsigned long,
+> > > which means that it's 32 bits on 32 bit architectures. This has cause=
+d a
+> > > number of filesystems to implement hacks to hash a 64-bit identifier
+> > > into a 32-bit field, and deprives us of a universal identifier field =
+for
+> > > an inode.
+> > >=20
+> > > This patchset changes the inode->i_ino field from an unsigned long to=
+ a
+> > > u64. This shouldn't make any material difference on 64-bit hosts, but
+> > > 32-bit hosts will see struct inode grow by at least 4 bytes. This cou=
+ld
+> > > have effects on slabcache sizes and field alignment.
+> > >=20
+> > > The bulk of the changes are to format strings and tracepoints, since =
+the
+> > > kernel itself doesn't care that much about the i_ino field. The first
+> > > patch changes some vfs function arguments, so check that one out
+> > > carefully.
+> > >=20
+> > > With this change, we may be able to shrink some inode structures. For
+> > > instance, struct nfs_inode has a fileid field that holds the 64-bit
+> > > inode number. With this set of changes, that field could be eliminate=
+d.
+> > > I'd rather leave that sort of cleanups for later just to keep this
+> > > simple.
+> > >=20
+> > > Much of this set was generated by LLM, but I attributed it to myself
+> > > since I consider this to be in the "menial tasks" category of LLM usa=
+ge.
+> > >=20
+> > > [1]: https://lore.kernel.org/linux-fsdevel/20260219-portrait-winkt-95=
+9070cee42f@brauner/
+> > >=20
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> >=20
+> > Jeff, missing from this patch set is EVM.  In hmac_add_misc() EVM copie=
+s the
+> > i_ino and calculates either an HMAC or file meta-data hash, which is th=
+en
+> > signed.=20
+> >=20
+> >=20
+>=20
+> Thanks Mimi, good catch.
+>=20
+> It looks like we should just be able to change the ino field to a u64
+> alongside everything else. Something like this:
+>=20
+> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm=
+/evm_crypto.c
+> index c0ca4eedb0fe..77b6c2fa345e 100644
+> --- a/security/integrity/evm/evm_crypto.c
+> +++ b/security/integrity/evm/evm_crypto.c
+> @@ -144,7 +144,7 @@ static void hmac_add_misc(struct shash_desc *desc, st=
+ruct inode *inode,
+>                           char type, char *digest)
+>  {
+>         struct h_misc {
+> -               unsigned long ino;
+> +               u64 ino;
+>                 __u32 generation;
+>                 uid_t uid;
+>                 gid_t gid;
+>=20
 
-Ooooh, right -- that does need to get fixed for SEEK_{DATA,HOLE} because
-otherwise it'll miss dirty data over a cow preallocation.
+Agreed.
 
-> > > Signed-off-by: Brian Foster <bfoster@redhat.com>
-> > 
-> > /me isn't sure he sees the point of doing this only for IOMAP_ZERO but
-> > you're right that it's weird to pass a folio batch and a hole mapping to
-> > iomap so
-> > 
-> > Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-> > 
-> 
-> Thanks.
+>=20
+> That should make no material difference on 64-bit hosts. What's the
+> effect on 32-bit? Will they just need to remeasure everything or would
+> the consequences be more dire? Do we have any clue whether anyone is
+> using EVM in 32-bit environments?
 
-NP. :)
+All good questions. Unfortunately I don't know the answer to most of them. =
+What
+we do know: changing the size of the i_ino field would affect EVM file meta=
+data
+verification and would require relabeling the filesystem.  Even packages
+containing EVM portable signatures, which don't include or verify the i_ino
+number, would be affected.
 
---D
+Mimi
 
-> Brian
-> 
-> > --D
-> > 
-> > > ---
-> > >  fs/xfs/xfs_iomap.c | 25 +++++++++++++++++++++----
-> > >  1 file changed, 21 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> > > index df240931f07a..3bef5ea610bb 100644
-> > > --- a/fs/xfs/xfs_iomap.c
-> > > +++ b/fs/xfs/xfs_iomap.c
-> > > @@ -1786,6 +1786,7 @@ xfs_buffered_write_iomap_begin(
-> > >  	xfs_fileoff_t		offset_fsb = XFS_B_TO_FSBT(mp, offset);
-> > >  	xfs_fileoff_t		end_fsb = xfs_iomap_end_fsb(mp, offset, count);
-> > >  	xfs_fileoff_t		cow_fsb = NULLFILEOFF;
-> > > +	xfs_fileoff_t		eof_fsb = XFS_B_TO_FSB(mp, XFS_ISIZE(ip));
-> > >  	struct xfs_bmbt_irec	imap, cmap;
-> > >  	struct xfs_iext_cursor	icur, ccur;
-> > >  	xfs_fsblock_t		prealloc_blocks = 0;
-> > > @@ -1868,7 +1869,8 @@ xfs_buffered_write_iomap_begin(
-> > >  	 * cache and fill the iomap batch with folios that need zeroing.
-> > >  	 */
-> > >  	if ((flags & IOMAP_ZERO) && imap.br_startoff > offset_fsb) {
-> > > -		loff_t	start, end;
-> > > +		loff_t		start, end;
-> > > +		unsigned int	fbatch_count;
-> > >  
-> > >  		imap.br_blockcount = imap.br_startoff - offset_fsb;
-> > >  		imap.br_startoff = offset_fsb;
-> > > @@ -1883,15 +1885,32 @@ xfs_buffered_write_iomap_begin(
-> > >  			goto found_imap;
-> > >  		}
-> > >  
-> > > +		/* no zeroing beyond eof, so split at the boundary */
-> > > +		if (offset_fsb >= eof_fsb)
-> > > +			goto found_imap;
-> > > +		if (offset_fsb < eof_fsb && end_fsb > eof_fsb)
-> > > +			xfs_trim_extent(&imap, offset_fsb, eof_fsb - offset_fsb);
-> > > +
-> > >  		/* COW fork blocks overlap the hole */
-> > >  		xfs_trim_extent(&imap, offset_fsb,
-> > >  			    cmap.br_startoff + cmap.br_blockcount - offset_fsb);
-> > >  		start = XFS_FSB_TO_B(mp, imap.br_startoff);
-> > >  		end = XFS_FSB_TO_B(mp, imap.br_startoff + imap.br_blockcount);
-> > > -		iomap_fill_dirty_folios(iter, &start, end, &iomap_flags);
-> > > +		fbatch_count = iomap_fill_dirty_folios(iter, &start, end,
-> > > +						       &iomap_flags);
-> > >  		xfs_trim_extent(&imap, offset_fsb,
-> > >  				XFS_B_TO_FSB(mp, start) - offset_fsb);
-> > >  
-> > > +		/*
-> > > +		 * Report the COW mapping if we have folios to zero. Otherwise
-> > > +		 * ignore the COW blocks as preallocation and report a hole.
-> > > +		 */
-> > > +		if (fbatch_count) {
-> > > +			xfs_trim_extent(&cmap, imap.br_startoff,
-> > > +					imap.br_blockcount);
-> > > +			imap.br_startoff = end_fsb;	/* fake hole */
-> > > +			goto found_cow;
-> > > +		}
-> > >  		goto found_imap;
-> > >  	}
-> > >  
-> > > @@ -1901,8 +1920,6 @@ xfs_buffered_write_iomap_begin(
-> > >  	 * unwritten extent.
-> > >  	 */
-> > >  	if (flags & IOMAP_ZERO) {
-> > > -		xfs_fileoff_t eof_fsb = XFS_B_TO_FSB(mp, XFS_ISIZE(ip));
-> > > -
-> > >  		if (isnullstartblock(imap.br_startblock) &&
-> > >  		    offset_fsb >= eof_fsb)
-> > >  			goto convert_delay;
-> > > -- 
-> > > 2.52.0
-> > > 
-> > > 
-> > 
-> 
-> 
+
+
+
 
