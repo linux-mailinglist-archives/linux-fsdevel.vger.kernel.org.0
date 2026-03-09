@@ -1,74 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-79837-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WHg0FBASr2nJNQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79837-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 19:31:44 +0100
+	id eAiEBRQUr2nJNQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 19:40:20 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAB4B23E9DC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 19:31:43 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7390123EB80
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 19:40:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 3706D300D179
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 18:31:41 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0DB88310B08F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 18:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E943E3346AF;
-	Mon,  9 Mar 2026 18:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 379F0349B1C;
+	Mon,  9 Mar 2026 18:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wr+48/Oa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+s/szMd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FEE11E98E3
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Mar 2026 18:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC7B340A59
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Mar 2026 18:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773081099; cv=none; b=BXpWYGca6YoEsM+ARAgZm38Mc4a8QygAIQ22ahTZz6gQiYtk/sVZAVv1iMZeQYmgY8biG9or2eytejcMcWyB/xCApP3zy49CFF4binoh/WbDnTbbrg9w6TnJIroPS0wFfICJ0Ty1n/wJPqZM6kGKmPxrCpx4PQy8f7VOW1pTpSs=
+	t=1773081328; cv=none; b=AGAHGIhg5eyDVNQ/SDzImE+8XQd6zdExtW1re06291/AeBKFnxSpk8XdAYNGH4O8FTZmx6vvw/E0UgcAvuKfb47+3GEQ2hUtahCv4NpBTwxB9vDPkGVLbkv6bKyiNSnfWxtF3wwfnsbdcIsPQi1i+95RUZ2+8sWD6roG8rrQiks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773081099; c=relaxed/simple;
-	bh=lLLCHk4i98fIV7FcKxxGBbiMquec2aPQc7quNqJ4U0s=;
+	s=arc-20240116; t=1773081328; c=relaxed/simple;
+	bh=nF787sr2BnRi+zUnax+t8uLIU88UGpf/xu/38vFtlX8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D8+7wjYQ+wcdHwtm1BbGqIcA7HZI4Yg1m+yVvwEjVamGNHo5ry4Vu9mMzhZadmzIQmkMn7By07Xto/jwL7HI7s/1fXeEuvitBQNXzgKBrTTuHRDmfAX9VfeCee8+LiBjMLWwEi/c/GuRgXFnpr87lHyhGaGcTy0aG1moe3GYE0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wr+48/Oa; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1773081097;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3t0FTVb5TmCQZpwgtY6rFB/t/h/fM2tKdwSKVyTt1cI=;
-	b=Wr+48/OaNNVDgSJNUZi0ZaBYFY3XQ7HP/2VLr4kZeB63bv12HNHOEgrk8++u9pyxQ66Pfg
-	RGJCrZuq9ZXOhCM1mavQ+f0f+zhi26lDx2ua6SPsqnlCRFlxD6CfMKUafzt460kCyW8Zsr
-	atoR+/e/9zy7EOXe2pdp/PWRsV9AVn4=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-446-6HLORRaTNiSOABqPcomQVg-1; Mon,
- 09 Mar 2026 14:31:33 -0400
-X-MC-Unique: 6HLORRaTNiSOABqPcomQVg-1
-X-Mimecast-MFC-AGG-ID: 6HLORRaTNiSOABqPcomQVg_1773081091
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CD3AE195609F;
-	Mon,  9 Mar 2026 18:31:31 +0000 (UTC)
-Received: from bfoster (unknown [10.22.89.107])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3021F19560A6;
-	Mon,  9 Mar 2026 18:31:31 +0000 (UTC)
-Date: Mon, 9 Mar 2026 14:31:28 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v3 8/8] xfs: report cow mappings with dirty pagecache for
- iomap zero range
-Message-ID: <aa8SAIBCokWCjTWJ@bfoster>
-References: <20260309134506.167663-1-bfoster@redhat.com>
- <20260309134506.167663-9-bfoster@redhat.com>
- <20260309175602.GR6033@frogsfrogsfrogs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IzYh5+q/jgoRCYSHT+gzHk9WihiS+/Fx8vpXev3/h6SpUzl/8OgB6YguWqELDmFJGIFy0bA9DD+cqDgmsqIBDwDSbU4sOjA48KauHXxG1fdWMR7DiLq6l4MZ2jRp1TTv+sdeQMs/N9BdBd1dLcvsSOquZBsPoBP39khWsborFXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+s/szMd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5332AC4CEF7;
+	Mon,  9 Mar 2026 18:35:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773081328;
+	bh=nF787sr2BnRi+zUnax+t8uLIU88UGpf/xu/38vFtlX8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X+s/szMdvL23289PEgDt8IVO0psFvvHsR08z0Z+Ao+Ge0rAeJHV9zfiIAhLXYWXUi
+	 xxezrTVRUwSi2GK2Q5BzJWv2SpO3WFF2JZBNI52aim5PmSqTru2J4S9ooszUWDDsQt
+	 Tm9Uf8SsTblRLsdzlSbJuqkG6HBeEGrkGYl1x1UiYWISxP3dVD3pVj3CwJnbFLOwfD
+	 mCeq8zV9+IiQQz+jwKz8zSUL54GEcttni2etl991QeL8/Kl7+Z3lvMqSNX3CGxs8m+
+	 BDQOf98RWF8nRRhinEli0hsP/bdphCMlm6rJVttWl8/yuAkneiYfLeACrWcGHwzQHZ
+	 RLffawZcv6V/g==
+Date: Mon, 9 Mar 2026 11:35:27 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Bernd Schubert <bernd@bsbernd.com>
+Cc: bschubert@ddn.com, joannelkoong@gmail.com,
+	linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, neal@gompa.dev
+Subject: Re: [GIT PULL] libfuse: run fuse servers as a contained service
+Message-ID: <20260309183527.GB6069@frogsfrogsfrogs>
+References: <177258294351.1167732.4543535509077707738.stg-ugh@frogsfrogsfrogs>
+ <0d3d5dfc-6237-4d6d-abeb-e7adddecf2d9@bsbernd.com>
+ <20260304232353.GS13829@frogsfrogsfrogs>
+ <20260309022710.GA6012@frogsfrogsfrogs>
+ <74356338-99d3-41dd-9ec0-12f62a1d7e6a@bsbernd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -77,175 +64,184 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260309175602.GR6033@frogsfrogsfrogs>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
-X-Rspamd-Queue-Id: BAB4B23E9DC
+In-Reply-To: <74356338-99d3-41dd-9ec0-12f62a1d7e6a@bsbernd.com>
+X-Rspamd-Queue-Id: 7390123EB80
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.34 / 15.00];
-	MID_END_EQ_FROM_USER_PART(4.00)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
 	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79837-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[redhat.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[bfoster@redhat.com,linux-fsdevel@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[3];
-	RCVD_COUNT_FIVE(0.00)[6];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	NEURAL_HAM(-0.00)[-0.990];
+	TAGGED_FROM(0.00)[bounces-79838-lists,linux-fsdevel=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FREEMAIL_CC(0.00)[ddn.com,gmail.com,vger.kernel.org,szeredi.hu,gompa.dev];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	NEURAL_HAM(-0.00)[-0.999];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[djwong@kernel.org,linux-fsdevel@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On Mon, Mar 09, 2026 at 10:56:02AM -0700, Darrick J. Wong wrote:
-> On Mon, Mar 09, 2026 at 09:45:06AM -0400, Brian Foster wrote:
-> > XFS has long supported the case where it is possible to have dirty
-> > data in pagecache backed by COW fork blocks and a hole in the data
-> > fork. This occurs for two reasons. On reflink enabled files, COW
-> > fork blocks are allocated with preallocation to help avoid
-> > fragmention. Second, if a mapping lookup for a write finds blocks in
-> > the COW fork, it consumes those blocks unconditionally. This might
-> > mean that COW fork blocks are backed by non-shared blocks or even a
-> > hole in the data fork, both of which are perfectly fine.
-> > 
-> > This leaves an odd corner case for zero range, however, because it
-> > needs to distinguish between ranges that are sparse and thus do not
-> > require zeroing and those that are not. A range backed by COW fork
-> > blocks and a data fork hole might either be a legitimate hole in the
-> > file or a range with pending buffered writes that will be written
-> > back (which will remap COW fork blocks into the data fork).
-> > 
-> > This "COW fork blocks over data fork hole" situation has
-> > historically been reported as a hole to iomap, which then has grown
-> > a flush hack as a workaround to ensure zeroing occurs correctly. Now
-> > that this has been lifted into the filesystem and replaced by the
-> > dirty folio lookup mechanism, we can do better and use the pagecache
-> > state to decide how to report the mapping. If a COW fork range
-> > exists with dirty folios in cache, then report a typical shared
-> > mapping. If the range is clean in cache, then we can consider the
-> > COW blocks preallocation and call it a hole.
-> > 
-> > This doesn't fundamentally change behavior, but makes mapping
-> > reporting more accurate. Note that this does require splitting
-> > across the EOF boundary (similar to normal zero range) to ensure we
-> > don't spuriously perform post-eof zeroing. iomap will warn about
-> > zeroing beyond EOF because folios beyond i_size may not be written
-> > back.
+On Mon, Mar 09, 2026 at 06:34:32PM +0100, Bernd Schubert wrote:
+> Hi Darrick,
 > 
-> Hrmm.  I wonder if IOMAP_REPORT should grow this new "expose dirty
-> unwritten cow fork mappings over a data fork hole" behavior too?  I
-> guess the only user of IOMAP_REPORT that might care is swapfile
-> activation, but that fsyncs the whole file to disk before starting the
-> iteration so I think it won't matter?
-> 
+> really sorry for mys late reply. To my excuse I have the flu since
+> Thursday and until yesterday it got worse every day.
 
-I'd have to take a closer look at that and some of the other iomap ops.
-I had similar thoughts in the past about whether this might help clean
-up seek hole/data and whatnot as well. For here it's primarily just a
-cleanup, but IMO it's better for iomap if it doesn't have to carry the
-caveat of "is this hole really a hole?"
+Oh, no worries.  I hope you feel better soon, but take the time to rest
+and get well!
 
-> > Signed-off-by: Brian Foster <bfoster@redhat.com>
-> 
-> /me isn't sure he sees the point of doing this only for IOMAP_ZERO but
-> you're right that it's weird to pass a folio batch and a hole mapping to
-> iomap so
-> 
-> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-> 
-
-Thanks.
-
-Brian
-
-> --D
-> 
-> > ---
-> >  fs/xfs/xfs_iomap.c | 25 +++++++++++++++++++++----
-> >  1 file changed, 21 insertions(+), 4 deletions(-)
+> On 3/9/26 03:27, Darrick J. Wong wrote:
+> > On Wed, Mar 04, 2026 at 03:23:53PM -0800, Darrick J. Wong wrote:
+> >> On Wed, Mar 04, 2026 at 02:36:03PM +0100, Bernd Schubert wrote:
+> >>>
+> >>>
+> >>> On 3/4/26 01:11, Darrick J. Wong wrote:
+> >>>> Hi Bernd,
+> >>>>
+> >>>> Please pull this branch with changes for libfuse.
+> >>>>
+> >>>> As usual, I did a test-merge with the main upstream branch as of a few
+> >>>> minutes ago, and didn't see any conflicts.  Please let me know if you
+> >>>> encounter any problems.
+> >>>
+> >>> Hi Darrick,
+> >>>
+> >>> quite some problems actually ;)
+> >>>
+> >>> https://github.com/libfuse/libfuse/pull/1444
+> >>>
+> >>> Basically everything fails.  Build test with
+> >>>
+> >>> ../../../home/runner/work/libfuse/libfuse/lib/fuse_service.c:24:10:
+> >>> fatal error: 'systemd/sd-daemon.h' file not found
+> >>>    24 | #include <systemd/sd-daemon.h>
+> >>>
+> >>>
+> >>> Two issues here:
+> >>> a) meson is not testing for sd-daemon.h?
+> >>> a.1) If not available needs to disable that service? Because I don't
+> >>> think BSD has support for systemd.
+> >>>
+> >>> b) .github/workflow/*.yml files need to be adjusted to add in the new
+> >>> dependency.
+> >>>
+> >>>
+> >>> Please also have a look at checkpatch (which is a plain linux copy) and
+> >>> the spelling test failures.
+> >>
+> >> I have a few questions after running checkpatch.pl (the one in the
+> >> libfuse repo):
+> >>
+> >> 1. What are the error return conventions for libfuse functions?
+> >>
+> >>    The lowlevel library mostly seems to return 0 for succes or negative
+> >>    errno, but not all of them are like that, e.g. fuse_parse_cmdline*.
+> >>
+> >>    The rest of libfuse mostly seems to return 0 for success or -1 for
+> >>    error, though it's unclear if they set errno to anything?
+> >>
+> >>    This comes up because checkpatch complains about "return ENOTBLK",
+> >>    saying that it should be returning -ENOTBLK.  But I'm already sorta
+> >>    confused because libfuse and its examples use positive and negative
+> >>    errno inconsistently.
 > > 
-> > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> > index df240931f07a..3bef5ea610bb 100644
-> > --- a/fs/xfs/xfs_iomap.c
-> > +++ b/fs/xfs/xfs_iomap.c
-> > @@ -1786,6 +1786,7 @@ xfs_buffered_write_iomap_begin(
-> >  	xfs_fileoff_t		offset_fsb = XFS_B_TO_FSBT(mp, offset);
-> >  	xfs_fileoff_t		end_fsb = xfs_iomap_end_fsb(mp, offset, count);
-> >  	xfs_fileoff_t		cow_fsb = NULLFILEOFF;
-> > +	xfs_fileoff_t		eof_fsb = XFS_B_TO_FSB(mp, XFS_ISIZE(ip));
-> >  	struct xfs_bmbt_irec	imap, cmap;
-> >  	struct xfs_iext_cursor	icur, ccur;
-> >  	xfs_fsblock_t		prealloc_blocks = 0;
-> > @@ -1868,7 +1869,8 @@ xfs_buffered_write_iomap_begin(
-> >  	 * cache and fill the iomap batch with folios that need zeroing.
-> >  	 */
-> >  	if ((flags & IOMAP_ZERO) && imap.br_startoff > offset_fsb) {
-> > -		loff_t	start, end;
-> > +		loff_t		start, end;
-> > +		unsigned int	fbatch_count;
-> >  
-> >  		imap.br_blockcount = imap.br_startoff - offset_fsb;
-> >  		imap.br_startoff = offset_fsb;
-> > @@ -1883,15 +1885,32 @@ xfs_buffered_write_iomap_begin(
-> >  			goto found_imap;
-> >  		}
-> >  
-> > +		/* no zeroing beyond eof, so split at the boundary */
-> > +		if (offset_fsb >= eof_fsb)
-> > +			goto found_imap;
-> > +		if (offset_fsb < eof_fsb && end_fsb > eof_fsb)
-> > +			xfs_trim_extent(&imap, offset_fsb, eof_fsb - offset_fsb);
-> > +
-> >  		/* COW fork blocks overlap the hole */
-> >  		xfs_trim_extent(&imap, offset_fsb,
-> >  			    cmap.br_startoff + cmap.br_blockcount - offset_fsb);
-> >  		start = XFS_FSB_TO_B(mp, imap.br_startoff);
-> >  		end = XFS_FSB_TO_B(mp, imap.br_startoff + imap.br_blockcount);
-> > -		iomap_fill_dirty_folios(iter, &start, end, &iomap_flags);
-> > +		fbatch_count = iomap_fill_dirty_folios(iter, &start, end,
-> > +						       &iomap_flags);
-> >  		xfs_trim_extent(&imap, offset_fsb,
-> >  				XFS_B_TO_FSB(mp, start) - offset_fsb);
-> >  
-> > +		/*
-> > +		 * Report the COW mapping if we have folios to zero. Otherwise
-> > +		 * ignore the COW blocks as preallocation and report a hole.
-> > +		 */
-> > +		if (fbatch_count) {
-> > +			xfs_trim_extent(&cmap, imap.br_startoff,
-> > +					imap.br_blockcount);
-> > +			imap.br_startoff = end_fsb;	/* fake hole */
-> > +			goto found_cow;
-> > +		}
-> >  		goto found_imap;
-> >  	}
-> >  
-> > @@ -1901,8 +1920,6 @@ xfs_buffered_write_iomap_begin(
-> >  	 * unwritten extent.
-> >  	 */
-> >  	if (flags & IOMAP_ZERO) {
-> > -		xfs_fileoff_t eof_fsb = XFS_B_TO_FSB(mp, XFS_ISIZE(ip));
-> > -
-> >  		if (isnullstartblock(imap.br_startblock) &&
-> >  		    offset_fsb >= eof_fsb)
-> >  			goto convert_delay;
-> > -- 
-> > 2.52.0
+> > Hi Bernd,
 > > 
-> > 
+> > Having spent a few days looking through lib/fuse*.c more carefully, I've
+> > come to the conclusion that most lowlevel library functions return 0 or
+> > negative errno on failure, and they often call fuse_log to complain
+> > about whatever failed.  Oddly, fuse_reply_err takes positive errno and
+> > ll servers are required to handle sign conversions correctly.  The high
+> > level fuse library does this inversion.
 > 
+> Yeah I know, confusing. But without breaking the API I don't think there
+> is much we can do about now.
 
+<nod> I agree, the existing library api can't change unless someone
+introduce a new name (e.g. fuse_session_custom_io_317)
+
+> > If that sounds like a reasonable approach for fuse_service.c then I'll
+> > convert it to log and return negative errno like the lowlevel library
+> > does.  Right now it mostly sets errno and returns -1, and isn't
+> > completely consistent about fuse_log().  util/mount_service.c will get
+> > changed to fprintf to stderr and return negative errno on failure.
+> 
+> 
+> Sounds good to me. Obviously for expected errors you don't want to
+
+Ok good, will go do that this afternoon.
+
+For logging ... I think what I'm going to do is log communication errors
+between the mount helper and the fuse server, but pass errors from the
+kernel api calls (e.g. ENOENT for an open()) straight to the fuse server
+and let them figure out what they want to do.
+
+Maybe I'll consider negative errno for comms failure and positive errno
+for expected errors <shrug>.  Let's see how that goes.
+
+> create logs. Logging is another topic I need to address at some point,
+> so that one can set the actual level one wants to print.
+
+Oh, I figured one simply overrode the logging function if they wanted
+non-default parameters. ;)
+
+> > For *_service.c functions that pass around fds from files opened on the
+> > other side of the service socket, a failure to open a file will result
+> > in the negative errno being sent in place of an fd.
+> > 
+> > How does that sound?
+> > 
+> > --D
+> > 
+> >> 2. There's no strscpy, but the check is left on, and there are plenty of
+> >>    users in libfuse.
+> 
+> Hrmm right, I had copied the script from linux to libfuse so that it
+> complains about wrong code style. So far it was mostly possible to
+> disable checks, in this specific case we probably need to modify
+> checkpatch. Pity, that will make it impossible to simply copy over newer
+> versions.
+
+Oh I was just extracting the checkpatch.pl command line from
+.github/workflows/checkpatch.yml so I think you could just add "STRCPY"
+to the --ignore value in that file.
+
+> >>
+> >> 3. Comments at the top of files -- checkpatch complains that the
+> >>    non-first lines of a multiline C comment should start with " * "but
+> >>    not all of them do that.  Should I just do C comments the way
+> >>    checkpatch wants?  Or keep going with the existing code?
+> 
+> I guess here it is better to follow checkpatch and change to the style,
+> it expects.
+
+That is the nice thing about running checkpatch as a git hook -- it only
+applies to new(ly changed) code. :)
+
+Get well soon!
+
+--D
+
+> 
+> 
+> Thanks,
+> Bernd
+> 
+> 
 
