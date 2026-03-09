@@ -1,263 +1,301 @@
-Return-Path: <linux-fsdevel+bounces-79820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 6ECRNsAEr2knLwIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 18:34:56 +0100
+	id 2Cb5DDUFr2lwLwIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 18:36:53 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4273A23DAF4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 18:34:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91AEC23DB72
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 18:36:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 0DBBE301BF74
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 17:34:40 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 0F176305A8BA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 17:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2743A2EBDDE;
-	Mon,  9 Mar 2026 17:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1DC2F49F6;
+	Mon,  9 Mar 2026 17:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="KeLY1Koy";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZxR7wig+"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YAOI/wZ/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56211DC9B3
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Mar 2026 17:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07943C1970;
+	Mon,  9 Mar 2026 17:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773077678; cv=none; b=lgsjD72ys0IsTlQ61T/MxzgvvNDf6EKSe8vWNz9DhS2comeAdAGNcwqvYL/3ZE7Hfqyf0jcsOvCzZywgpGFMikgx94S5fBzpBH+BcxtMVBZshK+tN1eMx+Jevk4yFWE/cW90/wtllUHYlv1WFA1oYKeUTDNc2qqqowmKdWqV/Jk=
+	t=1773077712; cv=none; b=r1dSfIGyPYTqn0JaEPmCAY7997CXFjrCb71sdstAqF+rB4bcKUPolWpI0CPLBCmKXx5QS9WY2C8dI+pfRB+VVnYVq2FdXJ8qMFYz1MPIF4NK7JIgeVu98MsL69WCYEbfoTPPMxVk9xOg0sR/SX7E1nOpXpoElCaStiZsDqcaZBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773077678; c=relaxed/simple;
-	bh=pIbLFdIZBip+RWddW6vHEwW4MriIbVvl0hGCG0r+DJM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kne40+hunwNgb5vLmwii/3tet2lJlmHlLeh52GJQ/bRnyeaZOclN6BiNsBOw5CjXp0TkuDRZFMxT6XSJssia9fgWDbc2Tj8iddDFFvMFcNvrC6u/DrTHAbX2LWd4k4Coqvroy84ZaCOGGOg/nRglX1ssa+PMXE39acLno5o6CfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=KeLY1Koy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZxR7wig+; arc=none smtp.client-ip=202.12.124.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfout.stl.internal (Postfix) with ESMTP id B11A51D00237;
-	Mon,  9 Mar 2026 13:34:35 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Mon, 09 Mar 2026 13:34:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1773077675;
-	 x=1773164075; bh=L/DX4dqZar6JhZnHb+7p+VU+TTqaetDRKHcVQmtZAIQ=; b=
-	KeLY1Koy6yedE/q2qfxaNNpGkIQv6kLGDX++ikowMZxa9E4ZVFH8K8aEuyR3wZZo
-	XYp4V5CMvyl7uV44ZsOBMPyCmI8mQpvhBBS96GFa+FF66Z2uuv9pNSbaWIiy+ZqC
-	DAXTVigkVWN9byTHAWp8HIsQ5UYiuIgFtmZfG4+BljWYzBl6qdqVFiiKZl6iEZ3i
-	8xMoDWksguTZ6LyrgXNYWBT4Ovf7r41uOUJimBpNIJnalCLWY0eUyUtixwq1sJaW
-	j7e0g2mA88IlIoYH8JsQgkIdcj9twKomWXClvmXqwGIPcq8bmRMBi5QdYh0GD4zy
-	N/18KnsEz0z0upF+vYkTuA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773077675; x=
-	1773164075; bh=L/DX4dqZar6JhZnHb+7p+VU+TTqaetDRKHcVQmtZAIQ=; b=Z
-	xR7wig+zVwWuKmDqqXBupAB+7Y2+0uQO62Slpr3ZBZ8M5/BmIHhZYrwvXCFKn/9Y
-	AVM24Qn8hmYxT78KoTQaQTTzddqISc3uZPIhKEJnBVQOmh4MtVuAcB47f+o5RJyj
-	r7/ZqEd9VSgONhtYsUBauOOU7waIwDk4PEFKcdTt+pv5vmPgoGt4SSkyhGPxfIz3
-	0AefV9A6/3R/8YUkQqQIKKhwU9zfChWq44uM4mdQt+uDDUgaYDCIUQg3K+QVzXDB
-	McoQHzuBRaIvGiOjHIe74vBL6m63MT5Unp+96E8Th5zmVqfZdyoybZ+KVni72qXH
-	rEhXItXspRSkssU8bOnVA==
-X-ME-Sender: <xms:qgSvab9WmyKarUkg7LLFlQwaiv-5y7XK9FA9bI-KBofnGp5fOspCBA>
-    <xme:qgSvabbKmN0KQLisir18_WmIHyqa39cvs8cRJp76FWXP9Sn_k-tN3jAI6OjBFXlFD
-    5r0m269pjZH5fmOos6aJ2Vr5YtiHeEwE72ztwYPstAzMnrHRFDK>
-X-ME-Received: <xmr:qgSvaS0uuZxp08rE8b2-Qel8GVQQl-gxCJknaSFav-RuJlLk400pI_RRAIXZOxinQbB3Ja74988M2HuM-4zMD7Phb0PjhUV0870wGtM61ZYZp7YsTg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvjeekjeefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghrnhgu
-    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
-    htthgvrhhnpeeugfevvdeggeeutdelgffgiefgffejheffkedtieduffehledvfeevgeej
-    hedtjeenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtgho
-    mhdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepug
-    hjfihonhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsshgthhhusggvrhhtsegu
-    ughnrdgtohhmpdhrtghpthhtohepjhhorghnnhgvlhhkohhonhhgsehgmhgrihhlrdgtoh
-    hmpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoh
-    epnhgvrghlsehgohhmphgrrdguvghv
-X-ME-Proxy: <xmx:qgSvaeaGvpU8woaMce1IG9I0qm9Q2hl1QHqzWsJVeYaiO5Ozh1leKA>
-    <xmx:qgSvaSLjzyVJJWG_u86M1N0ZUUp86QxVcT9wy7mkdG4D1k3rWSUuEw>
-    <xmx:qgSvaVFgHE7ppvf75VHZOzvFWCMnAFMOa1v7BjdgUKRVmCxVd8R8PQ>
-    <xmx:qgSvaRs_UtfDLQMYy2PLyu1njm53GRxAv5CpBm9-4N6aBRWiHOlPGw>
-    <xmx:qwSvaaV-VpbqQDvbsbj7LRzcDkimge-KrA-SYpkGWMGX77dUQVG3PGgh>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 9 Mar 2026 13:34:33 -0400 (EDT)
-Message-ID: <74356338-99d3-41dd-9ec0-12f62a1d7e6a@bsbernd.com>
-Date: Mon, 9 Mar 2026 18:34:32 +0100
+	s=arc-20240116; t=1773077712; c=relaxed/simple;
+	bh=lafVXzuhV61RjmVrewetl0LZjUOWGKV1axCa+l3Yj6w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mNg6LxnbnU3HkA4mvP73rVMmJhLhaKnQb7wRwMcRh+fRd64tx4YRNoUrjqVG6EimvgpfCQZcXDVZ/EftKu3+IEYNPlRAprYFUNxXHW8RZfQIt6jx7T2xCy6aZmSpP7FLZWooR16A2pVV9FcvYK8S9/f69p8A98HXQHSsMqKevPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YAOI/wZ/; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 629F56jS1503836;
+	Mon, 9 Mar 2026 17:34:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=pp1; bh=Vtlhm0EQ1xSG1AnmV
+	kTMbebOcFrwSxiUsQY+cdkOjVQ=; b=YAOI/wZ/8OimsXaDvDlPxjpki1Qjx3RMx
+	L9nQRWJiI0jZtrxRDQE96kPt337TMSiVItEqwuTsY5QpTQYlLUWbKpF2a43WEYl7
+	FNztpE4e0Ijpj2egonKXqjaFNgh8x+9PmM4FkDPAJK80yG/LkVvrTMDJFFuGXKId
+	qjaPm8fgWCC4RP/xdSK0foNoTKnaDM04wepXcR5/BWebtYGRIsge17aTWyPW8JnD
+	+M5Hm/tcKKJc6jPfmIPNi7Esv5tt5M612ZxImQ75AZQ610pD0N+mHMZo/tbCmV/x
+	q1Z58gCSyxAK5ztqpHI8zX9dsPKtp6qqDyVi+WFE593PSwdm1Zz8w==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4crcvr7gp1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Mar 2026 17:34:46 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 629DjNq9029356;
+	Mon, 9 Mar 2026 17:34:46 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4csp6ujjk5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Mar 2026 17:34:45 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 629HYhfM52036046
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 9 Mar 2026 17:34:44 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D7F7A20043;
+	Mon,  9 Mar 2026 17:34:43 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 35B7920040;
+	Mon,  9 Mar 2026 17:34:41 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.22.68])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  9 Mar 2026 17:34:40 +0000 (GMT)
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: djwong@kernel.org, john.g.garry@oracle.com, willy@infradead.org,
+        hch@lst.de, ritesh.list@gmail.com, jack@suse.cz,
+        Luis Chamberlain <mcgrof@kernel.org>, dgc@kernel.org, tytso@mit.edu,
+        p.raghav@samsung.com, andres@anarazel.de, linux-kernel@vger.kernel.org
+Subject: [RFC 2/3] iomap: Enable stable writes for RWF_WRITETHROUGH inodes
+Date: Mon,  9 Mar 2026 23:04:32 +0530
+Message-ID: <3704b81046b11f8b8da0367c7c8ad8767f42e5df.1773076216.git.ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <cover.1773076216.git.ojaswin@linux.ibm.com>
+References: <cover.1773076216.git.ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] libfuse: run fuse servers as a contained service
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: bschubert@ddn.com, joannelkoong@gmail.com, linux-fsdevel@vger.kernel.org,
- miklos@szeredi.hu, neal@gompa.dev
-References: <177258294351.1167732.4543535509077707738.stg-ugh@frogsfrogsfrogs>
- <0d3d5dfc-6237-4d6d-abeb-e7adddecf2d9@bsbernd.com>
- <20260304232353.GS13829@frogsfrogsfrogs>
- <20260309022710.GA6012@frogsfrogsfrogs>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <20260309022710.GA6012@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 4273A23DAF4
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA5MDE1OCBTYWx0ZWRfX68f8wx7XIu53
+ Enl2neocfxBMLdQx+ZNIosXumzEksznAo0zQPvxkB2sH7/dCFSjMK04u1XoHgnpbjIWfloY1uiI
+ 9e71XuWVW467n/4EJZMh0YVIQnobX/RkXZFI2VDV1WYlFY1Xr6r30lITlPEPfzNCi5LSe+Nwpqg
+ NtQIi0NDrdC69DQxKiyRQPg5IpHK/F2srqYia4BkeVC4cdan0G+vzZlZODDSj6P8cJ4WYtsEjd3
+ dTQbqXLPzs9xt0DBVO420BcIJYRol37p9RncpFpZsphcydFiQUEBP9fwoE3jNXKHDvI5c4t/gM8
+ V6djGyo4MMhRrXmjAnaLin1kFUEVMKKozb+r598nLVDVG3UGR04gZkkd6FlQ2dZbmEL3BHDCkuF
+ UoE9PiRsN3BD3qOTEVDsjeExNhsZL2tPmn0HB9ycn+TEkRbsyBWE0BZVMOYAeMjVk80UsdOhdQy
+ c9G1JgOtZDVLkj88SZQ==
+X-Proofpoint-GUID: Vhmub7mEpm-eBb32uRGgmbNM8WjTJQmQ
+X-Proofpoint-ORIG-GUID: qyic1gUoH0EE9xn4Ec68tZhCv1zerRtP
+X-Authority-Analysis: v=2.4 cv=QoFTHFyd c=1 sm=1 tr=0 ts=69af04b7 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
+ a=RzCfie-kr_QcCd8fBx8p:22 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=SyJQyBQOrdvXXMiPuw4A:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-09_04,2026-03-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 spamscore=0 priorityscore=1501 phishscore=0
+ lowpriorityscore=0 adultscore=0 clxscore=1015 malwarescore=0 suspectscore=0
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2602130000
+ definitions=main-2603090158
+X-Rspamd-Queue-Id: 91AEC23DB72
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [0.84 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[bsbernd.com,none];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[ibm.com,none];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[bsbernd.com:s=fm2,messagingengine.com:s=fm1];
+	R_DKIM_ALLOW(-0.20)[ibm.com:s=pp1];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_CC(0.00)[ddn.com,gmail.com,vger.kernel.org,szeredi.hu,gompa.dev];
+	FREEMAIL_CC(0.00)[kernel.org,oracle.com,infradead.org,lst.de,gmail.com,suse.cz,mit.edu,samsung.com,anarazel.de,vger.kernel.org];
+	RCPT_COUNT_TWELVE(0.00)[14];
 	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-79820-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-79822-lists,linux-fsdevel=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[bsbernd.com:+,messagingengine.com:+];
+	RCVD_TLS_LAST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_FIVE(0.00)[6];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[bernd@bsbernd.com,linux-fsdevel@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	NEURAL_HAM(-0.00)[-0.998];
+	FROM_NEQ_ENVFROM(0.00)[ojaswin@linux.ibm.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[ibm.com:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,suse.cz:email,linux.ibm.com:mid];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,messagingengine.com:dkim,bsbernd.com:dkim,bsbernd.com:mid,checkpatch.pl:url]
+	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCVD_COUNT_SEVEN(0.00)[11]
 X-Rspamd-Action: no action
 
-Hi Darrick,
+Currently, RWF_WRITETHROUGH writes wait for writeback to complete
+on a folio before performing the writethrough. This serializes
+writethrough with each other and the writeback path. However, it is also
+desirable have similar guarantees between RWF_WRITETHROUGH and non
+writethrough writes.
 
-really sorry for mys late reply. To my excuse I have the flu since
-Thursday and until yesterday it got worse every day.
+Hence, ensure stable writes are enabled on an inode's mapping as
+long as a writethrough write is ongoing. This way, all paths will
+wait for RWF_WRITETHROUGH to complete on a folio before proceeding.
 
+To track inflight writethrough writes, we use an atomic counter in the
+inode->i_mapping. This struct was chosen because (i) writethrough is an
+operation on the folio and (ii) we don't want to add bloat to struct
+inode.
 
-On 3/9/26 03:27, Darrick J. Wong wrote:
-> On Wed, Mar 04, 2026 at 03:23:53PM -0800, Darrick J. Wong wrote:
->> On Wed, Mar 04, 2026 at 02:36:03PM +0100, Bernd Schubert wrote:
->>>
->>>
->>> On 3/4/26 01:11, Darrick J. Wong wrote:
->>>> Hi Bernd,
->>>>
->>>> Please pull this branch with changes for libfuse.
->>>>
->>>> As usual, I did a test-merge with the main upstream branch as of a few
->>>> minutes ago, and didn't see any conflicts.  Please let me know if you
->>>> encounter any problems.
->>>
->>> Hi Darrick,
->>>
->>> quite some problems actually ;)
->>>
->>> https://github.com/libfuse/libfuse/pull/1444
->>>
->>> Basically everything fails.  Build test with
->>>
->>> ../../../home/runner/work/libfuse/libfuse/lib/fuse_service.c:24:10:
->>> fatal error: 'systemd/sd-daemon.h' file not found
->>>    24 | #include <systemd/sd-daemon.h>
->>>
->>>
->>> Two issues here:
->>> a) meson is not testing for sd-daemon.h?
->>> a.1) If not available needs to disable that service? Because I don't
->>> think BSD has support for systemd.
->>>
->>> b) .github/workflow/*.yml files need to be adjusted to add in the new
->>> dependency.
->>>
->>>
->>> Please also have a look at checkpatch (which is a plain linux copy) and
->>> the spelling test failures.
->>
->> I have a few questions after running checkpatch.pl (the one in the
->> libfuse repo):
->>
->> 1. What are the error return conventions for libfuse functions?
->>
->>    The lowlevel library mostly seems to return 0 for succes or negative
->>    errno, but not all of them are like that, e.g. fuse_parse_cmdline*.
->>
->>    The rest of libfuse mostly seems to return 0 for success or -1 for
->>    error, though it's unclear if they set errno to anything?
->>
->>    This comes up because checkpatch complains about "return ENOTBLK",
->>    saying that it should be returning -ENOTBLK.  But I'm already sorta
->>    confused because libfuse and its examples use positive and negative
->>    errno inconsistently.
-> 
-> Hi Bernd,
-> 
-> Having spent a few days looking through lib/fuse*.c more carefully, I've
-> come to the conclusion that most lowlevel library functions return 0 or
-> negative errno on failure, and they often call fuse_log to complain
-> about whatever failed.  Oddly, fuse_reply_err takes positive errno and
-> ll servers are required to handle sign conversions correctly.  The high
-> level fuse library does this inversion.
+Suggested-by: Dave Chinner <dgc@kernel.org>
+Suggested-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+---
+ fs/inode.c             |  1 +
+ fs/iomap/buffered-io.c | 35 +++++++++++++++++++++++++++++++++--
+ fs/iomap/direct-io.c   |  2 ++
+ include/linux/fs.h     |  2 ++
+ include/linux/iomap.h  |  2 ++
+ 5 files changed, 40 insertions(+), 2 deletions(-)
 
-Yeah I know, confusing. But without breaking the API I don't think there
-is much we can do about now.
-
-> 
-> If that sounds like a reasonable approach for fuse_service.c then I'll
-> convert it to log and return negative errno like the lowlevel library
-> does.  Right now it mostly sets errno and returns -1, and isn't
-> completely consistent about fuse_log().  util/mount_service.c will get
-> changed to fprintf to stderr and return negative errno on failure.
-
-
-Sounds good to me. Obviously for expected errors you don't want to
-create logs. Logging is another topic I need to address at some point,
-so that one can set the actual level one wants to print.
-
-> 
-> For *_service.c functions that pass around fds from files opened on the
-> other side of the service socket, a failure to open a file will result
-> in the negative errno being sent in place of an fd.
-> 
-> How does that sound?
-> 
-> --D
-> 
->> 2. There's no strscpy, but the check is left on, and there are plenty of
->>    users in libfuse.
-
-Hrmm right, I had copied the script from linux to libfuse so that it
-complains about wrong code style. So far it was mostly possible to
-disable checks, in this specific case we probably need to modify
-checkpatch. Pity, that will make it impossible to simply copy over newer
-versions.
-
->>
->> 3. Comments at the top of files -- checkpatch complains that the
->>    non-first lines of a multiline C comment should start with " * "but
->>    not all of them do that.  Should I just do C comments the way
->>    checkpatch wants?  Or keep going with the existing code?
-
-I guess here it is better to follow checkpatch and change to the style,
-it expects.
-
-
-Thanks,
-Bernd
-
+diff --git a/fs/inode.c b/fs/inode.c
+index cc12b68e021b..5b779c112ff8 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -280,6 +280,7 @@ int inode_init_always_gfp(struct super_block *sb, struct inode *inode, gfp_t gfp
+ 	mapping->flags = 0;
+ 	mapping->wb_err = 0;
+ 	atomic_set(&mapping->i_mmap_writable, 0);
++	atomic_set(&mapping->i_wt_count, 0);
+ #ifdef CONFIG_READ_ONLY_THP_FOR_FS
+ 	atomic_set(&mapping->nr_thps, 0);
+ #endif
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index ab169daa1126..9d4d459af1a0 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1150,11 +1150,41 @@ static bool iomap_writethrough_checks(struct kiocb *iocb, size_t off, loff_t len
+ 	return true;
+ }
+ 
++/**
++ * inode_writethrough_begin - signal start of a RWF_WRITETHROUGH request
++ * @inode: inode the writethrough happens on
++ *
++ * This is called when we are about to start a writethrough on an inode.
++ * If it is the first writethrough, set the mapping as stable to ensure
++ * other folio operations wait for writeback to finish.
++ *
++ * To avoid a race, just set the mapping stable first and then increment
++ * writethrough count, so that the stable writes are enforced as soon as
++ * writethrough count becomes non zero.
++ */
++inline void inode_writethrough_begin(struct inode *inode)
++{
++	mapping_set_stable_writes(inode->i_mapping);
++	atomic_inc(&inode->i_mapping->i_wt_count);
++}
++
++/**
++ * inode_writethrough_end - signal finish of a RWF_WRITETHROUGH request
++ * @inode: inode the writethrough I/O happened on
++ *
++ * This is called once we've finished processing a writethrough request
++ */
++inline void inode_writethrough_end(struct inode *inode)
++{
++	if (atomic_dec_and_test(&inode->i_mapping->i_wt_count))
++		mapping_clear_stable_writes(inode->i_mapping);
++}
++
+ /*
+  * With writethrough, we might potentially be writing through a partial
+  * folio hence we don't clear the dirty bit (yet)
+  */
+-static void folio_prepare_writethrough(struct folio *folio)
++static void folio_prepare_writethrough(struct inode *inode, struct folio *folio)
+ {
+ 	if (folio_test_writeback(folio))
+ 		folio_wait_writeback(folio);
+@@ -1167,6 +1197,7 @@ static void folio_prepare_writethrough(struct folio *folio)
+ 		/* Refer folio_clear_dirty_for_io() for why this is needed */
+ 		folio_mark_dirty(folio);
+ 
++	inode_writethrough_begin(inode);
+ }
+ 
+ /**
+@@ -1203,7 +1234,7 @@ static int iomap_writethrough_begin(struct kiocb *iocb, struct folio *folio,
+ 	bool fully_written;
+ 	u64 zero = 0;
+ 
+-	folio_prepare_writethrough(folio);
++	folio_prepare_writethrough(iter->inode, folio);
+ 
+ 	wt_ctx->bvec = kmalloc(sizeof(struct bio_vec), GFP_KERNEL | GFP_NOFS);
+ 	if (!wt_ctx->bvec)
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index f4d8ff08a83a..12680d97d765 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -140,6 +140,8 @@ ssize_t iomap_dio_complete(struct iomap_dio *dio)
+ 		kiocb_invalidate_post_direct_write(iocb, dio->size);
+ 
+ 	inode_dio_end(file_inode(iocb->ki_filp));
++	if (dio->flags & IOMAP_DIO_BUF_WRITETHROUGH)
++		inode_writethrough_end(file_inode(iocb->ki_filp));
+ 
+ 	if (ret > 0) {
+ 		iocb->ki_pos += ret;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index ca291957140e..6b7491fdd51a 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -456,6 +456,7 @@ extern const struct address_space_operations empty_aops;
+  *   memory mappings.
+  * @gfp_mask: Memory allocation flags to use for allocating pages.
+  * @i_mmap_writable: Number of VM_SHARED, VM_MAYWRITE mappings.
++ * @i_wt_count: Number of RWF_WRITETHROUGH writes ongoing in mapping.
+  * @nr_thps: Number of THPs in the pagecache (non-shmem only).
+  * @i_mmap: Tree of private and shared mappings.
+  * @i_mmap_rwsem: Protects @i_mmap and @i_mmap_writable.
+@@ -474,6 +475,7 @@ struct address_space {
+ 	struct rw_semaphore	invalidate_lock;
+ 	gfp_t			gfp_mask;
+ 	atomic_t		i_mmap_writable;
++	atomic_t		i_wt_count;
+ #ifdef CONFIG_READ_ONLY_THP_FOR_FS
+ 	/* number of thp, only for non-shmem files */
+ 	atomic_t		nr_thps;
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index b96574bb2918..6d08b966ceaf 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -630,6 +630,8 @@ struct iomap_writethrough_ops {
+ ssize_t iomap_file_writethrough_write(struct kiocb *iocb, struct iov_iter *i,
+ 				      const struct iomap_writethrough_ops *wt_ops,
+ 				      void *private);
++inline void inode_writethrough_begin(struct inode *inode);
++inline void inode_writethrough_end(struct inode *inode);
+ 
+ #ifdef CONFIG_SWAP
+ struct file;
+-- 
+2.52.0
 
 
