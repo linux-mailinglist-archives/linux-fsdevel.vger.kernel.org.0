@@ -1,270 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-79799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id yM2DE8nnrmlRKAIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 16:31:21 +0100
+	id 0BupBmztrmkWKQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 16:55:24 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6FBF23BB3F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 16:31:20 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B9DE23C30C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 16:55:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 9484B31087D9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 15:22:45 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 399E93056DD0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 15:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D2D3DA7E1;
-	Mon,  9 Mar 2026 15:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37FDB3DA7D5;
+	Mon,  9 Mar 2026 15:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qsJlM/9C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="89ekJIgO";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qsJlM/9C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="89ekJIgO"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VjLEaYsQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB423DA7D4
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Mar 2026 15:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773069724; cv=none; b=T+ryNrIhJMBBaDTsdv3PzB0LPGWj2dJlgaJlDkpsHSKAjgFvq/mA1WOoRlWjQ2tzVEi5V2Yr3CWzsBCNUWjhM8G06Ba6ZEx07kfeKRz8dH9mekAy0z1HgkxmBNo9XyHCHfHIcdR7qWsL+JUbOVZW2dWoXzL3w6p5JkEWXx26RAc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773069724; c=relaxed/simple;
-	bh=tuN+j8dF0CpeB+MjvYmUwXBdHk4cPZvKjZpQzLh7VpA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J48tphkOjTOxfdm3CBGbkS3S7ZFk87CNdE0wSr3wpMp7rNag2rqAxZAFymZJ3uEbO+H+qu0dh9hxgawCIpNiFmiO885rmHvA/FWHRkW/VA/OEW+ZiNJ6NMOBL4HkWiTIT+9tLxojLwLL2vGIrNh+99rhv8OICbE9nOsu+iPCw14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qsJlM/9C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=89ekJIgO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qsJlM/9C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=89ekJIgO; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 231385BE4E;
-	Mon,  9 Mar 2026 15:22:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1773069721; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zMVl6bHSVC8V1c12hajNbXBD7gYHhzudofJq+BOdJ2c=;
-	b=qsJlM/9C6Kuaptons2EwDZ4hEIFsKfGVBCnlDv5Q0R571u1NA7t7AW71S21xnpgTEXjUHw
-	6zj4eW1kDv8KpOcXnkZg6Nrc+a7jbTCbPpmx4l+f5/ugD69F+8WQW9itEmXDysjzzZJtWQ
-	rsbAAm5LTYXZr4VJ1SYskrnS0pMuPtE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1773069721;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zMVl6bHSVC8V1c12hajNbXBD7gYHhzudofJq+BOdJ2c=;
-	b=89ekJIgOcjwAIYPBAJVtG+U8/qVh5pHcKUJ7Z2RtxjlLdvwO1Lkt3i5YU89ANiWQsInLDR
-	p6dOGl8QvFYstsAw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="qsJlM/9C";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=89ekJIgO
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1773069721; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zMVl6bHSVC8V1c12hajNbXBD7gYHhzudofJq+BOdJ2c=;
-	b=qsJlM/9C6Kuaptons2EwDZ4hEIFsKfGVBCnlDv5Q0R571u1NA7t7AW71S21xnpgTEXjUHw
-	6zj4eW1kDv8KpOcXnkZg6Nrc+a7jbTCbPpmx4l+f5/ugD69F+8WQW9itEmXDysjzzZJtWQ
-	rsbAAm5LTYXZr4VJ1SYskrnS0pMuPtE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1773069721;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zMVl6bHSVC8V1c12hajNbXBD7gYHhzudofJq+BOdJ2c=;
-	b=89ekJIgOcjwAIYPBAJVtG+U8/qVh5pHcKUJ7Z2RtxjlLdvwO1Lkt3i5YU89ANiWQsInLDR
-	p6dOGl8QvFYstsAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0CBFA3EF79;
-	Mon,  9 Mar 2026 15:22:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5isWA5nlrmmoAgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 09 Mar 2026 15:22:01 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B939AA0AD1; Mon,  9 Mar 2026 16:21:52 +0100 (CET)
-Date: Mon, 9 Mar 2026 16:21:52 +0100
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] vfs: remove externs from fs.h on functions modified
- by i_ino widening
-Message-ID: <ct5jiqh3ka24xsxkf4weyevsnrvkifjks7mvgyjg4wbwejehwu@lpfygutfhn6c>
-References: <20260307-iino-u64-v2-1-a1a1696e0653@kernel.org>
- <urwtj2zfmxfhksormxkzb2z26a7nt5vesbkuwtow47fflf4u2l@x7cbae5dv7tr>
- <c73452245cd85a75bbfc12b31b940641352fb979.camel@kernel.org>
- <wlwvnfrhpw4yyzdnxte73nv6rs5lh2jilvnfd2mtocyct4jyel@4l4km3lehq2c>
- <214341c4753f7ce61d9b01155e9c493e880b7bbd.camel@kernel.org>
- <mkgjambnzw35slfb3vens5tlsugxpjg7q7cckrmwj426ot4x4b@acvye7cjmzde>
- <8e68da17ad8c9584d8082441331d91ab2d6cbb81.camel@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612003DA5B5
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Mar 2026 15:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773070703; cv=pass; b=Wo1dqryAQwBcQquNnOPTKjAPPW3VcfVM7ygtXZmz2iUGFq7RZ2Puqqyj0BzncwIwJbNxnHsB7XnI+VG9cgdVb6oF2fDkBfF1pstKhL5Uw9+5e7RGstWAF+PKR3BpXBUrXF3dYqFFGy0sdI78yEm2Z2GmPaMNS03t0Up92SwRcPo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773070703; c=relaxed/simple;
+	bh=iNHLiCDf49reb7pKbRitTgLTHJvgQkPQChd4fviY9A0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kJtN8x5Nnu5GCqtni7Ae1dNjade0PU6QzdPKs/O8psc1Cfo5Boa06L88cjKBvte4P7Q9TnUCyQG/sKWcKP/gjzh5rFsABrX56TIBKeIdFutT1le3kIK/AK2AuQpAtBtHdv6k1q9/8Cx9fXDor+0dbcVt376OvQsfuUdCbRfdm5c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VjLEaYsQ; arc=pass smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-661169cd6d8so13591a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Mar 2026 08:38:22 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773070701; cv=none;
+        d=google.com; s=arc-20240605;
+        b=IL9n/EAwv0P0QHIB/40kU9SxuvySKoVikoPqte2r9y5eTDfaNiU71t6kxUJsvFY1Xt
+         p/ZhV0jjqmQo33FxmcS6o1eFJ4Znr4+T7ACEymIN0YcDSNTHpdy6Z1tgrFwDLR4wjTpt
+         yuwWU2rwFU+q5K17QA5Brru6fFbEHG6wHGg2MSRcsQO9iQYNeoMu9z7mwcgMlmKElsus
+         /UM5VRD0ZY8x8NLPfgmdtPzq6whq4fP+om1UoC382cmtQwzGiSZSgVRE4YcQ53t+pKuM
+         5te7JxeNlVvU5yr1KqBqHAxIgSrVV+5Qpyfo3omV518hDIx5ghk6R2H+JhK8WMyj6L90
+         nMtQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=Uu1JyhWrGMTUefQ+KHAPU+wFh3BG2I8H+RnO/Jnz++8=;
+        fh=+/WjqGOODrJjRWEFHLCYnr7yJLLuUBSws8YhyjZh+N8=;
+        b=ToQY+wGG8PSoIGZpaNQQjMEs1Wh3WipdQvHB3E1ClzHtXzZy+vxQH9ZXUL7eTnA5dR
+         XQvGs3IEFkxC9gT/0CM1FTiXT2ftZiL/jy/DQclTLbwUk6uqokakPrAaR45dsW0EwST+
+         ZqGlbG5mMZ1y7lv0tVoxEdfRcNN5hCD+u0DuRs9kx2v4Rr302MUyEY2/br2+9GhGKroz
+         4aFzi0TOHOEydFf7tJRnUe+edq5xYH7D1Lxii0fnkf1CBK9Q6p4lAV23pj8UgTKKb3w4
+         VnAhJvrdQ+UXcDab4Fmdm08u2MtwZEiwXepO4+sJPlPNEJsw1JjUqKCrnOZXoMW2oaha
+         bKCA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1773070701; x=1773675501; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uu1JyhWrGMTUefQ+KHAPU+wFh3BG2I8H+RnO/Jnz++8=;
+        b=VjLEaYsQUPfnR5xOgC73kM7S1SwbjpADnZ8QOzZcIYphB2L73ZRwZzecty0RaUl20F
+         PhJ4eKUr0WhSmVT1T1cfhmcEB5d1qji5Jdrhtzy5u45e15tGTaj31JBEu8gBrQ1SD00X
+         ugkLcfnwy+oDw0C8SXB4zgvTiMof3GVJ3oGfhWw3xSk+KFAd8ohPq8gG+ko96R6CgwIA
+         2WgvuGcFw8QXu52DGYn0UV5rJKq9u5h+noBYBvmn7I79BmbO30uYZs/EXc+QPvfJQI+2
+         yV34/O5xxJbYmPJj6u7LRAqWlt5fBoWo+etsmrJbJ5g8QvV70Ja0Hhn6cu1XybkRG4cm
+         MoRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773070701; x=1773675501;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Uu1JyhWrGMTUefQ+KHAPU+wFh3BG2I8H+RnO/Jnz++8=;
+        b=RZlhNeSJkmhY4oIgqiTTCuI9GPvnDZmjHaCdRjujw+RygqKFsweaY3TegIhGycyw5+
+         Nig3kOkmF94fv4S3VLgPFv3J+T6N/lg7xD05FQF/RjwTNs6jpnx7FehbIipkuSxHFov+
+         4yfjTUBK/0MpDyLOLgGtsXwMpp2RxDIK64ndGY6P7nAsSJdN9BYIwfBoZD7+gxDsh5NK
+         J2WRA4z4hqbuA3RF/waMECbx4Qb9Tn6FVLJWUFVx3+3+I+uL+33xVenIKkpeDE4l2632
+         w4bSCcdWbjXmohnT5KNkb4OnsXOt5NIbFvZXru/c5t02lE705ZRrv9a2PFIEiNOv1Bh7
+         L6ow==
+X-Gm-Message-State: AOJu0YxYKIo1YwYgWD9blXvMb+XfptR/ucJmDfQCZPLm29lYdjHyQuCV
+	bkS5XG6njiYnjEe6dxLKslRkoAiMKerslKwfzDq+Qip7VFSpEhhLvPn+DkBLM5d66KBSLVXx3q4
+	F8VDYsJL52aU7tko+surPMLeYoeNxJeb4i91qusmF
+X-Gm-Gg: ATEYQzwumiSk8UJJ4wOV3wKDvVAezDVWiudXjUI0NyOAdlgUd7Q9TN3OaBsuAExH/xj
+	DsaD+4zWhDm11sTMG7pWROFBRmK0O1h997ooSFUkPYMkU6r4ybamQA/2gDWbaTSpLjc/GnqIbZC
+	YHM2LkufSq805SFma0jIcjdFA6HEGHSeYJRjlrvjCuTYKXaJV1NcuAKXw7PN76ZAFV7ZVhe1Ezp
+	0sTCwoPDie/nojAE3K/tcQCgFa/IYmGebw6Co7BfqWtToAyo7emN/O2ffnEUBCoRtuV4C1OFdLj
+	0wHWDRFzqGWNTa6wekV4NEVEnUnJvDCf4FHsmmlVYLM2+QbL
+X-Received: by 2002:a05:6402:3506:b0:661:1019:5388 with SMTP id
+ 4fb4d7f45d1cf-661e7d9e789mr90378a12.10.1773070700341; Mon, 09 Mar 2026
+ 08:38:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8e68da17ad8c9584d8082441331d91ab2d6cbb81.camel@kernel.org>
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Spam-Level: 
-X-Rspamd-Queue-Id: B6FBF23BB3F
+References: <20260306-work-kthread-nullfs-v2-0-ad1b4bed7d3e@kernel.org> <20260306-work-kthread-nullfs-v2-4-ad1b4bed7d3e@kernel.org>
+In-Reply-To: <20260306-work-kthread-nullfs-v2-4-ad1b4bed7d3e@kernel.org>
+From: Jann Horn <jannh@google.com>
+Date: Mon, 9 Mar 2026 16:37:44 +0100
+X-Gm-Features: AaiRm536JZNgrz4IdQWbn2SU23Zp9qTUQkcydIk89QEkamQfmXH-CFmqDZ7PP-k
+Message-ID: <CAG48ez060t6NXRt6Hua45aXxAmD0r1vAnm8eEyZSUh95GZG-vg@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 04/23] crypto: ccp: use scoped_with_init_fs() for
+ SEV file access
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>, 
+	Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Queue-Id: 1B9DE23C30C
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	TAGGED_FROM(0.00)[bounces-79799-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DMARC_NA(0.00)[suse.cz];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,suse.cz:dkim];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-79800-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	NEURAL_HAM(-0.00)[-0.941];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[google.com:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	MISSING_XM_UA(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[jannh@google.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-0.949];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[7]
+	RCPT_COUNT_SEVEN(0.00)[8];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On Mon 09-03-26 10:56:02, Jeff Layton wrote:
-> On Mon, 2026-03-09 at 15:46 +0100, Jan Kara wrote:
-> > On Mon 09-03-26 09:27:47, Jeff Layton wrote:
-> > > On Mon, 2026-03-09 at 13:27 +0100, Jan Kara wrote:
-> > > > On Mon 09-03-26 07:53:51, Jeff Layton wrote:
-> > > > > On Mon, 2026-03-09 at 11:02 +0100, Jan Kara wrote:
-> > > > > > On Sat 07-03-26 14:54:31, Jeff Layton wrote:
-> > > > > > > Christoph says, in response to one of the patches in the i_ino widening
-> > > > > > > series, which changes the prototype of several functions in fs.h:
-> > > > > > > 
-> > > > > > >     "Can you please drop all these pointless externs while you're at it?"
-> > > > > > > 
-> > > > > > > Remove extern keyword from functions touched by that patch (and a few
-> > > > > > > that happened to be nearby). Also add missing argument names to
-> > > > > > > declarations that lacked them.
-> > > > > > > 
-> > > > > > > Suggested-by: Christoph Hellwig <hch@lst.de>
-> > > > > > > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > > > > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > > > ...
-> > > > > > > -extern void inode_init_once(struct inode *);
-> > > > > > > -extern void address_space_init_once(struct address_space *mapping);
-> > > > > > > -extern struct inode * igrab(struct inode *);
-> > > > > > > -extern ino_t iunique(struct super_block *, ino_t);
-> > > > > > > -extern int inode_needs_sync(struct inode *inode);
-> > > > > > > -extern int inode_just_drop(struct inode *inode);
-> > > > > > > +void inode_init_once(struct inode *inode);
-> > > > > > > +void address_space_init_once(struct address_space *mapping);
-> > > > > > > +struct inode *igrab(struct inode *inode);
-> > > > > > > +ino_t iunique(struct super_block *sb, ino_t max_reserved);
-> > > > > > 
-> > > > > > I've just noticed that we probably forgot to convert iunique() to use u64
-> > > > > > for inode numbers... Although the iunique() number allocator might prefer
-> > > > > > to stay within 32 bits, the interfaces should IMO still use u64 for
-> > > > > > consistency.
-> > > > > > 
-> > > > > 
-> > > > > I went back and forth on that one, but I left iunique() changes off
-> > > > > since they weren't strictly required. Most filesystems that use it
-> > > > > won't have more than 2^32 inodes anyway.
-> > > > > 
-> > > > > If they worked before with iunique() limited to 32-bit values, they
-> > > > > should still after this. After the i_ino widening we could certainly
-> > > > > change it to return a u64 though.
-> > > > 
-> > > > Yes, it won't change anything wrt functionality. I just think that if we go
-> > > > for "ino_t is the userspace API type and kernel-internal inode numbers
-> > > > (i.e.  what gets stored in inode->i_ino) are passed as u64", then this
-> > > > place should logically have u64...
-> > > > 
-> > > 
-> > > I think we'll need a real plan for this.
-> > 
-> > <snip claude analysis>
-> >  
-> > > It certainly wouldn't hurt to make these functions return a u64 type,
-> > > but I worry a little about letting them return values bigger than
-> > > UINT_MAX:
-> > > 
-> > > One of my very first patches was 866b04fccbf1 ("inode numbering: make
-> > > static counters in new_inode and iunique be 32 bits"), and it made
-> > > get_next_ino() and iunique() always return 32 bit values. 
-> > > 
-> > > At the time, 32-bit machines and legacy binaries were a lot more
-> > > prevalent than they are today and this was real problem. I'm guessing
-> > > it's not so much today, so we could probably make them return real 64-
-> > > bit values. That might also obviate the need for locking in these
-> > > functions too.
-> > 
-> > Hum, I think I still didn't express myself clearly enough. I *don't* want
-> > to change values returned from get_next_ino() or iunique(). I would leave
-> > that for the moment when someone comes with a need for more than 4 billions
-> > of inodes in a filesystem using these (which I think is still quite a few
-> > years away). All I want is that in-kernel inode number is consistently
-> > passed as u64 and not as ino_t. So all I ask for is this diff:
-> > 
-> > - ino_t iunique(struct super_block *sb, ino_t max_reserved)
-> > + u64 iunique(struct super_block *sb u64 max_reserved)
-> > ...
-> >  	static unsigned int counter;
-> > -	ino_t res;
-> > +	u64 res;
-> > 
-> > and that's it. I.e., the 'counter' variable that determines max value of
-> > returned number stays as unsigned int.
-> 
-> Sure, that's simple enough, though I wonder whether it's the right
-> thing to do:
-> 
-> Both these functions return a max values of UINT_MAX, so maybe they
-> should return u32 instead? If you make them return u64, then this
-> limitation isn't evident unless you look at the function itself.
+On Fri, Mar 6, 2026 at 12:30=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+> Replace the manual init_task root retrieval with scoped_with_init_fs()
+> to temporarily override current->fs. This allows using the simpler
+> filp_open() instead of the init_root() + file_open_root() pattern.
+>
+> open_file_as_root() =E2=86=90 sev_read_init_ex_file() / sev_write_init_ex=
+_file()
+> =E2=86=90 sev_platform_init() =E2=86=90 __sev_guest_init() =E2=86=90 KVM =
+ioctl =E2=80=94 user process context
+>
+> Needs init's root because the SEV init_ex file path should resolve
+> against the real root, not a KVM user's chroot.
+>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>  drivers/crypto/ccp/sev-dev.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
+> index 096f993974d1..4320054da0f6 100644
+> --- a/drivers/crypto/ccp/sev-dev.c
+> +++ b/drivers/crypto/ccp/sev-dev.c
+> @@ -260,20 +260,16 @@ static int sev_cmd_buffer_len(int cmd)
+>
+>  static struct file *open_file_as_root(const char *filename, int flags, u=
+mode_t mode)
+>  {
+> -       struct path root __free(path_put) =3D {};
+> -
+> -       task_lock(&init_task);
+> -       get_fs_root(init_task.fs, &root);
+> -       task_unlock(&init_task);
+> -
+>         CLASS(prepare_creds, cred)();
+>         if (!cred)
+>                 return ERR_PTR(-ENOMEM);
+>
+>         cred->fsuid =3D GLOBAL_ROOT_UID;
+>
+> -       scoped_with_creds(cred)
+> -               return file_open_root(&root, filename, flags, mode);
+> +       scoped_with_init_fs() {
+> +               scoped_with_creds(cred)
+> +                       return filp_open(filename, flags, mode);
+> +       }
 
-Well, that limitation wasn't evident with ino_t either :). The kernel doc
-comment for the function should mention this, that's true. I don't think
-the type of the return value is a very explicit way of expressing that
-either (I'd say you often don't notice). If you want to make that more
-explicit besides the kernel doc comment, then I'd suggest to call the
-function iunique32().
-
-> I'm also wondering whether we should just go ahead and revamp them to
-> return real 64-bit values. When the collision risk goes away, then we
-> don't need the spinlock in iunique(), for instance. We could just make
-> that use an atomic64_t (or do something creative with percpu values).
-
-Yes, that would be interesting optimization, I think someone was already
-wanting to do something like that, but I agree we need to be careful about
-userspace regressions there and probably transition users one by one.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+This patch, along with the others that start using
+scoped_with_init_fs, should probably go closer to the end of the
+series? As-is, if someone bisects to just after this patch, SEV will
+be in a broken state where it wrongly looks up a file from the process
+root.
 
