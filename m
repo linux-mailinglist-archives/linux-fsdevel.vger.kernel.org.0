@@ -1,169 +1,270 @@
-Return-Path: <linux-fsdevel+bounces-79798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YN+3CMLnrmlRKAIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 16:31:14 +0100
+	id yM2DE8nnrmlRKAIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 16:31:21 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9145923BB36
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 16:31:13 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6FBF23BB3F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 16:31:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id ECCF13089620
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 15:20:47 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9484B31087D9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 15:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CDAB3DA7CB;
-	Mon,  9 Mar 2026 15:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D2D3DA7E1;
+	Mon,  9 Mar 2026 15:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nb3Xuhyq"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qsJlM/9C";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="89ekJIgO";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qsJlM/9C";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="89ekJIgO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D983DA5A7
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Mar 2026 15:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773069617; cv=pass; b=ehSFw73qLrIVrMnVzmS0DzT6ihyq9ARnb28orGlK3Sm0pcWGri7gxH59CirJSNUxr0q5F209zfcOVAqUVNBd1N3ryK8C2lHv2XQKHTMxmPmXHyEDj8X/VOKcUXqnBj29HuoGIqeRNRZev2GsJgl71Uu6p18cqM0EXVWqOTbQOIA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773069617; c=relaxed/simple;
-	bh=H5IKEg7YbJRQOBnAbP9gg+sdlcsBSmBL5/oo85fAOCU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D52Ltbr6t4JzaaZKfITKhBfDuzh8Fy1TEyxaoOO5uM456xnxd6iTTc9U4YmZJGxMEn9hA9NXezGbCOAIKaeJ2DcaGZB3YydPOhkaD3PacvDKjw4I6ac7Uo1L5EN1EKLNMFfUWKvGxG4M1cfNGjX5UTU3Y1EAMIgTCH2O+0VyMVo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nb3Xuhyq; arc=pass smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-661169cd6d8so13199a12.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Mar 2026 08:20:14 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773069613; cv=none;
-        d=google.com; s=arc-20240605;
-        b=ZHvVg9/eSwGsNyy3kU5iDYEe5oOvcZ1/pzeITS91zf1mhymtLNSzakOQ+xQf4o9tSD
-         +0QY/d7Eb4tBzQQB1/uQpGSENxg4upSXFKCHGiOkOIps7F3xDLg2kGEgBCwp+AHQQP4/
-         FYBtbUxUHrb6hL88E+4NYpyYqzDI7wk5MH7DQWe5CJZzSjrsziKzTRHocr6U5YgP9h2t
-         T1xG0jwm9ahP32VDBIfdPrO4TQHuC3xYtRXDCDcAAi9zzOYLUv5p6dyNtQcWoYwWgI12
-         EG5M7dQeqoFG48nxhmkzZSherICMd44DVvt4iZ841lar39h968KYg1ZQpZdj0fGufsfp
-         q/iw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=O7Xtjq3WAt00AauKxNCHGU7GaUkyaXCJGSuqsj+jHr4=;
-        fh=+/WjqGOODrJjRWEFHLCYnr7yJLLuUBSws8YhyjZh+N8=;
-        b=Ag10OR0qk6arVK6wDrOGYzpT2K72ZJWxHJnDvCGgfVHsj5219NIiSuyAt+wCn16I3Q
-         7foAuir0vfvuHOQOLloZPlcDnmJxt2HBjlH7zoL2INFAi2t5SDmrP9Ut7LuD68n/Pf/X
-         jykNN2njehIxRa0fnA78d6Ehtxh8N3i0nyBT1I72PYIyTgSGu2PDB//QJ1zsKbLFlOwI
-         rOV9fHEfNwFCIql6DApaNvUy4Yhp9G+abVsof6+aK0YeE6tfN54D26d/ONUHhJwT5vLR
-         mqAJlaRJtvXTLvRPvcwYMJf05sXPLtiYLcDiYpsNQEJSQ8ZkQ+phjtVDMZD0VDVeL0/p
-         /iGw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1773069613; x=1773674413; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O7Xtjq3WAt00AauKxNCHGU7GaUkyaXCJGSuqsj+jHr4=;
-        b=nb3XuhyqRkPoWYBjZabfakvs/EuCZHiaWW0cbqlpgzdkyeJ4k4EqeaX9iiM1jhREz4
-         3O1A/QgypWCB+M+diUAs2g1WhFPOe7kMoHolcy97eiPdJPee+huwycHL+hCMx8qw6tVK
-         OFKuQAGKo6IVGo1feQkWf8pLdY1uSwlIcqmSulL4x4Bb6R/5r55htEEnHnQIa489QUub
-         lEKq4qktQ1UglzgM+B/JZXm+aT8BYvjaO3xz88mGh0GBgu8rmKcUhxHGX1pAD88QdbJP
-         pCE2sAgmQevC8UCwxmslUDCZ465WxlOfRF0No+Ga3++unXe9gsTcn2yDJhVcYhc2jG6x
-         ZvLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773069613; x=1773674413;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=O7Xtjq3WAt00AauKxNCHGU7GaUkyaXCJGSuqsj+jHr4=;
-        b=kyA9Ibqdv+gorJWZJpqFWYe5LXSwp3M1tvx3i4srlDdR63ljOGDNRd13Xo5YbFhDks
-         YD+N+KDovHbAOO4L9dToVm88ZjP95bbxHdupW3EN6X6h22xSXfBy4t0CccGjMz2LCmcz
-         KhRDv7W1aW0niCBpwaw8WB9SS0M6Qg7yaiqe5bD+h01ORHC7mNb90PBYsWi+Zq5k22VK
-         7G9zpfDe/qYC7lsJdWDhqS/DoBTgj4AQQKnyjFwWnQ4MthW/QZR11a9c6z1FcijahL1C
-         PyVlUoCbHD3f9mqcmg14MjburdmHNgXPumvV5rDrm9q9F0W32MIcVO9ZN6TeBLfYSlVA
-         n5IQ==
-X-Gm-Message-State: AOJu0YyIGgjr2bP6XOVjV3MDiNMo/WD+/wDBafEKRIKwdNUUswDecLo1
-	fCDhbNyRzVXKrD82tj70kUB0diV0mwxX/zXBPA2YcfvPMfvnNBpcDkb9P6W7TNgA35VI1Mc99yA
-	Wui3I+qr2+gWqVf6YC+YFxJGr7gOVPLC8zrWcyJlw
-X-Gm-Gg: ATEYQzxVD4NjgO+PO7X20h9Hf2VJC31bfuvm79RsHgKnYlIco2W/o1P++k7ZfVSCqB5
-	wSq6cL4NMDVDrnNqcFotHxxdlFICzQwz34t6Y0RXYE7GL1CmBB1/PhXRYfWZcxnlUSYlcLZjDRN
-	VSEPESRzbMKnP6YgyrQ1PcA1gP5SQTD/Jky8YyqHjpn4g2jcU4nYv5Kev5oPmR+O1w8ATAHYjAW
-	S+GXh4kCCj76rEtYYEffOXMgfTw6Py9Q+4s73MKBBq/Z+TaAGqnS3S5ZT4/8MmP4Y9iNW524m0m
-	OkNsh7lFSWKDLxFAC23rFTb2hrI4nsUBOi3w1g==
-X-Received: by 2002:aa7:d5d4:0:b0:65c:212b:6b6 with SMTP id
- 4fb4d7f45d1cf-661f5da4ddemr53624a12.15.1773069612505; Mon, 09 Mar 2026
- 08:20:12 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB423DA7D4
+	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Mar 2026 15:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773069724; cv=none; b=T+ryNrIhJMBBaDTsdv3PzB0LPGWj2dJlgaJlDkpsHSKAjgFvq/mA1WOoRlWjQ2tzVEi5V2Yr3CWzsBCNUWjhM8G06Ba6ZEx07kfeKRz8dH9mekAy0z1HgkxmBNo9XyHCHfHIcdR7qWsL+JUbOVZW2dWoXzL3w6p5JkEWXx26RAc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773069724; c=relaxed/simple;
+	bh=tuN+j8dF0CpeB+MjvYmUwXBdHk4cPZvKjZpQzLh7VpA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J48tphkOjTOxfdm3CBGbkS3S7ZFk87CNdE0wSr3wpMp7rNag2rqAxZAFymZJ3uEbO+H+qu0dh9hxgawCIpNiFmiO885rmHvA/FWHRkW/VA/OEW+ZiNJ6NMOBL4HkWiTIT+9tLxojLwLL2vGIrNh+99rhv8OICbE9nOsu+iPCw14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qsJlM/9C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=89ekJIgO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qsJlM/9C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=89ekJIgO; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 231385BE4E;
+	Mon,  9 Mar 2026 15:22:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1773069721; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zMVl6bHSVC8V1c12hajNbXBD7gYHhzudofJq+BOdJ2c=;
+	b=qsJlM/9C6Kuaptons2EwDZ4hEIFsKfGVBCnlDv5Q0R571u1NA7t7AW71S21xnpgTEXjUHw
+	6zj4eW1kDv8KpOcXnkZg6Nrc+a7jbTCbPpmx4l+f5/ugD69F+8WQW9itEmXDysjzzZJtWQ
+	rsbAAm5LTYXZr4VJ1SYskrnS0pMuPtE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1773069721;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zMVl6bHSVC8V1c12hajNbXBD7gYHhzudofJq+BOdJ2c=;
+	b=89ekJIgOcjwAIYPBAJVtG+U8/qVh5pHcKUJ7Z2RtxjlLdvwO1Lkt3i5YU89ANiWQsInLDR
+	p6dOGl8QvFYstsAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="qsJlM/9C";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=89ekJIgO
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1773069721; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zMVl6bHSVC8V1c12hajNbXBD7gYHhzudofJq+BOdJ2c=;
+	b=qsJlM/9C6Kuaptons2EwDZ4hEIFsKfGVBCnlDv5Q0R571u1NA7t7AW71S21xnpgTEXjUHw
+	6zj4eW1kDv8KpOcXnkZg6Nrc+a7jbTCbPpmx4l+f5/ugD69F+8WQW9itEmXDysjzzZJtWQ
+	rsbAAm5LTYXZr4VJ1SYskrnS0pMuPtE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1773069721;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zMVl6bHSVC8V1c12hajNbXBD7gYHhzudofJq+BOdJ2c=;
+	b=89ekJIgOcjwAIYPBAJVtG+U8/qVh5pHcKUJ7Z2RtxjlLdvwO1Lkt3i5YU89ANiWQsInLDR
+	p6dOGl8QvFYstsAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0CBFA3EF79;
+	Mon,  9 Mar 2026 15:22:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 5isWA5nlrmmoAgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 09 Mar 2026 15:22:01 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B939AA0AD1; Mon,  9 Mar 2026 16:21:52 +0100 (CET)
+Date: Mon, 9 Mar 2026 16:21:52 +0100
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] vfs: remove externs from fs.h on functions modified
+ by i_ino widening
+Message-ID: <ct5jiqh3ka24xsxkf4weyevsnrvkifjks7mvgyjg4wbwejehwu@lpfygutfhn6c>
+References: <20260307-iino-u64-v2-1-a1a1696e0653@kernel.org>
+ <urwtj2zfmxfhksormxkzb2z26a7nt5vesbkuwtow47fflf4u2l@x7cbae5dv7tr>
+ <c73452245cd85a75bbfc12b31b940641352fb979.camel@kernel.org>
+ <wlwvnfrhpw4yyzdnxte73nv6rs5lh2jilvnfd2mtocyct4jyel@4l4km3lehq2c>
+ <214341c4753f7ce61d9b01155e9c493e880b7bbd.camel@kernel.org>
+ <mkgjambnzw35slfb3vens5tlsugxpjg7q7cckrmwj426ot4x4b@acvye7cjmzde>
+ <8e68da17ad8c9584d8082441331d91ab2d6cbb81.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260306-work-kthread-nullfs-v2-0-ad1b4bed7d3e@kernel.org> <20260306-work-kthread-nullfs-v2-2-ad1b4bed7d3e@kernel.org>
-In-Reply-To: <20260306-work-kthread-nullfs-v2-2-ad1b4bed7d3e@kernel.org>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 9 Mar 2026 16:19:36 +0100
-X-Gm-Features: AaiRm51-Q5v6TxzzyPpaFTXKx4dz26Gd4PPOR7UlqsHpAYHZZF1a-LEa2RyWUEE
-Message-ID: <CAG48ez27WdeHPQWeLaz39n62pFaGoqf3oc-st47qv28mgtQg-g@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 02/23] fs: add scoped_with_init_fs()
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>, 
-	Tejun Heo <tj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Rspamd-Queue-Id: 9145923BB36
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8e68da17ad8c9584d8082441331d91ab2d6cbb81.camel@kernel.org>
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Spam-Level: 
+X-Rspamd-Queue-Id: B6FBF23BB3F
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
+X-Spamd-Result: default: False [-1.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79798-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	TAGGED_FROM(0.00)[bounces-79799-lists,linux-fsdevel=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[google.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jannh@google.com,linux-fsdevel@vger.kernel.org];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DMARC_NA(0.00)[suse.cz];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.942];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,suse.cz:dkim];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid]
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[jack@suse.cz,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	NEURAL_HAM(-0.00)[-0.941];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_SEVEN(0.00)[7]
 X-Rspamd-Action: no action
 
-On Fri, Mar 6, 2026 at 12:30=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
-> Similar to scoped_with_kernel_creds() allow a temporary override of
-> current->fs to serve the few places where lookup is performed from
-> kthread context or needs init's filesytem state.
->
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-[...]
-> +static inline struct fs_struct *__override_init_fs(void)
-> +{
-> +       struct fs_struct *fs;
-> +
-> +       fs =3D current->fs;
-> +       smp_store_release(&current->fs, current->fs);
-> +       return fs;
-> +}
+On Mon 09-03-26 10:56:02, Jeff Layton wrote:
+> On Mon, 2026-03-09 at 15:46 +0100, Jan Kara wrote:
+> > On Mon 09-03-26 09:27:47, Jeff Layton wrote:
+> > > On Mon, 2026-03-09 at 13:27 +0100, Jan Kara wrote:
+> > > > On Mon 09-03-26 07:53:51, Jeff Layton wrote:
+> > > > > On Mon, 2026-03-09 at 11:02 +0100, Jan Kara wrote:
+> > > > > > On Sat 07-03-26 14:54:31, Jeff Layton wrote:
+> > > > > > > Christoph says, in response to one of the patches in the i_ino widening
+> > > > > > > series, which changes the prototype of several functions in fs.h:
+> > > > > > > 
+> > > > > > >     "Can you please drop all these pointless externs while you're at it?"
+> > > > > > > 
+> > > > > > > Remove extern keyword from functions touched by that patch (and a few
+> > > > > > > that happened to be nearby). Also add missing argument names to
+> > > > > > > declarations that lacked them.
+> > > > > > > 
+> > > > > > > Suggested-by: Christoph Hellwig <hch@lst.de>
+> > > > > > > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > > > > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > > > > ...
+> > > > > > > -extern void inode_init_once(struct inode *);
+> > > > > > > -extern void address_space_init_once(struct address_space *mapping);
+> > > > > > > -extern struct inode * igrab(struct inode *);
+> > > > > > > -extern ino_t iunique(struct super_block *, ino_t);
+> > > > > > > -extern int inode_needs_sync(struct inode *inode);
+> > > > > > > -extern int inode_just_drop(struct inode *inode);
+> > > > > > > +void inode_init_once(struct inode *inode);
+> > > > > > > +void address_space_init_once(struct address_space *mapping);
+> > > > > > > +struct inode *igrab(struct inode *inode);
+> > > > > > > +ino_t iunique(struct super_block *sb, ino_t max_reserved);
+> > > > > > 
+> > > > > > I've just noticed that we probably forgot to convert iunique() to use u64
+> > > > > > for inode numbers... Although the iunique() number allocator might prefer
+> > > > > > to stay within 32 bits, the interfaces should IMO still use u64 for
+> > > > > > consistency.
+> > > > > > 
+> > > > > 
+> > > > > I went back and forth on that one, but I left iunique() changes off
+> > > > > since they weren't strictly required. Most filesystems that use it
+> > > > > won't have more than 2^32 inodes anyway.
+> > > > > 
+> > > > > If they worked before with iunique() limited to 32-bit values, they
+> > > > > should still after this. After the i_ino widening we could certainly
+> > > > > change it to return a u64 though.
+> > > > 
+> > > > Yes, it won't change anything wrt functionality. I just think that if we go
+> > > > for "ino_t is the userspace API type and kernel-internal inode numbers
+> > > > (i.e.  what gets stored in inode->i_ino) are passed as u64", then this
+> > > > place should logically have u64...
+> > > > 
+> > > 
+> > > I think we'll need a real plan for this.
+> > 
+> > <snip claude analysis>
+> >  
+> > > It certainly wouldn't hurt to make these functions return a u64 type,
+> > > but I worry a little about letting them return values bigger than
+> > > UINT_MAX:
+> > > 
+> > > One of my very first patches was 866b04fccbf1 ("inode numbering: make
+> > > static counters in new_inode and iunique be 32 bits"), and it made
+> > > get_next_ino() and iunique() always return 32 bit values. 
+> > > 
+> > > At the time, 32-bit machines and legacy binaries were a lot more
+> > > prevalent than they are today and this was real problem. I'm guessing
+> > > it's not so much today, so we could probably make them return real 64-
+> > > bit values. That might also obviate the need for locking in these
+> > > functions too.
+> > 
+> > Hum, I think I still didn't express myself clearly enough. I *don't* want
+> > to change values returned from get_next_ino() or iunique(). I would leave
+> > that for the moment when someone comes with a need for more than 4 billions
+> > of inodes in a filesystem using these (which I think is still quite a few
+> > years away). All I want is that in-kernel inode number is consistently
+> > passed as u64 and not as ino_t. So all I ask for is this diff:
+> > 
+> > - ino_t iunique(struct super_block *sb, ino_t max_reserved)
+> > + u64 iunique(struct super_block *sb u64 max_reserved)
+> > ...
+> >  	static unsigned int counter;
+> > -	ino_t res;
+> > +	u64 res;
+> > 
+> > and that's it. I.e., the 'counter' variable that determines max value of
+> > returned number stays as unsigned int.
+> 
+> Sure, that's simple enough, though I wonder whether it's the right
+> thing to do:
+> 
+> Both these functions return a max values of UINT_MAX, so maybe they
+> should return u32 instead? If you make them return u64, then this
+> limitation isn't evident unless you look at the function itself.
 
-See my comments on patch 15 - I think you'll have to reorder this
-patch after the introduction of task_struct::real_fs and changing
-procfs to access task_struct::real_fs.
+Well, that limitation wasn't evident with ino_t either :). The kernel doc
+comment for the function should mention this, that's true. I don't think
+the type of the return value is a very explicit way of expressing that
+either (I'd say you often don't notice). If you want to make that more
+explicit besides the kernel doc comment, then I'd suggest to call the
+function iunique32().
 
-I'm not sure what the smp_store_release() is supposed to pair with; if
-you get rid of remote access to task_struct::fs as I suggest on patch
-15, it could be a plain store, otherwise it would have to happen under
-task_lock().
+> I'm also wondering whether we should just go ahead and revamp them to
+> return real 64-bit values. When the collision risk goes away, then we
+> don't need the spinlock in iunique(), for instance. We could just make
+> that use an atomic64_t (or do something creative with percpu values).
+
+Yes, that would be interesting optimization, I think someone was already
+wanting to do something like that, but I agree we need to be careful about
+userspace regressions there and probably transition users one by one.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
