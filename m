@@ -1,235 +1,320 @@
-Return-Path: <linux-fsdevel+bounces-79873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id YLUEJ4opr2mzOgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 21:11:54 +0100
+	id wPtiDrYpr2mzOgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 21:12:38 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id F142D240B1D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 21:11:53 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB330240B57
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 21:12:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 943BA3045C07
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 20:11:22 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 44F8A302084E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 20:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CDF3369234;
-	Mon,  9 Mar 2026 20:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE4436A018;
+	Mon,  9 Mar 2026 20:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b="cw9sT6Ax"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AMPyvjp0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx1.manguebit.org (mx1.manguebit.org [143.255.12.172])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44633366DB7;
-	Mon,  9 Mar 2026 20:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.255.12.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B483A3ED5BA;
+	Mon,  9 Mar 2026 20:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773087065; cv=none; b=r9HhivtxyIycpEeBzbUUCOyWtaoIon2Oco3lKdGzUvilZhLhoNlVTJNIZfnVk6SlH3dMOnWXTfEY9kB4bYKYTXUvvS2Za2bgvn4egwTlzbA5qmI4fPSWB4shQ621HAUSbwYc4OpcCAeFPy7IPtRqR1OpM+gnV3Xd0TPOnorYlYA=
+	t=1773087107; cv=none; b=ciYvgUuT78YlNbZfiANXnFAMqa2fMXWwXF/Nr3pNHCbdtYbtjS95Gcj6Y3CiFWeF1LJbgKt14eO6PWSzxWhbpHutrTYHWvvhGUHRVA9dGB/70tonlWYTkGKk3UqXnqyffvphwTNcnfJ1vROC+3wKdInVU9NMsQjIhHYJDO2NJPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773087065; c=relaxed/simple;
-	bh=BHXjoDoMhg8grJIMCmMPFUdP22ICo6GuMot4JWbdovE=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 MIME-Version:Content-Type; b=Be8AH7gHv8cg+EEF+qDLPZrGl1HGsTGQmEIlOuPlkY/Ql5A02q1TOqewtNpd4QEjRzAIMhDZcYXG2oA+QDgXaChUl8j9FBQg1pyl+pdxID1dmjhUaThG9TbIqK9A8g8PSbU+J338v1YwvNrwi2dOqa99LYuMBcIJEqJJpr2jZhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org; spf=pass smtp.mailfrom=manguebit.org; dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b=cw9sT6Ax; arc=none smtp.client-ip=143.255.12.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=manguebit.org; s=dkim; h=Content-Type:MIME-Version:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=UyS/RwtcErYljLx/mEivXVmGRBsy+mVkAss0060B5ew=; b=cw9sT6AxYrqPDrRYlmyMtT2PZ2
-	ndEaIvYfrm8B66xd6iaE+UW8xgrdif7RNXLAgahLUU+KWSCq/mqCdZNG8riVUgiiMjws4bmxdOPgm
-	/bTwZD9NN29Zgmc2OSIxpsl8DqwDT4qPgwmRnjMvbx9sczeATtOcRLv3CXzshUBi4qxStVZaHBBUg
-	lEcOp6ktpzobMEN3jLaMlfPSFb1FxCdihKZN8y4rVcSNLWbJNu5mGlcwZUPo+WuibJ81KqwMfRxBL
-	Y8sR01GlsBjAqepROEm8KD40MmGBLnm+48LolvmSyGutJvlK+0nJmo1G22V8VFOpGPOePAl9CoiuO
-	He73tt6A==;
-Received: from pc by mx1.manguebit.org with local (Exim 4.99.1)
-	id 1vzgwF-00000000YiG-3uZw;
-	Mon, 09 Mar 2026 17:10:51 -0300
-Message-ID: <c61799674ff937d3752e0b791a888c7a@manguebit.org>
-From: Paulo Alcantara <pc@manguebit.org>
-To: Viacheslav Dubeyko <slava@dubeyko.com>, dhowells@redhat.com,
- netfs@lists.linux.dev
-Cc: ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Slava.Dubeyko@ibm.com, slava@dubeyko.com, vdubeyko@redhat.com
-Subject: Re: [PATCH] netfs: fix VM_BUG_ON_FOLIO() issue in
- netfs_write_begin() call
-In-Reply-To: <20260309180215.2479178-2-slava@dubeyko.com>
-References: <20260309180215.2479178-2-slava@dubeyko.com>
-Date: Mon, 09 Mar 2026 17:10:50 -0300
+	s=arc-20240116; t=1773087107; c=relaxed/simple;
+	bh=JlmKdH0Bbz2ZxP9WbCFMzyyjBIEgtG4cMl4nlq+6890=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=PwGdnvMf/WMsYG8REvOTydwDMIxVIS4UmGwAPOUgMkQB1CfFwP0t/ChoJLK45l3/MheqlFQmy16PXalc7laagIRgRsSZbcD0eoDbcWQ0m73xmFOo13TyDuE2PHKOQi93EzYQEltPLeWbtNL7a0Bc/hpp+kUq5HoJB9a58MDCV+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AMPyvjp0; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 629FwFY71433673;
+	Mon, 9 Mar 2026 20:11:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=J+MReH
+	kdFCzDINevGmN7BYrD5h16dkVpWOVjmnX1Q/k=; b=AMPyvjp0jQUNgXn6Hk1tmf
+	EG4FCBlJk8vU0dzchEkhTCFJFLesmCchgPistcAgAs639vnP9pptng8kXMAbzOia
+	q5NshJyvTNfof8gdYp1GzwxZulybshI3PqRKjOb/SaI0UPEJrIt4jyexAIN48Wm0
+	w/Mw3wPT6W3BQmrKZWXHn6/DFARVTupqS/iLqqNyLrME9wToruViZdwdbBsu3Qtl
+	0zEFIHGN04u6+OjrW21Tgfm9LJbMSCz1cBRZneiIQ0NfJfCZ4Y4F3a9ghOwfDLyJ
+	r+N+wncn0OldU7zZnFVO0t6vNaRxLqtcCgLdbScpUcJtgriSZx0KQ9bsYjERgKcw
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4crcuy86s0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Mar 2026 20:11:07 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 629JvVsj024649;
+	Mon, 9 Mar 2026 20:11:06 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4cs0jjx73p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Mar 2026 20:11:06 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 629KB6ZU9699942
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 9 Mar 2026 20:11:06 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 276F258051;
+	Mon,  9 Mar 2026 20:11:06 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4A42F5805E;
+	Mon,  9 Mar 2026 20:11:03 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.72.80])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  9 Mar 2026 20:11:03 +0000 (GMT)
+Message-ID: <0bd92b4fce00a6111a0fc7764904f7e6ae0ece3a.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 00/12] vfs: change inode->i_ino from unsigned long
+ to u64
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+        fsverity@lists.linux.dev, linux-mm@kvack.org, netfs@lists.linux.dev,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-nilfs@vger.kernel.org,
+        v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+        autofs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+        linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+        devel@lists.orangefs.org, linux-unionfs@vger.kernel.org,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        netdev@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-hams@vger.kernel.org, linux-x25@vger.kernel.org,
+        audit@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-can@vger.kernel.org, linux-sctp@vger.kernel.org,
+        bpf@vger.kernel.org
+In-Reply-To: <dd3f9873c7939fba0ca2366effd24e4b6326f17b.camel@kernel.org>
+References: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
+				 <05b5d55c49b5a1bbc43a5315e3c84872e7e634b3.camel@linux.ibm.com>
+			 <f22758116dabd3c135a833bcb5cfcd2ea4f6ecf4.camel@kernel.org>
+		 <c9500adc562665d44feaca9206f23a5ba07432c1.camel@linux.ibm.com>
+	 <dd3f9873c7939fba0ca2366effd24e4b6326f17b.camel@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 09 Mar 2026 16:11:02 -0400
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Rspamd-Queue-Id: F142D240B1D
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=EK4LElZC c=1 sm=1 tr=0 ts=69af295b cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=uAbxVGIbfxUO_5tXvNgY:22 a=VwQbUJbxAAAA:8
+ a=Ohuc5M0UGw20_VvRb6sA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA5MDE3OCBTYWx0ZWRfX48NInAXNxJ9I
+ cqZ2w42oLBKp6f6ShdJYkvtWo35W1xBR9wJ3/AMrAgqtjjRmHF+LNmGqeG928jRHEGfhi5Dc3Ir
+ wmrxB6T58L1jgUeut/UN4ASDb+YKdYMu+ThxKOBJOKt26YDnsAlMtjSvmCcaxE+TT5Ibe0zYC0f
+ zBgbUGDl6m62+LPcwjv67C82HPGKVuU4mQ7dUKg2Sv0H9xprcqNV55N1hEVQyFV4pb7QXKtAhGE
+ YVUSx215hmiPcMqQdaRgfBi/PErZi+WGgzrtD+EeiIqh5iBJfaUE0yW08tvcIRwoQr42lAufyzB
+ vYZKyixwfkjfLVLXUjHMdBtRGJrXaAm82jJw9wIV+5PYqMOONm6AlqMVRpwFh8k3h3nwk8wQiR2
+ zhIg8VMnQ/RF3WK3QDU7+acPMfehsyHGr854HkqAG/4Nm9pp74q0YkbWa+CcmHp5NJJ/sMPIvY9
+ s27fVbRyzlJIijxgTKg==
+X-Proofpoint-GUID: xB1hrjZmRj2bIZxp5d4ApU8QU-_XE2VB
+X-Proofpoint-ORIG-GUID: xB1hrjZmRj2bIZxp5d4ApU8QU-_XE2VB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-09_05,2026-03-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 spamscore=0 suspectscore=0 clxscore=1015
+ bulkscore=0 impostorscore=0 priorityscore=1501 malwarescore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603090178
+X-Rspamd-Queue-Id: BB330240B57
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[manguebit.org,quarantine];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[manguebit.org:s=dkim];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[ibm.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[ibm.com:s=pp1];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79873-lists,linux-fsdevel=lfdr.de];
-	PRECEDENCE_BULK(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[manguebit.org:+];
-	MISSING_XM_UA(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[pc@manguebit.org,linux-fsdevel@vger.kernel.org];
-	MID_RHS_MATCH_FROM(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	RCPT_COUNT_TWELVE(0.00)[45];
+	TAGGED_FROM(0.00)[bounces-79874-lists,linux-fsdevel=lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[ibm.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.ibm.com:mid,tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo];
 	TO_DN_SOME(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[zohar@linux.ibm.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	PRECEDENCE_BULK(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,manguebit.org:dkim,manguebit.org:email,manguebit.org:mid]
+	RCVD_COUNT_SEVEN(0.00)[11]
 X-Rspamd-Action: no action
 
-Viacheslav Dubeyko <slava@dubeyko.com> writes:
+On Mon, 2026-03-09 at 15:33 -0400, Jeff Layton wrote:
+> On Mon, 2026-03-09 at 15:00 -0400, Mimi Zohar wrote:
+> > On Mon, 2026-03-09 at 13:59 -0400, Jeff Layton wrote:
+> > > On Mon, 2026-03-09 at 13:47 -0400, Mimi Zohar wrote:
+> > > > [ I/O socket time out.  Trimming the To list.]
+> > > >=20
+> > > > On Wed, 2026-03-04 at 10:32 -0500, Jeff Layton wrote:
+> > > > > This version squashes all of the format-string changes and the i_=
+ino
+> > > > > type change into the same patch. This results in a giant 600+ lin=
+e patch
+> > > > > at the end of the series, but it does remain bisectable.  Because=
+ the
+> > > > > patchset was reorganized (again) some of the R-b's and A-b's have=
+ been
+> > > > > dropped.
+> > > > >=20
+> > > > > The entire pile is in the "iino-u64" branch of my tree, if anyone=
+ is
+> > > > > interested in testing this.
+> > > > >=20
+> > > > >     https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux=
+.git/
+> > > > >=20
+> > > > > Original cover letter follows:
+> > > > >=20
+> > > > > ----------------------8<-----------------------
+> > > > >=20
+> > > > > Christian said [1] to "just do it" when I proposed this, so here =
+we are!
+> > > > >=20
+> > > > > For historical reasons, the inode->i_ino field is an unsigned lon=
+g,
+> > > > > which means that it's 32 bits on 32 bit architectures. This has c=
+aused a
+> > > > > number of filesystems to implement hacks to hash a 64-bit identif=
+ier
+> > > > > into a 32-bit field, and deprives us of a universal identifier fi=
+eld for
+> > > > > an inode.
+> > > > >=20
+> > > > > This patchset changes the inode->i_ino field from an unsigned lon=
+g to a
+> > > > > u64. This shouldn't make any material difference on 64-bit hosts,=
+ but
+> > > > > 32-bit hosts will see struct inode grow by at least 4 bytes. This=
+ could
+> > > > > have effects on slabcache sizes and field alignment.
+> > > > >=20
+> > > > > The bulk of the changes are to format strings and tracepoints, si=
+nce the
+> > > > > kernel itself doesn't care that much about the i_ino field. The f=
+irst
+> > > > > patch changes some vfs function arguments, so check that one out
+> > > > > carefully.
+> > > > >=20
+> > > > > With this change, we may be able to shrink some inode structures.=
+ For
+> > > > > instance, struct nfs_inode has a fileid field that holds the 64-b=
+it
+> > > > > inode number. With this set of changes, that field could be elimi=
+nated.
+> > > > > I'd rather leave that sort of cleanups for later just to keep thi=
+s
+> > > > > simple.
+> > > > >=20
+> > > > > Much of this set was generated by LLM, but I attributed it to mys=
+elf
+> > > > > since I consider this to be in the "menial tasks" category of LLM=
+ usage.
+> > > > >=20
+> > > > > [1]: https://lore.kernel.org/linux-fsdevel/20260219-portrait-wink=
+t-959070cee42f@brauner/
+> > > > >=20
+> > > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > >=20
+> > > > Jeff, missing from this patch set is EVM.  In hmac_add_misc() EVM c=
+opies the
+> > > > i_ino and calculates either an HMAC or file meta-data hash, which i=
+s then
+> > > > signed.=20
+> > > >=20
+> > > >=20
+> > >=20
+> > > Thanks Mimi, good catch.
+> > >=20
+> > > It looks like we should just be able to change the ino field to a u64
+> > > alongside everything else. Something like this:
+> > >=20
+> > > diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity=
+/evm/evm_crypto.c
+> > > index c0ca4eedb0fe..77b6c2fa345e 100644
+> > > --- a/security/integrity/evm/evm_crypto.c
+> > > +++ b/security/integrity/evm/evm_crypto.c
+> > > @@ -144,7 +144,7 @@ static void hmac_add_misc(struct shash_desc *desc=
+, struct inode *inode,
+> > >                           char type, char *digest)
+> > >  {
+> > >         struct h_misc {
+> > > -               unsigned long ino;
+> > > +               u64 ino;
+> > >                 __u32 generation;
+> > >                 uid_t uid;
+> > >                 gid_t gid;
+> > >=20
+> >=20
+> > Agreed.
+> >=20
+> > >=20
+> > > That should make no material difference on 64-bit hosts. What's the
+> > > effect on 32-bit? Will they just need to remeasure everything or woul=
+d
+> > > the consequences be more dire? Do we have any clue whether anyone is
+> > > using EVM in 32-bit environments?
+> >=20
+> > All good questions. Unfortunately I don't know the answer to most of th=
+em. What
+> > we do know: changing the size of the i_ino field would affect EVM file =
+metadata
+> > verification and would require relabeling the filesystem.  Even package=
+s
+> > containing EVM portable signatures, which don't include or verify the i=
+_ino
+> > number, would be affected.
+> >=20
+>=20
+> Ouch. Technically, I guess this is ABI...
+>=20
+> While converting to u64 seems like the ideal thing to do, the other
+> option might be to just keep this as an unsigned long for now.
+>=20
+> No effect on 64-bit, but that could keep things working 32-bit when the
+> i_ino casts properly to a u32. ext4 would be fine since they don't
+> issue inode numbers larger than UINT_MAX. xfs and btrfs are a bit more
+> iffy, but worst case they'd just need to be relabeled (which is what
+> they'll need to do anyway).
+>=20
+> If we do that, then we should probably add a comment to this function
+> explaining why it's an unsigned long.
 
-> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
->
-> The multiple runs of generic/013 test-case is capable
-> to reproduce a kernel BUG at mm/filemap.c:1504 with
-> probability of 30%.
->
-> while true; do
->   sudo ./check generic/013
-> done
->
-> [ 9849.452376] page: refcount:3 mapcount:0 mapping:00000000e58ff252 index:0x10781 pfn:0x1c322
-> [ 9849.452412] memcg:ffff8881a1915800
-> [ 9849.452417] aops:ceph_aops ino:1000058db9e dentry name(?):"f9XXXXXX"
-> [ 9849.452432] flags: 0x17ffffc0000000(node=0|zone=2|lastcpupid=0x1fffff)
-> [ 9849.452441] raw: 0017ffffc0000000 0000000000000000 dead000000000122 ffff88816110d248
-> [ 9849.452445] raw: 0000000000010781 0000000000000000 00000003ffffffff ffff8881a1915800
-> [ 9849.452447] page dumped because: VM_BUG_ON_FOLIO(!folio_test_locked(folio))
-> [ 9849.452474] ------------[ cut here ]------------
-> [ 9849.452476] kernel BUG at mm/filemap.c:1504!
-> [ 9849.478635] Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-> [ 9849.481772] CPU: 2 UID: 0 PID: 84223 Comm: fsstress Not tainted 7.0.0-rc1+ #18 PREEMPT(full)
-> [ 9849.482881] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.17.0-9.fc43 06/1
-> 0/2025
-> [ 9849.484539] RIP: 0010:folio_unlock+0x85/0xa0
-> [ 9849.485076] Code: 89 df 31 f6 e8 1c f3 ff ff 48 8b 5d f8 c9 31 c0 31 d2 31 f6 31 ff c3 cc
-> cc cc cc 48 c7 c6 80 6c d9 a7 48 89 df e8 4b b3 10 00 <0f> 0b 48 89 df e8 21 e6 2c 00 eb 9d 0f 1f 40 00 66 66 2e 0f 1f 84
-> [ 9849.493818] RSP: 0018:ffff8881bb8076b0 EFLAGS: 00010246
-> [ 9849.495740] RAX: 0000000000000000 RBX: ffffea00070c8980 RCX: 0000000000000000
-> [ 9849.498678] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> [ 9849.500559] RBP: ffff8881bb8076b8 R08: 0000000000000000 R09: 0000000000000000
-> [ 9849.501097] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000010782000
-> [ 9849.502108] R13: ffff8881935de738 R14: ffff88816110d010 R15: 0000000000001000
-> [ 9849.502516] FS:  00007e36cbe94740(0000) GS:ffff88824a899000(0000) knlGS:0000000000000000
-> [ 9849.502996] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [ 9849.503810] CR2: 000000c0002b0000 CR3: 000000011bbf6004 CR4: 0000000000772ef0
-> [ 9849.504459] PKRU: 55555554
-> [ 9849.504626] Call Trace:
-> [ 9849.505242]  <TASK>
-> [ 9849.505379]  netfs_write_begin+0x7c8/0x10a0
-> [ 9849.505877]  ? __kasan_check_read+0x11/0x20
-> [ 9849.506384]  ? __pfx_netfs_write_begin+0x10/0x10
-> [ 9849.507178]  ceph_write_begin+0x8c/0x1c0
-> [ 9849.507934]  generic_perform_write+0x391/0x8f0
-> [ 9849.508503]  ? __pfx_generic_perform_write+0x10/0x10
-> [ 9849.509062]  ? file_update_time_flags+0x19a/0x4b0
-> [ 9849.509581]  ? ceph_get_caps+0x63/0xf0
-> [ 9849.510259]  ? ceph_get_caps+0x63/0xf0
-> [ 9849.510530]  ceph_write_iter+0xe79/0x1ae0
-> [ 9849.511282]  ? __pfx_ceph_write_iter+0x10/0x10
-> [ 9849.511839]  ? lock_acquire+0x1ad/0x310
-> [ 9849.512334]  ? ksys_write+0xf9/0x230
-> [ 9849.512582]  ? lock_is_held_type+0xaa/0x140
-> [ 9849.513128]  vfs_write+0x512/0x1110
-> [ 9849.513634]  ? __fget_files+0x33/0x350
-> [ 9849.513893]  ? __pfx_vfs_write+0x10/0x10
-> [ 9849.514143]  ? mutex_lock_nested+0x1b/0x30
-> [ 9849.514394]  ksys_write+0xf9/0x230
-> [ 9849.514621]  ? __pfx_ksys_write+0x10/0x10
-> [ 9849.514887]  ? do_syscall_64+0x25e/0x1520
-> [ 9849.515122]  ? __kasan_check_read+0x11/0x20
-> [ 9849.515366]  ? trace_hardirqs_on_prepare+0x178/0x1c0
-> [ 9849.515655]  __x64_sys_write+0x72/0xd0
-> [ 9849.515885]  ? trace_hardirqs_on+0x24/0x1c0
-> [ 9849.516130]  x64_sys_call+0x22f/0x2390
-> [ 9849.516341]  do_syscall_64+0x12b/0x1520
-> [ 9849.516545]  ? do_syscall_64+0x27c/0x1520
-> [ 9849.516783]  ? do_syscall_64+0x27c/0x1520
-> [ 9849.517003]  ? lock_release+0x318/0x480
-> [ 9849.517220]  ? __x64_sys_io_getevents+0x143/0x2d0
-> [ 9849.517479]  ? percpu_ref_put_many.constprop.0+0x8f/0x210
-> [ 9849.517779]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [ 9849.518073]  ? do_syscall_64+0x25e/0x1520
-> [ 9849.518291]  ? __kasan_check_read+0x11/0x20
-> [ 9849.518519]  ? trace_hardirqs_on_prepare+0x178/0x1c0
-> [ 9849.518799]  ? do_syscall_64+0x27c/0x1520
-> [ 9849.519024]  ? local_clock_noinstr+0xf/0x120
-> [ 9849.519262]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [ 9849.519544]  ? do_syscall_64+0x25e/0x1520
-> [ 9849.519781]  ? __kasan_check_read+0x11/0x20
-> [ 9849.520008]  ? trace_hardirqs_on_prepare+0x178/0x1c0
-> [ 9849.520273]  ? do_syscall_64+0x27c/0x1520
-> [ 9849.520491]  ? trace_hardirqs_on_prepare+0x178/0x1c0
-> [ 9849.520767]  ? irqentry_exit+0x10c/0x6c0
-> [ 9849.520984]  ? trace_hardirqs_off+0x86/0x1b0
-> [ 9849.521224]  ? exc_page_fault+0xab/0x130
-> [ 9849.521472]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [ 9849.521766] RIP: 0033:0x7e36cbd14907
-> [ 9849.521989] Code: 10 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 51 c3 48 83 ec 28 48 89 54 24 18 48 89 74 24
-> [ 9849.523057] RSP: 002b:00007ffff2d2a968 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> [ 9849.523484] RAX: ffffffffffffffda RBX: 000000000000e549 RCX: 00007e36cbd14907
-> [ 9849.523885] RDX: 000000000000e549 RSI: 00005bd797ec6370 RDI: 0000000000000004
-> [ 9849.524277] RBP: 0000000000000004 R08: 0000000000000047 R09: 00005bd797ec6370
-> [ 9849.524652] R10: 0000000000000078 R11: 0000000000000246 R12: 0000000000000049
-> [ 9849.525062] R13: 0000000010781a37 R14: 00005bd797ec6370 R15: 0000000000000000
-> [ 9849.525447]  </TASK>
-> [ 9849.525574] Modules linked in: intel_rapl_msr intel_rapl_common intel_uncore_frequency_common intel_pmc_core pmt_telemetry pmt_discovery pmt_class intel_pmc_ssram_telemetry intel_vsec kvm_intel joydev kvm irqbypass ghash_clmulni_intel aesni_intel input_leds rapl mac_hid psmouse vga16fb serio_raw vgastate floppy i2c_piix4 bochs qemu_fw_cfg i2c_smbus pata_acpi sch_fq_codel rbd msr parport_pc ppdev lp parport efi_pstore
-> [ 9849.529150] ---[ end trace 0000000000000000 ]---
-> [ 9849.529502] RIP: 0010:folio_unlock+0x85/0xa0
-> [ 9849.530813] Code: 89 df 31 f6 e8 1c f3 ff ff 48 8b 5d f8 c9 31 c0 31 d2 31 f6 31 ff c3 cc cc cc cc 48 c7 c6 80 6c d9 a7 48 89 df e8 4b b3 10 00 <0f> 0b 48 89 df e8 21 e6 2c 00 eb 9d 0f 1f 40 00 66 66 2e 0f 1f 84
-> [ 9849.534986] RSP: 0018:ffff8881bb8076b0 EFLAGS: 00010246
-> [ 9849.536198] RAX: 0000000000000000 RBX: ffffea00070c8980 RCX: 0000000000000000
-> [ 9849.537718] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> [ 9849.539321] RBP: ffff8881bb8076b8 R08: 0000000000000000 R09: 0000000000000000
-> [ 9849.540862] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000010782000
-> [ 9849.542438] R13: ffff8881935de738 R14: ffff88816110d010 R15: 0000000000001000
-> [ 9849.543996] FS:  00007e36cbe94740(0000) GS:ffff88824b899000(0000) knlGS:0000000000000000
-> [ 9849.545854] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [ 9849.547092] CR2: 00007e36cb3ff000 CR3: 000000011bbf6006 CR4: 0000000000772ef0
-> [ 9849.548679] PKRU: 55555554
->
-> The race sequence:
-> 1. Read completes -> netfs_read_collection() runs
-> 2. netfs_wake_rreq_flag(rreq, NETFS_RREQ_IN_PROGRESS, ...)
-> 3. netfs_wait_for_read() returns -EFAULT to netfs_write_begin()
-> 4. The netfs_unlock_abandoned_read_pages() unlocks the folio
-> 5. netfs_write_begin() calls folio_unlock(folio) -> VM_BUG_ON_FOLIO()
->
-> The key reason of the issue that netfs_unlock_abandoned_read_pages()
-> doesn't check the flag NETFS_RREQ_NO_UNLOCK_FOLIO and executes
-> folio_unlock() unconditionally. This patch implements in
-> netfs_unlock_abandoned_read_pages() logic similar to
-> netfs_unlock_read_folio().
->
-> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> cc: David Howells <dhowells@redhat.com>
-> cc: Paulo Alcantara <pc@manguebit.org>
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
-> cc: Ceph Development <ceph-devel@vger.kernel.org>
-> ---
->  fs/netfs/read_retry.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
+Agreed.
 
-Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
+>=20
+> Thoughts?
+
+My concern would be embedded/IoT devices, but I don't have any insight into=
+ who
+might be using it on 32 bit.
+
+Mimi
 
