@@ -1,204 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-79771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id GJWnFIbBrmmRIgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 13:48:06 +0100
+	id 8L8vEYjCrmmRIgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 13:52:24 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 564A9239223
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 13:48:04 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D761C23931F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 13:52:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 82498301C682
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 12:39:21 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D745630B195A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 12:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4AD3AEF57;
-	Mon,  9 Mar 2026 12:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBACE3BD645;
+	Mon,  9 Mar 2026 12:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYLnhx5I"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VBdAwq6l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD693A4F4F;
-	Mon,  9 Mar 2026 12:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E9D378805;
+	Mon,  9 Mar 2026 12:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773059957; cv=none; b=GLMXRpWESPSBSB3N8n3lrnAnfomopMfmlQlpsbHTopydpqz2cEaeMWqRyTE6EVIJqeesTtK6SU0SHlo2tQk9oTIBaUAW5g65mBweWskefypgxBw8Q6rC3eXfm/kO+/YCiN/qWk6Ec137TG++yZFSF9/yIO5fE0b1wraS+XzUqNE=
+	t=1773060377; cv=none; b=Z+KxXsJftY2bMWrkrTTRohw9OfIufHuyVtYXHvqljTg9TYfNH/6DhnrDT/qEZ3Wjwhsq6FBgPclrw8qYku2R7KOwDcZ24xR7qPtLE4axLM1Q/i58EoZqF/eF99eOS3pWQvyLDX5VXDNh/fT2n8dU+GSCbmjbrWATRSjOlA1SO00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773059957; c=relaxed/simple;
-	bh=fEl4baRpKnJ2nFfANZeesOCBX6U6bvjEkJDi+RYvOr0=;
+	s=arc-20240116; t=1773060377; c=relaxed/simple;
+	bh=TB1rR85ROaSy6UBoxYmOUEsYJutQqwBBn4S6y5af2eE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D0mb+nZI9YyeL2XNAm1uzQWTXk+bdtjNZp/Ka2fs82b2RgfkiiVZ/3h7PDZibDq/CXY0b7I+cvvAcQ48zdAxjNiXPJkZI9EG77rDW+t/cSjLqLsrIN96f0FAnxIKEZt+d+hGgXOK8zubmC1iA20UDeSynVs99M2rPDghtHcHWnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DYLnhx5I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 086CFC4CEF7;
-	Mon,  9 Mar 2026 12:39:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773059957;
-	bh=fEl4baRpKnJ2nFfANZeesOCBX6U6bvjEkJDi+RYvOr0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DYLnhx5I72IJrLNHQJUVx4UbQs2eFALwvjPO7MhCySOrfhD6vnCsz91aW3UYnpVXJ
-	 wHFNvZxAwANQK+Kw/Eofc5iLP9RexcsZjp+Txm/YZr5ZM4CTIkFSng0ZLDk6lTd9TU
-	 RFk5fLChRXwYcOt0pTGu0NNwv28OlFVm1wrIICkxphiElXItgd74J71xKXC+OUFxnV
-	 ymjTK0oqy4NhT2BvoL21EPDa1Odzse6bhZB2aJNjuBWnou7/caJFWfqG2nJwQnfu/s
-	 Bye+grl2S6ESjn00WPUddq+cRvKZv1fTKMlBTManpRykjnkt58/ukEhbx8gm0oQdxU
-	 jewUA3dfemX5A==
-Date: Mon, 9 Mar 2026 13:39:13 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Demi Marie Obenour <demiobenour@gmail.com>
-Cc: Linux kernel mailing list <linux-kernel@vger.kernel.org>, 
-	dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org
-Subject: Re: Possible newline injection into fdinfo
-Message-ID: <20260309-zentimeter-abklatsch-990a9ae26ace@brauner>
-References: <08f230b4-8c01-45b8-9956-7cfb9f82eeff@gmail.com>
- <20260304-wertigkeit-rockkonzert-ac7270334804@brauner>
- <bc3c1712-a747-42f5-b175-43757fb83ac9@gmail.com>
- <20260305-gespeichert-athletisch-a25f907e6d2a@brauner>
- <a28e153e-1ad5-4d5e-b030-9b44158533d7@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cLWGjv++VoJEPzm4ip8hjUqHsMvsAOgA5DRub14VigQ2OBbNcJZRyMyi5gJSCtUU+9mcGRwaMD6VKopQqHnnX5Dwklr8GB0Nzr6drGNlQs4jR3swQadtRylwgS8g8+DPZLN/lcRqEk1Pq8G8OHoB3lDpBdueDtccdFARbqzyscc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VBdAwq6l; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1773060375; x=1804596375;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TB1rR85ROaSy6UBoxYmOUEsYJutQqwBBn4S6y5af2eE=;
+  b=VBdAwq6lbTDdPnK7DvU5XmCD6ux/aomOSNaOQnsvxmc5FExdUKoEVlAt
+   BSJzH6ZoB9lfRB/lo32zy/TweAHCswWZcn2/nXAUTnCgH6QKhuFerybut
+   zaB7QfaMxlxzILjwowWAsdieOT+iecu2JcfNrGQj0/nyjto9UAgVeN1QY
+   bkZjdSGa+gdsSScqI7Waq4hcOe1NAUhFqzj6j1oKTm73nZEv6PRLUBVqC
+   YwBpvIIlID6ABbF0ETfW++iMJ2TzwWMaVq+I3LHIILvLSzJyY8lTfFjCl
+   5r280B6VUlZjuGpBZ2spiouU9zCsRzX7GzS3ehQyroEqGtH5QTxAtGKqc
+   A==;
+X-CSE-ConnectionGUID: Dae5XyKmSyKuOpuuCi//+g==
+X-CSE-MsgGUID: 4D32fEneQlmIA2JlzrabFQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11723"; a="73981357"
+X-IronPort-AV: E=Sophos;i="6.23,109,1770624000"; 
+   d="scan'208";a="73981357"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2026 05:46:15 -0700
+X-CSE-ConnectionGUID: D7HOj06LTjyN+lE05ENfzQ==
+X-CSE-MsgGUID: xp+qGuzkR1qnAvKVB+FQuQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,109,1770624000"; 
+   d="scan'208";a="218886495"
+Received: from lkp-server01.sh.intel.com (HELO 434e41ea3c86) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 09 Mar 2026 05:46:12 -0700
+Received: from kbuild by 434e41ea3c86 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vzZzs-000000000EO-3e2R;
+	Mon, 09 Mar 2026 12:46:08 +0000
+Date: Mon, 9 Mar 2026 20:45:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kanchan Joshi <joshi.k@samsung.com>, brauner@kernel.org, hch@lst.de,
+	djwong@kernel.org, jack@suse.cz, cem@kernel.org, kbusch@kernel.org,
+	axboe@kernel.dk
+Cc: oe-kbuild-all@lists.linux.dev, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, gost.dev@samsung.com,
+	Kanchan Joshi <joshi.k@samsung.com>
+Subject: Re: [PATCH v2 4/5] xfs: steer allocation using write stream
+Message-ID: <202603092015.hrOdrSYV-lkp@intel.com>
+References: <20260309052944.156054-5-joshi.k@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a28e153e-1ad5-4d5e-b030-9b44158533d7@gmail.com>
-X-Rspamd-Queue-Id: 564A9239223
+In-Reply-To: <20260309052944.156054-5-joshi.k@samsung.com>
+X-Rspamd-Queue-Id: D761C23931F
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [2.34 / 15.00];
-	MID_END_EQ_FROM_USER_PART(4.00)[];
+X-Spamd-Result: default: False [-1.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	MID_CONTAINS_FROM(1.00)[];
+	DMARC_POLICY_ALLOW(-0.50)[intel.com,none];
+	R_DKIM_ALLOW(-0.20)[intel.com:s=Intel];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79771-lists,linux-fsdevel=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_TO(0.00)[gmail.com];
+	TAGGED_FROM(0.00)[bounces-79772-lists,linux-fsdevel=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	NEURAL_SPAM(0.00)[0.156];
-	RCPT_COUNT_THREE(0.00)[4];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,linux-fsdevel@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[intel.com:+];
 	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo]
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[lkp@intel.com,linux-fsdevel@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	NEURAL_HAM(-0.00)[-0.950];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:dkim,intel.com:email,intel.com:mid,01.org:url,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-On Thu, Mar 05, 2026 at 05:24:29AM -0500, Demi Marie Obenour wrote:
-> On 3/5/26 03:34, Christian Brauner wrote:
-> > On Wed, Mar 04, 2026 at 01:57:31PM -0500, Demi Marie Obenour wrote:
-> >> On 3/4/26 08:03, Christian Brauner wrote:
-> >>> On Wed, Mar 04, 2026 at 01:53:42AM -0500, Demi Marie Obenour wrote:
-> >>>> I noticed potentially missing input sanitization in dma_buf_set_name(),
-> >>>> which is reachable from DMA_BUF_SET_NAME.  This allows inserting a name
-> >>>> containing a newline, which is then used to construct the contents of
-> >>>> /proc/PID/task/TID/fdinfo/FD.  This could confuse userspace programs
-> >>>> that access this data, possibly tricking them into thinking a file
-> >>>> descriptor is of a different type than it actually is.
-> >>>>
-> >>>> Other code might have similar bugs.  For instance, there is code that
-> >>>> uses a sysfs path, a driver name, or a device name from /dev.  It is
-> >>>> possible to sanitize the first, and the second and third should come
-> >>>> from trusted sources within the kernel itself.  The last area where
-> >>>> I found a potential problem is BPF.  I don't know if this can happen.
-> >>>>
-> >>>> I think this should be fixed by either sanitizing data on write
-> >>>> (by limiting the allowed characters in dma_buf_set_name()), on read
-> >>>> (by using one of the formats that escapes special characters), or both.
-> >>>>
-> >>>> Is there a better way to identify that a file descriptor is of
-> >>>> a particular type, such as an eventfd?  fdinfo is subject to
-> >>>
-> >>> The problem is that most of the anonymous inodes share a single
-> >>> anonymous inode so any uapi that returns information based inode->i_op
-> >>> is not going to be usable.
-> >>>
-> >>>> bugs of this type, which might happen again.  readlink() reports
-> >>>> "anon_inode:[eventfd]" and S_IFMT reports a mode of 0, but but my
-> >>>
-> >>> That is definitely uapi by now. We've tried to change S_IFMT and it
-> >>> breaks lsfd and other tools so we can't reasonably change it. In fact,
-> >>> pidfds pretend to be anon_inode even though they're not simply because
-> >>> some tools parse that out.
-> >>
-> >> Does Linux guarantee that anything that is not an anonymous inode
-> >> will have (st_mode & S_IFMT) != 0?
-> > 
-> > Ignoring bugs or disk corruption anonymous inodes should be the only
-> > inode type that has a zero type. Everything else should have a non-zero
-> > type and the I made the VFS splat in may_open():
-> > 
-> >           switch (inode->i_mode & S_IFMT) {
-> >           case S_IFLNK:
-> >                   return -ELOOP;
-> >           case S_IFDIR:
-> >                   if (acc_mode & MAY_WRITE)
-> >                           return -EISDIR;
-> >                   if (acc_mode & MAY_EXEC)
-> >                           return -EACCES;
-> >                   break;
-> >           case S_IFBLK:
-> >           case S_IFCHR:
-> >                   if (!may_open_dev(path))
-> >                           return -EACCES;
-> >                   fallthrough;
-> >           case S_IFIFO:
-> >           case S_IFSOCK:
-> >                   if (acc_mode & MAY_EXEC)
-> >                           return -EACCES;
-> >                   flag &= ~O_TRUNC;
-> >                   break;
-> >           case S_IFREG:
-> >                   if ((acc_mode & MAY_EXEC) && path_noexec(path))
-> >                           return -EACCES;
-> >                   break;
-> >           default:
-> >                   VFS_BUG_ON_INODE(!IS_ANON_FILE(inode), inode);
-> >           }
-> > 
-> >> Maybe it is time for a prctl that disables this legacy behavior?
-> > 
-> > I've switched anonymous inodes internally to S_IFREG a while ago in [1]
-> > and then masked it off for userspace. Even just the internal conversion
-> > caused various subsystems like io_uring to lose it which is why we
-> > reverted it in [2].
-> > 
-> > So any next attempt needs to ensure that there are no internal and no
-> > external regressions. And no prctl()s please. It's a strong contender
-> > for Linux' main landfill next to procfs.
-> > Ideally we'd just look at lsfd and lsof and move them away from any type
-> > assertions. I have asked them to do that for pidfds a while ago and they
-> > have merged a patch to that effect.> > [1]: cfd86ef7e8e7 ("anon_inode: use a proper mode internally")
-> > [2]: 1e7ab6f67824 ("anon_inode: rework assertions")
-> 
-> What should programs like that be doing instead, given the fdinfo
-> newline injection bug?  Even if the current drivers are fixed,
-> the interface makes it very easy to mess up new ones.  It's like
-> preventing XSS when one has to manually HTML-escape everything.
-> 
-> Ideally, this would be fixed at the seq_file level, with any space
-> (including LF) introduced via %s being automatically escaped.
+Hi Kanchan,
 
-I'm not familiar enough with that particular wrinkle of the seqfile
-implementation my guess is that just doing this unconditional in seqfile
-will cause regressions. And the bug is with the ability to pass
-unsanitized input in so the caller should be fixed imho.
+kernel test robot noticed the following build errors:
 
-So for now you might want to fix dma_buf_set_name() and the two other
-possible offenders provided you can show the maintainers how this is
-possible.
+[auto build test ERROR on 11439c4635edd669ae435eec308f4ab8a0804808]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Kanchan-Joshi/fs-add-generic-write-stream-management-ioctl/20260309-133736
+base:   11439c4635edd669ae435eec308f4ab8a0804808
+patch link:    https://lore.kernel.org/r/20260309052944.156054-5-joshi.k%40samsung.com
+patch subject: [PATCH v2 4/5] xfs: steer allocation using write stream
+config: i386-randconfig-011-20260309 (https://download.01.org/0day-ci/archive/20260309/202603092015.hrOdrSYV-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260309/202603092015.hrOdrSYV-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202603092015.hrOdrSYV-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   ld: fs/xfs/xfs_inode.o: in function `xfs_inode_write_stream_to_ag':
+>> fs/xfs/xfs_inode.c:126:(.text+0x9ed): undefined reference to `__umoddi3'
+
+
+vim +126 fs/xfs/xfs_inode.c
+
+    95	
+    96	xfs_agnumber_t
+    97	xfs_inode_write_stream_to_ag(
+    98		struct xfs_inode	*ip)
+    99	{
+   100		struct xfs_mount	*mp = ip->i_mount;
+   101		uint8_t			stream_id = ip->i_write_stream;
+   102		uint32_t		max_streams = xfs_inode_max_write_streams(ip);
+   103		uint32_t		nr_ags;
+   104		xfs_agnumber_t		start_ag, ags_per_stream;
+   105	
+   106		if (XFS_IS_REALTIME_INODE(ip) || !max_streams)
+   107			return NULLAGNUMBER;
+   108	
+   109		stream_id -= 1; /* for 0-based math, stream-ids are 1-based */
+   110	
+   111		nr_ags = mp->m_sb.sb_agcount;
+   112		ags_per_stream = nr_ags / max_streams;
+   113	
+   114		/* for the case when we have fewer AGs than streams */
+   115		if (ags_per_stream == 0) {
+   116			start_ag = stream_id % nr_ags;
+   117			ags_per_stream = 1;
+   118		} else {
+   119			/* otherwise AGs are partitioned into N streams */
+   120			start_ag = stream_id * ags_per_stream;
+   121			/* uneven distribution case: last stream may contain extra */
+   122			if (stream_id == max_streams-1)
+   123				ags_per_stream = nr_ags - start_ag;
+   124		}
+   125		/* intra-stream concurrency: hash inode to choose AG within partition */
+ > 126		return start_ag + (ip->i_ino % ags_per_stream);
+   127	}
+   128	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
