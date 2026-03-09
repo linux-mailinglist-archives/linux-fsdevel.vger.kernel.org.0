@@ -1,196 +1,258 @@
-Return-Path: <linux-fsdevel+bounces-79875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cLfZCKcqr2mzOgIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 21:16:39 +0100
+	id Ak/qExgur2l1PQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 21:31:20 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF4CB240C35
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 21:16:38 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3216240D52
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 21:31:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1A300307AA28
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 20:14:52 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id DBDB2300D680
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 20:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B546369211;
-	Mon,  9 Mar 2026 20:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WgRGBO0+"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4FA27B343;
+	Mon,  9 Mar 2026 20:31:13 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7545A366DB7
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Mar 2026 20:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9236C2EA;
+	Mon,  9 Mar 2026 20:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773087290; cv=none; b=iREoseuEQamJY+tN3No8HdXZjKhA/Q1UeX8GMfwBoNtvp84BYZ3pA5icgW1bXJZ/R4vitfXKSTrZMyVFgTkEgpk0uoqBd9JY1CTqt4NOhhH/PovJogIanT02Fheqjq3EZGc+Rhe7+DXxwFIsAp9GKwG3naCgYttKSvv7ywR0TRo=
+	t=1773088272; cv=none; b=RTgN5ZgM5dpP1NrvoZNc+wtTD87tThyEiJdSeYfB3HjM7Ny2U/RIQCV8K8/HmJQj+g2s/c3xykPkWtUPar75TnfoZUj0fJ8ybUUcU/xUI8MSAXEZ/KMqv9UCw6zAkmSXiY6nXI25lGiH5cRXVgr8OkppXk5xkV1rZ+fF+UhbyqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773087290; c=relaxed/simple;
-	bh=t2ELUrTRrIA43qxN6ICa2HlQbYlezzntw2IcTVfori8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TK3OgSlrMlVE564481ipUyn/gdq12gPxD9pX1vtEV1r0UejNXLjP3AiH8JCLhFN1KFraw1ncvZ5raDd2nN2YgYHXVm5bPEInZWWEjMwHjTaVQGTcdBOfGfpcxfPwnc51DO0zdejQ6C0DdLkHXPa57VoDlFmGv/4NHsASpR3CDgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WgRGBO0+; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-829a535ad50so1269821b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Mar 2026 13:14:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1773087289; x=1773692089; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vcDGw75J1CjJnpglqCPC5b33UOnC1+NDU+DgqlhrL+E=;
-        b=WgRGBO0+3RQ6BaSZPMkHwYilzNG8yrke4nzj1NAESScOp4X6GEQis6YsI7ISlipbAL
-         yYDFZ4mOXT/QRu9wc2T/xvZ8Y2aLoOvC0U0TWM7WF4GyVMktCEYHpV/hrwNt+Egi27aH
-         7nl//d2I8E4pn1k3m/k8A5KjlHiBo5VY+AQSNigeWV1OWhb+MEPI5LpBP5flJe3JdFyW
-         1QF9eoPbQOW/PFrTLUkIuz54K0UiBeFz6FRHkCS52qu7bWKuBjghOLVz7Vfz8PR7o7a2
-         YoTQ+3opfFU3Itul/vLveK0qLdmz8WYTSdT3Z6bsZ+bEfdRJoNYQq+0X2XTnI0RD1ZSD
-         KNuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773087289; x=1773692089;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vcDGw75J1CjJnpglqCPC5b33UOnC1+NDU+DgqlhrL+E=;
-        b=kezPY2Epmb2zQbAzXYzkWsrSi3G252BhWoRKQtYeySZ2Qr8PHOMB+oqDt87l83qNsB
-         O2V1P/V9RDaLphFCCttKFQcvQOgqMYJ7NoTfrlQtu3gwggGSaJv2WUcJNOEesfKk/HYh
-         Md2qEoCORmmEfwupwyHeUOaW6gz7FNsDQzistEwQ89rNiPPErN0AQ4YHsJKnU3aTf8M7
-         5VSBXcQ396SZUdBYDTt2ffcqB9HanFhCOhounNhm7VNLHRXR62yRYGcidM5KeWuK8KNL
-         XsC2rG/KZqssTZrRvEFAX8hz79L/VoGxAzrlojpmxmQ0Fvxvv6HBod+fQAhDpfPb/CMq
-         f06w==
-X-Forwarded-Encrypted: i=1; AJvYcCWmXuSP3SLbjXExjEcSo0zDcxQHZJXLJvVVcy6qQwL8viWF9uZR1dOjp9CKPI3C7CclDHKbPXxXrIOm8F8Q@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2NZ86XeNvhXkWdIvZJu27uY9GYqM24efpnTYxO41Wg4hE9D2H
-	0RJqG3gEjOMuA8xZ+GsodEijQ7YxpFKGaYOqeiY4ENFf/Al0dk+FjeQTIeCYKzhCEY+VWY8MR/4
-	g1+xr3A==
-X-Received: from pfqz27.prod.google.com ([2002:aa7:9e5b:0:b0:821:82a1:fe7d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:4519:b0:821:8ea4:480e
- with SMTP id d2e1a72fcca58-829a2d88f61mr11174600b3a.10.1773087288647; Mon, 09
- Mar 2026 13:14:48 -0700 (PDT)
-Date: Mon, 9 Mar 2026 13:14:47 -0700
-In-Reply-To: <CAEvNRgHhFoyh__shK_YefhUOTP4RaG-sivUH=4Gj-2iy1HX+tw@mail.gmail.com>
+	s=arc-20240116; t=1773088272; c=relaxed/simple;
+	bh=LIBZ3t6qSs2lEqwdYFFVeDDtTa2MoTx83SBUaskuTn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dlNAA87HYB0tyqfS1RxchJPMKONbw0aBd40WlHyk2UTs++A7BqpBOZIAo7Mg1y0BaU7fW9kX8dfYz5sCMBfVLPi/Lpeg0vYnGRKVE2OKdIC1e3BI2V9zSMLoNUZFi1vxIWe3YnzRgd6jQNaaZxHbu/NQMSUSnuMUzc5GcVsxQ+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 992821516;
+	Mon,  9 Mar 2026 13:31:02 -0700 (PDT)
+Received: from arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C777A3F7BD;
+	Mon,  9 Mar 2026 13:31:05 -0700 (PDT)
+Date: Mon, 9 Mar 2026 20:31:03 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>,
+	Qing Wang <wangqing7171@gmail.com>,
+	syzbot+cae7809e9dc1459e4e63@syzkaller.appspotmail.com,
+	Liam.Howlett@oracle.com, akpm@linux-foundation.org, chao@kernel.org,
+	jaegeuk@kernel.org, jannh@google.com, linkinjeon@kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, lorenzo.stoakes@oracle.com, pfalcato@suse.de,
+	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com,
+	vbabka@suse.cz, Hao Li <hao.li@linux.dev>
+Subject: Re: [syzbot] [mm?] [f2fs?] [exfat?] memory leak in __kfree_rcu_sheaf
+Message-ID: <aa8uByvL9GwsGfnO@arm.com>
+References: <698a26d3.050a0220.3b3015.007e.GAE@google.com>
+ <20260302034102.3145719-1-wangqing7171@gmail.com>
+ <20df8dd1-a32c-489d-8345-085d424a2f12@kernel.org>
+ <aaeLT8mnMMj_kPJc@hyeyoo>
+ <925a916a-6dfb-48c0-985c-0bdfb96ebd26@kernel.org>
+ <aassZV5PjgFx8dSI@arm.com>
+ <aa66XJDX4QfmEbNA@hyeyoo>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20260309-gmem-st-blocks-v3-0-815f03d9653e@google.com>
- <20260309-gmem-st-blocks-v3-1-815f03d9653e@google.com> <577c4725-7eda-4693-a55a-413572541161@kernel.org>
- <CAEvNRgHhFoyh__shK_YefhUOTP4RaG-sivUH=4Gj-2iy1HX+tw@mail.gmail.com>
-Message-ID: <aa8qNz_52Qe6x1Kv@google.com>
-Subject: Re: [PATCH RFC v3 1/4] KVM: guest_memfd: Track amount of memory
- allocated on inode
-From: Sean Christopherson <seanjc@google.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: "David Hildenbrand (Arm)" <david@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	rientjes@google.com, rick.p.edgecombe@intel.com, yan.y.zhao@intel.com, 
-	fvdl@google.com, jthoughton@google.com, vannapurve@google.com, 
-	shivankg@amd.com, michael.roth@amd.com, pratyush@kernel.org, 
-	pasha.tatashin@soleen.com, kalyazin@amazon.com, tabba@google.com, 
-	Vlastimil Babka <vbabka@kernel.org>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-X-Rspamd-Queue-Id: AF4CB240C35
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aa66XJDX4QfmEbNA@hyeyoo>
+X-Rspamd-Queue-Id: B3216240D52
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [0.14 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
-	MV_CASE(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
+	DMARC_POLICY_SOFTFAIL(0.10)[arm.com : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79875-lists,linux-fsdevel=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[4];
-	RCPT_COUNT_TWELVE(0.00)[34];
-	DKIM_TRACE(0.00)[google.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[seanjc@google.com,linux-fsdevel@vger.kernel.org];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,syzkaller.appspotmail.com,oracle.com,linux-foundation.org,google.com,lists.sourceforge.net,vger.kernel.org,kvack.org,suse.de,samsung.com,googlegroups.com,suse.cz,linux.dev];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_FROM(0.00)[bounces-79876-lists,linux-fsdevel=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,arm.com:mid];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[catalin.marinas@arm.com,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	RCVD_COUNT_FIVE(0.00)[5];
+	R_DKIM_NA(0.00)[];
+	NEURAL_HAM(-0.00)[-0.980];
+	TAGGED_RCPT(0.00)[linux-fsdevel,cae7809e9dc1459e4e63];
+	MID_RHS_MATCH_FROM(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[]
 X-Rspamd-Action: no action
 
-On Mon, Mar 09, 2026, Ackerley Tng wrote:
-> "David Hildenbrand (Arm)" <david@kernel.org> writes:
+On Mon, Mar 09, 2026 at 09:17:32PM +0900, Harry Yoo wrote:
+> On Fri, Mar 06, 2026 at 07:35:01PM +0000, Catalin Marinas wrote:
 > 
-> > On 3/9/26 10:53, Ackerley Tng wrote:
-> >> The guest memfd currently does not update the inode's i_blocks and i_bytes
-> >> count when memory is allocated or freed. Hence, st_blocks returned from
-> >> fstat() is always 0.
-> >>
-> >> Introduce byte accounting for guest memfd inodes.  When a new folio is
-> >> added to the filemap, add the folio's size.  Use the .invalidate_folio()
-> >> callback to subtract the folio's size from inode fields when folios are
-> >> truncated and removed from the filemap.
-> >>
-> >> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> >> ---
-> >>  virt/kvm/guest_memfd.c | 14 ++++++++++++++
-> >>  1 file changed, 14 insertions(+)
-> >>
-> >> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> >> index 462c5c5cb602a..77219551056a7 100644
-> >> --- a/virt/kvm/guest_memfd.c
-> >> +++ b/virt/kvm/guest_memfd.c
-> >> @@ -136,6 +136,9 @@ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
-> >>  					 mapping_gfp_mask(inode->i_mapping), policy);
-> >>  	mpol_cond_put(policy);
-> >>
-> >> +	if (!IS_ERR(folio))
-> >> +		inode_add_bytes(inode, folio_size(folio));
-> >> +
-> >
-> > Can't we have two concurrent calls to __filemap_get_folio_mpol(), and we
-> > don't really know whether our call allocated the folio or simply found
-> > one (the other caller allocated) in the pagecache?
-> >
+> [...snip...]
 > 
-> Ah that is true. Two threads can get past filemap_lock_folio(), then get
-> to __filemap_get_folio_mpol(), and then thread 1 will return from
-> __filemap_get_folio_mpol() with an allocated folio while thread 2
-> returns with the folio allocated by thread 1. Both threads would end up
-> incrementing the number of bytes in the inode.
+> > I wonder whether some early kmem_cache_node allocations like the ones in
+> > early_kmem_cache_node_alloc() are not tracked and then kmemleak cannot
+> > find n->barn. I got lost in the slub code, but something like this:
 > 
-> Sean, Vlastimil, is this a good argument for open coding, like in RFC v2
-> [1]? So that guest_memfd can do inode_add_bytes() specifically when the
-> folio is added to the filemap.
+> This sounds plausible. Before sheaves, kmem_cache_node just maintained
+> a list of slabs. Because struct page (and struct slab overlaying on it)
+> is not tracked by kmemleak (as Vlastimil pointed out off-list),
+> not calling kmemleak_alloc() for kmem_cache_node was not a problem.
+> 
+> But now it maintains barns and sheaves,
+> and they are tracked by kmemleak...
 
-Heh, I assumed that was going to be _the_ argument, i.e. I was expecting the answer
-to my implicit question of "if this greatly simplifies accounting" was going to be
-"trying to do the right thing while using __filemap_get_folio_mpol() is insane".
+We could simply add kmemleak_ignore(), especially as we don't need the
+data in these structures to be scanned. We can assume the slab allocator
+doesn't leak it's own data structures. But I couldn't figure out why
+kmemleak couldn't track down the pointer in the first place and any
+random kmemleak_alloc() I added did not solve it.
 
-> An alternative I can think of is to add a callback that is called from
-> within __filemap_add_folio(). Would that be preferred?
+> > -----------8<-----------------------------------
+> > diff --git a/mm/slub.c b/mm/slub.c
+> > index 0c906fefc31b..401557ff5487 100644
+> > --- a/mm/slub.c
+> > +++ b/mm/slub.c
+> > @@ -7513,6 +7513,7 @@ static void early_kmem_cache_node_alloc(int node)
+> >  	slab->freelist = get_freepointer(kmem_cache_node, n);
+> >  	slab->inuse = 1;
+> >  	kmem_cache_node->node[node] = n;
+> > +	kmemleak_alloc(n, sizeof(*n), 1, GFP_NOWAIT);
+> >  	init_kmem_cache_node(n, NULL);
+> >  	inc_slabs_node(kmem_cache_node, node, slab->objects);
+> 
+> But this function is called for kmem_cache_node cache
+> (in kmem_cache_init()), even before kmemleak_init()?
 
-Probably not.  Poking around, it definitely seems like guest_memfd is the oddball.
-E.g. as David pointed out, even shmem participates in disk quota stuff, and HugeTLB
-is its own beast.  In other words, I doubt any "real" filesystem will want to hook
-__filemap_add_folio() in this way.
+That's fine, kmemleak starts as enabled by default and tracks early
+allocations in a local mem_pool[] array. kmemleak_init() just
+initialises its kmem_caches for the long run.
 
-So as I said before, "if this greatly simplifies accounting, then I'm ok with it".
-And it sounds like the answer is an emphatic "yes".  And again as I said before,
-all I ask at this point is that the refactoring changelog focuses on that point.
+> kmem_cache and kmalloc caches should call kmemleak_alloc() when
+> allocating kmem_cache_node structures, but as they are also created
+> before kmemleak_init(), I doubt that's actually doing its job...
 
-P.S. In future versions, please explain _why_ you want to add fstat() support,
-i.e. why you want to account allocated bytes/folios.  For folks like me that do
-very little userspace programming, and even less filesystems work, fstat() not
-working means nothing.  Even if the answer is "because literally every other FS
-in Linux works".
+It does. I just added a kmemleak_alloc() in create_kmalloc_cache() and
+kmemleak complained that the object from the kmem_cache_zalloc() is
+already registered. Of course, no stack trace saved for these early
+allocations but it does track them.
+
+> > -------------8<----------------------------------------
+> > 
+> > Another thing I noticed, not sure it's related but we should probably
+> > ignore an object once it has been passed to kvfree_call_rcu(), similar
+> > to what we do on the main path in this function. Also see commit
+> > 5f98fd034ca6 ("rcu: kmemleak: Ignore kmemleak false positives when
+> > RCU-freeing objects") when we added this kmemleak_ignore().
+> > 
+> > ---------8<-----------------------------------
+> > diff --git a/mm/slab_common.c b/mm/slab_common.c
+> > index d5a70a831a2a..73f4668d870d 100644
+> > --- a/mm/slab_common.c
+> > +++ b/mm/slab_common.c
+> > @@ -1954,8 +1954,14 @@ void kvfree_call_rcu(struct rcu_head *head, void *ptr)
+> >  	if (!head)
+> >  		might_sleep();
+> >  
+> > -	if (!IS_ENABLED(CONFIG_PREEMPT_RT) && kfree_rcu_sheaf(ptr))
+> > +	if (!IS_ENABLED(CONFIG_PREEMPT_RT) && kfree_rcu_sheaf(ptr)) {
+> > +		/*
+> > +		 * The object is now queued for deferred freeing via an RCU
+> > +		 * sheaf. Tell kmemleak to ignore it.
+> > +		 */
+> > +		kmemleak_ignore(ptr);
+> 
+> As Vlastimil pointed out off-list, we need to let kmemleak ignore
+> sheaves when they are submitted to call_rcu() and ideally undo
+> kmemleak_ignore() in __kfree_rcu_sheaf() when they are going to be reused.
+> 
+> But looking at mm/kmemleak.c, undoing kmemleak_ignore() doesn't seem to
+> be a thing.
+
+If that's needed, something like below:
+
+----------------------8<---------------------------------
+diff --git a/Documentation/dev-tools/kmemleak.rst b/Documentation/dev-tools/kmemleak.rst
+index 7d784e03f3f9..da2c849d4735 100644
+--- a/Documentation/dev-tools/kmemleak.rst
++++ b/Documentation/dev-tools/kmemleak.rst
+@@ -163,6 +163,7 @@ See the include/linux/kmemleak.h header for the functions prototype.
+ - ``kmemleak_not_leak``	 - mark an object as not a leak
+ - ``kmemleak_transient_leak``	 - mark an object as a transient leak
+ - ``kmemleak_ignore``		 - do not scan or report an object as leak
++- ``kmemleak_unignore``		 - undo a previous kmemleak_ignore()
+ - ``kmemleak_scan_area``	 - add scan areas inside a memory block
+ - ``kmemleak_no_scan``	 - do not scan a memory block
+ - ``kmemleak_erase``		 - erase an old value in a pointer variable
+diff --git a/include/linux/kmemleak.h b/include/linux/kmemleak.h
+index fbd424b2abb1..4eec0560be09 100644
+--- a/include/linux/kmemleak.h
++++ b/include/linux/kmemleak.h
+@@ -28,6 +28,7 @@ extern void kmemleak_update_trace(const void *ptr) __ref;
+ extern void kmemleak_not_leak(const void *ptr) __ref;
+ extern void kmemleak_transient_leak(const void *ptr) __ref;
+ extern void kmemleak_ignore(const void *ptr) __ref;
++extern void kmemleak_unignore(const void *ptr, int min_count) __ref;
+ extern void kmemleak_ignore_percpu(const void __percpu *ptr) __ref;
+ extern void kmemleak_scan_area(const void *ptr, size_t size, gfp_t gfp) __ref;
+ extern void kmemleak_no_scan(const void *ptr) __ref;
+@@ -104,6 +105,10 @@ static inline void kmemleak_ignore_percpu(const void __percpu *ptr)
+ static inline void kmemleak_ignore(const void *ptr)
+ {
+ }
++
++static inline void kmemleak_unignore(const void *ptr, int min_count)
++{
++}
+ static inline void kmemleak_scan_area(const void *ptr, size_t size, gfp_t gfp)
+ {
+ }
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index d79acf5c5100..99b7ebd03737 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -1292,6 +1292,24 @@ void __ref kmemleak_ignore(const void *ptr)
+ }
+ EXPORT_SYMBOL(kmemleak_ignore);
+ 
++/**
++ * kmemleak_unignore - undo a previous kmemleak_ignore() on an object
++ * @ptr:	pointer to beginning of the object
++ * @min_count:	minimum number of references the object must have to be
++ *		considered a non-leak (see kmemleak_alloc() for details)
++ *
++ * Calling this function undoes a prior kmemleak_ignore() by restoring the
++ * given min_count, making the object visible to kmemleak again.
++ */
++void __ref kmemleak_unignore(const void *ptr, int min_count)
++{
++	pr_debug("%s(0x%px)\n", __func__, ptr);
++
++	if (kmemleak_enabled && ptr && !IS_ERR(ptr))
++		paint_ptr((unsigned long)ptr, min_count, 0);
++}
++EXPORT_SYMBOL(kmemleak_unignore);
++
+ /**
+  * kmemleak_scan_area - limit the range to be scanned in an allocated object
+  * @ptr:	pointer to beginning or inside the object. This also
+----------------------8<---------------------------------
+
+-- 
+Catalin
 
