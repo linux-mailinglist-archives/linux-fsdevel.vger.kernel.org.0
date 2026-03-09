@@ -1,223 +1,296 @@
-Return-Path: <linux-fsdevel+bounces-79742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id iH9LL91+rmlfFQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 09:03:41 +0100
+	id eCoXMpiGrmnKFgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 09:36:40 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D90B2353A6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 09:03:41 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3201F2358B8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 09:36:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 59264302EA8D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 08:02:11 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 78F70300C5B5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 08:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8CD36BCC4;
-	Mon,  9 Mar 2026 08:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFD52727F3;
+	Mon,  9 Mar 2026 08:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bMeEWLFH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F0tZw+A2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF0836B056
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Mar 2026 08:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.217.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773043325; cv=pass; b=ubLgmtBReHn/8wk+y4xEjTY6TvFZ/U36+YCSTLgwdTGYChbmE+AaEkiEABOvtB0iWjRbFywrFSMerZid01ISTzQkSNSDZMTQjrMeFdagBv4z3iDsR5p0s5hax4TbRNAnlcl9gndR4vxJ2mM3W118vkp0mtJgYKpr7T4cFvYPRCI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773043325; c=relaxed/simple;
-	bh=YZGVdYoM57Ljoy9ZvHaawIawTucwlY62ulstM6rXlh4=;
-	h=From:In-Reply-To:References:MIME-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XLhLCIF4kYkTiWRla6RcaMj7y4EmCdKVLIA/bhchrNSccLnaLZf1IgrFv7PuaOpFewWTbeADLFqnqSgNinfiSfEaNwZ0dckukygcJ5ID84Ps6XNEvNYvD/z1+jj9N0y4BzbpHOiNLW6UJUDzZKkFDufcGloWvdwQZd0rxdBNo0o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bMeEWLFH; arc=pass smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-5ffa277c156so933345137.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Mar 2026 01:02:04 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773043324; cv=none;
-        d=google.com; s=arc-20240605;
-        b=jpWxxm9hjnOpx2It3s1/NFi0e5aksZCYoHoA4a58fkefF168mO41FMtb2T/toF4awv
-         +mnUs62w/5Klq27dGaFbTs37jrLx7Kr3/q0p1ksArzD3n5suGGyqiqou2wf01AYiUgiI
-         gRpfjXp8+/BkQENRWfcpOAuaCZk5ZLC03Poy4WMs3OgS3PE7Ok/7K6Pk48mBFpylwqzw
-         qKLasUh6Pw1LisbBTyAkTYJEwGAmG4LVJS2vyEUGAqmkDLws5kvGIl5oLU2gcZnRZ8Zl
-         ANQF1GaLiVo1VVVouaN5jUWDBhp5PakDC8SE8YpKFpmoZFsy16vuc9R68v+5P1LtNiR8
-         y+QQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:dkim-signature;
-        bh=5iKTwpN//vgpsNCCXbcsIw/eIDxxyup8fH8lZJsZvpA=;
-        fh=MrgHLHAvazJiaCQ3E5Voz2MenpToC9EOwYE0C0r8A/0=;
-        b=DJcuSHheyxOYV3u3i7s0O2kkB3Gdt512ma6IbvYRVAwjZLOIUFqER24Kk8edTeTHdV
-         jJqPwqPwyE5VUxJ7zCoZTzU61cmJ1EFFifHIczRhvnHomQVO666SvUNsBU5Q2DMxMmiy
-         6hS79LoAUr+QQbmGMF/iyqOu/EhLUSZ3MaYcrYKbTLmfet08PpfCXvChkAXIYOLcWS62
-         JZWrnRBB/FApWvoQgrAQSzyJ3GtWyQkQ+Tk5XncwMWymbOCkrlqe95Ow3u1Nt7htPRU2
-         Jy9LgGIuA+sdMTKaEa81h8MdSGmvYRw1189rYbSpCkWyc2Vdn27y2U1TtZ1i6pnn8mEf
-         xz8w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1773043324; x=1773648124; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5iKTwpN//vgpsNCCXbcsIw/eIDxxyup8fH8lZJsZvpA=;
-        b=bMeEWLFHPi89DslM8WJI/jzLMyY7qLB5p7V11q3O6F1OhvBt1YcnYtg/8G5xGWkLlZ
-         3nQm1WDrm2wY0xMplRAThdr+lXFJXrhVGkZ+RE7DXjnUDTAU8Ma6F+BqRrzgOYbkIfkP
-         0i9mAmxXC7ciGZnT9WrRF1vcQa/uvN4wFSG4TZbaZlS5mhjK4KSK8u+W8d/1ULiYVgba
-         hx02PcgUpdZR+4qw+XrVAH5eWwwVWFP6+IeFipCf5s2ObDrT/ti4bmyjZycobs4DLJ2E
-         2CzMcqV5himmziCW+4cmseEhJphf/YQXHjFaujyy4ileuqaPnz6cCjd7Zm7wXQ9I6uaX
-         asHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773043324; x=1773648124;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5iKTwpN//vgpsNCCXbcsIw/eIDxxyup8fH8lZJsZvpA=;
-        b=qPVAkbsGxe0GbSd/JNY1r992HWKvrZB7ENrP8Ov+Tq4jQr8Qfu9Vguo6z9iy8H+ocN
-         q0+TFuLSGaW94dmY5qU4z0fRzMVNT4oFdahHWzDRs/GeeyVreVSeXCJUmZzNMPy7zEbB
-         x3CaaLMipWwfQws6lSY7KR5lXfXtSWxQi4/Q9GXVtLB0EMzq01CM7LKIdGZ219NJ1eV3
-         WY5IYCkxk6yt1bxWHs4LJcsCEyBND8KcXJozEnGIMGWmICSULdgPMAzAqUVG7O85VSVv
-         4Pa/xJ8j4hA66voV+DSZfi4oAE79ZA+3VVFJAjBa/Cyq9V0zjiWlPxFtoPlG0gjXVw9A
-         Aarg==
-X-Forwarded-Encrypted: i=1; AJvYcCXGWi8YXao1D7H5bkABOf0bv6Gu73imNYh8qMcUYh5ktmQQm4xZoIChHyUs/+LuEKHCH1KLFbaTH8G5vctr@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7uadXkqbaHan+Fzhni3k6fxP3lI3CYaKj2I/h3xuPoNDCdqFS
-	0tuHcwLdm6ysKHv+GoEsX16nHUcm8HtKzXPRftYjFLA7vhUOPk0707M0dQABWt6Lm9fzt+JohKd
-	OmjZPRhYdQ7n7bBuLOZXSnmpvh9Fmm9VPXEt0ioj0
-X-Gm-Gg: ATEYQzwBzRHNH7smYO9MnHy2DUvOTvmKc7mcpQmfW6zE31yFkeVYniOZ4f5gNNEIlIw
-	Tai+7Xa1Ui/7+9wp89zqpy9bXAH+xQwpJCR+AoUDOGYvPVLH7zUHNmic2AnmX1FKfzGRONmKcuT
-	eMS0O/mgyBjV3Ez2ZP/YrQefzGoP1zuhFE95docs9ipuxapNCLemogZrrvGzwYJNRUm+R+lJVRd
-	ktVEZyfgk81NP0dHGxGvYL5MUijUZojRerj+ZD2sOxdpXCZX+02Ik8HuTQBqTjtTZOqiatMJ1Qr
-	gb/aUHtgZVhOSYIfPAWqvvHDUdYo/7IkOmSv4H1pnqbLcnqU7GJAw8eiRGFWVMbLjgVqAQ==
-X-Received: by 2002:a05:6102:4194:b0:5ff:cee8:660c with SMTP id
- ada2fe7eead31-5ffe61bf0d2mr3868411137.31.1773043322886; Mon, 09 Mar 2026
- 01:02:02 -0700 (PDT)
-Received: from 176938342045 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 9 Mar 2026 01:02:02 -0700
-Received: from 176938342045 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 9 Mar 2026 01:02:02 -0700
-From: Ackerley Tng <ackerleytng@google.com>
-In-Reply-To: <aahNprLw0_Cdhzxp@google.com>
-References: <20260225-gmem-st-blocks-v2-0-87d7098119a9@google.com>
- <20260225-gmem-st-blocks-v2-2-87d7098119a9@google.com> <5097ff66-b727-4eac-b845-3bd08d1a0ead@suse.com>
- <aahNprLw0_Cdhzxp@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC0D169AD2;
+	Mon,  9 Mar 2026 08:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773045384; cv=none; b=gXrzJLNACKQSt/sdIbKy3YRIcjNbwG1bcNv1XzXQnsGKRDk6CLx5CMkqyztLprl9n6gAQAdFKSLXPklppACBRjnphRvcvW9tDFWRiGvh55nfs95KCNs64Z0ql+rcTreMAdB9WcP62hrbmN/DqHR9yrqtdA5ANf/VbK2suOsDGEs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773045384; c=relaxed/simple;
+	bh=98Et67B5IeLorzkSf+DdzhUp/9E8SiMRZ4t/sh44fek=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=o7j7ROLHF3AUlKbgVTmwnzY4LCdgo3x4iNrn2zyA1j1cJZ0E3xhGbaJUMx6IIfyn0ekUmIpDc7mNxPA6uq2EfysfcRLC7Equ+bYBmwFzrbqIW/ky5fgUnu1Qqh/AAhrgOgRZoy+F7AOoQSVJrg1sccz1z97gBlbyx8MKdDYytZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F0tZw+A2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 008B5C4CEF7;
+	Mon,  9 Mar 2026 08:36:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773045384;
+	bh=98Et67B5IeLorzkSf+DdzhUp/9E8SiMRZ4t/sh44fek=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=F0tZw+A22wskrzRAfXU6AUPivBXW2PEOCcTNojOe1rc/aR/dbkuaHVVMBJARHc0/8
+	 l7hEVCP/G0T9TzYili0skBrpifg3F+zoh9YLkR0FD1X4mlh+WXJDufGiD0EpnaXiZa
+	 hV5aUFpHE9vdH5sicEDIiVIFZfPVREFqIUrails7ZjHRvI0rkDHDDHD7O2B1IsUhmu
+	 uStlC+3pg5ewkLxAvhDPBUHKBm0j5XlmWLIlEzngXdmED9a25SxBbvPCeypKTVj5Ax
+	 /fh1+aBbIGsFil1+WtXrUZKckOE8lvqLGXsygUK88OaqzozMFEDM4PH9YFPfgF9TAA
+	 DbSO7b6QkewLw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA6AEF370F;
+	Mon,  9 Mar 2026 08:36:23 +0000 (UTC)
+From: Cheng Ding via B4 Relay <devnull+cding.ddn.com@kernel.org>
+Date: Mon, 09 Mar 2026 16:35:57 +0800
+Subject: [PATCH v3] fuse: invalidate page cache after sync and async direct
+ writes
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 9 Mar 2026 01:02:02 -0700
-X-Gm-Features: AaiRm52tdsuammFV80Tf5JuKg-WPQwxrDNCct9c5X_bV6T_IkMHGIVZ0r4R166A
-Message-ID: <CAEvNRgFwyqY0q-PTvMGjK82rxvbCfPxK8-RUPML3w_8mzAk8xA@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 2/6] KVM: guest_memfd: Directly allocate folios
- with filemap_alloc_folio()
-To: Sean Christopherson <seanjc@google.com>, Vlastimil Babka <vbabka@suse.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	rientjes@google.com, rick.p.edgecombe@intel.com, yan.y.zhao@intel.com, 
-	fvdl@google.com, jthoughton@google.com, vannapurve@google.com, 
-	shivankg@amd.com, michael.roth@amd.com, pratyush@kernel.org, 
-	pasha.tatashin@soleen.com, kalyazin@amazon.com, tabba@google.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Rspamd-Queue-Id: 6D90B2353A6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260309-xfstests-generic-451-v3-1-bb6ad2f59512@ddn.com>
+X-B4-Tracking: v=1; b=H4sIAGyGrmkC/3WOwQqDMBBEf0Vy7paYGMGe+h+lh5hNNNAmJZGgi
+ P/eVSjtpYc9zDLzZlaWbfI2s0u1smSLzz4GEvJUMTPqMFjwSJoJLloueQuzy5PNU4bBBooaaFQ
+ NziJ3HSrNO8Uo+krW+fnA3u6kR5+nmJajpdT79wOUoPMSDKCPoOmMNiN1hqIfHvVEa6DUQA295
+ g55I1ojr4jhbOKT7egifnF/9hVBiE72AlVDrqb/IrZtewMs0GitBQEAAA==
+X-Change-ID: 20260306-xfstests-generic-451-fed0f9d5a095
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jingbo Xu <jefflexu@linux.alibaba.com>, 
+ Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Cheng Ding <cding@ddn.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1773045382; l=6170;
+ i=cding@ddn.com; s=20260306; h=from:subject:message-id;
+ bh=w/sm1B9ghtDKBX1+JbHHriYeIpWZkXGqCIgWBh7X6IY=;
+ b=88TUcsvlpCd21MKLkdqq8S//oRJpWFR/D1f+CZ8I+aLbHF2ldTYeYgYzLVdKAyDOuOEY8a8ON
+ Mr2kr5frjsGDNZLz4UI5jk1Vdt5wYIKtBruqZT0h4XOPQZLSRj5jlBE
+X-Developer-Key: i=cding@ddn.com; a=ed25519;
+ pk=dzzlP8PhiZl3jtcAzbjIIv0kgtoA95fHdILVyjaeePk=
+X-Endpoint-Received: by B4 Relay for cding@ddn.com/20260306 with
+ auth_id=667
+X-Original-From: Cheng Ding <cding@ddn.com>
+Reply-To: cding@ddn.com
+X-Rspamd-Queue-Id: 3201F2358B8
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
-	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79742-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79743-lists,linux-fsdevel=lfdr.de,cding.ddn.com];
 	RCVD_TLS_LAST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[35];
-	DKIM_TRACE(0.00)[google.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[ackerleytng@google.com,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	NEURAL_HAM(-0.00)[-0.952];
+	REPLYTO_DOM_NEQ_FROM_DOM(0.00)[];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,mail.gmail.com:mid]
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	HAS_REPLYTO(0.00)[cding@ddn.com];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[devnull@kernel.org,linux-fsdevel@vger.kernel.org];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	NEURAL_HAM(-0.00)[-0.951];
+	RCPT_COUNT_FIVE(0.00)[6];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-Sean Christopherson <seanjc@google.com> writes:
+From: Cheng Ding <cding@ddn.com>
 
-> On Mon, Mar 02, 2026, Vlastimil Babka wrote:
->> On 2/25/26 08:20, Ackerley Tng wrote:
->> > __filemap_get_folio_mpol() is parametrized by a bunch of GFP flags, which
->>
->>                                                            FGP?
->>
->> > adds complexity for the reader. Since guest_memfd doesn't meaningfully use
->> > any of the other FGP flags, undo that complexity by directly calling
->> > filemap_alloc_folio().
->> >
->> > Directly calling filemap_alloc_folio() also allows the order of 0 to be
->> > explicitly specified, which is the only order guest_memfd supports. This is
->> > easier to understand,
->
-> That's debatable.  IMO, one isn't clearly better than the other, especially since
-> filemap_lock_folio() is itself a wrapper for __filemap_get_folio_mpol().  And there
-> is a cost to open-coding, as it means we risk missing something if there's a change
-> in __filemap_get_folio_mpol() that's beneficial to guest_memfd.
->
-> As Vlastimil said, if this greatly simplifies accounting, then I'm ok with it.
-> But the changelog needs to focus on that aspect, because I don't see this as a
-> clear win versus using __filemap_get_folio_mpol().
->
+Fixes xfstests generic/451, similar to how commit b359af8275a9 ("fuse:
+Invalidate the page cache after FOPEN_DIRECT_IO write") fixes xfstests
+generic/209.
 
-FGF_GET_ORDER() indeed caps the order at 0. I was overly focused on the
-earlier line where it did mapping_min_folio_order(), where I thought
-other code could possibly influence the eventual order.
+Signed-off-by: Cheng Ding <cding@ddn.com>
+---
+Changes in v3:
+- Address review comments: fix typo
+- Address review comments: move sb_init_dio_done_wq() to fuse_direct_IO()
+  Note: We could skip sb_init_dio_done_wq() when io->blocking is true, but
+  I opted to keep the change simpler.
+- Link to v2: https://lore.kernel.org/r/20260306-xfstests-generic-451-v2-1-93b2d540304b@ddn.com
 
-I'll revert to __filemap_get_folio_mpol() in the next version and see
-how that goes. Thanks!
+Changes in v2:
+- Address review comments: move invalidation from fuse_direct_io() to
+  fuse_direct_write_iter()
+- Link to v1: https://lore.kernel.org/r/20260303-async-dio-aio-cache-invalidation-v1-1-fba0fd0426c3@ddn.com
+---
+ fs/fuse/file.c   | 59 +++++++++++++++++++++++++++++++++++++++++++++-----------
+ fs/fuse/fuse_i.h |  1 +
+ 2 files changed, 49 insertions(+), 11 deletions(-)
 
-> And if we go through with this, we should probably revert 16a542e22339 ("mm/filemap:
-> Extend __filemap_get_folio() to support NUMA memory policies"), because guest_memfd
-> is/was the only user.
->
->> > +static struct folio *__kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
->> > +{
->> > +	/* TODO: Support huge pages. */
->> > +	struct mempolicy *policy;
->> > +	struct folio *folio;
->> > +	gfp_t gfp;
->> > +	int ret;
->> > +
->> > +	/*
->> > +	 * Fast-path: See if folio is already present in mapping to avoid
->> > +	 * policy_lookup.
->> > +	 */
->> > +	folio = filemap_lock_folio(inode->i_mapping, index);
->> > +	if (!IS_ERR(folio))
->> > +		return folio;
->> > +
->> > +	gfp = mapping_gfp_mask(inode->i_mapping);
->> > +
->> > +	policy = mpol_shared_policy_lookup(&GMEM_I(inode)->policy, index);
->
-> This is a potential performance regression.  Previously, KVM would do a policy
-> lookup once per retry loop.  Now KVM will do the lookup
->
-> I doubt it will matter in practice, because on EEXIST filemap_lock_folio() should
-> be all but guaranteed to find the existing folio.  But it's also something that
-> should be easy enough to avoid, and it's also another argument for using
-> __filemap_get_folio_mpol() instead of open coding our own version.
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index b1bb7153cb78..c43fe74cdd46 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -23,6 +23,8 @@
+ #include <linux/task_io_accounting_ops.h>
+ #include <linux/iomap.h>
+ 
++int sb_init_dio_done_wq(struct super_block *sb);
++
+ static int fuse_send_open(struct fuse_mount *fm, u64 nodeid,
+ 			  unsigned int open_flags, int opcode,
+ 			  struct fuse_open_out *outargp)
+@@ -629,6 +631,19 @@ static ssize_t fuse_get_res_by_io(struct fuse_io_priv *io)
+ 	return io->bytes < 0 ? io->size : io->bytes;
+ }
+ 
++static void fuse_aio_invalidate_worker(struct work_struct *work)
++{
++	struct fuse_io_priv *io = container_of(work, struct fuse_io_priv, work);
++	struct address_space *mapping = io->iocb->ki_filp->f_mapping;
++	ssize_t res = fuse_get_res_by_io(io);
++	pgoff_t start = io->offset >> PAGE_SHIFT;
++	pgoff_t end = (io->offset + res - 1) >> PAGE_SHIFT;
++
++	invalidate_inode_pages2_range(mapping, start, end);
++	io->iocb->ki_complete(io->iocb, res);
++	kref_put(&io->refcnt, fuse_io_release);
++}
++
+ /*
+  * In case of short read, the caller sets 'pos' to the position of
+  * actual end of fuse request in IO request. Otherwise, if bytes_requested
+@@ -661,10 +676,11 @@ static void fuse_aio_complete(struct fuse_io_priv *io, int err, ssize_t pos)
+ 	spin_unlock(&io->lock);
+ 
+ 	if (!left && !io->blocking) {
++		struct inode *inode = file_inode(io->iocb->ki_filp);
++		struct address_space *mapping = io->iocb->ki_filp->f_mapping;
+ 		ssize_t res = fuse_get_res_by_io(io);
+ 
+ 		if (res >= 0) {
+-			struct inode *inode = file_inode(io->iocb->ki_filp);
+ 			struct fuse_conn *fc = get_fuse_conn(inode);
+ 			struct fuse_inode *fi = get_fuse_inode(inode);
+ 
+@@ -673,6 +689,17 @@ static void fuse_aio_complete(struct fuse_io_priv *io, int err, ssize_t pos)
+ 			spin_unlock(&fi->lock);
+ 		}
+ 
++		if (io->write && res > 0 && mapping->nrpages) {
++			/*
++			 * As in generic_file_direct_write(), invalidate after the
++			 * write, to invalidate read-ahead cache that may have competed
++			 * with the write.
++			 */
++			INIT_WORK(&io->work, fuse_aio_invalidate_worker);
++			queue_work(inode->i_sb->s_dio_done_wq, &io->work);
++			return;
++		}
++
+ 		io->iocb->ki_complete(io->iocb, res);
+ 	}
+ 
+@@ -1738,15 +1765,6 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
+ 	if (res > 0)
+ 		*ppos = pos;
+ 
+-	if (res > 0 && write && fopen_direct_io) {
+-		/*
+-		 * As in generic_file_direct_write(), invalidate after the
+-		 * write, to invalidate read-ahead cache that may have competed
+-		 * with the write.
+-		 */
+-		invalidate_inode_pages2_range(mapping, idx_from, idx_to);
+-	}
+-
+ 	return res > 0 ? res : err;
+ }
+ EXPORT_SYMBOL_GPL(fuse_direct_io);
+@@ -1785,6 +1803,8 @@ static ssize_t fuse_direct_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ {
+ 	struct inode *inode = file_inode(iocb->ki_filp);
++	struct address_space *mapping = inode->i_mapping;
++	loff_t pos = iocb->ki_pos;
+ 	ssize_t res;
+ 	bool exclusive;
+ 
+@@ -1801,6 +1821,16 @@ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 					     FUSE_DIO_WRITE);
+ 			fuse_write_update_attr(inode, iocb->ki_pos, res);
+ 		}
++		if (res > 0 && mapping->nrpages) {
++			/*
++			 * As in generic_file_direct_write(), invalidate after
++			 * write, to invalidate read-ahead cache that may have
++			 * with the write.
++			 */
++			invalidate_inode_pages2_range(mapping,
++				pos >> PAGE_SHIFT,
++				(pos + res - 1) >> PAGE_SHIFT);
++		}
+ 	}
+ 	fuse_dio_unlock(iocb, exclusive);
+ 
+@@ -2826,6 +2856,7 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 	size_t count = iov_iter_count(iter), shortened = 0;
+ 	loff_t offset = iocb->ki_pos;
+ 	struct fuse_io_priv *io;
++	bool async = ff->fm->fc->async_dio;
+ 
+ 	pos = offset;
+ 	inode = file->f_mapping->host;
+@@ -2834,6 +2865,12 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 	if ((iov_iter_rw(iter) == READ) && (offset >= i_size))
+ 		return 0;
+ 
++	if ((iov_iter_rw(iter) == WRITE) && async && !inode->i_sb->s_dio_done_wq) {
++		ret = sb_init_dio_done_wq(inode->i_sb);
++		if (ret < 0)
++			return ret;
++	}
++
+ 	io = kmalloc_obj(struct fuse_io_priv);
+ 	if (!io)
+ 		return -ENOMEM;
+@@ -2849,7 +2886,7 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 	 * By default, we want to optimize all I/Os with async request
+ 	 * submission to the client filesystem if supported.
+ 	 */
+-	io->async = ff->fm->fc->async_dio;
++	io->async = async;
+ 	io->iocb = iocb;
+ 	io->blocking = is_sync_kiocb(iocb);
+ 
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 7f16049387d1..6e8c8cf6b2c8 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -377,6 +377,7 @@ union fuse_file_args {
+ /** The request IO state (for asynchronous processing) */
+ struct fuse_io_priv {
+ 	struct kref refcnt;
++	struct work_struct work;
+ 	int async;
+ 	spinlock_t lock;
+ 	unsigned reqs;
+
+---
+base-commit: 3c9332f821aa11552f19c331c5aa5299c78c7c94
+change-id: 20260306-xfstests-generic-451-fed0f9d5a095
+
+Best regards,
+-- 
+Cheng Ding <cding@ddn.com>
+
+
 
