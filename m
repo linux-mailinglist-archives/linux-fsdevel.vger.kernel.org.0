@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-79847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KFD5M80er2kgOQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 20:26:05 +0100
+	id 6AWmB9oer2khOQIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 20:26:18 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0D023FDA4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 20:26:05 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19A4623FDCB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 20:26:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 3278F301807B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 19:25:13 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 86356301A69A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 19:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9AE33FFACF;
-	Mon,  9 Mar 2026 19:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E3E3FFACC;
+	Mon,  9 Mar 2026 19:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bSyBxqrD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JuwDnmS+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8AA73F23D0;
-	Mon,  9 Mar 2026 19:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7341364E82;
+	Mon,  9 Mar 2026 19:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773084275; cv=none; b=jlHRq/KizeavokbDxszykzPoj+DsmbwllqfAZNq6SdpGEMB2jdWMkEMEPAwBWIK3BceqE1t7gluu8XLqljNjU9dIhjBGVrVucPr3D2NeOzFLEfRoS/n6jjJOmUVKyw6Wu30zs7Vzoz11nylTcXc+kxFAFKLKiNpx21OMQeFVuGY=
+	t=1773084278; cv=none; b=VOnpoPs74QkIY1+YCo9BMxznlhorfE7IfExzfiN/I893hiUfNgsEOziap4rfFwAX3Yj4Dtv3mZwGTwYVUP6Od/P4aHguYkh1zL5h752ZDav+xLdLOQLqoLiNKp6q1O+8WaAI3wa1tVD6PDG2Jjx3Qs3DhjzxkMKqSf8Y2A1VzBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773084275; c=relaxed/simple;
-	bh=iQYRiqA9cyCFfCD+frPbM5NfENG2rGvkSzMHjGAc96c=;
+	s=arc-20240116; t=1773084278; c=relaxed/simple;
+	bh=USjbWhOC1arzSyoakdY4fbeZ1rzXass4TvLh8eVymoA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=siyKgVF/bv55fd9ejFeN+7rGc+L7nY7UpWEPPmR0t5X2Zj/jWYR9dSvanDgkf83WBTVjV1lJCqgTBwb225ceilK498q0ovtJT9I0daiX4J/GD2J1AsSgmYorLMcGW0yE8cvACvihir4BSetnsLFRir6MuVk0sYBGgR5I5vbKXME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bSyBxqrD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54227C4AF1C;
-	Mon,  9 Mar 2026 19:24:33 +0000 (UTC)
+	 MIME-Version; b=LLVpVHwNJVLGxib7fawsRnnX+CMLJR/KeSjrjPB6gKHIJDtsb5BzgaMOyuow7Wia/Qmr+grgQToBGvxx7xsFsi1orubYs81NJ8jpaQ8+Szvd0470PSSubGpdrKwgBxafQRhIxTFuWvoImPnPU3alb6bWaewN6bgF7eDHPWOOlkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JuwDnmS+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0521FC4CEF7;
+	Mon,  9 Mar 2026 19:24:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773084275;
-	bh=iQYRiqA9cyCFfCD+frPbM5NfENG2rGvkSzMHjGAc96c=;
+	s=k20201202; t=1773084278;
+	bh=USjbWhOC1arzSyoakdY4fbeZ1rzXass4TvLh8eVymoA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bSyBxqrDRYnSWv7fJeZKW+WStTHvuFa+ZMAmSewBM2BYMn3U6HfDM4JmaPLscsTJE
-	 WQB5KrQtLJYsTp4MM/gMZZwswIvDIP7EUU6zKN714zqpDiqXbsfOLLoYpJS27VLwma
-	 h3UabDmPYbRCBli/m3LxsiHoxAGpiujBK0P23DeGufKHgoKA1TXXe3Du1YYeD14mlM
-	 gBA1HCcSGwvTX1pZy/xiYw0BNRzJSQYkE9lBD7lrRG6+YB3NQGnfNm++IkXlGlQ+YS
-	 RdFQsHeYetIjx66BpvOU/yrNPNCgtya0BgtXIzKNcBXGNB5iBCEquxoJgBhJQztMyX
-	 n0aqUUsIf3NBA==
+	b=JuwDnmS+jYbtHtbT4zDx+Ex/UnK1zbxg+nDgCdY/PnIib1GOQG+jkX7JANABERP/l
+	 4OYiQfY56D1PkW2wMNr0bzDJmFIGL2AyHTVdLewFRw05Vta3b5xRg/FZPq8326CIiv
+	 JFzAT1rLCHNXNd/h0Ax04+MBpzdxWTGhGKeWHZ6vjsc7IF218STcSKWw1G9/BmmR8G
+	 rvpUTyJioeMSTvXg3RFie8SeH1oumlZVPp0MheVjuAR/uNedsembBu2Gsf7ER/4n+q
+	 xtdQ9hOsx3ca2jMYn46J9YBJfZuvOFBEUC//y6RbdPQiiBG2BGdk32W5zmngJ/vaIf
+	 DVZOJ6r7f99EA==
 From: Andrey Albershteyn <aalbersh@kernel.org>
 To: linux-xfs@vger.kernel.org,
 	fsverity@lists.linux.dev,
@@ -55,9 +55,9 @@ Cc: Andrey Albershteyn <aalbersh@kernel.org>,
 	linux-f2fs-devel@lists.sourceforge.net,
 	linux-btrfs@vger.kernel.org,
 	djwong@kernel.org
-Subject: [PATCH v4 06/25] fsverity: hoist pagecache_read from f2fs/ext4 to fsverity
-Date: Mon,  9 Mar 2026 20:23:21 +0100
-Message-ID: <20260309192355.176980-7-aalbersh@kernel.org>
+Subject: [PATCH v4 07/25] iomap: introduce IOMAP_F_FSVERITY and teach writeback to handle fsverity
+Date: Mon,  9 Mar 2026 20:23:22 +0100
+Message-ID: <20260309192355.176980-8-aalbersh@kernel.org>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20260309192355.176980-1-aalbersh@kernel.org>
 References: <20260309192355.176980-1-aalbersh@kernel.org>
@@ -68,20 +68,20 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 1F0D023FDA4
+X-Rspamd-Queue-Id: 19A4623FDCB
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_CONTAINS_FROM(1.00)[];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-79847-lists,linux-fsdevel=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-79848-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
@@ -95,179 +95,136 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TAGGED_RCPT(0.00)[linux-fsdevel];
 	TO_DN_SOME(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo]
 X-Rspamd-Action: no action
 
-This is the same function to read from pageache. XFS will also need
-this, so move this to core fsverity.
+This flag indicates that I/O is for fsverity metadata.
+
+In the write path skip i_size check and i_size updates as metadata is
+past EOF. In writeback don't update i_size and continue writeback if
+even folio is beyond EOF. In read path don't zero fsverity folios, again
+they are past EOF.
+
+The iomap_block_needs_zeroing() is also called from write path. For
+folios of larger order we don't want to zero out pages in the folio as
+these could contain other merkle tree blocks. For fsverity, filesystem
+will request to read PAGE_SIZE memory regions. For data folios, iomap
+will zero the rest of the folio for anything which is beyond EOF. We
+don't want this for fsverity folios.
 
 Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 ---
- fs/ext4/verity.c         | 32 +++-----------------------------
- fs/f2fs/verity.c         | 30 +-----------------------------
- fs/verity/pagecache.c    | 33 +++++++++++++++++++++++++++++++++
- include/linux/fsverity.h |  2 ++
- 4 files changed, 39 insertions(+), 58 deletions(-)
+ fs/iomap/buffered-io.c | 34 +++++++++++++++++++++++++---------
+ fs/iomap/trace.h       |  3 ++-
+ include/linux/iomap.h  |  5 +++++
+ 3 files changed, 32 insertions(+), 10 deletions(-)
 
-diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
-index 347945ac23a4..ac5c133f5529 100644
---- a/fs/ext4/verity.c
-+++ b/fs/ext4/verity.c
-@@ -34,32 +34,6 @@ static inline loff_t ext4_verity_metadata_pos(const struct inode *inode)
- 	return round_up(inode->i_size, 65536);
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 51a58a0bfe6c..530794dcdd91 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -344,9 +344,16 @@ static inline bool iomap_block_needs_zeroing(const struct iomap_iter *iter,
+ {
+ 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+ 
+-	return srcmap->type != IOMAP_MAPPED ||
+-		(srcmap->flags & IOMAP_F_NEW) ||
+-		pos >= i_size_read(iter->inode);
++	if (srcmap->type != IOMAP_MAPPED)
++		return true;
++
++	if (srcmap->flags & IOMAP_F_NEW)
++		return true;
++
++	if (srcmap->flags & IOMAP_F_FSVERITY)
++		return false;
++
++	return pos >= i_size_read(iter->inode);
  }
  
--/*
-- * Read some verity metadata from the inode.  __vfs_read() can't be used because
-- * we need to read beyond i_size.
-- */
--static int pagecache_read(struct inode *inode, void *buf, size_t count,
--			  loff_t pos)
--{
--	while (count) {
--		struct folio *folio;
--		size_t n;
--
--		folio = read_mapping_folio(inode->i_mapping, pos >> PAGE_SHIFT,
--					 NULL);
--		if (IS_ERR(folio))
--			return PTR_ERR(folio);
--
--		n = memcpy_from_file_folio(buf, folio, pos, count);
--		folio_put(folio);
--
--		buf += n;
--		pos += n;
--		count -= n;
--	}
--	return 0;
--}
--
- /*
-  * Write some verity metadata to the inode for FS_IOC_ENABLE_VERITY.
-  * kernel_write() can't be used because the file descriptor is readonly.
-@@ -311,8 +285,8 @@ static int ext4_get_verity_descriptor_location(struct inode *inode,
- 		goto bad;
- 	desc_size_pos -= sizeof(desc_size_disk);
+ /**
+@@ -1152,13 +1159,14 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i,
+ 		 * unlock and release the folio.
+ 		 */
+ 		old_size = iter->inode->i_size;
+-		if (pos + written > old_size) {
++		if (pos + written > old_size &&
++		    !(iter->iomap.flags & IOMAP_F_FSVERITY)) {
+ 			i_size_write(iter->inode, pos + written);
+ 			iter->iomap.flags |= IOMAP_F_SIZE_CHANGED;
+ 		}
+ 		__iomap_put_folio(iter, write_ops, written, folio);
  
--	err = pagecache_read(inode, &desc_size_disk, sizeof(desc_size_disk),
--			     desc_size_pos);
-+	err = fsverity_pagecache_read(inode, &desc_size_disk,
-+				      sizeof(desc_size_disk), desc_size_pos);
- 	if (err)
- 		return err;
- 	desc_size = le32_to_cpu(desc_size_disk);
-@@ -352,7 +326,7 @@ static int ext4_get_verity_descriptor(struct inode *inode, void *buf,
- 	if (buf_size) {
- 		if (desc_size > buf_size)
- 			return -ERANGE;
--		err = pagecache_read(inode, buf, desc_size, desc_pos);
-+		err = fsverity_pagecache_read(inode, buf, desc_size, desc_pos);
- 		if (err)
- 			return err;
- 	}
-diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
-index b3b3e71604ac..5ea0a9b40443 100644
---- a/fs/f2fs/verity.c
-+++ b/fs/f2fs/verity.c
-@@ -36,34 +36,6 @@ static inline loff_t f2fs_verity_metadata_pos(const struct inode *inode)
- 	return round_up(inode->i_size, 65536);
- }
+-		if (old_size < pos)
++		if (old_size < pos && !(iter->iomap.flags & IOMAP_F_FSVERITY))
+ 			pagecache_isize_extended(iter->inode, old_size, pos);
  
--/*
-- * Read some verity metadata from the inode.  __vfs_read() can't be used because
-- * we need to read beyond i_size.
-- */
--static int pagecache_read(struct inode *inode, void *buf, size_t count,
--			  loff_t pos)
--{
--	while (count) {
--		size_t n = min_t(size_t, count,
--				 PAGE_SIZE - offset_in_page(pos));
--		struct page *page;
--
--		page = read_mapping_page(inode->i_mapping, pos >> PAGE_SHIFT,
--					 NULL);
--		if (IS_ERR(page))
--			return PTR_ERR(page);
--
--		memcpy_from_page(buf, page, offset_in_page(pos), n);
--
--		put_page(page);
--
--		buf += n;
--		pos += n;
--		count -= n;
--	}
--	return 0;
--}
--
- /*
-  * Write some verity metadata to the inode for FS_IOC_ENABLE_VERITY.
-  * kernel_write() can't be used because the file descriptor is readonly.
-@@ -248,7 +220,7 @@ static int f2fs_get_verity_descriptor(struct inode *inode, void *buf,
- 	if (buf_size) {
- 		if (size > buf_size)
- 			return -ERANGE;
--		res = pagecache_read(inode, buf, size, pos);
-+		res = fsverity_pagecache_read(inode, buf, size, pos);
- 		if (res)
- 			return res;
- 	}
-diff --git a/fs/verity/pagecache.c b/fs/verity/pagecache.c
-index 1d94bf73f38c..ec65f60e657f 100644
---- a/fs/verity/pagecache.c
-+++ b/fs/verity/pagecache.c
-@@ -78,3 +78,36 @@ void fsverity_folio_zero_hash(struct folio *folio, size_t poff, size_t plen,
- 				vi->tree_params.digest_size);
- }
- EXPORT_SYMBOL_GPL(fsverity_folio_zero_hash);
-+
-+/**
-+ * fsverity_pagecache_read() - read page and copy data to buffer
-+ * @inode:	copy from this inode's address space
-+ * @buf:	buffer to copy to
-+ * @count:	number of bytes to copy
-+ * @pos:	position of the folio to copy from
-+ *
-+ * Read some verity metadata from the inode.  __vfs_read() can't be used because
-+ * we need to read beyond i_size.
-+ */
-+int fsverity_pagecache_read(struct inode *inode, void *buf, size_t count,
-+			  loff_t pos)
-+{
-+	while (count) {
-+		struct folio *folio;
-+		size_t n;
-+
-+		folio = read_mapping_folio(inode->i_mapping, pos >> PAGE_SHIFT,
-+					 NULL);
-+		if (IS_ERR(folio))
-+			return PTR_ERR(folio);
-+
-+		n = memcpy_from_file_folio(buf, folio, pos, count);
-+		folio_put(folio);
-+
-+		buf += n;
-+		pos += n;
-+		count -= n;
+ 		cond_resched();
+@@ -1786,13 +1794,21 @@ static int iomap_writeback_range(struct iomap_writepage_ctx *wpc,
+  * Check interaction of the folio with the file end.
+  *
+  * If the folio is entirely beyond i_size, return false.  If it straddles
+- * i_size, adjust end_pos and zero all data beyond i_size.
++ * i_size, adjust end_pos and zero all data beyond i_size. Don't skip fsverity
++ * folios as those are beyond i_size.
+  */
+-static bool iomap_writeback_handle_eof(struct folio *folio, struct inode *inode,
+-		u64 *end_pos)
++static bool iomap_writeback_handle_eof(struct folio *folio,
++				       struct iomap_writepage_ctx *wpc,
++				       u64 *end_pos)
+ {
++	struct inode *inode = wpc->inode;
+ 	u64 isize = i_size_read(inode);
+ 
++	if (wpc->iomap.flags & IOMAP_F_FSVERITY) {
++		WARN_ON_ONCE(folio_pos(folio) < isize);
++		return true;
 +	}
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(fsverity_pagecache_read);
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index 1ca8de129323..53dc161e18c0 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -327,5 +327,7 @@ void generic_readahead_merkle_tree(struct inode *inode, pgoff_t index,
- 				   unsigned long nr_pages);
- void fsverity_folio_zero_hash(struct folio *folio, size_t poff, size_t plen,
- 			      struct fsverity_info *vi);
-+int fsverity_pagecache_read(struct inode *inode, void *buf, size_t count,
-+			    loff_t pos);
++
+ 	if (*end_pos > isize) {
+ 		size_t poff = offset_in_folio(folio, isize);
+ 		pgoff_t end_index = isize >> PAGE_SHIFT;
+@@ -1858,7 +1874,7 @@ int iomap_writeback_folio(struct iomap_writepage_ctx *wpc, struct folio *folio)
  
- #endif	/* _LINUX_FSVERITY_H */
+ 	trace_iomap_writeback_folio(inode, pos, folio_size(folio));
+ 
+-	if (!iomap_writeback_handle_eof(folio, inode, &end_pos))
++	if (!iomap_writeback_handle_eof(folio, wpc, &end_pos))
+ 		return 0;
+ 	WARN_ON_ONCE(end_pos <= pos);
+ 
+diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+index 532787277b16..5252051cc137 100644
+--- a/fs/iomap/trace.h
++++ b/fs/iomap/trace.h
+@@ -118,7 +118,8 @@ DEFINE_RANGE_EVENT(iomap_zero_iter);
+ 	{ IOMAP_F_ATOMIC_BIO,	"ATOMIC_BIO" }, \
+ 	{ IOMAP_F_PRIVATE,	"PRIVATE" }, \
+ 	{ IOMAP_F_SIZE_CHANGED,	"SIZE_CHANGED" }, \
+-	{ IOMAP_F_STALE,	"STALE" }
++	{ IOMAP_F_STALE,	"STALE" }, \
++	{ IOMAP_F_FSVERITY,	"FSVERITY" }
+ 
+ 
+ #define IOMAP_DIO_STRINGS \
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 531f9ebdeeae..dc39837b0d45 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -87,6 +87,11 @@ struct vm_fault;
+ #define IOMAP_F_INTEGRITY	0
+ #endif /* CONFIG_BLK_DEV_INTEGRITY */
+ 
++/*
++ * IO happens beyond inode EOF, fsverity metadata is stored there
++ */
++#define IOMAP_F_FSVERITY	(1U << 10)
++
+ /*
+  * Flag reserved for file system specific usage
+  */
 -- 
 2.51.2
 
