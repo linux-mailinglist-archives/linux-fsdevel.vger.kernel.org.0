@@ -1,189 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-79806-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-79807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id gMY0OVPxrmkWKQIAu9opvQ
-	(envelope-from <linux-fsdevel+bounces-79806-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 17:12:03 +0100
+	id 4HnXI3L0rmnZKgIAu9opvQ
+	(envelope-from <linux-fsdevel+bounces-79807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>)
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 17:25:22 +0100
 X-Original-To: lists+linux-fsdevel@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F9923C820
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 17:12:02 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D8A23CAAF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 09 Mar 2026 17:25:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 112CF306240E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 16:07:06 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id C4CA13052820
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2026 16:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994223BFE2A;
-	Mon,  9 Mar 2026 16:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5ED63CA486;
+	Mon,  9 Mar 2026 16:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h0WVw+EJ"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="rIHyROpF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF882236EB
-	for <linux-fsdevel@vger.kernel.org>; Mon,  9 Mar 2026 16:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773072424; cv=pass; b=peZZ7xCpNpcYEtYEkeNyFFrrtlUfEJFe6nXGHKaNvz/pebHYPaxWX2+fj2By6NeN4xk5cqGCJLsleXk/GfIQ4L42Dti+aqoJJstlgif4bONSu/6FRJnYoLkZfN6vHDBlPqO1L5b96subXaCqsDqyk+6i6C93ZzhI7fK18gH1/sg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773072424; c=relaxed/simple;
-	bh=tnJEXQi0QMLuGskG5kwVEd82dGxbwaji6bCS8GssTUA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TQhLS7iA2tH4JBYw18oQlMJDaoRm6BTJbZ4wlav2TwDRl5DPxoqwugkdAe5Hz/IwPo0ZdPvqQzXZywJqU1W07W8x9V5TtasOORtFqWwa+rFOBJOu5t/e7oPD3Tprtq0FiIX55w0qY7xFseZxtmLoT2vX6CODVPqC4bcFyvw06eU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h0WVw+EJ; arc=pass smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-661169cd6d8so14074a12.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Mar 2026 09:07:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773072421; cv=none;
-        d=google.com; s=arc-20240605;
-        b=VqmozXXMeNGpjWJfI4orMKNZmHv2ikZDBE1FZh2V4H+rdHhj+/ySKJu34Co6EkyI5v
-         4oHi2NXN5VrxW36FCPm+zzfeqnTl/OJgNBenpAJTXmSNoXQJe0lW7zmwJTgIy4sngts3
-         3EeZiFQrewx5WjIGEwbQPsQy+Lz/hhDss67kr+Kw3qvwvYRjb57sv98ydi4BTVcsJzMe
-         TL4INLMTfc+2NsQEiqF8Fs2iFzM9G2/6tKVXdtHXOK0pRUBp/f2fAXdSYD2OaqagH1r+
-         zL3jCtKbnbuKaNcXEp4yDWwzvQZ/qO5BJZpyc0TGg/8oL73jrd4+kSfc95NLxIRAzpMl
-         Ku0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=pImyNInQryg7ScSI7a4TcEjYTJDRJ/H8m7YcY6WOvR8=;
-        fh=+/WjqGOODrJjRWEFHLCYnr7yJLLuUBSws8YhyjZh+N8=;
-        b=OmqZDDVFXn2nbj/dHCYaurIStdN5+rZYwRahv1C5SIbiuHbFEkVB4SZJv0M8QFjN7x
-         Y3v9zJoUZ6RNZ8mpEwf2kU/CK21xq3HrbV2SYgFXTg6yHZd67soRLHOtbTj45VyrbQ/i
-         c0+oV3Hl/VGTR2/P57qrDJq63yVMmTwR90jfsXj2Lhi6PygfgmeM9DuBudb4Qy/7I047
-         cJPSLF++lo9osyXcUVdcy+eQF09BQA4kwBFTYswVWx/hHdi4mTeNEY0bHyykwhnL2D9p
-         IQoAeKXxrSovOMFvTok8XgqrwDEX6tDBEo8rOAUNm9RTCzhFhG0yiLBHnOoXko6NuTrE
-         h1Og==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1773072421; x=1773677221; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pImyNInQryg7ScSI7a4TcEjYTJDRJ/H8m7YcY6WOvR8=;
-        b=h0WVw+EJ3nb0FtYEjgdH57fSAo120DhUqXIUQLaHTuQYBkYtvepadYcEhGzse22rKo
-         hutHtCUbdl2Zoh4PpXqzXkshprgKID//IixfoPg2j1zn+mq038FqtGXo4d7rBPjRyzsP
-         G30jIAXsJAdx9GnFvQoPO2BUBc+/aXdbuyKwuBKAFhkj98QKGj1riG4zfpE2SkiVgHUu
-         mfaKrtNjimM6fjPrGn1QW7gjwfba2GLkG1mtECLblp3CbSVZA3SbfI6VXtYyHl85PwvO
-         YRVFL9xvuDeSWekq1YczpkrnHjGGoVg+NQwOUKRu8DjVcqTAvZgebQ+m7dEOBbnlu/j7
-         BIzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773072421; x=1773677221;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=pImyNInQryg7ScSI7a4TcEjYTJDRJ/H8m7YcY6WOvR8=;
-        b=EOvpZqIkdtb6m6y/nbMsncvS+LPgeF+v63ZAht7PjP/rUR3vwDp/XSfs/BVSd2i94h
-         Jg+l5mDan9JaH8RwR5Gn9j5oTcbkv10RADfODobDlkDWefk4uPXm49EtA7lwqe+dxCr4
-         UKleZSMCyhOvj/zPzi9Vtcz01AR84Cxg6STDW3rv7f7I3omkXwMLX58nTC2hdYIDtuXs
-         TXmkLAE7AY1cJgkTEcNigjDPJ8UVwOFStr4SGacRR5s/k83X8tXmllhaOZshIsqwWnKd
-         Csj5DgE3ZQuaFgzdg5yDN/28FZm8L3CoOTR04dUjojyyZykPvFACAVQHo4/9lSkhVjJE
-         wDFg==
-X-Gm-Message-State: AOJu0YxeQ8bfuhOVPSw4Kb+S8TC5bgUOgEFQb9fHjuUfjH2ORt3ivchx
-	TosQ5uFAD0LdvDclBiKN2qEns6ENujkWo4xAeZKTyyU63ayV24te1uGw5qGBA7eaL6puHxgvpjk
-	v6LfOl69lQE63Ov8UKFZQOTwGADfMCpdrWZzxM916
-X-Gm-Gg: ATEYQzy3dEKoOTbwSra6EBFNAvWuLSCOcGUKdx/htvevFdxPzvEkKhX5pXKtfECVtSY
-	OqGBT82yyHMZWZEH5oVS+UZjsQ72hMG6Og5D+zGLVjVVd9yXVTrIKDK5XTPmKDsrlQcBsj8CsNK
-	xCPsDgZeeMiR4COIhaxhUiigUVE4g+kkt7KcfNXp3YQ9X3JR94keliIn2/WZdGcaeSQE2rd0Pik
-	53fMG+h5bqviW7NLkl8j0y+fBSC/xuB6CojQ5XrrmgtwhfSjzHzItCPdAfNbmRBdR1i2s9MEsNm
-	yKX+3x2q7R4tVfcDd45+888FCgo4BrM2/fzFSg==
-X-Received: by 2002:a05:6402:3254:20b0:662:a565:cb41 with SMTP id
- 4fb4d7f45d1cf-662a565cf01mr18194a12.6.1773072420879; Mon, 09 Mar 2026
- 09:07:00 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461D83ACA6B;
+	Mon,  9 Mar 2026 16:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773072873; cv=none; b=FG6hLKejGirSDRjelBXfoSq2GG899wa35yGQpGO5fcALHY/ehdmKsFaDp1H/CEBoUJQ7QweKOdtcraZf4jLtG8DV3+gomcYChIpoIJc99wrPHILZiPEyx9Aw/n5wM3n8jJtFLASLB3KLlJMwIkX3gpmq8K2FGMXWL26xhC/INUg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773072873; c=relaxed/simple;
+	bh=p1jDg/PoZE134/hvzAZp30erwJqRyaAnX8Tci2InXOo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=i8rOAJfw4s0ozmhl6Y+9eNwF31XidrV9SyqIIsulLQejdiiqGV/Ht6EHTFI0KbDGVOV5S/ACq9juBo+03xsVXx3VG++yn+2D0Uv3o3uCNTEzPwDMGxNJbVZCe97Eae9kNdCmtv5skHd4xZIiMBxEyesNkJdtaftfBit2ZzhI9TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=rIHyROpF; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 7913540C9C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1773072871; bh=p1jDg/PoZE134/hvzAZp30erwJqRyaAnX8Tci2InXOo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=rIHyROpFd/tKHNE2cNLLgwSlk7bC/Xbm5umP3AawrfzYgfiuvY/yRdDBI5REo6fKC
+	 +niFUjJQGCUOuG4AC4Q06wb2V5v+NFkg3x6MoeuryvNSOn+xU2cZmFraCDAVHY3v3j
+	 7CbmunT6w4hBHEsE6QGd2xBiaspuz1WRDboznSeWWZ+5DUY4nAl9adTmdqCM9/HCCi
+	 l5W6THUrTQqmjNw+WVSUrxTnRQzSOT1wJQx3M8ngkpRb0prHUuR2dvaw1RegGHjKcb
+	 PuJ6ZAR7/qpWekypRt7R7VGDHNDZPamBJznl1wPy42xS23XRyIfvr3pl6BdyJDRwjO
+	 gnApntLob1Wwg==
+Received: from localhost (unknown [IPv6:2601:280:4600:27b::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 7913540C9C;
+	Mon,  9 Mar 2026 16:14:31 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: "David Hildenbrand (Arm)" <david@kernel.org>, linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-mm@kvack.org, "David Hildenbrand (Arm)" <david@kernel.org>, Zi Yan
+ <ziy@nvidia.com>, Lance Yang <lance.yang@linux.dev>, Vlastimil Babka
+ <vbabka@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Lorenzo
+ Stoakes <lorenzo.stoakes@oracle.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, "Liam R . Howlett"
+ <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, Dev Jain
+ <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, Shuah Khan
+ <skhan@linuxfoundation.org>, Usama Arif <usamaarif642@gmail.com>, Andi
+ Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v2] docs: filesystems: clarify KernelPageSize vs.
+ MMUPageSize in smaps
+In-Reply-To: <20260306081916.38872-1-david@kernel.org>
+References: <20260306081916.38872-1-david@kernel.org>
+Date: Mon, 09 Mar 2026 10:14:30 -0600
+Message-ID: <87ms0hvv2x.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260306-work-kthread-nullfs-v2-0-ad1b4bed7d3e@kernel.org> <20260306-work-kthread-nullfs-v2-18-ad1b4bed7d3e@kernel.org>
-In-Reply-To: <20260306-work-kthread-nullfs-v2-18-ad1b4bed7d3e@kernel.org>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 9 Mar 2026 17:06:24 +0100
-X-Gm-Features: AaiRm53Q95hj2azeXcgcreHeoxAMVLzWfUEJ3sSaaRFPh4Xdn7psa1tH2zr5jFM
-Message-ID: <CAG48ez3Oei55q_b4Wbh5Z4R81ZjOvfKcJhZe1QVudbxMw3TAsQ@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 18/23] fs: add umh argument to struct kernel_clone_args
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>, 
-	Tejun Heo <tj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Rspamd-Queue-Id: 65F9923C820
+Content-Type: text/plain
+X-Rspamd-Queue-Id: 97D8A23CAAF
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[google.com:s=20230601];
+X-Spamd-Result: default: False [-1.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[lwn.net,none];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[lwn.net:s=20201203];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-79806-lists,linux-fsdevel=lfdr.de];
-	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,kernel.org,nvidia.com,linux.dev,linux-foundation.org,oracle.com,linux.alibaba.com,redhat.com,arm.com,linuxfoundation.org,gmail.com,linux.intel.com];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-79807-lists,linux-fsdevel=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[19];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[google.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	DKIM_TRACE(0.00)[lwn.net:+];
 	MISSING_XM_UA(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[jannh@google.com,linux-fsdevel@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.959];
-	TAGGED_RCPT(0.00)[linux-fsdevel];
-	RCPT_COUNT_SEVEN(0.00)[8];
 	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,mail.gmail.com:mid]
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[corbet@lwn.net,linux-fsdevel@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
+	TAGGED_RCPT(0.00)[linux-fsdevel];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[trenco.lwn.net:mid,sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo,lwn.net:dkim]
 X-Rspamd-Action: no action
 
-On Fri, Mar 6, 2026 at 12:31=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
-> Add a umh field to struct kernel_clone_args. When set, copy_fs() copies
-> from pid 1's fs_struct instead of the kthread's fs_struct. This ensures
-> usermodehelper threads always get init's filesystem state regardless of
-> their parent's (kthreadd's) fs.
->
-> Usermodehelper threads are not allowed to create mount namespaces
-> (CLONE_NEWNS), share filesystem state (CLONE_FS), or be started from
-> a non-initial mount namespace. No usermodehelper currently does this so
-> we don't need to worry about this restriction.
->
-> Set .umh =3D 1 in user_mode_thread(). At this stage pid 1's fs points to
-> rootfs which is the same as kthreadd's fs, so this is functionally
-> equivalent.
-[...]
-> -static int copy_fs(u64 clone_flags, struct task_struct *tsk)
-> +static int copy_fs(u64 clone_flags, struct task_struct *tsk, bool umh)
->  {
-> -       struct fs_struct *fs =3D current->fs;
-> +       struct fs_struct *fs;
-> +
-> +       /*
-> +        * Usermodehelper may use userspace_init_fs filesystem state but
-> +        * they don't get to create mount namespaces, share the
-> +        * filesystem state, or be started from a non-initial mount
-> +        * namespace.
-> +        */
-> +       if (umh) {
-> +               if (clone_flags & (CLONE_NEWNS | CLONE_FS))
-> +                       return -EINVAL;
-> +               if (current->nsproxy->mnt_ns !=3D &init_mnt_ns)
-> +                       return -EINVAL;
-> +               fs =3D userspace_init_fs;
-> +       } else {
-> +               fs =3D current->fs;
-> +       }
->
->         VFS_WARN_ON_ONCE(current->fs !=3D current->real_fs);
+"David Hildenbrand (Arm)" <david@kernel.org> writes:
 
-Should that VFS_WARN_ON_ONCE() be in the else {} block?
+> There was recently some confusion around THPs and the interaction with
+> KernelPageSize / MMUPageSize. Historically, these entries always
+> correspond to the smallest size we could encounter, not any current
+> usage of transparent huge pages or larger sizes used by the MMU.
+>
+> Ever since we added THP support many, many years ago, these entries
+> would keep reporting the smallest (fallback) granularity in a VMA.
+>
+> For this reason, they default to PAGE_SIZE for all VMAs except for
+> VMAs where we have the guarantee that the system and the MMU will
+> always use larger page sizes. hugetlb, for example, exposes a custom
+> vm_ops->pagesize callback to handle that. Similarly, dax/device
+> exposes a custom vm_ops->pagesize callback and provides similar
+> guarantees.
+>
+> Let's clarify the historical meaning of KernelPageSize / MMUPageSize,
+> and point at "AnonHugePages", "ShmemPmdMapped" and "FilePmdMapped"
+> regarding PMD entries.
+>
+> While at it, document "FilePmdMapped", clarify what the "AnonHugePages"
+> and "ShmemPmdMapped" entries really mean, and make it clear that there
+> are no other entries for other THP/folio sizes or mappings.
+>
+> Also drop the duplicate "KernelPageSize" and "MMUPageSize" entries in
+> the example.
 
-I don't know if it could happen that a VFS operation that happens with
-overwritten current->fs calls back into firmware loading or such, or
-if that is anyway impossible for locking reasons or such...
+Applied, thanks.
+
+jon
 
